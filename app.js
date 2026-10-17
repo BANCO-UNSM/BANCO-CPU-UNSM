@@ -1,13 +1,102 @@
 'use strict';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ready=Boolean(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY);
+// Identificador de instalación de este navegador. No constituye identificación física infalible.
+const deviceKey='academia_unsm_device_v1';
+let deviceId=localStorage.getItem(deviceKey);
+if(!deviceId){deviceId=crypto.randomUUID();localStorage.setItem(deviceKey,deviceId)}
 const db=ready?window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY):null;
-let user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
+let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
 const teacher=()=>['teacher','admin'].includes(profile?.role);
 const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':''}>${esc(s)}</p></div>`;
-async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase. Mientras tanto puedes usar la demo local.');$('nav').innerHTML='<a href="demo.html">Abrir demostración</a>';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
-async function refresh(){profile=null;questions=[];attempts=[];if(user){const p=await db.from('profiles').select('role,name').eq('id',user.id).maybeSingle();profile=p.data;const q=await db.from('questions').select('id,cycle,week,subject,topic,page,original_number,statement,options,source,status').order('created_at',{ascending:false});if(q.error)alert(q.error.message);else questions=q.data||[];const a=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=a.data||[]}render()}
-function render(){const pages=user?[['home','Inicio'],['bank','Banco académico'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[])]:[];$('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{page=x.dataset.page;quiz=null;practice=null;render()});$('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación'})[page];$('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';if(user)$('logout').onclick=()=>db.auth.signOut();$('app').innerHTML=!user?login():({home,bank,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage})[page]();bind()}
+async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
+async function refresh(){
+ profile=null;access=null;questions=[];attempts=[];
+ if(user){
+  const p=await db.from('profiles').select('role,name').eq('id',user.id).maybeSingle();profile=p.data;
+  if(teacher()) access={status:'staff',allowed:true};
+  else {
+   // Primero se comprueba la suscripción: has_active_access exige una sesión ya vinculada.
+   const {data:subscribed,error:subscriptionError}=await db.rpc('has_valid_subscription');
+   if(subscriptionError)access={status:'setup_error',message:subscriptionError.message,allowed:false};
+   else if(!subscribed)access={status:'pending',message:'Tu cuenta aún no tiene una autorización vigente. Contacta al administrador.',allowed:false};
+   else {
+    // Registra el navegador y la sesión de Supabase en una única operación segura.
+    const {data:registered,error:deviceError}=await db.rpc('register_student_session',{p_device_token:deviceId});
+    if(deviceError||!registered)access={status:'device_blocked',message:deviceError?.message||'Ya existe otra sesión autorizada. Solicita al administrador liberar el navegador anterior.',allowed:false};
+    else {
+     const {data:verified,error:verifyError}=await db.rpc('verify_student_device',{p_device_token:deviceId});
+     const {data:active,error:activeError}=await db.rpc('has_active_access');
+     const allowed=verified===true&&active===true&&!verifyError&&!activeError;
+     access={status:allowed?'active':'device_blocked',allowed,message:verifyError?.message||activeError?.message||'No se pudo validar esta sesión.'};
+    }
+   }
+  }
+  if(teacher()||access?.allowed){
+   const q=await db.from('questions').select('id,cycle,week,subject,topic,page,original_number,statement,options,source,status').order('created_at',{ascending:false});
+   if(q.error)console.error(q.error.message);else questions=q.data||[];
+   const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
+  }
+ }
+ render();
+}
+function render(){
+ const allowed=teacher()||access?.allowed;
+ const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos']]:[])]:[['access','Mi acceso']]):[];
+ if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
+ $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
+ document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{page=x.dataset.page;quiz=null;practice=null;render()});
+ $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos'})[page];
+ $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
+ if(user)$('logout').onclick=()=>db.auth.signOut();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage})[page]();
+ bind();
+}
+function accessPage(){
+ const status=access?.status==='pending'?'Pendiente de autorización':access?.status==='suspended'?'Cuenta suspendida':access?.status==='device_blocked'?'Dispositivo no autorizado':access?.status==='setup_error'?'Actualización pendiente en Supabase':'Suscripción vencida';
+ return `<div class="card"><h2>${esc(status)}</h2><p>El administrador debe confirmar tu pago y habilitar tu acceso. No se realizan cobros en esta página.</p><p class="muted">${esc(access?.message||'Si ya pagaste, contacta al administrador. Si cambiaste de equipo, solicita liberar el dispositivo anterior.')}</p>${access?.expires_at?`<p>Vencimiento: ${esc(new Date(access.expires_at).toLocaleString('es-PE'))}</p>`:''}<button id="reloadAccess">Actualizar mi estado</button></div>`;
+}
+function studentsPage(){
+ if(!admin())return notice('Solo el administrador puede gestionar alumnos',true);
+ return `<div class="card"><h2>Control de alumnos</h2><p class="muted">Los pagos se reciben fuera de la web. Solo tú autorizas, renuevas, suspendes y liberas navegadores.</p><button id="loadStudents">Actualizar lista</button><p id="studentsStatus" class="muted"></p><div id="studentsList">${students.map(x=>`<div class="listitem"><strong>${esc(x.student_name||'Estudiante')}</strong><p class="small">ID: ${esc(x.student_id)} · ${esc(x.access_status)} · ${x.expires_at?esc(new Date(x.expires_at).toLocaleString('es-PE')):'Sin vencimiento'} · Navegador: ${x.device_registered?'vinculado':'sin vincular'}</p><p class="small muted">Pago: ${esc(x.payment_method||'sin registrar')} · S/ ${esc(x.payment_amount??'—')}</p><div class="actions"><button data-student-action="approve" data-student-id="${esc(x.student_id)}">Autorizar / renovar</button><button class="secondary" data-student-action="payment" data-student-id="${esc(x.student_id)}">Registrar pago</button><button class="secondary" data-student-action="release_device" data-student-id="${esc(x.student_id)}">Liberar navegador</button><button class="secondary" data-student-action="suspend" data-student-id="${esc(x.student_id)}">Suspender</button></div></div>`).join('')||'<p>Presiona «Actualizar lista» para cargar los alumnos.</p>'}</div></div>`;
+}
+async function loadStudents(){
+ const {data,error}=await db.rpc('admin_list_students');
+ if(error){const status=$('studentsStatus');if(status)status.textContent=error.message;return}
+ students=data||[];render();
+}
+function bindStudents(){
+ $('loadStudents').onclick=loadStudents;
+ document.querySelectorAll('[data-student-action]').forEach(b=>b.onclick=async()=>{
+  const id=b.dataset.studentId,action=b.dataset.studentAction,student=students.find(x=>x.student_id===id);
+  if(!student)return;
+  let rpc,args;
+  if(action==='approve'){
+   const suggested=student.expires_at&&new Date(student.expires_at)>new Date()?new Date(student.expires_at):new Date(Date.now()+30*86400000);
+   const date=prompt('Fecha de vencimiento (AAAA-MM-DD):',suggested.toISOString().slice(0,10));
+   if(date===null)return;
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(Date.parse(date+'T23:59:59'))){alert('Fecha inválida');return}
+   rpc='admin_authorize_student';args={p_student_id:id,p_expires_at:new Date(date+'T23:59:59').toISOString()};
+  }else if(action==='payment'){
+   const method=prompt('Medio de pago: Yape, Plin, Transferencia o Efectivo',student.payment_method||'Yape');
+   if(method===null)return;
+   const normalized=['Yape','Plin','Transferencia','Efectivo'].find(x=>x.toLowerCase()===method.trim().toLowerCase());
+   if(!normalized){alert('Medio de pago inválido');return}
+   const amount=prompt('Importe recibido en soles:',String(student.payment_amount??''));
+   if(amount===null)return;
+   if(!amount.trim()||!Number.isFinite(Number(amount))||Number(amount)<=0){alert('Importe inválido');return}
+   const note=prompt('Observación (opcional):','');if(note===null)return;
+   rpc='admin_register_payment';args={p_student_id:id,p_method:normalized,p_amount:Number(amount),p_notes:note};
+  }else{
+   if(!confirm(`¿Confirmas ${action==='suspend'?'suspender al alumno':'liberar su navegador'}?`))return;
+   rpc=action==='suspend'?'admin_suspend_student':'admin_release_device';args={p_student_id:id};
+  }
+  b.disabled=true;
+  const {error}=await db.rpc(rpc,args);
+  if(error){alert('No se pudo actualizar: '+error.message);b.disabled=false;return}
+  await loadStudents();
+ });
+}
 function login(){return `<div class="card"><h2>Ingresar a Academia UNSM</h2><p class="muted">Regístrate como estudiante o inicia sesión. Un administrador debe habilitar las cuentas docentes.</p><form id="authForm"><div class="field"><label>Correo electrónico</label><input type="email" name="email" required></div><div class="field"><label>Contraseña (mínimo 6 caracteres)</label><input type="password" name="password" minlength="6" required></div><div class="actions"><button type="submit" name="action" value="login">Ingresar</button><button type="button" id="signup" class="secondary">Crear cuenta</button></div></form><p id="authStatus" class="muted"></p></div>`}
 function home(){return `<div class="grid"><div class="card"><div class="muted">Preguntas visibles</div><div class="stat">${questions.length}</div></div><div class="card"><div class="muted">Materias</div><div class="stat">${new Set(questions.map(q=>q.subject)).size}</div></div><div class="card"><div class="muted">Simulacros completados</div><div class="stat">${attempts.length}</div></div></div><div class="card"><h2>${teacher()?'Gestión académica':'Preparación preuniversitaria'}</h2><p>Consulta preguntas organizadas por semana y materia. ${teacher()?'Registra nuevas preguntas y decide cuándo publicarlas.':'Practica y revisa tu rendimiento con calificación segura.'}</p><p class="muted">La carga de separatas y verificación de claves se realizará progresivamente.</p></div>`}
 function bank(){return `<div class="card"><h2>Banco académico</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(questions.map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(questions.map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
@@ -190,5 +279,5 @@ function bindReviewDetail(){
  };
 }
 
-function bind(){if(!user){$('authForm').onsubmit=async e=>{e.preventDefault();const f=e.target;const {error}=await db.auth.signInWithPassword({email:f.email.value,password:f.password.value});$('authStatus').textContent=error?error.message:'Sesión iniciada'};$('signup').onclick=async()=>{const f=$('authForm');const {error}=await db.auth.signUp({email:f.email.value,password:f.password.value});$('authStatus').textContent=error?error.message:'Cuenta solicitada. Revisa tu correo para confirmarla si está habilitada.'};return}if(page==='bank'){for(const id of ['subjectFilter','weekFilter','searchFilter'])$(id).addEventListener(id==='searchFilter'?'input':'change',bankList);bankList()}if(page==='practice')bindPractice();if(page==='bulk')bindBulk();if(page==='review')bindReview();if(page==='quiz'){if($('startQuiz'))$('startQuiz').onclick=()=>{const subject=$('quizSubject').value;const pool=questions.filter(q=>q.status==='published'&&(!subject||q.subject===subject));if(!pool.length)return alert('No hay preguntas publicadas.');const count=Math.min(pool.length,Math.max(1,Number($('quizCount').value)||10));quiz={items:pool.sort(()=>Math.random()-.5).slice(0,count),answers:Array(count).fill(null),i:0};render()};if($('nextQuiz'))$('nextQuiz').onclick=async()=>{const sel=document.querySelector('input[name=choice]:checked');quiz.answers[quiz.i]=sel?Number(sel.value):null;if(quiz.i<quiz.items.length-1){quiz.i++;render();return}$('nextQuiz').disabled=true;const {data,error}=await db.rpc('grade_attempt',{p_answers:quiz.items.map((q,i)=>({id:q.id,selected:quiz.answers[i]}))});if(error){$('quizError').textContent=error.message;$('nextQuiz').disabled=false;return}quiz.result=data;await refresh()};if($('restartQuiz'))$('restartQuiz').onclick=()=>{quiz=null;render()}}if(page==='manage'&&teacher())$('questionForm').onsubmit=async e=>{e.preventDefault();const f=e.target,values=Object.fromEntries(new FormData(f).entries());const {error}=await db.rpc('save_question',{p_cycle:values.cycle,p_week:Number(values.week),p_subject:values.subject,p_topic:values.topic,p_page:values.page?Number(values.page):null,p_number:values.number?Number(values.number):null,p_statement:values.statement,p_options:'ABCDE'.split('').map(x=>values['option'+x]),p_source:values.source||'',p_correct:Number(values.correct),p_explanation:values.explanation||'',p_publish:false});if(error){$('saveStatus').textContent='Error: '+error.message}else{f.reset();await refresh();const status=$('saveStatus');if(status)status.textContent='Pregunta guardada correctamente como borrador. Pendiente de revisión.'}}}
+function bind(){if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(!user){$('authForm').onsubmit=async e=>{e.preventDefault();const f=e.target;const {error}=await db.auth.signInWithPassword({email:f.email.value,password:f.password.value});$('authStatus').textContent=error?error.message:'Sesión iniciada'};$('signup').onclick=async()=>{const f=$('authForm');const {error}=await db.auth.signUp({email:f.email.value,password:f.password.value});$('authStatus').textContent=error?error.message:'Cuenta solicitada. Revisa tu correo para confirmarla si está habilitada.'};return}if(page==='bank'){for(const id of ['subjectFilter','weekFilter','searchFilter'])$(id).addEventListener(id==='searchFilter'?'input':'change',bankList);bankList()}if(page==='practice')bindPractice();if(page==='bulk')bindBulk();if(page==='review')bindReview();if(page==='quiz'){if($('startQuiz'))$('startQuiz').onclick=()=>{const subject=$('quizSubject').value;const pool=questions.filter(q=>q.status==='published'&&(!subject||q.subject===subject));if(!pool.length)return alert('No hay preguntas publicadas.');const count=Math.min(pool.length,Math.max(1,Number($('quizCount').value)||10));quiz={items:pool.sort(()=>Math.random()-.5).slice(0,count),answers:Array(count).fill(null),i:0};render()};if($('nextQuiz'))$('nextQuiz').onclick=async()=>{const sel=document.querySelector('input[name=choice]:checked');quiz.answers[quiz.i]=sel?Number(sel.value):null;if(quiz.i<quiz.items.length-1){quiz.i++;render();return}$('nextQuiz').disabled=true;const {data,error}=await db.rpc('grade_attempt',{p_answers:quiz.items.map((q,i)=>({id:q.id,selected:quiz.answers[i]}))});if(error){$('quizError').textContent=error.message;$('nextQuiz').disabled=false;return}quiz.result=data;await refresh()};if($('restartQuiz'))$('restartQuiz').onclick=()=>{quiz=null;render()}}if(page==='manage'&&teacher())$('questionForm').onsubmit=async e=>{e.preventDefault();const f=e.target,values=Object.fromEntries(new FormData(f).entries());const {error}=await db.rpc('save_question',{p_cycle:values.cycle,p_week:Number(values.week),p_subject:values.subject,p_topic:values.topic,p_page:values.page?Number(values.page):null,p_number:values.number?Number(values.number):null,p_statement:values.statement,p_options:'ABCDE'.split('').map(x=>values['option'+x]),p_source:values.source||'',p_correct:Number(values.correct),p_explanation:values.explanation||'',p_publish:false});if(error){$('saveStatus').textContent='Error: '+error.message}else{f.reset();await refresh();const status=$('saveStatus');if(status)status.textContent='Pregunta guardada correctamente como borrador. Pendiente de revisión.'}}}
 init();
