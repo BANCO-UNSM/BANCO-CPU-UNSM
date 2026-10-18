@@ -310,7 +310,14 @@ function bind(){if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').on
   status.textContent=authMode==='signup'?'Registrando cuenta...':'Iniciando sesión...';
   try{
    if(authMode==='signup'){
-    const {error}=await db.auth.signUp({email,password,options:{data:{name}}});
+    const {error}=await db.auth.signUp({
+  email,
+  password,
+  options:{
+    data:{name},
+    emailRedirectTo:'https://banco-unsm.github.io/BANCO-CPU-UNSM/'
+  }
+});
     status.textContent=error?'No se pudo registrar: '+error.message:'Solicitud de registro enviada. Revisa tu correo si necesitas confirmarlo. El administrador deberá autorizar tu acceso.';
    }else{
     const {error}=await db.auth.signInWithPassword({email,password});
