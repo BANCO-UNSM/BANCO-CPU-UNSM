@@ -154,6 +154,8 @@ function render(){
  $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
  bind();
  mostrarFormulas();
+ // Carga imágenes privadas visibles después de dibujar cada pantalla.
+ cargarImagenesPrivadas($('app'));
 }
 function accessPage(){
  const status=access?.status==='pending'?'Pendiente de autorización':access?.status==='suspended'?'Cuenta suspendida':access?.status==='device_blocked'?'Dispositivo no autorizado':access?.status==='setup_error'?'Actualización pendiente en Supabase':'Suscripción vencida';
@@ -248,6 +250,8 @@ function bindBankSolutions(){
       const answer=valid?`${'ABCDE'[index]}) ${esc(data.options?.[index]||'')}`:'Clave no disponible';
       target.innerHTML=`<div class="card"><strong>Respuesta correcta: ${answer}</strong><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap">${esc(data.explanation?.trim()||'No se ha registrado una explicación.')}</p>${espacioImagenPrivada(questions.find(q=>q.id===id)?.solution_image_path,'Imagen de la solución')}</div>`;
       target.hidden=false;button.textContent='Ocultar solución';
+      // La solución se descarga únicamente al abrirla.
+      cargarImagenesPrivadas(target);
       if(typeof renderMathInElement==='function')renderMathInElement(target,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
     };
   });
