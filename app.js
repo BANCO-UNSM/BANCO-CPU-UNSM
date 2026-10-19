@@ -2,7 +2,9 @@
 function mostrarFormulas() {
   if (typeof renderMathInElement !== 'function') return;
 
-  const contenedor = document.getElementById('app');
+  
+const contenedor = document.getElementById('bankList')
+  || document.getElementById('app');
   if (!contenedor) return;
 
   renderMathInElement(contenedor, {
