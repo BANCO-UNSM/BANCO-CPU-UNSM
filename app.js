@@ -7,6 +7,7 @@ let deviceId=localStorage.getItem(deviceKey);
 if(!deviceId){deviceId=crypto.randomUUID();localStorage.setItem(deviceKey,deviceId)}
 const db=ready?window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY):null;
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
+let activityRows=[],activityLoaded=false,activityError='';
 let authMode='login';
 const teacher=()=>['teacher','admin'].includes(profile?.role);
 const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':''}>${esc(s)}</p></div>`;
@@ -43,19 +44,31 @@ async function refresh(){
 }
 function render(){
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
  document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{page=x.dataset.page;quiz=null;practice=null;render()});
- $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos'})[page];
+ $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
  bind();
 }
 function accessPage(){
  const status=access?.status==='pending'?'Pendiente de autorización':access?.status==='suspended'?'Cuenta suspendida':access?.status==='device_blocked'?'Dispositivo no autorizado':access?.status==='setup_error'?'Actualización pendiente en Supabase':'Suscripción vencida';
  return `<div class="card"><h2>${esc(status)}</h2><p>El administrador debe confirmar tu pago y habilitar tu acceso. No se realizan cobros en esta página.</p><p class="muted">${esc(access?.message||'Si ya pagaste, contacta al administrador. Si cambiaste de equipo, solicita liberar el dispositivo anterior.')}</p>${access?.expires_at?`<p>Vencimiento: ${esc(new Date(access.expires_at).toLocaleString('es-PE'))}</p>`:''}<button id="reloadAccess">Actualizar mi estado</button></div>`;
+}
+function activityPage(){
+ if(!admin())return notice('Acceso exclusivo para administradores',true);
+ const n=activityRows.length,active=activityRows.filter(x=>Number(x.practice_count)+Number(x.attempt_count)>0).length;
+ const date=v=>v?new Date(v).toLocaleString('es-PE',{timeZone:'America/Lima',dateStyle:'short',timeStyle:'short'}):'Sin registro';
+ return `<div class="card"><h2>Seguimiento de estudiantes</h2><p class="muted">Consulta de actividad registrada. Un inicio de sesión no significa necesariamente que el alumno haya practicado. Los datos se actualizan al pulsar el botón.</p><button id="loadActivity">${activityLoaded?'Actualizar actividad':'Consultar actividad'}</button><p id="activityStatus" class="muted" role="status">${esc(activityError)}</p>${activityLoaded?`<div class="grid"><div class="card"><div class="muted">Estudiantes</div><div class="stat">${n}</div></div><div class="card"><div class="muted">Con actividad</div><div class="stat">${active}</div></div><div class="card"><div class="muted">Sin actividad registrada</div><div class="stat">${n-active}</div></div></div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left"><thead><tr><th>Estudiante</th><th>Último ingreso</th><th>Respuestas de práctica</th><th>Simulacros</th><th>Aciertos en simulacros</th><th>Último simulacro</th></tr></thead><tbody>${activityRows.map(x=>`<tr><td>${esc(x.student_name||'Sin nombre')}</td><td>${esc(date(x.last_sign_in_at))}</td><td>${Number(x.practice_count)||0}</td><td>${Number(x.attempt_count)||0}</td><td>${Number(x.quiz_correct)||0} / ${Number(x.quiz_questions)||0}</td><td>${esc(date(x.last_attempt))}</td></tr>`).join('')}</tbody></table></div>${!n?'<p>No hay estudiantes registrados.</p>':''}`:''}</div>`;
+}
+async function loadActivity(){
+ const button=$('loadActivity');if(button)button.disabled=true;
+ const {data,error}=await db.rpc('admin_student_activity');
+ if(error){activityError='No se pudo consultar: '+error.message;const st=$('activityStatus');if(st)st.textContent=activityError;if(button)button.disabled=false;return;}
+ activityRows=Array.isArray(data)?data:[];activityLoaded=true;activityError='';render();
 }
 function studentsPage(){
  if(!admin())return notice('Solo el administrador puede gestionar alumnos',true);
@@ -291,7 +304,7 @@ function bindReviewDetail(){
  };
 }
 
-function bind(){if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(!user){
+function bind(){if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(user&&page==='activity'&&$('loadActivity'))$('loadActivity').onclick=loadActivity;if(!user){
  $('authSwitch').onclick=()=>{authMode=authMode==='login'?'signup':'login';render()};
  $('authForm').onsubmit=async e=>{
   e.preventDefault();
