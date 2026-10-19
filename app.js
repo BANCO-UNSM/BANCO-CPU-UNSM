@@ -1,3 +1,20 @@
+
+function mostrarFormulas() {
+  if (typeof renderMathInElement !== 'function') return;
+
+  const contenedor = document.getElementById('app');
+  if (!contenedor) return;
+
+  renderMathInElement(contenedor, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '\\(', right: '\\)', display: false },
+      { left: '\\[', right: '\\]', display: true },
+      { left: '$', right: '$', display: false }
+    ],
+    throwOnError: false
+  });
+}
 'use strict';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ready=Boolean(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY);
