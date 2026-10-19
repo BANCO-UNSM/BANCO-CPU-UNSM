@@ -272,7 +272,10 @@ function bindBankSolutions(){
       const index=Number(data.correct_index);
       const valid=Number.isInteger(index)&&index>=0&&index<5;
       const answer=valid?`${'ABCDE'[index]}) ${esc(data.options?.[index]||'')}`:'Clave no disponible';
-      target.innerHTML=`<div class="card"><strong>Respuesta correcta: ${answer}</strong><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap">${esc(data.explanation?.trim()||'No se ha registrado una explicación.')}</p>${espacioImagenPrivada(questions.find(q=>q.id===id)?.solution_image_path,'Imagen de la solución')}</div>`;
+      const imagenSolucion=questions.find(q=>q.id===id)?.solution_image_path;
+      const explicacion=(data.explanation||'').trim();
+      const contenidoExplicacion=explicacion?`<p style="white-space:pre-wrap;line-height:1.75;margin:14px 0">${esc(explicacion)}</p>`:(imagenSolucion?'':'<p class="muted">Todavía no se ha registrado el desarrollo de esta pregunta.</p>');
+      target.innerHTML=`<div class="card" style="padding:22px;border-radius:14px"><div style="font-weight:700;font-size:1.08rem;margin-bottom:12px">Respuesta correcta: ${answer}</div><h3 style="margin:0 0 14px">Desarrollo paso a paso</h3>${contenidoExplicacion}${espacioImagenPrivada(imagenSolucion,'Imagen de la solución')}</div>`;
       target.hidden=false;button.textContent='Ocultar solución';
       // La solución se descarga únicamente al abrirla.
       cargarImagenesPrivadas(target);
