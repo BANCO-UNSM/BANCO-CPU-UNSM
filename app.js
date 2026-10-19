@@ -81,6 +81,7 @@ function espacioImagenPrivada(ruta,descripcion){
   return `<div class="private-image-box" data-private-image="${esc(ruta)}"><p class="muted small">Cargando imagen...</p><img alt="${esc(descripcion)}" style="display:none;max-width:100%;height:auto;border-radius:8px;margin:10px 0"></div>`;
 }
 async function cargarImagenesPrivadas(raiz=document){
+  if(!db)return;
   const nodos=[...raiz.querySelectorAll('[data-private-image]')];
   await Promise.all(nodos.map(async contenedor=>{
     if(contenedor.dataset.imageLoading==='yes')return;
@@ -89,22 +90,45 @@ async function cargarImagenesPrivadas(raiz=document){
     const img=contenedor.querySelector('img');
     const mensaje=contenedor.querySelector('p');
     if(!img)return;
+    let url=null;
+    const temporizador=setTimeout(()=>{
+      if(contenedor.isConnected&&mensaje&&mensaje.isConnected){
+        mensaje.textContent='La imagen está tardando demasiado. Recarga la página para reintentar.';
+      }
+    },12000);
     try{
       const {data,error}=await db.storage.from('soluciones-academia').download(ruta);
       if(error)throw error;
+      if(!data||!data.size)throw new Error('El archivo recibido está vacío.');
       if(!contenedor.isConnected)return;
-      const url=URL.createObjectURL(data);
+      url=URL.createObjectURL(data);
       imagenesTemporales.add(url);
       img.dataset.privateObjectUrl=url;
-      img.onload=()=>{if(mensaje)mensaje.remove();};
-      img.onerror=()=>{img.style.display='none';if(mensaje)mensaje.textContent='No se pudo mostrar la imagen.';};
+      img.onload=()=>{
+        clearTimeout(temporizador);
+        if(mensaje)mensaje.remove();
+      };
+      img.onerror=()=>{
+        clearTimeout(temporizador);
+        img.style.display='none';
+        if(mensaje)mensaje.textContent='No se pudo mostrar el archivo de imagen.';
+      };
       img.src=url;
       img.style.display='block';
+      if(img.complete&&img.naturalWidth>0){
+        clearTimeout(temporizador);
+        if(mensaje)mensaje.remove();
+      }
     }catch(err){
-      if(contenedor.isConnected&&mensaje)mensaje.textContent='Imagen no disponible: '+(err?.message||'sin permiso de acceso');
+      clearTimeout(temporizador);
+      console.error('Error al cargar imagen privada:',ruta,err);
+      if(contenedor.isConnected&&mensaje){
+        mensaje.textContent='Imagen no disponible: '+(err?.message||'Comprueba el acceso al archivo');
+      }
     }
   }));
 }
+
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
 let activityRows=[],activityLoaded=false,activityError='';
 let authMode='login';
