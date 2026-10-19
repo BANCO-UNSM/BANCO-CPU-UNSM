@@ -67,6 +67,44 @@ async function subirImagenPregunta(archivo, carpeta) {
 
   return nombre;
 }
+// Las imágenes son privadas: se descargan con la sesión autenticada, sin enlaces públicos.
+const imagenesTemporales=new Set();
+function liberarImagenesPrivadas(raiz=document){
+  raiz.querySelectorAll('img[data-private-object-url]').forEach(img=>{
+    const url=img.dataset.privateObjectUrl;
+    if(url){URL.revokeObjectURL(url);imagenesTemporales.delete(url);}
+  });
+}
+function espacioImagenPrivada(ruta,descripcion){
+  if(typeof ruta!=='string'||!ruta.trim())return '';
+  if(!/^(enunciados|soluciones)\/[a-zA-Z0-9_-]+\.(png|jpg|webp)$/.test(ruta))return '';
+  return `<div class="private-image-box" data-private-image="${esc(ruta)}"><p class="muted small">Cargando imagen...</p><img alt="${esc(descripcion)}" style="display:none;max-width:100%;height:auto;border-radius:8px;margin:10px 0"></div>`;
+}
+async function cargarImagenesPrivadas(raiz=document){
+  const nodos=[...raiz.querySelectorAll('[data-private-image]')];
+  await Promise.all(nodos.map(async contenedor=>{
+    if(contenedor.dataset.imageLoading==='yes')return;
+    contenedor.dataset.imageLoading='yes';
+    const ruta=contenedor.dataset.privateImage;
+    const img=contenedor.querySelector('img');
+    const mensaje=contenedor.querySelector('p');
+    if(!img)return;
+    try{
+      const {data,error}=await db.storage.from('soluciones-academia').download(ruta);
+      if(error)throw error;
+      if(!contenedor.isConnected)return;
+      const url=URL.createObjectURL(data);
+      imagenesTemporales.add(url);
+      img.dataset.privateObjectUrl=url;
+      img.onload=()=>{if(mensaje)mensaje.remove();};
+      img.onerror=()=>{img.style.display='none';if(mensaje)mensaje.textContent='No se pudo mostrar la imagen.';};
+      img.src=url;
+      img.style.display='block';
+    }catch(err){
+      if(contenedor.isConnected&&mensaje)mensaje.textContent='Imagen no disponible: '+(err?.message||'sin permiso de acceso');
+    }
+  }));
+}
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
 let activityRows=[],activityLoaded=false,activityError='';
 let authMode='login';
@@ -96,7 +134,7 @@ async function refresh(){
    }
   }
   if(teacher()||access?.allowed){
-   const q=await db.from('questions').select('id,cycle,week,subject,topic,page,original_number,statement,options,source,status').order('created_at',{ascending:false});
+   const q=await db.from('questions').select('id,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
    if(q.error)console.error(q.error.message);else questions=q.data||[];
    const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
   }
@@ -112,6 +150,7 @@ function render(){
  $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
+  liberarImagenesPrivadas($('app'));
  $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
  bind();
  mostrarFormulas();
@@ -179,9 +218,14 @@ function login(){
 }
 function home(){return `<div class="grid"><div class="card"><div class="muted">Preguntas visibles</div><div class="stat">${questions.length}</div></div><div class="card"><div class="muted">Materias</div><div class="stat">${new Set(questions.map(q=>q.subject)).size}</div></div><div class="card"><div class="muted">Simulacros completados</div><div class="stat">${attempts.length}</div></div></div><div class="card"><h2>${teacher()?'Gestión académica':'Preparación preuniversitaria'}</h2><p>Consulta preguntas organizadas por semana y materia. ${teacher()?'Registra nuevas preguntas y decide cuándo publicarlas.':'Practica y revisa tu rendimiento con calificación segura.'}</p><p class="muted">La carga de separatas y verificación de claves se realizará progresivamente.</p></div>`}
 function bank(){return `<div class="card"><h2>Banco académico</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(questions.map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(questions.map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
-function bankList(){const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();$('bankList').innerHTML=questions.filter(q=>(!s||q.subject===s)&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
-mostrarFormulas();
-if(admin())bindBankSolutions();
+function bankList(){
+ const contenedor=$('bankList');
+ liberarImagenesPrivadas(contenedor);
+ const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();
+ contenedor.innerHTML=questions.filter(q=>(!s||q.subject===s)&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
+ mostrarFormulas();
+ cargarImagenesPrivadas(contenedor);
+ if(admin())bindBankSolutions();
 }
 
 function bindBankSolutions(){
@@ -191,7 +235,7 @@ function bindBankSolutions(){
       const id=button.dataset.bankSolution;
       const target=document.getElementById('bank-solution-'+id);
       if(!target)return;
-      if(!target.hidden){target.hidden=true;button.textContent='Ver solución';return;}
+      if(!target.hidden){liberarImagenesPrivadas(target);target.innerHTML='';target.hidden=true;button.textContent='Ver solución';return;}
       button.disabled=true;button.textContent='Consultando...';
       const {data,error}=await db.rpc('get_question_for_review',{p_question_id:id});
       button.disabled=false;
@@ -202,13 +246,13 @@ function bindBankSolutions(){
       const index=Number(data.correct_index);
       const valid=Number.isInteger(index)&&index>=0&&index<5;
       const answer=valid?`${'ABCDE'[index]}) ${esc(data.options?.[index]||'')}`:'Clave no disponible';
-      target.innerHTML=`<div class="card"><strong>Respuesta correcta: ${answer}</strong><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap">${esc(data.explanation?.trim()||'No se ha registrado una explicación.')}</p></div>`;
+      target.innerHTML=`<div class="card"><strong>Respuesta correcta: ${answer}</strong><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap">${esc(data.explanation?.trim()||'No se ha registrado una explicación.')}</p>${espacioImagenPrivada(questions.find(q=>q.id===id)?.solution_image_path,'Imagen de la solución')}</div>`;
       target.hidden=false;button.textContent='Ocultar solución';
       if(typeof renderMathInElement==='function')renderMathInElement(target,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
     };
   });
 }
-function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(questions.filter(q=>q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div><div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return `<div class="card"><h2>Resultado del simulacro</h2><div class="stat">${quiz.result.correct}/${quiz.result.total}</div><p>${Math.round(quiz.result.correct/quiz.result.total*100)}% de aciertos</p><button id="restartQuiz">Otro simulacro</button></div><div class="card"><h2>Revisión</h2>${quiz.items.map((q,i)=>{const d=quiz.result.details.find(d=>d.id===q.id);return `<div class="listitem"><strong>${esc(q.statement)}</strong><p>Tu respuesta: ${quiz.answers[i]===null?'Sin responder':esc(q.options[quiz.answers[i]])}</p><p>Clave: ${'ABCDE'[d.correct_index]}) ${esc(q.options[d.correct_index])} · ${d.is_correct?'Correcta':'Incorrecta'}</p>${d.explanation?`<div class="card"><strong>Desarrollo paso a paso</strong><p style="white-space:pre-wrap">${esc(d.explanation)}</p></div>`:'<p class="muted small">El desarrollo todavía no está disponible en el resultado del servidor.</p>'}</div>`}).join('')}</div>`}const q=quiz.items[quiz.i];return `<div class="card"><p>Pregunta ${quiz.i+1} de ${quiz.items.length}</p><h2>${esc(q.statement)}</h2>${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button><p id="quizError" class="muted"></p></div>`}
+function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(questions.filter(q=>q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div><div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return `<div class="card"><h2>Resultado del simulacro</h2><div class="stat">${quiz.result.correct}/${quiz.result.total}</div><p>${Math.round(quiz.result.correct/quiz.result.total*100)}% de aciertos</p><button id="restartQuiz">Otro simulacro</button></div><div class="card"><h2>Revisión</h2>${quiz.items.map((q,i)=>{const d=quiz.result.details.find(d=>d.id===q.id);return `<div class="listitem"><strong>${esc(q.statement)}</strong>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<p>Tu respuesta: ${quiz.answers[i]===null?'Sin responder':esc(q.options[quiz.answers[i]])}</p><p>Clave: ${'ABCDE'[d.correct_index]}) ${esc(q.options[d.correct_index])} · ${d.is_correct?'Correcta':'Incorrecta'}</p>${d.explanation||q.solution_image_path?`<div class="card"><strong>Desarrollo paso a paso</strong><p style="white-space:pre-wrap">${esc(d.explanation||'')}</p>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}</div>`:'<p class="muted small">El desarrollo todavía no está disponible en el resultado del servidor.</p>'}</div>`}).join('')}</div>`}const q=quiz.items[quiz.i];return `<div class="card"><p>Pregunta ${quiz.i+1} de ${quiz.items.length}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button><p id="quizError" class="muted"></p></div>`}
 
 // La respuesta correcta nunca se obtiene antes de comprobar la pregunta en Supabase.
 function practicePage(){
@@ -217,7 +261,7 @@ function practicePage(){
   const q=practice.items[practice.i];
   if(!q)return `<div class="card"><h2>Práctica finalizada</h2><p>Has completado ${practice.items.length} pregunta(s).</p><p>Aciertos en esta sesión: <strong>${practice.hits}/${practice.items.length}</strong></p><button id="finishPractice">Volver al inicio de práctica</button></div>`;
   const d=practice.feedback;
-  return `<div class="card"><p class="muted">Pregunta ${practice.i+1} de ${practice.items.length} · ${esc(q.subject)} · Semana ${esc(q.week)}</p><h2>${esc(q.statement)}</h2>${q.options.map((o,i)=>`<label class="option"><input type="radio" name="practiceChoice" value="${i}" ${d?'disabled':''} ${practice.selected===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}${!d?`<button id="checkPractice">Comprobar respuesta</button>`:`<div class="card"><h3>${d.is_correct?'¡Respuesta correcta!':'Respuesta incorrecta'}</h3><p>Tu respuesta: ${practice.selected===null?'Sin responder':`${'ABCDE'[practice.selected]}) ${esc(q.options[practice.selected])}`}</p><p><strong>Respuesta correcta: ${'ABCDE'[d.correct_index]}) ${esc(q.options[d.correct_index])}</strong></p><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap">${esc(d.explanation?.trim()||'Todavía no se ha registrado una explicación para esta pregunta.')}</p></div><button id="nextPractice">${practice.i===practice.items.length-1?'Ver resumen':'Siguiente pregunta'}</button>`}<p id="practiceError" class="muted"></p></div>`;
+  return `<div class="card"><p class="muted">Pregunta ${practice.i+1} de ${practice.items.length} · ${esc(q.subject)} · Semana ${esc(q.week)}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="practiceChoice" value="${i}" ${d?'disabled':''} ${practice.selected===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}${!d?`<button id="checkPractice">Comprobar respuesta</button>`:`<div class="card"><h3>${d.is_correct?'¡Respuesta correcta!':'Respuesta incorrecta'}</h3><p>Tu respuesta: ${practice.selected===null?'Sin responder':`${'ABCDE'[practice.selected]}) ${esc(q.options[practice.selected])}`}</p><p><strong>Respuesta correcta: ${'ABCDE'[d.correct_index]}) ${esc(q.options[d.correct_index])}</strong></p><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap">${esc(d.explanation?.trim()||'Todavía no se ha registrado una explicación para esta pregunta.')}</p>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}</div><button id="nextPractice">${practice.i===practice.items.length-1?'Ver resumen':'Siguiente pregunta'}</button>`}<p id="practiceError" class="muted"></p></div>`;
 }
 async function startPractice(items){
   if(!items.length){$('practiceStatus').textContent='No hay preguntas disponibles con este criterio.';return}
@@ -403,11 +447,11 @@ function reviewPage(){
  const opts=(values,current)=>values.map(v=>`<option value="${esc(v)}" ${String(v)===String(current)?'selected':''}>${esc(v)}</option>`).join('');
  const filtered=questions.filter(q=>(!reviewFilter.subject||q.subject===reviewFilter.subject)&&(!reviewFilter.week||String(q.week)===reviewFilter.week)&&(!reviewFilter.status||q.status===reviewFilter.status));
  const detail=reviewSelected;
- return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todas las semanas</option>${weeks.map(w=>`<option value="${w}" ${String(w)===reviewFilter.week?'selected':''}>Semana ${w}</option>`).join('')}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length} preguntas encontradas · ${questions.filter(q=>q.status==='draft').length} borradores · ${questions.filter(q=>q.status==='review').length} en revisión · ${questions.filter(q=>q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p><button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')||'<p>No hay preguntas con estos filtros.</p>'}</div><div id="reviewDetail">${detail?reviewDetail(detail):''}</div>`;
+ return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todas las semanas</option>${weeks.map(w=>`<option value="${w}" ${String(w)===reviewFilter.week?'selected':''}>Semana ${w}</option>`).join('')}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length} preguntas encontradas · ${questions.filter(q=>q.status==='draft').length} borradores · ${questions.filter(q=>q.status==='review').length} en revisión · ${questions.filter(q=>q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')||'<p>No hay preguntas con estos filtros.</p>'}</div><div id="reviewDetail">${detail?reviewDetail(detail):''}</div>`;
 }
 function reviewDetail(q){
  const editable=q.status!=='published'||admin();
- return `<div class="card"><h2>Pregunta N.º ${q.original_number??'—'} · ${esc(q.status)}</h2><p class="muted small">Materia: ${esc(q.subject)} · Semana ${q.week}</p><form id="reviewForm"><div class="form-grid"><div class="field"><label>Ciclo</label><input name="cycle" value="${esc(q.cycle)}" required ${editable?'':'disabled'}></div><div class="field"><label>Semana</label><input type="number" name="week" min="1" max="60" value="${q.week}" required ${editable?'':'disabled'}></div><div class="field"><label>Materia</label><input name="subject" value="${esc(q.subject)}" required ${editable?'':'disabled'}></div><div class="field"><label>Tema</label><input name="topic" value="${esc(q.topic)}" required ${editable?'':'disabled'}></div><div class="field"><label>Página</label><input type="number" name="page" min="1" value="${q.page??''}" ${editable?'':'disabled'}></div><div class="field"><label>Número original</label><input type="number" name="number" min="1" value="${q.original_number??''}" ${editable?'':'disabled'}></div></div><div class="field"><label>Enunciado</label><textarea name="statement" required ${editable?'':'disabled'}>${esc(q.statement)}</textarea></div>${'ABCDE'.split('').map((letter,i)=>`<div class="field"><label>Alternativa ${letter}</label><input name="option${letter}" value="${esc(q.options[i]||'')}" required ${editable?'':'disabled'}></div>`).join('')}<div class="field"><label>Clave propuesta</label><select name="correct" ${editable?'':'disabled'}>${'ABCDE'.split('').map((letter,i)=>`<option value="${i}" ${q.correct_index===i?'selected':''}>${letter}</option>`).join('')}</select></div><div class="field"><label>Explicación</label><textarea name="explanation" ${editable?'':'disabled'}>${esc(q.explanation||'')}</textarea></div><div class="field"><label>Referencia</label><input name="source" value="${esc(q.source||'')}" ${editable?'':'disabled'}></div>${editable?'<button type="submit" id="reviewSave">'+(q.status==='published'?'Guardar cambios de pregunta publicada':'Guardar correcciones')+'</button>':''}</form><div class="actions" style="margin-top:12px">${q.status==='draft'?'<button id="reviewSubmit" class="secondary">Enviar a revisión</button>':''}${admin()&&q.status==='review'?'<button id="reviewPublish">Publicar pregunta</button>':''}<button id="reviewClose" class="secondary">Cerrar detalle</button></div><p id="reviewDetailStatus" class="muted" role="status"></p>${q.status==='published'?'<p class="muted small">'+(admin()?'Solo el administrador puede editar esta pregunta. Las calificaciones anteriores no se recalcularán. Cada cambio quedará registrado.':'Esta pregunta publicada solo puede ser editada por el administrador.')+'</p>':''}</div>`;
+ return `<div class="card"><h2>Pregunta N.º ${q.original_number??'—'} · ${esc(q.status)}</h2><p class="muted small">Materia: ${esc(q.subject)} · Semana ${q.week}</p><form id="reviewForm"><div class="form-grid"><div class="field"><label>Ciclo</label><input name="cycle" value="${esc(q.cycle)}" required ${editable?'':'disabled'}></div><div class="field"><label>Semana</label><input type="number" name="week" min="1" max="60" value="${q.week}" required ${editable?'':'disabled'}></div><div class="field"><label>Materia</label><input name="subject" value="${esc(q.subject)}" required ${editable?'':'disabled'}></div><div class="field"><label>Tema</label><input name="topic" value="${esc(q.topic)}" required ${editable?'':'disabled'}></div><div class="field"><label>Página</label><input type="number" name="page" min="1" value="${q.page??''}" ${editable?'':'disabled'}></div><div class="field"><label>Número original</label><input type="number" name="number" min="1" value="${q.original_number??''}" ${editable?'':'disabled'}></div></div><div class="field"><label>Enunciado</label><textarea name="statement" required ${editable?'':'disabled'}>${esc(q.statement)}</textarea></div>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${'ABCDE'.split('').map((letter,i)=>`<div class="field"><label>Alternativa ${letter}</label><input name="option${letter}" value="${esc(q.options[i]||'')}" required ${editable?'':'disabled'}></div>`).join('')}<div class="field"><label>Clave propuesta</label><select name="correct" ${editable?'':'disabled'}>${'ABCDE'.split('').map((letter,i)=>`<option value="${i}" ${q.correct_index===i?'selected':''}>${letter}</option>`).join('')}</select></div><div class="field"><label>Explicación</label><textarea name="explanation" ${editable?'':'disabled'}>${esc(q.explanation||'')}</textarea></div>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}<div class="field"><label>Referencia</label><input name="source" value="${esc(q.source||'')}" ${editable?'':'disabled'}></div>${editable?'<button type="submit" id="reviewSave">'+(q.status==='published'?'Guardar cambios de pregunta publicada':'Guardar correcciones')+'</button>':''}</form><div class="actions" style="margin-top:12px">${q.status==='draft'?'<button id="reviewSubmit" class="secondary">Enviar a revisión</button>':''}${admin()&&q.status==='review'?'<button id="reviewPublish">Publicar pregunta</button>':''}<button id="reviewClose" class="secondary">Cerrar detalle</button></div><p id="reviewDetailStatus" class="muted" role="status"></p>${q.status==='published'?'<p class="muted small">'+(admin()?'Solo el administrador puede editar esta pregunta. Las calificaciones anteriores no se recalcularán. Cada cambio quedará registrado.':'Esta pregunta publicada solo puede ser editada por el administrador.')+'</p>':''}</div>`;
 }
 function bindReview(){
  for(const [id,key] of [['reviewSubject','subject'],['reviewWeek','week'],['reviewStatus','status']])$(id).onchange=()=>{reviewFilter[key]=$(id).value;reviewSelected=null;render()};
@@ -415,7 +459,7 @@ function bindReview(){
    const message=$('reviewMessage');message.textContent='Cargando pregunta y clave...';
    const {data,error}=await db.rpc('get_question_for_review',{p_question_id:btn.dataset.reviewId});
    if(error){message.textContent='Error: '+error.message;return}
-   reviewSelected=data;$('reviewDetail').innerHTML=reviewDetail(data);message.textContent='';bindReviewDetail();$('reviewDetail').scrollIntoView({behavior:'smooth',block:'start'});
+   reviewSelected={...data,statement_image_path:questions.find(q=>q.id===data.id)?.statement_image_path??data.statement_image_path,solution_image_path:questions.find(q=>q.id===data.id)?.solution_image_path??data.solution_image_path};liberarImagenesPrivadas($('reviewDetail'));$('reviewDetail').innerHTML=reviewDetail(reviewSelected);cargarImagenesPrivadas($('reviewDetail'));message.textContent='';bindReviewDetail();$('reviewDetail').scrollIntoView({behavior:'smooth',block:'start'});
  });
  if(reviewSelected)bindReviewDetail();
 }
@@ -602,25 +646,15 @@ if(page==='manage'&&teacher()){
       if(error) throw error;
 
       f.reset();
-      await refresh();
-
+      try { await refresh(); }
+      catch(refreshError){ console.warn('Pregunta guardada, pero no se pudo actualizar la pantalla:',refreshError); }
       const mensaje=$('saveStatus');
-      if(mensaje){
-        mensaje.textContent=
-          'Pregunta guardada correctamente como borrador. Pendiente de revisión.';
-      }
+      if(mensaje) mensaje.textContent='Pregunta guardada correctamente como borrador. Pendiente de revisión.';
 
     }catch(error){
-      // Si falla el registro, intenta retirar las imágenes recién subidas.
-      if(rutasSubidas.length){
-        const {error:cleanupError}=await db.storage
-          .from('soluciones-academia')
-          .remove(rutasSubidas);
-
-        if(cleanupError){
-          console.warn('No se pudieron retirar las imágenes:',cleanupError);
-        }
-      }
+      // No se intenta eliminar sin una política DELETE autorizada.
+      // Un archivo subido antes del error podría requerir limpieza administrativa.
+      if(rutasSubidas.length) console.warn('Posibles imágenes sin asociar:',rutasSubidas);
 
       const mensaje=$('saveStatus');
       if(mensaje) mensaje.textContent='Error: '+error.message;
