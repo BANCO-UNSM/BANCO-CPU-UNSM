@@ -25,6 +25,48 @@ const deviceKey='academia_unsm_device_v1';
 let deviceId=localStorage.getItem(deviceKey);
 if(!deviceId){deviceId=crypto.randomUUID();localStorage.setItem(deviceKey,deviceId)}
 const db=ready?window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY):null;
+async function subirImagenPregunta(archivo, carpeta) {
+  if (!archivo || archivo.size === 0) return null;
+
+  const tiposPermitidos = [
+    'image/png',
+    'image/jpeg',
+    'image/webp'
+  ];
+
+  if (!tiposPermitidos.includes(archivo.type)) {
+    throw new Error('Solo se permiten imágenes PNG, JPG o WEBP.');
+  }
+
+  if (archivo.size > 5 * 1024 * 1024) {
+    throw new Error('La imagen no debe superar los 5 MB.');
+  }
+
+  if (!['enunciados', 'soluciones'].includes(carpeta)) {
+    throw new Error('Carpeta de imágenes no permitida.');
+  }
+
+  const extension = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'image/webp': 'webp'
+  }[archivo.type];
+
+  const nombre = `${carpeta}/${crypto.randomUUID()}.${extension}`;
+
+  const { error } = await db.storage
+    .from('soluciones-academia')
+    .upload(nombre, archivo, {
+      contentType: archivo.type,
+      upsert: false
+    });
+
+  if (error) {
+    throw new Error('No se pudo subir la imagen: ' + error.message);
+  }
+
+  return nombre;
+}
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
 let activityRows=[],activityLoaded=false,activityError='';
 let authMode='login';
@@ -205,7 +247,65 @@ function bindPractice(){
 }
 
 function results(){return `<div class="card"><h2>Mis resultados</h2>${attempts.map(a=>`<div class="listitem"><strong>${new Date(a.submitted_at).toLocaleString('es-PE')}</strong> · ${a.correct}/${a.total} (${Math.round(100*a.correct/a.total)}%)</div>`).join('')||'<p>Todavía no hay resultados.</p>'}</div>`}
-function manage(){if(!teacher())return notice('Acceso exclusivo para docentes',true);return `<div class="card"><h2>Registrar pregunta original</h2><p class="muted">Conserva ciclo, semana, número y página. La pregunta se guarda como borrador para revisión administrativa.</p><form id="questionForm"><div class="form-grid"><div class="field"><label>Ciclo</label><input name="cycle" value="2026-II" required></div><div class="field"><label>Semana</label><input name="week" type="number" min="1" max="60" value="9" required></div><div class="field"><label>Materia</label><input name="subject" required></div><div class="field"><label>Tema</label><input name="topic" required></div><div class="field"><label>Página</label><input name="page" type="number" min="1"></div><div class="field"><label>Número original</label><input name="number" type="number" min="1"></div></div><div class="field"><label>Enunciado</label><textarea name="statement" required></textarea></div>${'ABCDE'.split('').map(x=>`<div class="field"><label>Alternativa ${x}</label><input name="option${x}" required></div>`).join('')}<div class="field"><label>Clave propuesta</label><select name="correct">${'ABCDE'.split('').map((x,i)=>`<option value="${i}">${x}</option>`).join('')}</select></div><div class="field"><label>Explicación</label><textarea name="explanation"></textarea></div><div class="field"><label>Referencia de origen</label><input name="source" placeholder="Separata CPU-UNSM, semana 09, pág. 15"></div><button type="submit">Guardar en Supabase</button></form><p id="saveStatus"></p></div>`}
+function manage(){
+  if(!teacher()) return notice('Acceso exclusivo para docentes',true);
+
+  return `<div class="card">
+    <h2>Registrar pregunta original</h2>
+    <p class="muted">Conserva ciclo, semana, número y página. La pregunta se guarda como borrador para revisión administrativa.</p>
+
+    <form id="questionForm">
+      <div class="form-grid">
+        <div class="field"><label>Ciclo</label><input name="cycle" value="2026-II" required></div>
+        <div class="field"><label>Semana</label><input name="week" type="number" min="1" max="60" value="9" required></div>
+        <div class="field"><label>Materia</label><input name="subject" required></div>
+        <div class="field"><label>Tema</label><input name="topic" required></div>
+        <div class="field"><label>Página</label><input name="page" type="number" min="1"></div>
+        <div class="field"><label>Número original</label><input name="number" type="number" min="1"></div>
+      </div>
+
+      <div class="field">
+        <label>Enunciado</label>
+        <textarea name="statement" required></textarea>
+      </div>
+
+      <div class="field">
+        <label>Imagen del enunciado (opcional)</label>
+        <input type="file" name="statementImage" accept="image/png,image/jpeg,image/webp">
+        <p class="muted small">PNG, JPG o WEBP. Máximo 5 MB.</p>
+      </div>
+
+      ${'ABCDE'.split('').map(x=>`<div class="field"><label>Alternativa ${x}</label><input name="option${x}" required></div>`).join('')}
+
+      <div class="field">
+        <label>Clave propuesta</label>
+        <select name="correct">
+          ${'ABCDE'.split('').map((x,i)=>`<option value="${i}">${x}</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Explicación</label>
+        <textarea name="explanation"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Imagen de la solución (opcional)</label>
+        <input type="file" name="solutionImage" accept="image/png,image/jpeg,image/webp">
+        <p class="muted small">PNG, JPG o WEBP. Máximo 5 MB.</p>
+      </div>
+
+      <div class="field">
+        <label>Referencia de origen</label>
+        <input name="source" placeholder="Separata CPU-UNSM, semana 09, pág. 15">
+      </div>
+
+      <button type="submit">Guardar en Supabase</button>
+    </form>
+
+    <p id="saveStatus"></p>
+  </div>`;
+}
 
 // Importador CSV: la revisión se realiza ANTES de guardar, sin acceso directo a answer_keys.
 const BULK_HEADERS=['cycle','week','subject','topic','page','original_number','statement','option_a','option_b','option_c','option_d','option_e','correct','explanation','source'];
@@ -387,5 +487,148 @@ function bind(){if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').on
   }catch(err){status.textContent='Error de conexión: '+(err?.message||'Inténtalo nuevamente.')}finally{submit.disabled=false}
  };
  return;
-}if(page==='bank'){for(const id of ['subjectFilter','weekFilter','searchFilter'])$(id).addEventListener(id==='searchFilter'?'input':'change',bankList);bankList()}if(page==='practice')bindPractice();if(page==='bulk')bindBulk();if(page==='review')bindReview();if(page==='quiz'){if($('startQuiz'))$('startQuiz').onclick=()=>{const subject=$('quizSubject').value;const pool=questions.filter(q=>q.status==='published'&&(!subject||q.subject===subject));if(!pool.length)return alert('No hay preguntas publicadas.');const count=Math.min(pool.length,Math.max(1,Number($('quizCount').value)||10));quiz={items:pool.sort(()=>Math.random()-.5).slice(0,count),answers:Array(count).fill(null),i:0};render()};if($('nextQuiz'))$('nextQuiz').onclick=async()=>{const sel=document.querySelector('input[name=choice]:checked');quiz.answers[quiz.i]=sel?Number(sel.value):null;if(quiz.i<quiz.items.length-1){quiz.i++;render();return}$('nextQuiz').disabled=true;const {data,error}=await db.rpc('grade_attempt',{p_answers:quiz.items.map((q,i)=>({id:q.id,selected:quiz.answers[i]}))});if(error){$('quizError').textContent=error.message;$('nextQuiz').disabled=false;return}quiz.result=data;await refresh()};if($('restartQuiz'))$('restartQuiz').onclick=()=>{quiz=null;render()}}if(page==='manage'&&teacher())$('questionForm').onsubmit=async e=>{e.preventDefault();const f=e.target,values=Object.fromEntries(new FormData(f).entries());const {error}=await db.rpc('save_question',{p_cycle:values.cycle,p_week:Number(values.week),p_subject:values.subject,p_topic:values.topic,p_page:values.page?Number(values.page):null,p_number:values.number?Number(values.number):null,p_statement:values.statement,p_options:'ABCDE'.split('').map(x=>values['option'+x]),p_source:values.source||'',p_correct:Number(values.correct),p_explanation:values.explanation||'',p_publish:false});if(error){$('saveStatus').textContent='Error: '+error.message}else{f.reset();await refresh();const status=$('saveStatus');if(status)status.textContent='Pregunta guardada correctamente como borrador. Pendiente de revisión.'}}}
+}
+if(page==='bank'){
+  for(const id of ['subjectFilter','weekFilter','searchFilter'])
+    $(id).addEventListener(
+      id==='searchFilter'?'input':'change',
+      bankList
+    );
+  bankList();
+}
+
+if(page==='practice') bindPractice();
+if(page==='bulk') bindBulk();
+if(page==='review') bindReview();
+
+if(page==='quiz'){
+  if($('startQuiz')) $('startQuiz').onclick=()=>{
+    const subject=$('quizSubject').value;
+    const pool=questions.filter(q=>
+      q.status==='published'&&(!subject||q.subject===subject)
+    );
+    if(!pool.length) return alert('No hay preguntas publicadas.');
+    const count=Math.min(
+      pool.length,
+      Math.max(1,Number($('quizCount').value)||10)
+    );
+    quiz={
+      items:pool.sort(()=>Math.random()-.5).slice(0,count),
+      answers:Array(count).fill(null),
+      i:0
+    };
+    render();
+  };
+
+  if($('nextQuiz')) $('nextQuiz').onclick=async()=>{
+    const sel=document.querySelector('input[name=choice]:checked');
+    quiz.answers[quiz.i]=sel?Number(sel.value):null;
+
+    if(quiz.i<quiz.items.length-1){
+      quiz.i++;
+      render();
+      return;
+    }
+
+    $('nextQuiz').disabled=true;
+
+    const {data,error}=await db.rpc('grade_attempt',{
+      p_answers:quiz.items.map((q,i)=>({
+        id:q.id,
+        selected:quiz.answers[i]
+      }))
+    });
+
+    if(error){
+      $('quizError').textContent=error.message;
+      $('nextQuiz').disabled=false;
+      return;
+    }
+
+    quiz.result=data;
+    await refresh();
+  };
+
+  if($('restartQuiz')) $('restartQuiz').onclick=()=>{
+    quiz=null;
+    render();
+  };
+}
+
+if(page==='manage'&&teacher()){
+  $('questionForm').onsubmit=async e=>{
+    e.preventDefault();
+
+    const f=e.target;
+    const values=Object.fromEntries(new FormData(f).entries());
+    const boton=f.querySelector('button[type="submit"]');
+    const status=$('saveStatus');
+
+    boton.disabled=true;
+    const rutasSubidas=[];
+
+    try{
+      if(status) status.textContent='Subiendo imágenes y guardando pregunta...';
+
+      const statementImagePath=await subirImagenPregunta(
+        values.statementImage,
+        'enunciados'
+      );
+      if(statementImagePath) rutasSubidas.push(statementImagePath);
+
+      const solutionImagePath=await subirImagenPregunta(
+        values.solutionImage,
+        'soluciones'
+      );
+      if(solutionImagePath) rutasSubidas.push(solutionImagePath);
+
+      const {error}=await db.rpc('save_question',{
+        p_cycle:values.cycle,
+        p_week:Number(values.week),
+        p_subject:values.subject,
+        p_topic:values.topic,
+        p_page:values.page?Number(values.page):null,
+        p_number:values.number?Number(values.number):null,
+        p_statement:values.statement,
+        p_options:'ABCDE'.split('').map(x=>values['option'+x]),
+        p_source:values.source||'',
+        p_correct:Number(values.correct),
+        p_explanation:values.explanation||'',
+        p_publish:false,
+        p_statement_image_path:statementImagePath,
+        p_solution_image_path:solutionImagePath
+      });
+
+      if(error) throw error;
+
+      f.reset();
+      await refresh();
+
+      const mensaje=$('saveStatus');
+      if(mensaje){
+        mensaje.textContent=
+          'Pregunta guardada correctamente como borrador. Pendiente de revisión.';
+      }
+
+    }catch(error){
+      // Si falla el registro, intenta retirar las imágenes recién subidas.
+      if(rutasSubidas.length){
+        const {error:cleanupError}=await db.storage
+          .from('soluciones-academia')
+          .remove(rutasSubidas);
+
+        if(cleanupError){
+          console.warn('No se pudieron retirar las imágenes:',cleanupError);
+        }
+      }
+
+      const mensaje=$('saveStatus');
+      if(mensaje) mensaje.textContent='Error: '+error.message;
+
+    }finally{
+      if(boton.isConnected) boton.disabled=false;
+    }
+  };
+}
+}
 init();
