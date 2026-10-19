@@ -451,7 +451,7 @@ function reviewPage(){
 }
 function reviewDetail(q){
  const editable=q.status!=='published'||admin();
- return `<div class="card"><h2>Pregunta N.º ${q.original_number??'—'} · ${esc(q.status)}</h2><p class="muted small">Materia: ${esc(q.subject)} · Semana ${q.week}</p><form id="reviewForm"><div class="form-grid"><div class="field"><label>Ciclo</label><input name="cycle" value="${esc(q.cycle)}" required ${editable?'':'disabled'}></div><div class="field"><label>Semana</label><input type="number" name="week" min="1" max="60" value="${q.week}" required ${editable?'':'disabled'}></div><div class="field"><label>Materia</label><input name="subject" value="${esc(q.subject)}" required ${editable?'':'disabled'}></div><div class="field"><label>Tema</label><input name="topic" value="${esc(q.topic)}" required ${editable?'':'disabled'}></div><div class="field"><label>Página</label><input type="number" name="page" min="1" value="${q.page??''}" ${editable?'':'disabled'}></div><div class="field"><label>Número original</label><input type="number" name="number" min="1" value="${q.original_number??''}" ${editable?'':'disabled'}></div></div><div class="field"><label>Enunciado</label><textarea name="statement" required ${editable?'':'disabled'}>${esc(q.statement)}</textarea></div>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${'ABCDE'.split('').map((letter,i)=>`<div class="field"><label>Alternativa ${letter}</label><input name="option${letter}" value="${esc(q.options[i]||'')}" required ${editable?'':'disabled'}></div>`).join('')}<div class="field"><label>Clave propuesta</label><select name="correct" ${editable?'':'disabled'}>${'ABCDE'.split('').map((letter,i)=>`<option value="${i}" ${q.correct_index===i?'selected':''}>${letter}</option>`).join('')}</select></div><div class="field"><label>Explicación</label><textarea name="explanation" ${editable?'':'disabled'}>${esc(q.explanation||'')}</textarea></div>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}<div class="field"><label>Referencia</label><input name="source" value="${esc(q.source||'')}" ${editable?'':'disabled'}></div>${editable?'<button type="submit" id="reviewSave">'+(q.status==='published'?'Guardar cambios de pregunta publicada':'Guardar correcciones')+'</button>':''}</form><div class="actions" style="margin-top:12px">${q.status==='draft'?'<button id="reviewSubmit" class="secondary">Enviar a revisión</button>':''}${admin()&&q.status==='review'?'<button id="reviewPublish">Publicar pregunta</button>':''}<button id="reviewClose" class="secondary">Cerrar detalle</button></div><p id="reviewDetailStatus" class="muted" role="status"></p>${q.status==='published'?'<p class="muted small">'+(admin()?'Solo el administrador puede editar esta pregunta. Las calificaciones anteriores no se recalcularán. Cada cambio quedará registrado.':'Esta pregunta publicada solo puede ser editada por el administrador.')+'</p>':''}</div>`;
+ return `<div class="card"><h2>Pregunta N.º ${q.original_number??'—'} · ${esc(q.status)}</h2><p class="muted small">Materia: ${esc(q.subject)} · Semana ${q.week}</p><form id="reviewForm"><div class="form-grid"><div class="field"><label>Ciclo</label><input name="cycle" value="${esc(q.cycle)}" required ${editable?'':'disabled'}></div><div class="field"><label>Semana</label><input type="number" name="week" min="1" max="60" value="${q.week}" required ${editable?'':'disabled'}></div><div class="field"><label>Materia</label><input name="subject" value="${esc(q.subject)}" required ${editable?'':'disabled'}></div><div class="field"><label>Tema</label><input name="topic" value="${esc(q.topic)}" required ${editable?'':'disabled'}></div><div class="field"><label>Página</label><input type="number" name="page" min="1" value="${q.page??''}" ${editable?'':'disabled'}></div><div class="field"><label>Número original</label><input type="number" name="number" min="1" value="${q.original_number??''}" ${editable?'':'disabled'}></div></div><div class="field"><label>Enunciado</label><textarea name="statement" required ${editable?'':'disabled'}>${esc(q.statement)}</textarea></div>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${'ABCDE'.split('').map((letter,i)=>`<div class="field"><label>Alternativa ${letter}</label><input name="option${letter}" value="${esc(q.options[i]||'')}" required ${editable?'':'disabled'}></div>`).join('')}<div class="field"><label>Clave propuesta</label><select name="correct" ${editable?'':'disabled'}>${'ABCDE'.split('').map((letter,i)=>`<option value="${i}" ${q.correct_index===i?'selected':''}>${letter}</option>`).join('')}</select></div><div class="field"><label>Explicación</label><textarea name="explanation" ${editable?'':'disabled'}>${esc(q.explanation||'')}</textarea></div>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}${admin()?`<div class="field"><label>Agregar o reemplazar imagen de la solución</label><input id="reviewSolutionImage" type="file" accept="image/png,image/jpeg,image/webp"><p class="muted small">PNG, JPG o WEBP, hasta 5 MB. Puedes guardar esta imagen sin modificar el texto, las alternativas ni la clave.</p><button type="button" id="reviewUploadSolution">Guardar imagen de solución</button><p id="reviewImageStatus" class="muted" role="status"></p></div>`:''}<div class="field"><label>Referencia</label><input name="source" value="${esc(q.source||'')}" ${editable?'':'disabled'}></div>${editable?'<button type="submit" id="reviewSave">'+(q.status==='published'?'Guardar cambios de pregunta publicada':'Guardar correcciones')+'</button>':''}</form><div class="actions" style="margin-top:12px">${q.status==='draft'?'<button id="reviewSubmit" class="secondary">Enviar a revisión</button>':''}${admin()&&q.status==='review'?'<button id="reviewPublish">Publicar pregunta</button>':''}<button id="reviewClose" class="secondary">Cerrar detalle</button></div><p id="reviewDetailStatus" class="muted" role="status"></p>${q.status==='published'?'<p class="muted small">'+(admin()?'Solo el administrador puede editar esta pregunta. Las calificaciones anteriores no se recalcularán. Cada cambio quedará registrado.':'Esta pregunta publicada solo puede ser editada por el administrador.')+'</p>':''}</div>`;
 }
 function bindReview(){
  for(const [id,key] of [['reviewSubject','subject'],['reviewWeek','week'],['reviewStatus','status']])$(id).onchange=()=>{reviewFilter[key]=$(id).value;reviewSelected=null;render()};
@@ -467,6 +467,38 @@ function bindReviewDetail(){
  const q=reviewSelected;if(!q)return;
  $('reviewClose').onclick=()=>{reviewSelected=null;$('reviewDetail').innerHTML=''};
  const form=$('reviewForm');
+ const imageButton=$('reviewUploadSolution');
+ if(imageButton&&admin())imageButton.onclick=async()=>{
+   const input=$('reviewSolutionImage');
+   const status=$('reviewImageStatus');
+   const archivo=input?.files?.[0];
+   if(!archivo||archivo.size===0){status.textContent='Selecciona una imagen antes de guardar.';return;}
+   imageButton.disabled=true;
+   let ruta=null;
+   try{
+     status.textContent='Subiendo imagen de la solución...';
+     ruta=await subirImagenPregunta(archivo,'soluciones');
+     const {error}=await db.rpc('admin_set_question_solution_image',{
+       p_question_id:q.id,
+       p_solution_image_path:ruta
+     });
+     if(error)throw error;
+     // Solo actualizamos la imagen: no se modifican la clave ni los demás campos.
+     q.solution_image_path=ruta;
+     const enLista=questions.find(item=>item.id===q.id);
+     if(enLista)enLista.solution_image_path=ruta;
+     const previo=form.querySelector('[data-private-image^="soluciones/"]');
+     if(previo){liberarImagenesPrivadas(previo);previo.remove();}
+     input.insertAdjacentHTML('beforebegin',espacioImagenPrivada(ruta,'Imagen de la solución'));
+     cargarImagenesPrivadas(form);
+     input.value='';
+     status.textContent='Imagen de solución guardada. La pregunta y su clave permanecen intactas.';
+   }catch(err){
+     status.textContent='No se pudo guardar la imagen: '+(err?.message||'Error desconocido')+'. No se cambió la pregunta.';
+     // No borramos automáticamente: Storage puede carecer de permiso DELETE.
+     if(ruta)console.warn('Imagen sin asociar en Storage:',ruta);
+   }finally{imageButton.disabled=false;}
+ };
  if(q.status!=='published'||admin())form.onsubmit=async e=>{
    e.preventDefault();const b=$('reviewSave'),status=$('reviewDetailStatus');b.disabled=true;status.textContent='Guardando...';
    const v=Object.fromEntries(new FormData(form).entries());
