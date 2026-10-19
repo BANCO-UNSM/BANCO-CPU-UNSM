@@ -137,8 +137,34 @@ function login(){
 }
 function home(){return `<div class="grid"><div class="card"><div class="muted">Preguntas visibles</div><div class="stat">${questions.length}</div></div><div class="card"><div class="muted">Materias</div><div class="stat">${new Set(questions.map(q=>q.subject)).size}</div></div><div class="card"><div class="muted">Simulacros completados</div><div class="stat">${attempts.length}</div></div></div><div class="card"><h2>${teacher()?'Gestión académica':'Preparación preuniversitaria'}</h2><p>Consulta preguntas organizadas por semana y materia. ${teacher()?'Registra nuevas preguntas y decide cuándo publicarlas.':'Practica y revisa tu rendimiento con calificación segura.'}</p><p class="muted">La carga de separatas y verificación de claves se realizará progresivamente.</p></div>`}
 function bank(){return `<div class="card"><h2>Banco académico</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(questions.map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(questions.map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
-function bankList(){const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();$('bankList').innerHTML=questions.filter(q=>(!s||q.subject===s)&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p></div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
+function bankList(){const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();$('bankList').innerHTML=questions.filter(q=>(!s||q.subject===s)&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
 mostrarFormulas();
+if(admin())bindBankSolutions();
+}
+
+function bindBankSolutions(){
+  document.querySelectorAll('[data-bank-solution]').forEach(button=>{
+    button.onclick=async()=>{
+      if(!admin())return;
+      const id=button.dataset.bankSolution;
+      const target=document.getElementById('bank-solution-'+id);
+      if(!target)return;
+      if(!target.hidden){target.hidden=true;button.textContent='Ver solución';return;}
+      button.disabled=true;button.textContent='Consultando...';
+      const {data,error}=await db.rpc('get_question_for_review',{p_question_id:id});
+      button.disabled=false;
+      if(error||!data){
+        target.innerHTML=`<p class="muted">${esc('No se pudo consultar la solución: '+(error?.message||'Sin datos'))}</p>`;
+        target.hidden=false;button.textContent='Reintentar';return;
+      }
+      const index=Number(data.correct_index);
+      const valid=Number.isInteger(index)&&index>=0&&index<5;
+      const answer=valid?`${'ABCDE'[index]}) ${esc(data.options?.[index]||'')}`:'Clave no disponible';
+      target.innerHTML=`<div class="card"><strong>Respuesta correcta: ${answer}</strong><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap">${esc(data.explanation?.trim()||'No se ha registrado una explicación.')}</p></div>`;
+      target.hidden=false;button.textContent='Ocultar solución';
+      if(typeof renderMathInElement==='function')renderMathInElement(target,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+    };
+  });
 }
 function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(questions.filter(q=>q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div><div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return `<div class="card"><h2>Resultado del simulacro</h2><div class="stat">${quiz.result.correct}/${quiz.result.total}</div><p>${Math.round(quiz.result.correct/quiz.result.total*100)}% de aciertos</p><button id="restartQuiz">Otro simulacro</button></div><div class="card"><h2>Revisión</h2>${quiz.items.map((q,i)=>{const d=quiz.result.details.find(d=>d.id===q.id);return `<div class="listitem"><strong>${esc(q.statement)}</strong><p>Tu respuesta: ${quiz.answers[i]===null?'Sin responder':esc(q.options[quiz.answers[i]])}</p><p>Clave: ${'ABCDE'[d.correct_index]}) ${esc(q.options[d.correct_index])} · ${d.is_correct?'Correcta':'Incorrecta'}</p>${d.explanation?`<div class="card"><strong>Desarrollo paso a paso</strong><p style="white-space:pre-wrap">${esc(d.explanation)}</p></div>`:'<p class="muted small">El desarrollo todavía no está disponible en el resultado del servidor.</p>'}</div>`}).join('')}</div>`}const q=quiz.items[quiz.i];return `<div class="card"><p>Pregunta ${quiz.i+1} de ${quiz.items.length}</p><h2>${esc(q.statement)}</h2>${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button><p id="quizError" class="muted"></p></div>`}
 
