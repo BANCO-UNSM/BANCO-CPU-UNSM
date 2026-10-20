@@ -158,7 +158,9 @@ async function refresh(){
    }
   }
   if(teacher()||access?.allowed){
-   const q=await db.from('questions').select('id,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
+   const q=await db.from('questions')
+.select('id,modality,cycle,week,subject
+,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
    if(q.error)console.error(q.error.message);else questions=q.data||[];
    const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
   }
@@ -248,7 +250,9 @@ function bankList(){
  const contenedor=$('bankList');
  liberarImagenesPrivadas(contenedor);
  const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();
- contenedor.innerHTML=questions.filter(q=>(!s||q.subject===s)&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
+ contenedor.innerHTML=q
+questions.filter(q=>q.modality==='CPU-UNSM'&&(!s||q.subject===s)
+&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
  mostrarFormulas();
  cargarImagenesPrivadas(contenedor);
  if(admin())bindBankSolutions();
@@ -315,12 +319,16 @@ async function startPractice(items){
   practice={items:[...items].sort(()=>Math.random()-.5),i:0,selected:null,feedback:null,hits:0};render();
 }
 function bindPractice(){
-  if($('startPractice'))$('startPractice').onclick=()=>{const subject=$('practiceSubject').value;startPractice(questions.filter(q=>q.status==='published'&&(!subject||q.subject===subject)))};
+  if($('startPractice'))$('startPractice').onclick=()=>{const subject=$('practiceSubject').value;startPractice(
+questions.filter(q=>q.modality==='CPU-UNSM'&&q.status==='published'
+&&(!subject||q.subject===subject)))};
   if($('reviewPractice'))$('reviewPractice').onclick=async()=>{
     const button=$('reviewPractice');button.disabled=true;$('practiceStatus').textContent='Buscando tus preguntas pendientes...';
     const {data,error}=await db.rpc('questions_to_review',{p_limit:100});
     if(error){$('practiceStatus').textContent='No se pudo consultar el repaso: '+error.message;button.disabled=false;return}
-    const ids=new Set((data||[]).map(x=>x.question_id));const items=questions.filter(q=>q.status==='published'&&ids.has(q.id));
+    const ids=new Set((data||[]).map(x=>x.question_id));const items=
+questions.filter(q=>q.modality==='CPU-UNSM'&&q.status==='published'&&ids.has(q.id))
+;
     if(!items.length){$('practiceStatus').textContent='No tienes preguntas pendientes de repaso. ¡Buen trabajo!';button.disabled=false;return}
     startPractice(items);
   };
@@ -648,6 +656,7 @@ const subject = $('quizSubject').value;
 const week = $('quizWeek').value;
 
 const pool = questions.filter(q =>
+q.modality === 'CPU-UNSM' &&
   q.status === 'published' &&
   (!subject || q.subject === subject) &&
   (!week || Number(q.week) === Number(week))
