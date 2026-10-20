@@ -136,6 +136,19 @@ let selectedModality='CPU-UNSM';
 const modalityQuestions=()=>questions.filter(q=>q.modality===selectedModality);
 
 const teacher=()=>['teacher','admin'].includes(profile?.role);
+// Coincidencias exactas normalizadas en todas las modalidades, sin exponer claves.
+const normalizarEnunciado=s=>String(s??'').trim().replace(/\s+/g,' ').toLowerCase();
+const errorDuplicado=e=>e?.code==='23505'||/questions_unique_statement_normalized|duplicate key value|llave duplicada/i.test(e?.message||'');
+async function buscarPreguntaDuplicada(enunciado){
+  const texto=String(enunciado??'').trim();
+  if(!texto)return null;
+  const {data,error}=await db.rpc('find_duplicate_question',{p_statement:texto});
+  if(error)throw new Error('No se pudo comprobar si la pregunta existe: '+error.message);
+  return Array.isArray(data)?(data[0]||null):data;
+}
+function mensajeDuplicado(q){
+  return `Esta pregunta ya existe en CachimboLab. Modalidad: ${q.modality}; materia: ${q.subject}; estado: ${q.status}. Enunciado existente: ${q.statement}`;
+}
 const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':''}>${esc(s)}</p></div>`;
 async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
 async function refresh(){
@@ -443,6 +456,7 @@ function manage(){
       <div class="field">
         <label>Enunciado</label>
         <textarea name="statement" required></textarea>
+        <p id="duplicateStatus" class="muted small" role="status" aria-live="polite"></p>
       </div>
 
       <div class="field">
@@ -500,7 +514,7 @@ function parseBulkCsv(text){
   row.push(cell);if(row.some(v=>v.trim()))rows.push(row);
   return rows;
 }
-function bulkFingerprint(q){return [String(q.cycle||'').trim().toLowerCase(),String(q.week||'').trim(),String(q.subject||'').trim().toLowerCase(),String(q.statement||'').trim().replace(/\s+/g,' ').toLowerCase()].join('|')}
+function bulkFingerprint(q){return normalizarEnunciado(q.statement)}
 function validateBulkRow(r){
   const errs=[],required=['cycle','week','subject','topic','statement','option_a','option_b','option_c','option_d','option_e','correct'];
   for(const f of required)if(!String(r[f]||'').trim())errs.push('Falta '+f);
@@ -545,7 +559,7 @@ function bindBulk(){
       const header=matrix.shift().map(x=>x.trim().toLowerCase());
       if(header.join('|')!==BULK_HEADERS.join('|'))throw Error('Las columnas no coinciden con la plantilla. Descarga la plantilla y conserva el orden de los encabezados.');
       if(matrix.length>500)throw Error('Máximo 500 preguntas por archivo. Divide el CSV.');
-      const seen=new Set(questions.filter(q=>q.modality===($('bulkModality')?.value||'CPU-UNSM')).map(bulkFingerprint));
+      const seen=new Set(questions.map(bulkFingerprint));
       bulkRows=matrix.map((values,i)=>{
         const r={line:i+2};BULK_HEADERS.forEach((h,j)=>r[h]=String(values[j]??'').trim());
         r.errors=validateBulkRow(r);
@@ -563,7 +577,11 @@ function bindBulk(){
     const rows=bulkRows.filter(r=>!r.errors.length);let saved=0;const failures=[];
      const importModality=$('bulkModality').value;
     for(let i=0;i<rows.length;i++){
-      const r=rows[i];status.textContent=`Guardando ${i+1} de ${rows.length}... (${saved} correctas)`;
+      const r=rows[i];status.textContent=`Comprobando ${i+1} de ${rows.length}... (${saved} guardadas)`;
+      let existente;
+      try{existente=await buscarPreguntaDuplicada(r.statement);}
+      catch(e){failures.push(`Fila ${r.line}: ${e.message}`);continue;}
+      if(existente){failures.push(`Fila ${r.line}: ${mensajeDuplicado(existente)}`);continue;}
       const {error}=await db.rpc('save_question_by_modality',{
   p_modality:importModality,
   p_cycle:r.cycle,p_week:Number(r.week),p_subject:r.subject,p_topic:r.topic,
@@ -572,7 +590,7 @@ function bindBulk(){
         p_statement:r.statement,p_options:['a','b','c','d','e'].map(x=>r['option_'+x]),
         p_source:r.source,p_correct:'ABCDE'.indexOf(r.correct.toUpperCase()),p_explanation:r.explanation
       });
-      if(error)failures.push(`Fila ${r.line}: ${error.message}`);else{saved++;r.errors.push('Guardada en Supabase');}
+      if(error)failures.push(`Fila ${r.line}: ${errorDuplicado(error)?'Esta pregunta ya existe en el banco.':error.message}`);else{saved++;r.errors.push('Guardada en Supabase');}
     }
     bulkBusy=false;await refresh();
     const result=$('bulkStatus');if(result)result.textContent=`Finalizado: ${saved} guardadas como borrador; ${failures.length} fallidas. ${failures.slice(0,5).join(' | ')}`;
@@ -841,7 +859,7 @@ const {error}=await db.rpc('save_question_by_modality',{
       if(rutasSubidas.length) console.warn('Posibles imágenes sin asociar:',rutasSubidas);
 
       const mensaje=$('saveStatus');
-      if(mensaje) mensaje.textContent='Error: '+error.message;
+      if(mensaje) mensaje.textContent=errorDuplicado(error)?'Esta pregunta ya existe en el banco. No se guardó nuevamente.':'Error: '+error.message;
 
     }finally{
       if(boton.isConnected) boton.disabled=false;
