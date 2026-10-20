@@ -244,7 +244,68 @@ function login(){
  const signup=authMode==='signup';
  return `<div class="card"><h2>${signup?'Crear cuenta de estudiante':'Ingresar a CachimboLab'}</h2><p class="muted">${signup?'Completa tus datos para solicitar una cuenta. El administrador debe autorizar tu acceso antes de utilizar el banco académico.':'Ingresa con tu correo y contraseña. Si eres nuevo, selecciona «Crear cuenta».'}</p><form id="authForm">${signup?'<div class="field"><label for="authName">Nombre completo y apellidos</label><input id="authName" name="fullName" type="text" autocomplete="name" minlength="3" maxlength="120" required placeholder="Ej.: María Pérez López"></div>':''}<div class="field"><label for="authEmail">Correo electrónico</label><input id="authEmail" type="email" name="email" autocomplete="email" required></div><div class="field"><label for="authPassword">Contraseña (mínimo 6 caracteres)</label><input id="authPassword" type="password" name="password" autocomplete="${signup?'new-password':'current-password'}" minlength="6" required></div>${signup?'<div class="field"><label for="authConfirm">Confirmar contraseña</label><input id="authConfirm" type="password" name="confirmPassword" autocomplete="new-password" minlength="6" required></div>':''}<div class="actions"><button id="authSubmit" type="submit">${signup?'Registrar mi cuenta':'Ingresar'}</button><button type="button" id="authSwitch" class="secondary">${signup?'Ya tengo cuenta':'Crear cuenta'}</button></div></form><p id="authStatus" class="muted" role="status" aria-live="polite"></p></div>`;
 }
-function home(){return `<div class="grid"><div class="card"><div class="muted">Preguntas visibles</div><div class="stat">${questions.length}</div></div><div class="card"><div class="muted">Materias</div><div class="stat">${new Set(questions.map(q=>q.subject)).size}</div></div><div class="card"><div class="muted">Simulacros completados</div><div class="stat">${attempts.length}</div></div></div><div class="card"><h2>${teacher()?'Gestión académica':'Preparación preuniversitaria'}</h2><p>Consulta preguntas organizadas por semana y materia. ${teacher()?'Registra nuevas preguntas y decide cuándo publicarlas.':'Practica y revisa tu rendimiento con calificación segura.'}</p><p class="muted">La carga de separatas y verificación de claves se realizará progresivamente.</p></div>`}
+function home(){
+  const cpu = questions.filter(q => q.modality === 'CPU-UNSM');
+  const beca = questions.filter(q => q.modality === 'BECA18');
+
+  return `
+    <div class="card">
+      <h2>🎯 Elige tu modalidad de preparación</h2>
+      <p>Selecciona el programa para el que deseas prepararte.</p>
+
+      <div class="grid">
+        <div class="card">
+          <h2>🎓 CPU-UNSM</h2>
+          <p>Banco de preguntas, prácticas y simulacros.</p>
+          <p class="muted">${cpu.length} preguntas registradas</p>
+          <button type="button" id="selectCPU">
+            Prepararme para CPU-UNSM
+          </button>
+        </div>
+
+        <div class="card">
+          <h2>🏆 Beca 18</h2>
+          <p>Preparación académica con preguntas independientes.</p>
+          <p class="muted">${beca.length} preguntas registradas</p>
+          <button type="button" id="selectBeca">
+            Prepararme para Beca 18
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="muted">Preguntas visibles</div>
+        <div class="stat">${questions.length}</div>
+      </div>
+
+      <div class="card">
+        <div class="muted">Materias</div>
+        <div class="stat">${new Set(questions.map(q=>q.subject)).size}</div>
+      </div>
+
+      <div class="card">
+        <div class="muted">Simulacros completados</div>
+        <div class="stat">${attempts.length}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>${teacher()?'Gestión académica':'Preparación preuniversitaria'}</h2>
+      <p>
+        Consulta preguntas organizadas por semana y materia.
+        ${teacher()
+          ? 'Registra nuevas preguntas y decide cuándo publicarlas.'
+          : 'Practica y revisa tu rendimiento con calificación segura.'}
+      </p>
+      <p class="muted">
+        La carga de separatas y verificación de claves se realizará progresivamente.
+      </p>
+    </div>
+  `;
+}
+
 function bank(){return `<div class="card"><h2>Banco académico</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(questions.map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(questions.map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
 function bankList(){
  const contenedor=$('bankList');
@@ -601,7 +662,10 @@ function bindReviewDetail(){
  };
 }
 
-function bind(){if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(user&&page==='activity'&&$('loadActivity'))$('loadActivity').onclick=loadActivity;if(!user){
+function bind(){
+ if($('selectCPU')) $('selectCPU').onclick=()=>{alert('Has seleccionado CPU-UNSM');};
+if($('selectBeca')) $('selectBeca').onclick=()=>{alert('Has seleccionado Beca 18');};
+  if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(user&&page==='activity'&&$('loadActivity'))$('loadActivity').onclick=loadActivity;if(!user){
  $('authSwitch').onclick=()=>{authMode=authMode==='login'?'signup':'login';render()};
  $('authForm').onsubmit=async e=>{
   e.preventDefault();
