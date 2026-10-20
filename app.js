@@ -347,6 +347,14 @@ function manage(){
 
     <form id="questionForm">
       <div class="form-grid">
+        
+<div class="field">
+  <label>Modalidad de preparación</label>
+  <select name="modality" required>
+    <option value="CPU-UNSM">🎓 CPU-UNSM</option>
+    <option value="BECA18">🏆 Beca 18</option>
+  </select>
+</div>
         <div class="field"><label>Ciclo</label><input name="cycle" value="2026-II" required></div>
         <div class="field"><label>Semana</label><input name="week" type="number" min="1" max="60" value="9" required></div>
         <div class="field"><label>Materia</label><input name="subject" required></div>
@@ -433,10 +441,18 @@ function bulkPage(){
   return `<div class="card"><h2>Carga masiva desde CSV</h2>
     <p>Importa preguntas de tus separatas CPU-UNSM sin registrarlas una por una. Prepara un CSV con la plantilla, revisa la vista previa y guarda únicamente las filas válidas. <strong>Todas se guardan como borradores</strong>: ninguna se publica automáticamente.</p>
     <p><a href="plantilla_preguntas.csv" download>Descargar plantilla CSV</a> · <span class="muted">Puedes editarla con Excel y guardarla como CSV UTF-8 (delimitado por comas).</span></p>
+    
+<div class="field">
+  <label>Modalidad de las preguntas del CSV</label>
+  <select id="bulkModality">
+    <option value="CPU-UNSM">🎓 CPU-UNSM</option>
+    <option value="BECA18">🏆 Beca 18</option>
+  </select>
+</div>
     <div class="field"><label>Selecciona tu archivo CSV</label><input id="bulkFile" type="file" accept=".csv,text/csv" ${bulkBusy?'disabled':''}></div>
     <p id="bulkStatus" class="muted" aria-live="polite">${bulkRows.length?`${bulkRows.length} filas analizadas: ${valid} listas, ${invalid} con observaciones.`:'Aún no se ha seleccionado un archivo.'}</p>
     <div class="actions"><button id="bulkImport" ${!valid||bulkBusy?'disabled':''}>Guardar ${valid} preguntas como borradores</button><button id="bulkClear" class="secondary" ${bulkBusy?'disabled':''}>Limpiar vista previa</button></div>
-    <p class="muted small">No incluyas claves secretas de Supabase. El importador usa tu sesión y la función segura save_question. La clave de cada pregunta es obligatoria para guardarla, pero debe revisarse antes de publicarla.</p>
+    <p class="muted small">No incluyas claves secretas de Supabase. El importador usa tu sesión y la función segura rpc('save_question'. La clave de cada pregunta es obligatoria para guardarla, pero debe revisarse antes de publicarla.</p>
   </div>
   ${bulkRows.length?`<div class="card"><h2>Vista previa</h2><p class="muted">Se muestran las primeras 30 filas. Corrige el CSV y vuelve a seleccionarlo si encuentras errores.</p>
   ${bulkRows.slice(0,30).map(r=>`<div class="listitem"><strong>Fila ${r.line} · ${esc(r.subject)} · Semana ${esc(r.week)} · N.º ${esc(r.original_number||'—')}</strong> <span class="tag">${r.errors.length?'Revisar':'Lista'}</span><p>${esc(r.statement).slice(0,450)}</p><p class="small">Clave propuesta: ${esc(r.correct)} · ${esc(r.source||'Sin referencia')}</p>${r.errors.length?`<p style="color:#b45309">${esc(r.errors.join('; '))}</p>`:''}</div>`).join('')}</div>`:''}`;
@@ -470,11 +486,13 @@ function bindBulk(){
     const rows=bulkRows.filter(r=>!r.errors.length);let saved=0;const failures=[];
     for(let i=0;i<rows.length;i++){
       const r=rows[i];status.textContent=`Guardando ${i+1} de ${rows.length}... (${saved} correctas)`;
-      const {error}=await db.rpc('save_question',{
-        p_cycle:r.cycle,p_week:Number(r.week),p_subject:r.subject,p_topic:r.topic,
+      const {error}=await db.rpc('save_question_by_modality',{
+  p_modality:$('bulkModality').value,
+  p_cycle:r.cycle,p_week:Number(r.week),p_subject:r.subject,p_topic:r.topic,
+
         p_page:r.page?Number(r.page):null,p_number:r.original_number?Number(r.original_number):null,
         p_statement:r.statement,p_options:['a','b','c','d','e'].map(x=>r['option_'+x]),
-        p_source:r.source,p_correct:'ABCDE'.indexOf(r.correct.toUpperCase()),p_explanation:r.explanation,p_publish:false
+        p_source:r.source,p_correct:'ABCDE'.indexOf(r.correct.toUpperCase()),p_explanation:r.explanation
       });
       if(error)failures.push(`Fila ${r.line}: ${error.message}`);else{saved++;r.errors.push('Guardada en Supabase');}
     }
@@ -709,8 +727,10 @@ if(page==='manage'&&teacher()){
       );
       if(solutionImagePath) rutasSubidas.push(solutionImagePath);
 
-      const {error}=await db.rpc('save_question',{
-        p_cycle:values.cycle,
+      
+const {error}=await db.rpc('save_question_by_modality',{
+  p_modality:values.modality,
+  p_cycle:values.cycle,
         p_week:Number(values.week),
         p_subject:values.subject,
         p_topic:values.topic,
@@ -721,7 +741,6 @@ if(page==='manage'&&teacher()){
         p_source:values.source||'',
         p_correct:Number(values.correct),
         p_explanation:values.explanation||'',
-        p_publish:false,
         p_statement_image_path:statementImagePath,
         p_solution_image_path:solutionImagePath
       });
