@@ -132,6 +132,9 @@ async function cargarImagenesPrivadas(raiz=document){
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
 let activityRows=[],activityLoaded=false,activityError='';
 let authMode='login';
+let selectedModality='CPU-UNSM';
+const modalityQuestions=()=>questions.filter(q=>q.modality===selectedModality);
+
 const teacher=()=>['teacher','admin'].includes(profile?.role);
 const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':''}>${esc(s)}</p></div>`;
 async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
@@ -159,9 +162,15 @@ async function refresh(){
   }
   if(teacher()||access?.allowed){
    const q=await db.from('questions')
-.select('id,modality,cycle,week,subject
-,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
-   if(q.error)console.error(q.error.message);else questions=q.data||[];
+.select('id,modality,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
+   if(q.error){
+     console.error('Consulta de preguntas:',q.error.message);
+     // Compatibilidad con bases anteriores a la incorporación de modalidad.
+     if(/modality|column|schema cache/i.test(q.error.message)){
+       const old=await db.from('questions').select('id,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
+       if(old.error)console.error(old.error.message);else questions=(old.data||[]).map(x=>({...x,modality:'CPU-UNSM'}));
+     }
+   }else questions=(q.data||[]).map(x=>({...x,modality:x.modality||'CPU-UNSM'}));
    const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
   }
  }
@@ -306,13 +315,12 @@ function home(){
   `;
 }
 
-function bank(){return `<div class="card"><h2>Banco académico</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(questions.map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(questions.map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
+function bank(){return `<div class="card"><h2>Banco académico · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(modalityQuestions().map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(modalityQuestions().map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
 function bankList(){
  const contenedor=$('bankList');
  liberarImagenesPrivadas(contenedor);
  const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();
- contenedor.innerHTML=q
-questions.filter(q=>q.modality==='CPU-UNSM'&&(!s||q.subject===s)
+ contenedor.innerHTML=questions.filter(q=>q.modality===selectedModality&&(!s||q.subject===s)
 &&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
  mostrarFormulas();
  cargarImagenesPrivadas(contenedor);
@@ -348,13 +356,13 @@ function bindBankSolutions(){
     };
   });
 }
-function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(questions.filter(q=>q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div>
+function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(modalityQuestions().filter(q=>q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div>
 <div class="field">
   <label>Semana del examen</label>
   <select id="quizWeek">
     <option value="">Todas las semanas</option>
     ${[...new Set(
-      questions
+      modalityQuestions()
         .filter(q => q.status === 'published')
         .map(q => Number(q.week))
         .filter(w => Number.isInteger(w) && w > 0)
@@ -368,7 +376,7 @@ function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><
 
 // La respuesta correcta nunca se obtiene antes de comprobar la pregunta en Supabase.
 function practicePage(){
-  const published=questions.filter(q=>q.status==='published');
+  const published=modalityQuestions().filter(q=>q.status==='published');
   if(!practice)return `<div class="card"><h2>Práctica inmediata</h2><p class="muted">Resuelve una pregunta y recibe la corrección al instante. Tus respuestas se guardan en Supabase.</p><div class="field"><label>Materia</label><select id="practiceSubject"><option value="">Todas las materias</option>${[...new Set(published.map(q=>q.subject))].sort().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select></div><div class="actions"><button id="startPractice" ${published.length?'':'disabled'}>Comenzar práctica</button><button id="reviewPractice" class="secondary">Repasar mis errores</button></div><p id="practiceStatus" class="muted">${published.length?`${published.length} pregunta(s) publicada(s) disponible(s).`:'Todavía no hay preguntas publicadas.'}</p></div>`;
   const q=practice.items[practice.i];
   if(!q)return `<div class="card"><h2>Práctica finalizada</h2><p>Has completado ${practice.items.length} pregunta(s).</p><p>Aciertos en esta sesión: <strong>${practice.hits}/${practice.items.length}</strong></p><button id="finishPractice">Volver al inicio de práctica</button></div>`;
@@ -381,14 +389,14 @@ async function startPractice(items){
 }
 function bindPractice(){
   if($('startPractice'))$('startPractice').onclick=()=>{const subject=$('practiceSubject').value;startPractice(
-questions.filter(q=>q.modality==='CPU-UNSM'&&q.status==='published'
+questions.filter(q=>q.modality===selectedModality&&q.status==='published'
 &&(!subject||q.subject===subject)))};
   if($('reviewPractice'))$('reviewPractice').onclick=async()=>{
     const button=$('reviewPractice');button.disabled=true;$('practiceStatus').textContent='Buscando tus preguntas pendientes...';
     const {data,error}=await db.rpc('questions_to_review',{p_limit:100});
     if(error){$('practiceStatus').textContent='No se pudo consultar el repaso: '+error.message;button.disabled=false;return}
     const ids=new Set((data||[]).map(x=>x.question_id));const items=
-questions.filter(q=>q.modality==='CPU-UNSM'&&q.status==='published'&&ids.has(q.id))
+questions.filter(q=>q.modality===selectedModality&&q.status==='published'&&ids.has(q.id))
 ;
     if(!items.length){$('practiceStatus').textContent='No tienes preguntas pendientes de repaso. ¡Buen trabajo!';button.disabled=false;return}
     startPractice(items);
@@ -508,7 +516,7 @@ function bulkPage(){
   const valid=bulkRows.filter(r=>!r.errors.length).length;
   const invalid=bulkRows.length-valid;
   return `<div class="card"><h2>Carga masiva desde CSV</h2>
-    <p>Importa preguntas de tus separatas CPU-UNSM sin registrarlas una por una. Prepara un CSV con la plantilla, revisa la vista previa y guarda únicamente las filas válidas. <strong>Todas se guardan como borradores</strong>: ninguna se publica automáticamente.</p>
+    <p>Importa preguntas de la modalidad seleccionada sin registrarlas una por una. Prepara un CSV con la plantilla, revisa la vista previa y guarda únicamente las filas válidas. <strong>Todas se guardan como borradores</strong>: ninguna se publica automáticamente.</p>
     <p><a href="plantilla_preguntas.csv" download>Descargar plantilla CSV</a> · <span class="muted">Puedes editarla con Excel y guardarla como CSV UTF-8 (delimitado por comas).</span></p>
     
 <div class="field">
@@ -537,7 +545,7 @@ function bindBulk(){
       const header=matrix.shift().map(x=>x.trim().toLowerCase());
       if(header.join('|')!==BULK_HEADERS.join('|'))throw Error('Las columnas no coinciden con la plantilla. Descarga la plantilla y conserva el orden de los encabezados.');
       if(matrix.length>500)throw Error('Máximo 500 preguntas por archivo. Divide el CSV.');
-      const seen=new Set(questions.map(bulkFingerprint));
+      const seen=new Set(questions.filter(q=>q.modality===($('bulkModality')?.value||'CPU-UNSM')).map(bulkFingerprint));
       bulkRows=matrix.map((values,i)=>{
         const r={line:i+2};BULK_HEADERS.forEach((h,j)=>r[h]=String(values[j]??'').trim());
         r.errors=validateBulkRow(r);
@@ -553,10 +561,11 @@ function bindBulk(){
     if(bulkBusy||!confirm('¿Guardar las preguntas válidas como borradores en Supabase? No se publicarán automáticamente.'))return;
     const button=$('bulkImport');button.disabled=true;$('bulkClear').disabled=true;file.disabled=true;bulkBusy=true;
     const rows=bulkRows.filter(r=>!r.errors.length);let saved=0;const failures=[];
+     const importModality=$('bulkModality').value;
     for(let i=0;i<rows.length;i++){
       const r=rows[i];status.textContent=`Guardando ${i+1} de ${rows.length}... (${saved} correctas)`;
       const {error}=await db.rpc('save_question_by_modality',{
-  p_modality:$('bulkModality').value,
+  p_modality:importModality,
   p_cycle:r.cycle,p_week:Number(r.week),p_subject:r.subject,p_topic:r.topic,
 
         p_page:r.page?Number(r.page):null,p_number:r.original_number?Number(r.original_number):null,
@@ -576,12 +585,12 @@ function bindBulk(){
 const admin=()=>profile?.role==='admin';
 function reviewPage(){
  if(!teacher())return notice('Acceso exclusivo para docentes',true);
- const subjects=[...new Set(questions.map(q=>q.subject))].sort();
- const weeks=[...new Set(questions.map(q=>q.week))].sort((a,b)=>a-b);
+ const subjects=[...new Set(modalityQuestions().map(q=>q.subject))].sort();
+ const weeks=[...new Set(modalityQuestions().map(q=>q.week))].sort((a,b)=>a-b);
  const opts=(values,current)=>values.map(v=>`<option value="${esc(v)}" ${String(v)===String(current)?'selected':''}>${esc(v)}</option>`).join('');
- const filtered=questions.filter(q=>(!reviewFilter.subject||q.subject===reviewFilter.subject)&&(!reviewFilter.week||String(q.week)===reviewFilter.week)&&(!reviewFilter.status||q.status===reviewFilter.status));
+ const filtered=modalityQuestions().filter(q=>(!reviewFilter.subject||q.subject===reviewFilter.subject)&&(!reviewFilter.week||String(q.week)===reviewFilter.week)&&(!reviewFilter.status||q.status===reviewFilter.status));
  const detail=reviewSelected;
- return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todas las semanas</option>${weeks.map(w=>`<option value="${w}" ${String(w)===reviewFilter.week?'selected':''}>Semana ${w}</option>`).join('')}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length} preguntas encontradas · ${questions.filter(q=>q.status==='draft').length} borradores · ${questions.filter(q=>q.status==='review').length} en revisión · ${questions.filter(q=>q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')||'<p>No hay preguntas con estos filtros.</p>'}</div><div id="reviewDetail">${detail?reviewDetail(detail):''}</div>`;
+ return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todas las semanas</option>${weeks.map(w=>`<option value="${w}" ${String(w)===reviewFilter.week?'selected':''}>Semana ${w}</option>`).join('')}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length} preguntas encontradas · ${modalityQuestions().filter(q=>q.status==='draft').length} borradores · ${modalityQuestions().filter(q=>q.status==='review').length} en revisión · ${modalityQuestions().filter(q=>q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')||'<p>No hay preguntas con estos filtros.</p>'}</div><div id="reviewDetail">${detail?reviewDetail(detail):''}</div>`;
 }
 function reviewDetail(q){
  const editable=q.status!=='published'||admin();
@@ -663,8 +672,8 @@ function bindReviewDetail(){
 }
 
 function bind(){
- if($('selectCPU')) $('selectCPU').onclick=()=>{alert('Has seleccionado CPU-UNSM');};
-if($('selectBeca')) $('selectBeca').onclick=()=>{alert('Has seleccionado Beca 18');};
+ if($('selectCPU')) $('selectCPU').onclick=()=>{selectedModality='CPU-UNSM';page='bank';quiz=null;practice=null;render();};
+if($('selectBeca')) $('selectBeca').onclick=()=>{selectedModality='BECA18';page='bank';quiz=null;practice=null;render();};
   if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(user&&page==='activity'&&$('loadActivity'))$('loadActivity').onclick=loadActivity;if(!user){
  $('authSwitch').onclick=()=>{authMode=authMode==='login'?'signup':'login';render()};
  $('authForm').onsubmit=async e=>{
@@ -720,7 +729,7 @@ const subject = $('quizSubject').value;
 const week = $('quizWeek').value;
 
 const pool = questions.filter(q =>
-q.modality === 'CPU-UNSM' &&
+q.modality === selectedModality &&
   q.status === 'published' &&
   (!subject || q.subject === subject) &&
   (!week || Number(q.week) === Number(week))
