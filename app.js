@@ -801,7 +801,30 @@ q.modality === selectedModality &&
 }
 
 if(page==='manage'&&teacher()){
-  $('questionForm').onsubmit=async e=>{
+  const formularioPregunta=$('questionForm');
+  const campoEnunciado=formularioPregunta.elements.namedItem('statement');
+  const estadoDuplicado=$('duplicateStatus');
+  let consultaDuplicado=0;
+  async function comprobarEnunciado(){
+    const version=++consultaDuplicado;
+    const texto=campoEnunciado.value.trim();
+    estadoDuplicado.textContent='';
+    if(!texto)return null;
+    estadoDuplicado.textContent='Comprobando si esta pregunta ya existe...';
+    try{
+      const existente=await buscarPreguntaDuplicada(texto);
+      if(version!==consultaDuplicado||texto!==campoEnunciado.value.trim())return null;
+      estadoDuplicado.textContent=existente?mensajeDuplicado(existente):'No se encontró una pregunta con el mismo enunciado.';
+      estadoDuplicado.style.color=existente?'#b45309':'';
+      return existente;
+    }catch(error){
+      if(version===consultaDuplicado)estadoDuplicado.textContent=error.message;
+      return null;
+    }
+  }
+  campoEnunciado.addEventListener('blur',comprobarEnunciado);
+  campoEnunciado.addEventListener('input',()=>{consultaDuplicado++;estadoDuplicado.textContent='';});
+  formularioPregunta.onsubmit=async e=>{
     e.preventDefault();
 
     const f=e.target;
@@ -813,6 +836,12 @@ if(page==='manage'&&teacher()){
     const rutasSubidas=[];
 
     try{
+      if(status) status.textContent='Verificando duplicados antes de guardar...';
+      const existente=await buscarPreguntaDuplicada(values.statement);
+      if(existente){
+        if(estadoDuplicado){estadoDuplicado.textContent=mensajeDuplicado(existente);estadoDuplicado.style.color='#b45309';}
+        throw new Error('Esta pregunta ya existe en el banco. No se guardó nuevamente.');
+      }
       if(status) status.textContent='Subiendo imágenes y guardando pregunta...';
 
       const statementImagePath=await subirImagenPregunta(
