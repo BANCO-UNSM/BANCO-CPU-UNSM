@@ -626,10 +626,14 @@ if(page==='review') bindReview();
 
 if(page==='quiz'){
   if($('startQuiz')) $('startQuiz').onclick=()=>{
-    const subject=$('quizSubject').value;
-    const pool=questions.filter(q=>
-      q.status==='published'&&(!subject||q.subject===subject)
-    );
+const subject = $('quizSubject').value;
+const week = $('quizWeek').value;
+
+const pool = questions.filter(q =>
+  q.status === 'published' &&
+  (!subject || q.subject === subject) &&
+  (!week || Number(q.week) === Number(week))
+);
     if(!pool.length) return alert('No hay preguntas publicadas.');
     const count=Math.min(
       pool.length,
