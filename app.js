@@ -385,7 +385,42 @@ function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><
       .join('')}
   </select>
 </div>
-<div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return `<div class="card"><h2>Resultado del simulacro</h2><div class="stat">${quiz.result.correct}/${quiz.result.total}</div><p>${Math.round(quiz.result.correct/quiz.result.total*100)}% de aciertos</p><button id="restartQuiz">Otro simulacro</button></div><div class="card"><h2>Revisión</h2>${quiz.items.map((q,i)=>{const d=quiz.result.details.find(d=>d.id===q.id);return `<div class="listitem"><strong>${esc(q.statement)}</strong>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<p>Tu respuesta: ${quiz.answers[i]===null?'Sin responder':esc(q.options[quiz.answers[i]])}</p><p>Clave: ${'ABCDE'[d.correct_index]}) ${esc(q.options[d.correct_index])} · ${d.is_correct?'Correcta':'Incorrecta'}</p>${d.explanation||q.solution_image_path?`<div class="card"><strong>Desarrollo paso a paso</strong><p style="white-space:pre-wrap">${esc(d.explanation||'')}</p>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}</div>`:'<p class="muted small">El desarrollo todavía no está disponible en el resultado del servidor.</p>'}</div>`}).join('')}</div>`}const q=quiz.items[quiz.i];return `<div class="card"><p>Pregunta ${quiz.i+1} de ${quiz.items.length}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button><p id="quizError" class="muted"></p></div>`}
+<div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="card"><p>Pregunta ${quiz.i+1} de ${quiz.items.length}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button><p id="quizError" class="muted"></p></div>`}
+
+// Corrección de simulacros: solo se muestran claves recibidas tras grade_attempt.
+function quizReviewPage(){
+  const result=quiz.result;
+  const details=Array.isArray(result.details)?result.details:[];
+  const total=Number(result.total)||quiz.items.length;
+  const correct=Number(result.correct)||0;
+  const blank=quiz.answers.filter(a=>a===null||a===undefined).length;
+  const wrong=Math.max(0,total-correct-blank);
+  const percent=total?Math.round(correct/total*100):0;
+  const revision=quiz.items.map((q,i)=>{
+    const d=details.find(x=>String(x.id)===String(q.id));
+    const selected=quiz.answers[i];
+    const blankAnswer=selected===null||selected===undefined;
+    const key=Number(d?.correct_index);
+    const hasKey=Boolean(d)&&Number.isInteger(key)&&key>=0&&key<q.options.length;
+    const isCorrect=hasKey&&!blankAnswer&&Number(selected)===key;
+    const state=blankAnswer?'Sin responder':!hasKey?'Pendiente de verificar':isCorrect?'Correcta':'Incorrecta';
+    const stateColor=blankAnswer?'#64748b':isCorrect?'#2563eb':'#b91c1c';
+    const options=q.options.map((option,j)=>{
+      const correctOption=hasKey&&j===key;
+      const wrongOption=!blankAnswer&&j===Number(selected)&&hasKey&&!isCorrect;
+      const symbol=correctOption?'✓':wrongOption?'✕':'○';
+      const color=correctOption?'#2563eb':wrongOption?'#b91c1c':'#64748b';
+      const background=correctOption?'#eff6ff':wrongOption?'#fef2f2':'transparent';
+      const annotation=correctOption?' — Respuesta correcta':wrongOption?' — Tu respuesta':'';
+      return `<div style="display:flex;align-items:flex-start;gap:10px;margin:7px 0;padding:9px 11px;border-radius:9px;border:1px solid ${correctOption?'#bfdbfe':wrongOption?'#fecaca':'#e2e8f0'};background:${background}"><span aria-hidden="true" style="color:${color};font-weight:800;font-size:1.15rem;min-width:20px">${symbol}</span><span style="color:${correctOption||wrongOption?color:'inherit'}">${'ABCDE'[j]}) ${esc(option)}${annotation}</span></div>`;
+    }).join('');
+    const explanation=typeof d?.explanation==='string'?d.explanation.trim():'';
+    const solutionImage=q.solution_image_path;
+    const explanationHtml=explanation?`<p style="white-space:pre-wrap;line-height:1.75">${esc(explanation)}</p>`:(!solutionImage?'<p class="muted">Todavía no se ha registrado un desarrollo paso a paso para esta pregunta.</p>':'');
+    return `<div class="listitem"><p class="muted small">Pregunta ${i+1} · ${esc(q.subject||'')} · Semana ${esc(q.week??'—')}</p><strong>${esc(q.statement)}</strong>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<p style="font-weight:700;color:${stateColor}">${blankAnswer?'○':isCorrect?'✓':'✕'} ${esc(state)}</p>${options}${!hasKey?'<p class="muted">No se recibió una clave válida para esta pregunta. Consulta al administrador.</p>':''}<details style="margin-top:12px" ${explanation||solutionImage?'':'open'}><summary style="cursor:pointer;font-weight:700">Ver desarrollo paso a paso</summary><div class="card" style="margin-top:10px">${explanationHtml}${espacioImagenPrivada(solutionImage,'Imagen de la solución')}</div></details></div>`;
+  }).join('');
+  return `<div class="card"><h2>Resultado del simulacro</h2><div class="stat">${correct}/${total}</div><p>${percent}% de aciertos</p><p><strong style="color:#2563eb">✓ ${correct} correctas</strong> · <strong style="color:#b91c1c">✕ ${wrong} incorrectas</strong> · <strong style="color:#64748b">○ ${blank} en blanco</strong></p><p class="muted small">Las soluciones se muestran únicamente después de entregar el simulacro.</p><button id="restartQuiz">Otro simulacro</button></div><div class="card"><h2>Revisión de respuestas</h2>${revision}</div>`;
+}
 
 // La respuesta correcta nunca se obtiene antes de comprobar la pregunta en Supabase.
 function practicePage(){
