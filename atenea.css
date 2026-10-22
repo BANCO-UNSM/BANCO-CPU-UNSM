@@ -20,3 +20,8 @@
 #atenea-panel{z-index:3;right:0}
 @media(max-width:700px){#atenea-personaje{width:105px;bottom:52px}#atenea-panel{right:0}}
 @media(prefers-reduced-motion:reduce){#atenea-personaje{transition:none}}
+
+/* V2.5: personaje completo, sin recortes ni deformación */
+#atenea-personaje{width:clamp(125px,13vw,205px);bottom:56px;right:0;overflow:visible}
+#atenea-personaje img{width:100%;height:auto;object-fit:contain;object-position:bottom center}
+@media(max-width:700px){#atenea-personaje{width:clamp(85px,22vw,120px);bottom:55px}}
