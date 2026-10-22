@@ -84,11 +84,57 @@ async function ask(message){
  }catch(err){console.warn('Atenea:',err?.message||err);add('bot','⚠️ '+(err?.message||'Ocurrió un problema temporal. Inténtalo más tarde.'),false);}
  finally{busy(false);if(state.open)$('atenea-input')?.focus();}
 }
+// Arrastre mediante Pointer Events, compatible con ratón y pantallas táctiles.
+const dragState={moved:false};
+function initCharacterDrag(){
+ const el=$('atenea-personaje');if(!el)return;
+ let start=null,suppressUntil=0;
+ el.addEventListener('pointerdown',e=>{
+  if(e.button!==0&&e.pointerType==='mouse')return;
+  const r=el.getBoundingClientRect();
+  start={id:e.pointerId,x:e.clientX,y:e.clientY,left:r.left,top:r.top,active:false};
+  dragState.moved=false;el.setPointerCapture(e.pointerId);
+ });
+ el.addEventListener('pointermove',e=>{
+  if(!start||start.id!==e.pointerId)return;
+  const dx=e.clientX-start.x,dy=e.clientY-start.y;
+  if(!start.active&&Math.hypot(dx,dy)<7)return;
+  start.active=true;dragState.moved=true;
+  const maxX=Math.max(0,window.innerWidth-el.offsetWidth),maxY=Math.max(0,window.innerHeight-el.offsetHeight);
+  const x=Math.max(0,Math.min(maxX,start.left+dx)),y=Math.max(0,Math.min(maxY,start.top+dy));
+  el.style.setProperty('position','fixed','important');
+  el.style.setProperty('left',x+'px','important');el.style.setProperty('top',y+'px','important');
+  el.style.setProperty('right','auto','important');el.style.setProperty('bottom','auto','important');
+  el.classList.add('atenea-dragging');
+ });
+ const finish=e=>{if(!start||e.pointerId!==start.id)return;
+  if(start.active){suppressUntil=Date.now()+350;dragState.moved=true;}
+  start=null;el.classList.remove('atenea-dragging');
+ };
+ el.addEventListener('pointerup',finish);el.addEventListener('pointercancel',finish);
+ el.addEventListener('click',e=>{if(Date.now()<suppressUntil){e.stopImmediatePropagation();e.preventDefault();}},true);
+ window.addEventListener('resize',()=>{
+  if(!el.style.left)return;const r=el.getBoundingClientRect();
+  el.style.left=Math.max(0,Math.min(window.innerWidth-r.width,r.left))+'px';
+  el.style.top=Math.max(0,Math.min(window.innerHeight-r.height,r.top))+'px';
+ });
+}
 function mount(){if($('atenea-root'))return;
  const root=document.createElement('div');root.id='atenea-root';
- root.innerHTML=`<button id="atenea-personaje" type="button" aria-label="Abrir chat con Atenea" title="Habla con Atenea"><img src="atenea-cuerpo-entero-v29.png" alt="Atenea, tu tutora virtual" /></button><button id="atenea-toggle" type="button" aria-label="Abrir asistente Atenea" title="Habla con Atenea"><img class="atenea-toggle-avatar" src="atenea-retrato.png" alt="" /> <span>Atenea</span></button><section id="atenea-panel" role="dialog" aria-label="Atenea, asistente académica" hidden><div class="atenea-top"><div class="atenea-mark"><img src="atenea-retrato.png" alt="Atenea, tutora virtual de CachimboLab" /></div><div><strong>ATENEA</strong><small>Tu guía inteligente hacia la UNSM</small></div><button type="button" id="atenea-close" aria-label="Cerrar">×</button></div><div id="atenea-feed" class="atenea-feed" aria-live="polite"></div><div class="atenea-shortcuts"><button type="button" data-ask="Dame una pista">💡 Pista</button><button type="button" data-ask="Explícame el concepto sin revelar la respuesta de la práctica">📘 Explicación</button><button type="button" data-ask="Motívame">💙 Ánimo</button></div><form id="atenea-form"><input id="atenea-input" maxlength="700" autocomplete="off" placeholder="Pregúntale a Atenea..." aria-label="Tu mensaje"/><button id="atenea-send" type="submit" aria-label="Enviar">➤</button></form><div class="atenea-foot"><label><input type="checkbox" id="atenea-voice"/> 🔊 Leer respuestas</label><span id="atenea-status">Atenea usa Gemini con cupos gratuitos.</span></div></section>`;
+ root.innerHTML=`<button id="atenea-personaje" type="button" aria-label="Abrir chat con Atenea" title="Habla con Atenea"><img src="atenea-cuerpo-entero-v29.png" alt="Atenea, tu tutora virtual" /></button><button id="atenea-minimize" type="button" aria-label="Ocultar figura de Atenea" title="Ocultar figura de Atenea">−</button><button id="atenea-toggle" type="button" aria-label="Abrir asistente Atenea" title="Habla con Atenea"><img class="atenea-toggle-avatar" src="atenea-retrato.png" alt="" /> <span>Atenea</span></button><section id="atenea-panel" role="dialog" aria-label="Atenea, asistente académica" hidden><div class="atenea-top"><div class="atenea-mark"><img src="atenea-retrato.png" alt="Atenea, tutora virtual de CachimboLab" /></div><div><strong>ATENEA</strong><small>Tu guía inteligente hacia la UNSM</small></div><button type="button" id="atenea-close" aria-label="Cerrar">×</button></div><div id="atenea-feed" class="atenea-feed" aria-live="polite"></div><div class="atenea-shortcuts"><button type="button" data-ask="Dame una pista">💡 Pista</button><button type="button" data-ask="Explícame el concepto sin revelar la respuesta de la práctica">📘 Explicación</button><button type="button" data-ask="Motívame">💙 Ánimo</button></div><form id="atenea-form"><input id="atenea-input" maxlength="700" autocomplete="off" placeholder="Pregúntale a Atenea..." aria-label="Tu mensaje"/><button id="atenea-send" type="submit" aria-label="Enviar">➤</button></form><div class="atenea-foot"><label><input type="checkbox" id="atenea-voice"/> 🔊 Leer respuestas</label><span id="atenea-status">Atenea usa Gemini con cupos gratuitos.</span></div></section>`;
  document.body.append(root);
- $('atenea-toggle').onclick=()=>show(!state.open);$('atenea-personaje').onclick=()=>show(!state.open);$('atenea-close').onclick=()=>show(false);
+ $('atenea-toggle').onclick=()=>show(!state.open);
+ $('atenea-personaje').onclick=()=>{if(!dragState.moved)show(!state.open);};
+ $('atenea-close').onclick=()=>show(false);
+ $('atenea-minimize').onclick=()=>{
+  const hidden=root.classList.toggle('atenea-figure-hidden');
+  const btn=$('atenea-minimize');btn.textContent=hidden?'+':'−';
+  btn.title=hidden?'Mostrar figura de Atenea':'Ocultar figura de Atenea';
+  btn.setAttribute('aria-label',btn.title);
+  try{sessionStorage.setItem('ateneaFigureHidden',String(hidden));}catch(_){}
+ };
+ try{if(sessionStorage.getItem('ateneaFigureHidden')==='true')$('atenea-minimize').click();}catch(_){}
+ initCharacterDrag();
  $('atenea-voice').onchange=e=>{state.voice=e.target.checked;if(!state.voice&&'speechSynthesis'in window)speechSynthesis.cancel();};
  $('atenea-form').onsubmit=e=>{e.preventDefault();const i=$('atenea-input'),msg=i.value.trim();if(!msg||state.busy)return;i.value='';void ask(msg);};
  root.querySelectorAll('[data-ask]').forEach(b=>b.onclick=()=>{if(!state.busy)void ask(b.dataset.ask);});

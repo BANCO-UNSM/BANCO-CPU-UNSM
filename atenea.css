@@ -30,3 +30,14 @@
 #atenea-personaje{right:4px;bottom:55px;width:clamp(145px,14vw,225px);height:auto;max-height:none;overflow:visible;filter:drop-shadow(0 5px 9px rgba(15,35,65,.16))}
 #atenea-personaje img{display:block;width:100%;height:auto;max-height:none;object-fit:contain;clip-path:none}
 @media(max-width:700px){#atenea-personaje{width:clamp(95px,22vw,135px);bottom:55px;right:0}}
+
+/* V3.0: tamaño mayor, arrastre y opción de minimizar la figura. */
+#atenea-personaje{width:clamp(185px,18vw,275px);touch-action:none;user-select:none;cursor:grab}
+#atenea-personaje.atenea-dragging{cursor:grabbing;transition:none;transform:none}
+#atenea-root.atenea-figure-hidden #atenea-personaje{display:none!important}
+#atenea-minimize{position:absolute;right:0;bottom:calc(55px + clamp(185px,18vw,275px)*2.55);z-index:5;width:30px;height:30px;border:1px solid #d7dce6;border-radius:50%;background:#fff;color:#173250;box-shadow:0 2px 9px #122c4930;font-size:22px;line-height:1;cursor:pointer}
+#atenea-root.atenea-figure-hidden #atenea-minimize{bottom:8px;right:116px}
+@media(max-width:700px){#atenea-personaje{width:clamp(105px,28vw,155px)}#atenea-minimize{bottom:calc(55px + clamp(105px,28vw,155px)*2.55);right:0}#atenea-root.atenea-figure-hidden #atenea-minimize{bottom:7px;right:112px}}
+
+#atenea-minimize{bottom:63px;right:0}
+@media(max-width:700px){#atenea-minimize{bottom:60px;right:0}}
