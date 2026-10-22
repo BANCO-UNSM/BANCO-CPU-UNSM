@@ -25,3 +25,8 @@
 #atenea-personaje{width:clamp(125px,13vw,205px);bottom:56px;right:0;overflow:visible}
 #atenea-personaje img{width:100%;height:auto;object-fit:contain;object-position:bottom center}
 @media(max-width:700px){#atenea-personaje{width:clamp(85px,22vw,120px);bottom:55px}}
+
+/* V2.7: fotografía original completa, proporciones naturales, sin recortar pies */
+#atenea-personaje{width:clamp(145px,15vw,220px);height:auto;right:10px;bottom:58px;max-height:none;overflow:visible;display:block}
+#atenea-personaje img{display:block;width:100%;height:auto;max-width:100%;max-height:calc(100dvh - 110px);object-fit:contain;object-position:bottom center}
+@media(max-width:700px){#atenea-personaje{width:clamp(85px,22vw,120px);right:4px;bottom:55px}}
