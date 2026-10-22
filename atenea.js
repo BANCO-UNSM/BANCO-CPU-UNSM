@@ -15,9 +15,22 @@ const speak=text=>{
  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/\s+/g,' ').slice(0,1800));u.lang='es-PE';u.rate=.91;u.pitch=1.02;
  const voices=speechSynthesis.getVoices();const v=voices.find(v=>/^es[-_](PE|MX|CO|419)/i.test(v.lang)&&/female|mujer|paulina|sabina|helena|monica|luciana/i.test(v.name))||voices.find(v=>/^es/i.test(v.lang)&&/female|mujer|paulina|sabina|helena|monica|luciana/i.test(v.name))||voices.find(v=>/^es/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u);
 };
+const formatText=(target,source)=>{
+ const lines=String(source).replace(/\r\n?/g,'\n').split('\n');let list=null;
+ const inline=(parent,line)=>{const re=/(\*\*[^*\n]+\*\*|`[^`\n]+`)/g;let start=0,m;
+  while((m=re.exec(line))){if(m.index>start)parent.append(document.createTextNode(line.slice(start,m.index)));
+   const token=m[0],el=document.createElement(token.startsWith('**')?'strong':'code');el.textContent=token.startsWith('**')?token.slice(2,-2):token.slice(1,-1);parent.append(el);start=re.lastIndex;}
+  if(start<line.length)parent.append(document.createTextNode(line.slice(start)));};
+ for(const line of lines){if(!line.trim()){list=null;continue;}
+  const bullet=line.match(/^\s*(?:[-*]|\d+\.)\s+(.+)$/);
+  if(bullet){const kind=/^\s*\d+\./.test(line)?'ol':'ul';if(!list||list.tagName.toLowerCase()!==kind){list=document.createElement(kind);target.append(list);}const li=document.createElement('li');inline(li,bullet[1]);list.append(li);continue;}
+  list=null;const heading=line.match(/^\s*#{1,4}\s+(.+)$/);const block=document.createElement(heading?'strong':'div');inline(block,heading?heading[1]:line);target.append(block);
+ }
+ if(typeof renderMathInElement==='function'){try{renderMathInElement(target,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false,strict:'ignore'});}catch(e){console.warn('Atenea: error de formato matemático',e);}}
+};
 const add=(who,text,record=true)=>{
  if(record){state.history.push({role:who==='user'?'user':'assistant',content:text});state.history=state.history.slice(-16);}
- const feed=$('atenea-feed');if(!feed)return;const div=document.createElement('div');div.className='atenea-bubble '+(who==='user'?'atenea-user':'atenea-bot');div.textContent=text;feed.append(div);feed.scrollTop=feed.scrollHeight;if(who!=='user')speak(text);
+ const feed=$('atenea-feed');if(!feed)return;const div=document.createElement('div');div.className='atenea-bubble '+(who==='user'?'atenea-user':'atenea-bot');formatText(div,text);feed.append(div);feed.scrollTop=feed.scrollHeight;if(who!=='user')speak(text);
 };
 function busy(on){state.busy=on;const i=$('atenea-input'),send=$('atenea-send');if(i)i.disabled=on;if(send)send.disabled=on;document.querySelectorAll('#atenea-root [data-ask]').forEach(b=>b.disabled=on);const status=$('atenea-status');if(status)status.textContent=on?'Atenea está preparando su respuesta…':'Atenea usa Gemini con cupos gratuitos.';}
 async function ask(message){
