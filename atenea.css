@@ -41,3 +41,29 @@
 
 #atenea-minimize{bottom:63px;right:0}
 @media(max-width:700px){#atenea-minimize{bottom:60px;right:0}}
+
+/* V3.1: saludo junto a Atenea, descartable, sin bloquear el simulacro. */
+#atenea-saludo{
+ position:absolute;bottom:clamp(275px,35vw,420px);right:clamp(155px,16vw,245px);
+ width:205px;max-width:calc(100vw - 175px);box-sizing:border-box;
+ background:#fff;color:#153353;border:1px solid #dbe6f2;
+ border-radius:18px;padding:15px 24px 14px 14px;
+ box-shadow:0 8px 28px rgba(19,43,72,.18);
+ font-size:13px;line-height:1.5;font-weight:650;text-align:center;
+ z-index:2;
+}
+#atenea-saludo:after{
+ content:"";position:absolute;right:-8px;bottom:25px;width:15px;height:15px;
+ background:#fff;border-top:1px solid #dbe6f2;border-right:1px solid #dbe6f2;transform:rotate(45deg);
+}
+#atenea-saludo-close{
+ position:absolute;top:3px;right:5px;border:0;background:transparent;
+ color:#5e7186;font-size:19px;line-height:1;cursor:pointer;padding:3px 5px;
+}
+#atenea-root.atenea-figure-hidden #atenea-saludo,
+#atenea-root.atenea-chat-open #atenea-saludo,
+#atenea-root.atenea-saludo-dismissed #atenea-saludo{display:none!important}
+@media(max-width:700px){
+ #atenea-saludo{right:105px;bottom:240px;width:150px;max-width:calc(100vw - 140px);font-size:11px;padding:12px 19px 12px 9px}
+}
+@media(max-width:360px){#atenea-saludo{right:90px;width:135px;bottom:210px}}
