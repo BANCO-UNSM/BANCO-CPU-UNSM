@@ -86,6 +86,28 @@ async function ask(message){
 }
 // Arrastre mediante Pointer Events, compatible con ratón y pantallas táctiles.
 const dragState={moved:false};
+
+// Mantiene el globo junto al dedo de Atenea, incluso al arrastrarla.
+function posicionarSaludo(){
+ const figura=$('atenea-personaje'),globo=$('atenea-saludo'),control=$('atenea-minimize');
+ if(!figura||!globo||!control)return;
+ const r=figura.getBoundingClientRect();
+ const w=globo.offsetWidth||190,h=globo.offsetHeight||92;
+ // El dedo levantado se sitúa en la zona superior izquierda de la figura.
+ let x=r.left-w+Math.min(46,r.width*.24),y=r.top+Math.min(22,r.height*.07);
+ const maxX=Math.max(6,window.innerWidth-w-6),maxY=Math.max(6,window.innerHeight-h-6);
+ // Cuando se arrastra al borde izquierdo, el saludo pasa al otro lado.
+ const ladoDerecho=x<6;
+ if(ladoDerecho)x=r.right-12;
+ x=Math.max(6,Math.min(maxX,x));y=Math.max(6,Math.min(maxY,y));
+ globo.style.left=x+'px';globo.style.top=y+'px';
+ globo.classList.toggle('atenea-saludo-derecha',ladoDerecho);
+ // El botón minimizar también acompaña a la figura.
+ if(!$('atenea-root').classList.contains('atenea-figure-hidden')){
+  control.style.left=Math.max(6,Math.min(window.innerWidth-36,r.right-22))+'px';
+  control.style.top=Math.max(6,Math.min(window.innerHeight-36,r.bottom-25))+'px';
+ }else{control.style.removeProperty('left');control.style.removeProperty('top');}
+}
 function initCharacterDrag(){
  const el=$('atenea-personaje');if(!el)return;
  let start=null,suppressUntil=0;
@@ -105,7 +127,7 @@ function initCharacterDrag(){
   el.style.setProperty('position','fixed','important');
   el.style.setProperty('left',x+'px','important');el.style.setProperty('top',y+'px','important');
   el.style.setProperty('right','auto','important');el.style.setProperty('bottom','auto','important');
-  el.classList.add('atenea-dragging');
+  el.classList.add('atenea-dragging');posicionarSaludo();
  });
  const finish=e=>{if(!start||e.pointerId!==start.id)return;
   if(start.active){suppressUntil=Date.now()+350;dragState.moved=true;}
@@ -116,7 +138,7 @@ function initCharacterDrag(){
  window.addEventListener('resize',()=>{
   if(!el.style.left)return;const r=el.getBoundingClientRect();
   el.style.left=Math.max(0,Math.min(window.innerWidth-r.width,r.left))+'px';
-  el.style.top=Math.max(0,Math.min(window.innerHeight-r.height,r.top))+'px';
+  el.style.top=Math.max(0,Math.min(window.innerHeight-r.height,r.top))+'px';posicionarSaludo();
  });
 }
 function mount(){if($('atenea-root'))return;
@@ -137,15 +159,21 @@ function mount(){if($('atenea-root'))return;
   btn.title=hidden?'Mostrar figura de Atenea':'Ocultar figura de Atenea';
   btn.setAttribute('aria-label',btn.title);
   try{sessionStorage.setItem('ateneaFigureHidden',String(hidden));}catch(_){}
+  requestAnimationFrame(posicionarSaludo);
  };
  try{if(sessionStorage.getItem('ateneaFigureHidden')==='true')$('atenea-minimize').click();}catch(_){}
  initCharacterDrag();
+ requestAnimationFrame(posicionarSaludo);
+ window.addEventListener('resize',posicionarSaludo);
+ window.addEventListener('scroll',posicionarSaludo,{passive:true});
+ const figuraImg=$('atenea-personaje').querySelector('img');
+ if(figuraImg&&!figuraImg.complete)figuraImg.addEventListener('load',posicionarSaludo,{once:true});
  $('atenea-voice').onchange=e=>{state.voice=e.target.checked;if(!state.voice&&'speechSynthesis'in window)speechSynthesis.cancel();};
  $('atenea-form').onsubmit=e=>{e.preventDefault();const i=$('atenea-input'),msg=i.value.trim();if(!msg||state.busy)return;i.value='';void ask(msg);};
  root.querySelectorAll('[data-ask]').forEach(b=>b.onclick=()=>{if(!state.busy)void ask(b.dataset.ask);});
  add('bot','¡Hola, futuro cachimbo! 💙 Soy Atenea. Puedo ayudarte con conceptos, pistas y estrategias de estudio.',false);
 }
-function show(open){state.open=open;$('atenea-root')?.classList.toggle('atenea-chat-open',open);$('atenea-panel').hidden=!open;$('atenea-toggle').setAttribute('aria-expanded',String(open));$('atenea-personaje').setAttribute('aria-expanded',String(open));if(open)$('atenea-input').focus();else if('speechSynthesis'in window)speechSynthesis.cancel();}
+function show(open){state.open=open;$('atenea-root')?.classList.toggle('atenea-chat-open',open);$('atenea-panel').hidden=!open;$('atenea-toggle').setAttribute('aria-expanded',String(open));$('atenea-personaje').setAttribute('aria-expanded',String(open));if(open)$('atenea-input').focus();else{requestAnimationFrame(posicionarSaludo);if('speechSynthesis'in window)speechSynthesis.cancel();}}
 function sync(){if(canUse()){
  mount();$('atenea-root').hidden=false;
  if(state.userId!==user.id){state.userId=user.id;state.history=[];const feed=$('atenea-feed');if(feed)feed.textContent='';add('bot','¡Hola! 💙 Soy Atenea. ¿Qué tema te gustaría aprender hoy?',false);}

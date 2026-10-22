@@ -73,3 +73,25 @@
 #atenea-root.atenea-figure-hidden #atenea-saludo,#atenea-root.atenea-chat-open #atenea-saludo,#atenea-root.atenea-saludo-dismissed #atenea-saludo{display:none!important}
 @media(max-width:700px){#atenea-root #atenea-saludo{right:135px!important;bottom:195px!important;max-width:145px;width:145px}}
 @media(max-width:390px){#atenea-root #atenea-saludo{right:112px!important;bottom:175px!important;max-width:135px;width:135px}}
+
+/* V3.3: el globo sigue a la figura y señala su mano, no una coordenada fija. */
+#atenea-root #atenea-saludo{
+ position:fixed!important;right:auto!important;bottom:auto!important;
+ left:0;top:0;z-index:10001;max-width:min(205px,calc(100vw - 16px));
+ box-sizing:border-box;pointer-events:auto;
+}
+#atenea-root #atenea-saludo:after{right:-8px;bottom:24px}
+#atenea-root #atenea-saludo.atenea-saludo-derecha:after{
+ right:auto;left:-8px;transform:rotate(225deg)
+}
+#atenea-root #atenea-minimize{position:fixed!important;right:auto!important;bottom:auto!important;z-index:10002}
+#atenea-root.atenea-figure-hidden #atenea-minimize{
+ left:auto!important;top:auto!important;right:128px!important;bottom:28px!important
+}
+#atenea-root.atenea-figure-hidden #atenea-saludo,
+#atenea-root.atenea-chat-open #atenea-saludo,
+#atenea-root.atenea-saludo-dismissed #atenea-saludo{display:none!important}
+@media(max-width:700px){
+ #atenea-root #atenea-saludo{width:150px!important;max-width:calc(100vw - 16px);font-size:11px}
+ #atenea-root.atenea-figure-hidden #atenea-minimize{right:112px!important;bottom:19px!important}
+}
