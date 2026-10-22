@@ -67,3 +67,9 @@
  #atenea-saludo{right:105px;bottom:240px;width:150px;max-width:calc(100vw - 140px);font-size:11px;padding:12px 19px 12px 9px}
 }
 @media(max-width:360px){#atenea-saludo{right:90px;width:135px;bottom:210px}}
+
+/* V3.2: posición fija y saludo visible en cada carga nueva. */
+#atenea-root #atenea-saludo{position:fixed!important;right:clamp(190px,19vw,295px)!important;bottom:245px!important;display:block;visibility:visible;opacity:1;pointer-events:auto;z-index:10001;max-width:205px}
+#atenea-root.atenea-figure-hidden #atenea-saludo,#atenea-root.atenea-chat-open #atenea-saludo,#atenea-root.atenea-saludo-dismissed #atenea-saludo{display:none!important}
+@media(max-width:700px){#atenea-root #atenea-saludo{right:135px!important;bottom:195px!important;max-width:145px;width:145px}}
+@media(max-width:390px){#atenea-root #atenea-saludo{right:112px!important;bottom:175px!important;max-width:135px;width:135px}}

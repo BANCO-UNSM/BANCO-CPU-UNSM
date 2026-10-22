@@ -128,9 +128,9 @@ function mount(){if($('atenea-root'))return;
  $('atenea-close').onclick=()=>show(false);
  $('atenea-saludo-close').onclick=()=>{
   root.classList.add('atenea-saludo-dismissed');
-  try{sessionStorage.setItem('ateneaSaludoDismissed','true');}catch(_){}
+
  };
- try{if(sessionStorage.getItem('ateneaSaludoDismissed')==='true')root.classList.add('atenea-saludo-dismissed');}catch(_){}
+
  $('atenea-minimize').onclick=()=>{
   const hidden=root.classList.toggle('atenea-figure-hidden');
   const btn=$('atenea-minimize');btn.textContent=hidden?'+':'−';
