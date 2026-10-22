@@ -4,3 +4,7 @@
 
 /* Respuestas de Atenea: listas y fórmulas legibles */
 .atenea-bubble{white-space:normal;overflow-wrap:anywhere}.atenea-bubble>div+div{margin-top:6px}.atenea-bubble ul,.atenea-bubble ol{margin:7px 0;padding-left:23px}.atenea-bubble li+li{margin-top:5px}.atenea-bubble .katex-display{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:6px 0}.atenea-bubble code{background:#f1f3f7;padding:1px 4px;border-radius:4px}
+
+.atenea-bubble pre{overflow-x:auto;white-space:pre;font-family:monospace;padding:10px;border-radius:8px;background:rgba(125,125,125,.1)}
+.atenea-bubble h3,.atenea-bubble h4,.atenea-bubble h5,.atenea-bubble h6{margin:12px 0 6px;font-size:1em}
+.atenea-bubble hr{border:0;border-top:1px solid #d6dbe4;margin:12px 0}

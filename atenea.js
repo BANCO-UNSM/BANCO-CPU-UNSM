@@ -16,17 +16,46 @@ const speak=text=>{
  const voices=speechSynthesis.getVoices();const v=voices.find(v=>/^es[-_](PE|MX|CO|419)/i.test(v.lang)&&/female|mujer|paulina|sabina|helena|monica|luciana/i.test(v.name))||voices.find(v=>/^es/i.test(v.lang)&&/female|mujer|paulina|sabina|helena|monica|luciana/i.test(v.name))||voices.find(v=>/^es/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u);
 };
 const formatText=(target,source)=>{
- const lines=String(source).replace(/\r\n?/g,'\n').split('\n');let list=null;
- const inline=(parent,line)=>{const re=/(\*\*[^*\n]+\*\*|`[^`\n]+`)/g;let start=0,m;
-  while((m=re.exec(line))){if(m.index>start)parent.append(document.createTextNode(line.slice(start,m.index)));
-   const token=m[0],el=document.createElement(token.startsWith('**')?'strong':'code');el.textContent=token.startsWith('**')?token.slice(2,-2):token.slice(1,-1);parent.append(el);start=re.lastIndex;}
-  if(start<line.length)parent.append(document.createTextNode(line.slice(start)));};
- for(const line of lines){if(!line.trim()){list=null;continue;}
-  const bullet=line.match(/^\s*(?:[-*]|\d+\.)\s+(.+)$/);
-  if(bullet){const kind=/^\s*\d+\./.test(line)?'ol':'ul';if(!list||list.tagName.toLowerCase()!==kind){list=document.createElement(kind);target.append(list);}const li=document.createElement('li');inline(li,bullet[1]);list.append(li);continue;}
-  list=null;const heading=line.match(/^\s*#{1,4}\s+(.+)$/);const block=document.createElement(heading?'strong':'div');inline(block,heading?heading[1]:line);target.append(block);
+ // Normaliza saltos de línea reales y secuencias escapadas por la API.
+ const raw=String(source??'').replace(/\r\n?/g,'\n').replace(/\\n/g,'\n')
+  .replace(/\\([*`])/g,'$1');
+ const appendInline=(parent,value)=>{
+  // LaTeX se identifica antes del Markdown para no romper los delimitadores.
+  const rx=/(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|(?<!\$)\$(?!\$)[^\n$]+\$(?!\$)|\*\*[^*\n]+\*\*|`[^`\n]+`)/g;
+  let pos=0,m;
+  while((m=rx.exec(value))){
+   if(m.index>pos)parent.append(document.createTextNode(value.slice(pos,m.index)));
+   const token=m[0];
+   if(token.startsWith('$')||token.startsWith('\\[')||token.startsWith('\\(')){
+    const display=token.startsWith('$$')||token.startsWith('\\[');
+    const formula=token.startsWith('$$')?token.slice(2,-2):token.startsWith('$')?token.slice(1,-1):token.slice(2,-2);
+    const node=document.createElement(display?'div':'span');
+    if(typeof katex!=='undefined'&&typeof katex.render==='function'){
+     try{katex.render(formula,node,{displayMode:display,throwOnError:false,strict:'ignore',trust:false});}
+     catch(e){node.textContent=token;}
+    }else{node.textContent=token;}
+    parent.append(node);
+   }else if(token.startsWith('**')){
+    const node=document.createElement('strong');appendInline(node,token.slice(2,-2));parent.append(node);
+   }else{const node=document.createElement('code');node.textContent=token.slice(1,-1);parent.append(node);}
+   pos=rx.lastIndex;
+  }
+  if(pos<value.length)parent.append(document.createTextNode(value.slice(pos)));
+ };
+ let list=null,code=null;
+ for(const line of raw.split('\n')){
+  if(/^\s*```/.test(line)){if(code){code=null;}else{const pre=document.createElement('pre');code=document.createElement('code');pre.append(code);target.append(pre);}list=null;continue;}
+  if(code){code.append(document.createTextNode(line+'\n'));continue;}
+  if(!line.trim()){list=null;continue;}
+  if(/^\s*---+\s*$/.test(line)){target.append(document.createElement('hr'));list=null;continue;}
+  const bullet=line.match(/^\s*([-*]|\d+\.)\s+(.+)$/);
+  if(bullet){const kind=/\d/.test(bullet[1])?'ol':'ul';if(!list||list.tagName.toLowerCase()!==kind){list=document.createElement(kind);target.append(list);}
+   const li=document.createElement('li');appendInline(li,bullet[2]);list.append(li);continue;}
+  list=null;
+  const heading=line.match(/^\s*(#{1,4})\s+(.+)$/);
+  const tag=heading?'h'+Math.min(heading[1].length+2,6):'div';
+  const block=document.createElement(tag);appendInline(block,heading?heading[2]:line);target.append(block);
  }
- if(typeof renderMathInElement==='function'){try{renderMathInElement(target,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false,strict:'ignore'});}catch(e){console.warn('Atenea: error de formato matemático',e);}}
 };
 const add=(who,text,record=true)=>{
  if(record){state.history.push({role:who==='user'?'user':'assistant',content:text});state.history=state.history.slice(-16);}
