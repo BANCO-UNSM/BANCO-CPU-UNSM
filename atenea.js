@@ -1,40 +1,62 @@
-/* Atenea v1: tutora guiada local. Sin claves privadas ni acceso a respuestas antes de contestar. */
+/* Atenea v2: chat conectado a Supabase Edge Function atenea-chat (Gemini).
+   No incluye claves privadas, respuestas oficiales ni llamadas directas a Gemini. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
-const state={open:false,voice:false,history:[]};
-const canUse=()=>typeof user!=='undefined' && !!user && (typeof teacher==='function'&&teacher() || !!access?.allowed);
-const context=()=>{
+const state={open:false,voice:false,busy:false,history:[],userId:null};
+const canUse=()=>typeof user!=='undefined'&&!!user&&!!access?.allowed;
+const studyContext=()=>{
  const q=(typeof practice!=='undefined'&&practice?.items?.[practice.i])||null;
- return {q,answered:!!(typeof practice!=='undefined'&&practice?.feedback),feedback:typeof practice!=='undefined'?practice?.feedback:null};
+ if(!q)return null;
+ // Nunca enviar claves, alternativas, feedback ni explicaciones oficiales.
+ return {subject:String(q.subject||'').slice(0,100),topic:String(q.topic||'').slice(0,150),week:String(q.week??'').slice(0,10),statement:String(q.statement||'').slice(0,2500)};
 };
-const escText=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const speak=text=>{
  if(!state.voice||!('speechSynthesis'in window))return;
- speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text.replace(/\s+/g,' ').slice(0,1800));u.lang='es-PE';u.rate=.91;u.pitch=1.02;
- const voices=speechSynthesis.getVoices();const voice=voices.find(v=>/^es[-_](PE|MX|CO|419)/i.test(v.lang)&&/female|mujer|paulina|sabina|helena|monica|luciana/i.test(v.name))||voices.find(v=>/^es/i.test(v.lang)&&/female|mujer|paulina|sabina|helena|monica|luciana/i.test(v.name))||voices.find(v=>/^es/i.test(v.lang));if(voice)u.voice=voice;
- speechSynthesis.speak(u);
+ speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/\s+/g,' ').slice(0,1800));u.lang='es-PE';u.rate=.91;u.pitch=1.02;
+ const voices=speechSynthesis.getVoices();const v=voices.find(v=>/^es[-_](PE|MX|CO|419)/i.test(v.lang)&&/female|mujer|paulina|sabina|helena|monica|luciana/i.test(v.name))||voices.find(v=>/^es/i.test(v.lang)&&/female|mujer|paulina|sabina|helena|monica|luciana/i.test(v.name))||voices.find(v=>/^es/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u);
 };
-const add=(who,text)=>{state.history.push({who,text});state.history=state.history.slice(-20);const feed=$('atenea-feed');if(!feed)return;const div=document.createElement('div');div.className='atenea-bubble '+(who==='user'?'atenea-user':'atenea-bot');div.textContent=text;feed.append(div);feed.scrollTop=feed.scrollHeight;if(who!=='user')speak(text);};
-function answer(input){const t=input.toLocaleLowerCase('es');const {q,answered,feedback}=context();const subject=q?.subject||'la materia que estás estudiando';
- if(/(hola|buenas|saludos)/.test(t))return '¡Hola, futuro cachimbo! Soy Atenea. 💙 Estoy aquí para acompañarte en tu preparación para la UNSM. ¿Quieres una pista, una estrategia o motivación?';
- if(/(pista|ayuda|no entiendo|no sé|no se)/.test(t))return q&&!answered?`Estás practicando ${subject}, semana ${q.week}. Primero identifica qué concepto central aparece en el enunciado. Después descarta las alternativas que contradigan ese concepto. No te revelaré la clave antes de que respondas. ¿Qué opción te parece más razonable?`:'Puedo darte una pista cuando estés resolviendo una pregunta en «Práctica inmediata». Mientras tanto, identifica las palabras clave del tema y explica con tus propias palabras qué te pide la pregunta.';
- if(/(explica|explicación|explicacion|respuesta|correcta|por qué|porque)/.test(t)){
- if(q&&!answered)return 'Primero intenta responder la pregunta en «Práctica inmediata». Después podré ayudarte a revisar la explicación. Así aprendes a razonar sin depender de la clave.';
- if(q&&answered){const ex=String(feedback?.explanation||'').trim();return ex?`Revisemos la explicación de ${subject}:\n\n${ex}`:'Ya comprobaste tu respuesta. Revisa el desarrollo mostrado debajo de la pregunta; si aún no tiene explicación, el docente puede incorporarla.';}
- return 'Abre «Práctica inmediata» y selecciona una materia. Al comprobar una respuesta, podrás consultar su explicación conmigo.';
- }
- if(/(motiv|ánimo|animo|cansad|difícil|dificil)/.test(t))return 'Tu ingreso no depende de acertar todo hoy. 💙 Cada error que comprendes es una oportunidad de mejorar. Estudia con constancia, descansa cuando lo necesites y vuelve con una meta pequeña y concreta.';
- if(/(repas|estudi|consejo|estrategia)/.test(t))return `Te propongo un repaso en tres pasos: 1) recuerda las ideas esenciales de ${subject}; 2) resuelve una pregunta sin mirar la clave; 3) explica por qué descartaste cada alternativa. ¡Ese último paso fortalece mucho tu aprendizaje!`;
- return 'Puedo ayudarte con pistas, estrategias de estudio, motivación y explicaciones de preguntas que ya respondiste. Por ahora soy una tutora guiada; la conversación abierta con IA se añadirá en una siguiente etapa.';
+const add=(who,text,record=true)=>{
+ if(record){state.history.push({role:who==='user'?'user':'assistant',content:text});state.history=state.history.slice(-16);}
+ const feed=$('atenea-feed');if(!feed)return;const div=document.createElement('div');div.className='atenea-bubble '+(who==='user'?'atenea-user':'atenea-bot');div.textContent=text;feed.append(div);feed.scrollTop=feed.scrollHeight;if(who!=='user')speak(text);
+};
+function busy(on){state.busy=on;const i=$('atenea-input'),send=$('atenea-send');if(i)i.disabled=on;if(send)send.disabled=on;document.querySelectorAll('#atenea-root [data-ask]').forEach(b=>b.disabled=on);const status=$('atenea-status');if(status)status.textContent=on?'Atenea está preparando su respuesta…':'Atenea usa Gemini con cupos gratuitos.';}
+async function ask(message){
+ const msg=String(message||'').trim().slice(0,700);if(!msg||state.busy)return;
+ if(!canUse()){add('bot','Tu sesión no tiene acceso autorizado a Atenea.',false);return;}
+ const previous=state.history.slice(-8);add('user',msg);busy(true);
+ try{
+  if(typeof db==='undefined'||!db)throw new Error('No se pudo iniciar la conexión con Supabase.');
+  const {data:{session},error:sessionError}=await db.auth.getSession();
+  if(sessionError||!session?.access_token||session.user.id!==user?.id)throw new Error('Inicia sesión nuevamente para hablar con Atenea.');
+  const {data,error}=await db.functions.invoke('atenea-chat',{
+   method:'POST',headers:{Authorization:`Bearer ${session.access_token}`},
+   body:{message:msg,history:previous,context:studyContext()}
+  });
+  if(error){let reason='No se pudo contactar a Atenea.';
+   try{const details=await error.context?.json?.();if(typeof details?.error==='string')reason=details.error;}catch(_){/* Respuesta sin JSON */}
+   throw new Error(reason);
+  }
+  if(typeof data?.reply!=='string'||!data.reply.trim())throw new Error(data?.error||'Atenea no devolvió una respuesta.');
+  add('bot',data.reply.trim());
+  if(Number.isInteger(data.remaining)){$('atenea-status').textContent=`Te quedan ${data.remaining} de 60 consultas hoy (hora de Perú).`;}
+ }catch(err){console.warn('Atenea:',err?.message||err);add('bot','⚠️ '+(err?.message||'Ocurrió un problema temporal. Inténtalo más tarde.'),false);}
+ finally{busy(false);if(state.open)$('atenea-input')?.focus();}
 }
-function mount(){if($('atenea-root'))return;const root=document.createElement('div');root.id='atenea-root';root.innerHTML=`<button id="atenea-toggle" type="button" aria-label="Abrir asistente Atenea" title="Habla con Atenea">✦ <span>Atenea</span></button><section id="atenea-panel" role="dialog" aria-label="Atenea, asistente académica" hidden><div class="atenea-top"><div class="atenea-mark">A</div><div><strong>ATENEA</strong><small>Tu guía inteligente hacia la UNSM</small></div><button type="button" id="atenea-close" aria-label="Cerrar">×</button></div><div id="atenea-feed" class="atenea-feed" aria-live="polite"></div><div class="atenea-shortcuts"><button type="button" data-ask="Dame una pista">💡 Pista</button><button type="button" data-ask="Explícame la respuesta">📘 Explicación</button><button type="button" data-ask="Motívame">💙 Ánimo</button></div><form id="atenea-form"><input id="atenea-input" maxlength="350" autocomplete="off" placeholder="Pregúntale a Atenea..." aria-label="Tu mensaje"/><button type="submit" aria-label="Enviar">➤</button></form><div class="atenea-foot"><label><input type="checkbox" id="atenea-voice"/> 🔊 Leer respuestas</label><span>Voz disponible según tu navegador</span></div></section>`;document.body.append(root);
+function mount(){if($('atenea-root'))return;
+ const root=document.createElement('div');root.id='atenea-root';
+ root.innerHTML=`<button id="atenea-toggle" type="button" aria-label="Abrir asistente Atenea" title="Habla con Atenea">✦ <span>Atenea</span></button><section id="atenea-panel" role="dialog" aria-label="Atenea, asistente académica" hidden><div class="atenea-top"><div class="atenea-mark">A</div><div><strong>ATENEA</strong><small>Tu guía inteligente hacia la UNSM</small></div><button type="button" id="atenea-close" aria-label="Cerrar">×</button></div><div id="atenea-feed" class="atenea-feed" aria-live="polite"></div><div class="atenea-shortcuts"><button type="button" data-ask="Dame una pista">💡 Pista</button><button type="button" data-ask="Explícame el concepto sin revelar la respuesta de la práctica">📘 Explicación</button><button type="button" data-ask="Motívame">💙 Ánimo</button></div><form id="atenea-form"><input id="atenea-input" maxlength="700" autocomplete="off" placeholder="Pregúntale a Atenea..." aria-label="Tu mensaje"/><button id="atenea-send" type="submit" aria-label="Enviar">➤</button></form><div class="atenea-foot"><label><input type="checkbox" id="atenea-voice"/> 🔊 Leer respuestas</label><span id="atenea-status">Atenea usa Gemini con cupos gratuitos.</span></div></section>`;
+ document.body.append(root);
  $('atenea-toggle').onclick=()=>show(!state.open);$('atenea-close').onclick=()=>show(false);
  $('atenea-voice').onchange=e=>{state.voice=e.target.checked;if(!state.voice&&'speechSynthesis'in window)speechSynthesis.cancel();};
- $('atenea-form').onsubmit=e=>{e.preventDefault();const i=$('atenea-input');const msg=i.value.trim();if(!msg)return;i.value='';add('user',msg);add('bot',answer(msg));};
- root.querySelectorAll('[data-ask]').forEach(b=>b.onclick=()=>{const msg=b.dataset.ask;add('user',msg);add('bot',answer(msg));});
- add('bot','¡Hola, futuro cachimbo! 💙 Soy Atenea, tu compañera de estudio. ¿Necesitas una pista o quieres repasar una pregunta?');
+ $('atenea-form').onsubmit=e=>{e.preventDefault();const i=$('atenea-input'),msg=i.value.trim();if(!msg||state.busy)return;i.value='';void ask(msg);};
+ root.querySelectorAll('[data-ask]').forEach(b=>b.onclick=()=>{if(!state.busy)void ask(b.dataset.ask);});
+ add('bot','¡Hola, futuro cachimbo! 💙 Soy Atenea. Puedo ayudarte con conceptos, pistas y estrategias de estudio.',false);
 }
 function show(open){state.open=open;$('atenea-panel').hidden=!open;$('atenea-toggle').setAttribute('aria-expanded',String(open));if(open)$('atenea-input').focus();else if('speechSynthesis'in window)speechSynthesis.cancel();}
-function sync(){if(canUse()){mount();$('atenea-root').hidden=false;}else{if($('atenea-root')){$('atenea-root').hidden=true;if(state.open)show(false);}}}
-const observer=new MutationObserver(()=>sync());window.addEventListener('DOMContentLoaded',()=>{sync();const target=$('account');if(target)observer.observe(target,{childList:true,subtree:true});});
+function sync(){if(canUse()){
+ mount();$('atenea-root').hidden=false;
+ if(state.userId!==user.id){state.userId=user.id;state.history=[];const feed=$('atenea-feed');if(feed)feed.textContent='';add('bot','¡Hola! 💙 Soy Atenea. ¿Qué tema te gustaría aprender hoy?',false);}
+ }else if($('atenea-root')){$('atenea-root').hidden=true;state.history=[];state.userId=null;if(state.open)show(false);}}
+const observer=new MutationObserver(sync);
+window.addEventListener('DOMContentLoaded',()=>{sync();const target=$('account');if(target)observer.observe(target,{childList:true,subtree:true});});
 })();
