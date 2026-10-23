@@ -131,7 +131,7 @@ async function cargarImagenesPrivadas(raiz=document){
 
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
 let activityRows=[],activityLoaded=false,activityError='';
-let relationItems=[],relationBusy=false,relationLoaded=false,relationError='',relationSelected=null,relationAnswers=[],relationGrade=null;
+let relationItems=[],relationBusy=false,relationLoaded=false,relationError='',relationSelected=null,relationAnswers=[],relationGrade=null,relationReview=null;
 let authMode='login';
 let selectedModality='CPU-UNSM';
 const modalityQuestions=()=>questions.filter(q=>q.modality===selectedModality);
@@ -153,6 +153,7 @@ function mensajeDuplicado(q){
 const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':''}>${esc(s)}</p></div>`;
 async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
 async function refresh(){
+ relationLoaded=false;relationItems=[];relationReview=null;
  profile=null;access=null;questions=[];attempts=[];
  if(user){
   const p=await db.from('profiles').select('role,name').eq('id',user.id).maybeSingle();profile=p.data;
@@ -192,15 +193,15 @@ async function refresh(){
 }
 function render(){
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['relations','Relacionar columnas'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
  document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{page=x.dataset.page;quiz=null;practice=null;render()});
- $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',relations:'Relacionar columnas',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
+ $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,relations:relationsPage,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
  bind();
  mostrarFormulas();
  // Carga imágenes privadas visibles después de dibujar cada pantalla.
@@ -331,17 +332,17 @@ function home(){
 
 
 // Ejercicios de relación: las claves solo se consultan después de calificar mediante RPC.
-function relationsPage(){
- if(!relationLoaded&&!relationBusy){queueMicrotask(loadRelations);}
- const buttons=relationItems.map(q=>`<button type="button" class="secondary" data-rel-id="${esc(q.id)}">${esc(q.titulo)} · ${Number(q.total_relaciones)||0} relaciones ${q.estado==='borrador'?'(borrador)':''}</button>`).join('');
- let content='<p class="muted">Selecciona un ejercicio para responder en los paréntesis.</p>';
- const q=relationItems.find(x=>x.id===relationSelected);
- if(q){
-  const left=Array.isArray(q.columna_izquierda)?q.columna_izquierda:[];
-  const right=Array.isArray(q.columna_derecha)?q.columna_derecha:[];
-  content=`<div class="card"><h2>${esc(q.titulo)}</h2><p class="muted">${esc(q.enunciado)}</p><div class="relation-head"><strong>COLUMNA A</strong><strong>COLUMNA B</strong></div><div class="relation-rows">${right.map((r,i)=>`<div class="relation-row"><span>${i+1}. ${esc(left[i]||'')}</span><label class="relation-answer">(<input data-rel-answer="${i}" type="number" min="1" max="${left.length}" step="1" inputmode="numeric" aria-label="Número correspondiente a ${esc(r)}" value="${esc(relationAnswers[i]??'')}" ${relationGrade?'disabled':''}>) <span>${esc(r)}</span></label>${relationGrade?`<span class="relation-result ${relationGrade.detalle?.[i]?.correcto?'ok':'bad'}">${relationGrade.detalle?.[i]?.correcto?'✓':`✕ ${Number(relationGrade.detalle?.[i]?.respuesta_correcta)||'—'}`}</span>`:''}</div>`).join('')}</div>${relationGrade?`<p class="relation-score">Resultado: ${Number(relationGrade.aciertos)||0} de ${right.length} relaciones correctas.</p><button id="relationAgain" class="secondary">Volver a intentar</button>`:`<button id="relationCheck" ${relationBusy?'disabled':''}>Calificar relaciones</button>`}<p id="relationStatus" role="status" class="muted"></p></div>`;
- }
- return `<div class="card"><h2>Relacionar columnas · CPU-UNSM</h2><p class="muted">Ejercicios de Razonamiento Verbal con el formato original de la separata. Las respuestas se verifican en Supabase.</p><div class="actions">${buttons||'<span class="muted">No hay ejercicios disponibles todavía.</span>'}<button type="button" class="secondary" id="relationReload">Actualizar</button></div>${relationError?`<p style="color:#b91c1c">${esc(relationError)}</p>`:''}</div>${content}`;
+function relationRows(q,withAnswers=false){
+ const left=Array.isArray(q.columna_izquierda)?q.columna_izquierda:[];
+ const right=Array.isArray(q.columna_derecha)?q.columna_derecha:[];
+ return `<div class="relation-head"><strong>COLUMNA A</strong><strong>COLUMNA B</strong></div><div class="relation-rows">${right.map((r,i)=>`<div class="relation-row"><span>${i+1}. ${esc(left[i]||'')}</span><label class="relation-answer">(<input data-rel-answer="${i}" type="number" min="1" max="${left.length}" step="1" inputmode="numeric" aria-label="Número correspondiente a ${esc(r)}" value="${esc(relationAnswers[i]??'')}" ${withAnswers?'':'disabled'} ${relationGrade?'disabled':''}>) <span>${esc(r)}</span></label>${relationGrade?`<span class="relation-result ${relationGrade.detalle?.[i]?.correcto?'ok':'bad'}">${relationGrade.detalle?.[i]?.correcto?'✓':`✕ ${Number(relationGrade.detalle?.[i]?.respuesta_correcta)||'—'}`}</span>`:''}</div>`).join('')}</div>`;
+}
+function relationBankPanel(){
+ if(selectedModality!=='CPU-UNSM')return '';
+ if(!relationLoaded&&!relationBusy)queueMicrotask(loadRelations);
+ const filtered=relationItems.filter(q=>q.estado==='publicado'&&(!$('subjectFilter')?.value||$('subjectFilter').value==='Razonamiento Verbal')&&(!$('weekFilter')?.value||String(q.semana)===$('weekFilter').value));
+ const q=filtered.find(q=>q.id===relationSelected);
+ return `<div class="card" style="margin-top:14px"><h2>Ejercicios de relacionar · Razonamiento Verbal</h2>${relationError?`<p style="color:#b91c1c">${esc(relationError)}</p>`:''}${filtered.map(q=>`<button type="button" class="secondary" data-rel-id="${esc(q.id)}">Semana ${Number(q.semana)||6} · Pregunta ${Number(q.numero_original)||'—'} · ${esc(q.titulo)}</button>`).join('')||'<p class="muted">No hay ejercicios de relación publicados con estos filtros.</p>'}${q?`<div class="card"><h3>Pregunta ${Number(q.numero_original)} · ${esc(q.titulo)}</h3><p>${esc(q.enunciado)}</p>${relationRows(q,true)}${relationGrade?`<p class="relation-score">Resultado: ${Number(relationGrade.aciertos)||0} de ${Number(q.total_relaciones)} relaciones correctas.</p><button id="relationAgain" class="secondary">Volver a intentar</button>`:'<button id="relationCheck">Calificar relaciones</button>'}<p id="relationStatus" role="status"></p></div>`:''}</div>`;
 }
 async function loadRelations(){
  if(relationBusy)return;relationBusy=true;relationError='';
@@ -349,10 +350,10 @@ async function loadRelations(){
  relationBusy=false;relationLoaded=true;
  if(error){relationError='No se pudieron cargar los ejercicios: '+error.message;relationItems=[];}
  else relationItems=Array.isArray(data)?data:[];
- if(page==='relations')render();
+ if(page==='review'||page==='bank')render();
 }
 function bindRelations(){
- $('relationReload')?.addEventListener('click',()=>{relationLoaded=false;loadRelations()});
+ 
  document.querySelectorAll('[data-rel-id]').forEach(b=>b.onclick=()=>{
   relationSelected=b.dataset.relId;relationAnswers=[];relationGrade=null;render();
  });
@@ -376,6 +377,8 @@ function bankList(){
  const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();
  contenedor.innerHTML=questions.filter(q=>q.modality===selectedModality&&(!s||q.subject===s)
 &&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
+ contenedor.insertAdjacentHTML('beforeend',relationBankPanel());
+ bindRelations();
  mostrarFormulas();
  cargarImagenesPrivadas(contenedor);
  if(admin())bindBankSolutions();
@@ -679,19 +682,23 @@ function bindBulk(){
 const admin=()=>profile?.role==='admin';
 function reviewPage(){
  if(!teacher())return notice('Acceso exclusivo para docentes',true);
- const subjects=[...new Set(modalityQuestions().map(q=>q.subject))].sort();
- const weeks=[...new Set(modalityQuestions().map(q=>q.week))].sort((a,b)=>a-b);
+ if(!relationLoaded&&!relationBusy)queueMicrotask(loadRelations);
+ const subjects=[...new Set([...modalityQuestions().map(q=>q.subject),'Razonamiento Verbal'])].sort();
+ const weeks=[...new Set([...modalityQuestions().map(q=>q.week),6])].sort((a,b)=>a-b);
  const opts=(values,current)=>values.map(v=>`<option value="${esc(v)}" ${String(v)===String(current)?'selected':''}>${esc(v)}</option>`).join('');
  const filtered=modalityQuestions().filter(q=>(!reviewFilter.subject||q.subject===reviewFilter.subject)&&(!reviewFilter.week||String(q.week)===reviewFilter.week)&&(!reviewFilter.status||q.status===reviewFilter.status));
  const detail=reviewSelected;
- return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todas las semanas</option>${weeks.map(w=>`<option value="${w}" ${String(w)===reviewFilter.week?'selected':''}>Semana ${w}</option>`).join('')}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length} preguntas encontradas · ${modalityQuestions().filter(q=>q.status==='draft').length} borradores · ${modalityQuestions().filter(q=>q.status==='review').length} en revisión · ${modalityQuestions().filter(q=>q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')||'<p>No hay preguntas con estos filtros.</p>'}</div><div id="reviewDetail">${detail?reviewDetail(detail):''}</div>`;
+ const rels=relationItems.filter(q=>(!reviewFilter.subject||reviewFilter.subject==='Razonamiento Verbal')&&(!reviewFilter.week||String(q.semana)===reviewFilter.week)&&(!reviewFilter.status||(q.estado==='borrador'?'draft':q.estado==='publicado'?'published':q.estado==='revision'?'review':q.estado)===reviewFilter.status));
+ return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todas las semanas</option>${weeks.map(w=>`<option value="${w}" ${String(w)===reviewFilter.week?'selected':''}>Semana ${w}</option>`).join('')}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length+rels.length} preguntas encontradas · ${modalityQuestions().filter(q=>q.status==='draft').length} borradores · ${modalityQuestions().filter(q=>q.status==='review').length} en revisión · ${modalityQuestions().filter(q=>q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${rels.map(q=>`<div class="listitem"><strong>Razonamiento Verbal · Semana ${Number(q.semana)||6} · N.º ${Number(q.numero_original)||'—'}</strong> <span class="tag">${esc(q.estado)}</span><p>${esc(q.titulo)}</p><button class="secondary" data-relation-review="${esc(q.id)}">Revisar pregunta</button></div>`).join('')}${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')}${!filtered.length&&!rels.length?'<p>No hay preguntas con estos filtros.</p>':''}${relationError?`<p style="color:#b91c1c">${esc(relationError)}</p>`:''}</div><div id="reviewDetail">${relationReview?relationReviewDetail(relationReview):(detail?reviewDetail(detail):'')}</div>`;
 }
 function reviewDetail(q){
  const editable=q.status!=='published'||admin();
  return `<div class="card"><h2>Pregunta N.º ${q.original_number??'—'} · ${esc(q.status)}</h2><p class="muted small">Materia: ${esc(q.subject)} · Semana ${q.week}</p><form id="reviewForm"><div class="form-grid"><div class="field"><label>Ciclo</label><input name="cycle" value="${esc(q.cycle)}" required ${editable?'':'disabled'}></div><div class="field"><label>Semana</label><input type="number" name="week" min="1" max="60" value="${q.week}" required ${editable?'':'disabled'}></div><div class="field"><label>Materia</label><input name="subject" value="${esc(q.subject)}" required ${editable?'':'disabled'}></div><div class="field"><label>Tema</label><input name="topic" value="${esc(q.topic)}" required ${editable?'':'disabled'}></div><div class="field"><label>Página</label><input type="number" name="page" min="1" value="${q.page??''}" ${editable?'':'disabled'}></div><div class="field"><label>Número original</label><input type="number" name="number" min="1" value="${q.original_number??''}" ${editable?'':'disabled'}></div></div><div class="field"><label>Enunciado</label><textarea name="statement" required ${editable?'':'disabled'}>${esc(q.statement)}</textarea></div>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${'ABCDE'.split('').map((letter,i)=>`<div class="field"><label>Alternativa ${letter}</label><input name="option${letter}" value="${esc(q.options[i]||'')}" required ${editable?'':'disabled'}></div>`).join('')}<div class="field"><label>Clave propuesta</label><select name="correct" ${editable?'':'disabled'}>${'ABCDE'.split('').map((letter,i)=>`<option value="${i}" ${q.correct_index===i?'selected':''}>${letter}</option>`).join('')}</select></div><div class="field"><label>Explicación</label><textarea name="explanation" ${editable?'':'disabled'}>${esc(q.explanation||'')}</textarea></div>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}${admin()?`<div class="field"><label>Agregar o reemplazar imagen de la solución</label><input id="reviewSolutionImage" type="file" accept="image/png,image/jpeg,image/webp"><p class="muted small">PNG, JPG o WEBP, hasta 5 MB. Puedes guardar esta imagen sin modificar el texto, las alternativas ni la clave.</p><button type="button" id="reviewUploadSolution">Guardar imagen de solución</button><p id="reviewImageStatus" class="muted" role="status"></p></div>`:''}<div class="field"><label>Referencia</label><input name="source" value="${esc(q.source||'')}" ${editable?'':'disabled'}></div>${editable?'<button type="submit" id="reviewSave">'+(q.status==='published'?'Guardar cambios de pregunta publicada':'Guardar correcciones')+'</button>':''}</form><div class="actions" style="margin-top:12px">${q.status==='draft'?'<button id="reviewSubmit" class="secondary">Enviar a revisión</button>':''}${admin()&&q.status==='review'?'<button id="reviewPublish">Publicar pregunta</button>':''}<button id="reviewClose" class="secondary">Cerrar detalle</button></div><p id="reviewDetailStatus" class="muted" role="status"></p>${q.status==='published'?'<p class="muted small">'+(admin()?'Solo el administrador puede editar esta pregunta. Las calificaciones anteriores no se recalcularán. Cada cambio quedará registrado.':'Esta pregunta publicada solo puede ser editada por el administrador.')+'</p>':''}</div>`;
 }
 function bindReview(){
- for(const [id,key] of [['reviewSubject','subject'],['reviewWeek','week'],['reviewStatus','status']])$(id).onchange=()=>{reviewFilter[key]=$(id).value;reviewSelected=null;render()};
+ document.querySelectorAll('[data-relation-review]').forEach(b=>b.onclick=async()=>{const msg=$('reviewMessage');msg.textContent='Cargando relaciones...';const {data,error}=await db.rpc('cachimbolab_revisar_relacion',{p_id:b.dataset.relationReview});if(error){msg.textContent=error.message;return}relationReview=data;reviewSelected=null;$('reviewDetail').innerHTML=relationReviewDetail(data);msg.textContent='';bindRelationReview();$('reviewDetail').scrollIntoView({behavior:'smooth',block:'start'});});
+ if(relationReview)bindRelationReview();
+ for(const [id,key] of [['reviewSubject','subject'],['reviewWeek','week'],['reviewStatus','status']])$(id).onchange=()=>{reviewFilter[key]=$(id).value;reviewSelected=null;relationReview=null;render()};
  document.querySelectorAll('[data-review-id]').forEach(btn=>btn.onclick=async()=>{
    const message=$('reviewMessage');message.textContent='Cargando pregunta y clave...';
    const {data,error}=await db.rpc('get_question_for_review',{p_question_id:btn.dataset.reviewId});
@@ -699,6 +706,23 @@ function bindReview(){
    reviewSelected={...data,statement_image_path:questions.find(q=>q.id===data.id)?.statement_image_path??data.statement_image_path,solution_image_path:questions.find(q=>q.id===data.id)?.solution_image_path??data.solution_image_path};liberarImagenesPrivadas($('reviewDetail'));$('reviewDetail').innerHTML=reviewDetail(reviewSelected);cargarImagenesPrivadas($('reviewDetail'));message.textContent='';bindReviewDetail();$('reviewDetail').scrollIntoView({behavior:'smooth',block:'start'});
  });
  if(reviewSelected)bindReviewDetail();
+}
+function relationReviewDetail(q){
+ const left=q.columna_izquierda||[],right=q.columna_derecha||[],key=q.clave||[];
+ return `<div class="card"><h2>Pregunta ${Number(q.numero_original)} · ${esc(q.titulo)}</h2><p>Razonamiento Verbal · Semana ${Number(q.semana)} · ${esc(q.estado)}</p><p>${esc(q.enunciado)}</p><div class="relation-head"><strong>COLUMNA A</strong><strong>COLUMNA B (clave)</strong></div><div class="relation-rows">${right.map((r,i)=>`<div class="relation-row"><span>${i+1}. ${esc(left[i]||'')}</span><span>(${Number(key[i])||'—'}) ${esc(r)}</span></div>`).join('')}</div><div class="actions">${q.estado==='borrador'?'<button id="relationToReview" class="secondary">Enviar a revisión</button>':''}${admin()&&q.estado==='revision'?'<button id="relationPublish">Publicar pregunta</button>':''}${admin()&&q.estado==='publicado'?'<button id="relationUnpublish" class="secondary">Volver a borrador</button>':''}<button id="relationClose" class="secondary">Cerrar</button></div><p id="relationReviewStatus" role="status"></p></div>`;
+}
+function bindRelationReview(){
+ $('relationClose')?.addEventListener('click',()=>{relationReview=null;$('reviewDetail').innerHTML=''});
+ const change=async(estado)=>{
+  if(!confirm(`¿Cambiar esta pregunta a ${estado}?`))return;
+  const status=$('relationReviewStatus');status.textContent='Guardando...';
+  const {data,error}=await db.rpc('cachimbolab_estado_relacion',{p_id:relationReview.id,p_estado:estado});
+  if(error){status.textContent=error.message;return;}
+  relationReview=null;relationLoaded=false;await loadRelations();
+ };
+ $('relationToReview')?.addEventListener('click',()=>change('revision'));
+ $('relationPublish')?.addEventListener('click',()=>change('publicado'));
+ $('relationUnpublish')?.addEventListener('click',()=>change('borrador'));
 }
 function bindReviewDetail(){
  const q=reviewSelected;if(!q)return;
@@ -766,7 +790,7 @@ function bindReviewDetail(){
 }
 
 function bind(){
- if(page==='relations')bindRelations();
+
  if($('selectCPU')) $('selectCPU').onclick=()=>{selectedModality='CPU-UNSM';page='bank';quiz=null;practice=null;render();};
 if($('selectBeca')) $('selectBeca').onclick=()=>{selectedModality='BECA18';page='bank';quiz=null;practice=null;render();};
   if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(user&&page==='activity'&&$('loadActivity'))$('loadActivity').onclick=loadActivity;if(!user){
