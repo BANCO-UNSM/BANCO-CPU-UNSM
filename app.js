@@ -131,6 +131,7 @@ async function cargarImagenesPrivadas(raiz=document){
 
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
 let activityRows=[],activityLoaded=false,activityError='';
+let relationItems=[],relationBusy=false,relationLoaded=false,relationError='',relationSelected=null,relationAnswers=[],relationGrade=null;
 let authMode='login';
 let selectedModality='CPU-UNSM';
 const modalityQuestions=()=>questions.filter(q=>q.modality===selectedModality);
@@ -191,15 +192,15 @@ async function refresh(){
 }
 function render(){
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['relations','Relacionar columnas'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
  document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{page=x.dataset.page;quiz=null;practice=null;render()});
- $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
+ $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',relations:'Relacionar columnas',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,relations:relationsPage,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
  bind();
  mostrarFormulas();
  // Carga imágenes privadas visibles después de dibujar cada pantalla.
@@ -326,6 +327,46 @@ function home(){
       </p>
     </div>
   `;
+}
+
+
+// Ejercicios de relación: las claves solo se consultan después de calificar mediante RPC.
+function relationsPage(){
+ if(!relationLoaded&&!relationBusy){queueMicrotask(loadRelations);}
+ const buttons=relationItems.map(q=>`<button type="button" class="secondary" data-rel-id="${esc(q.id)}">${esc(q.titulo)} · ${Number(q.total_relaciones)||0} relaciones ${q.estado==='borrador'?'(borrador)':''}</button>`).join('');
+ let content='<p class="muted">Selecciona un ejercicio para responder en los paréntesis.</p>';
+ const q=relationItems.find(x=>x.id===relationSelected);
+ if(q){
+  const left=Array.isArray(q.columna_izquierda)?q.columna_izquierda:[];
+  const right=Array.isArray(q.columna_derecha)?q.columna_derecha:[];
+  content=`<div class="card"><h2>${esc(q.titulo)}</h2><p class="muted">${esc(q.enunciado)}</p><div class="relation-head"><strong>COLUMNA A</strong><strong>COLUMNA B</strong></div><div class="relation-rows">${right.map((r,i)=>`<div class="relation-row"><span>${i+1}. ${esc(left[i]||'')}</span><label class="relation-answer">(<input data-rel-answer="${i}" type="number" min="1" max="${left.length}" step="1" inputmode="numeric" aria-label="Número correspondiente a ${esc(r)}" value="${esc(relationAnswers[i]??'')}" ${relationGrade?'disabled':''}>) <span>${esc(r)}</span></label>${relationGrade?`<span class="relation-result ${relationGrade.detalle?.[i]?.correcto?'ok':'bad'}">${relationGrade.detalle?.[i]?.correcto?'✓':`✕ ${Number(relationGrade.detalle?.[i]?.respuesta_correcta)||'—'}`}</span>`:''}</div>`).join('')}</div>${relationGrade?`<p class="relation-score">Resultado: ${Number(relationGrade.aciertos)||0} de ${right.length} relaciones correctas.</p><button id="relationAgain" class="secondary">Volver a intentar</button>`:`<button id="relationCheck" ${relationBusy?'disabled':''}>Calificar relaciones</button>`}<p id="relationStatus" role="status" class="muted"></p></div>`;
+ }
+ return `<div class="card"><h2>Relacionar columnas · CPU-UNSM</h2><p class="muted">Ejercicios de Razonamiento Verbal con el formato original de la separata. Las respuestas se verifican en Supabase.</p><div class="actions">${buttons||'<span class="muted">No hay ejercicios disponibles todavía.</span>'}<button type="button" class="secondary" id="relationReload">Actualizar</button></div>${relationError?`<p style="color:#b91c1c">${esc(relationError)}</p>`:''}</div>${content}`;
+}
+async function loadRelations(){
+ if(relationBusy)return;relationBusy=true;relationError='';
+ const {data,error}=await db.rpc('cachimbolab_listar_relaciones',{p_device_token:deviceId});
+ relationBusy=false;relationLoaded=true;
+ if(error){relationError='No se pudieron cargar los ejercicios: '+error.message;relationItems=[];}
+ else relationItems=Array.isArray(data)?data:[];
+ if(page==='relations')render();
+}
+function bindRelations(){
+ $('relationReload')?.addEventListener('click',()=>{relationLoaded=false;loadRelations()});
+ document.querySelectorAll('[data-rel-id]').forEach(b=>b.onclick=()=>{
+  relationSelected=b.dataset.relId;relationAnswers=[];relationGrade=null;render();
+ });
+ document.querySelectorAll('[data-rel-answer]').forEach(el=>el.oninput=()=>{relationAnswers[Number(el.dataset.relAnswer)]=el.value});
+ $('relationAgain')?.addEventListener('click',()=>{relationAnswers=[];relationGrade=null;render()});
+ $('relationCheck')?.addEventListener('click',async()=>{
+  const q=relationItems.find(x=>x.id===relationSelected);if(!q)return;
+  const arr=Array.from({length:q.total_relaciones},(_,i)=>{const v=relationAnswers[i];return v===''||v==null?null:Number(v)});
+  if(arr.some(v=>v!==null&&(!Number.isInteger(v)||v<1||v>q.total_relaciones))){$('relationStatus').textContent='Ingresa números enteros válidos dentro del rango.';return}
+  const button=$('relationCheck');button.disabled=true;
+  const {data,error}=await db.rpc('cachimbolab_calificar_relaciones',{p_id:q.id,p_respuestas:arr,p_device_token:deviceId});
+  if(error){button.disabled=false;$('relationStatus').textContent='No se pudo calificar: '+error.message;return}
+  relationGrade=data;render();
+ });
 }
 
 function bank(){return `<div class="card"><h2>Banco académico · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(modalityQuestions().map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(modalityQuestions().map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
@@ -725,6 +766,7 @@ function bindReviewDetail(){
 }
 
 function bind(){
+ if(page==='relations')bindRelations();
  if($('selectCPU')) $('selectCPU').onclick=()=>{selectedModality='CPU-UNSM';page='bank';quiz=null;practice=null;render();};
 if($('selectBeca')) $('selectBeca').onclick=()=>{selectedModality='BECA18';page='bank';quiz=null;practice=null;render();};
   if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(user&&page==='activity'&&$('loadActivity'))$('loadActivity').onclick=loadActivity;if(!user){
