@@ -7,3 +7,12 @@
 .relation-answer{display:flex;align-items:center;gap:5px;min-width:0}.relation-answer input{width:44px;min-width:44px;padding:5px 3px;text-align:center;border:1px solid #c9d5df;border-radius:6px}.relation-answer span{overflow-wrap:anywhere}
 .relation-result{font-size:.8rem;font-weight:700}.relation-result.ok{color:#087f5b}.relation-result.bad{color:#b91c1c}.relation-score{font-weight:700;color:#087f5b;margin-top:18px}
 @media(max-width:550px){.relation-row{font-size:.78rem;gap:4px}.relation-answer input{width:36px;min-width:36px}.relation-head{font-size:.7rem}}
+
+/* Beca 18: panel de lectura compartido y temporizadores */
+.exam-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.exam-question{min-width:0}.reading-panel{border:1px solid #c7dafa;background:#fff;border-radius:15px;overflow:hidden;position:sticky;top:14px}
+.reading-panel h3{background:#eaf3ff;color:#0b4aa5;padding:15px;margin:0;font-size:16px}
+.reading-scroll{padding:16px;max-height:70vh;overflow:auto;line-height:1.75;font-size:14px}
+.time-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin:12px 0}
+.time-grid span{background:#f0f6fd;padding:8px;border-radius:8px}
+@media(max-width:900px){.exam-layout{grid-template-columns:1fr}.reading-panel{position:static}.reading-scroll{max-height:38vh}}

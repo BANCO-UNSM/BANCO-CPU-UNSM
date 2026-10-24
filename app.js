@@ -19,29 +19,6 @@ const contenedor = document.getElementById('bankList')
 }
 'use strict';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-// Formato seguro de antonimia contextual CPU-UNSM, semana 6, preguntas 44–57.
-// Convierte **palabra** en negrita y reconoce también la palabra objetivo sin marcas.
-// Solo afecta la presentación: el texto original de Supabase no se modifica.
-const palabrasAntonimiaSemana6={44:'vetó',45:'descendía',46:'evidente',47:'vilipendiado',48:'desempolva',49:'yermo',50:'erosión',51:'cauto',52:'dípsomano',53:'discreto',54:'castidad',55:'gélido',56:'precisa',57:'fachendoso'};
-function enunciadoFormateado(q){
- const raw=String(q?.statement??'');
- const aplicarNegrita=(texto)=>{
-  const partes=texto.split(/(\*\*[^*\n]+\*\*)/g);
-  return partes.map(parte=>parte.startsWith('**')&&parte.endsWith('**')&&parte.length>4
-   ?'<strong>'+esc(parte.slice(2,-2))+'</strong>':esc(parte)).join('');
- };
- if(q?.modality!=='CPU-UNSM'||q?.subject!=='Razonamiento Verbal'||Number(q?.week)!==6)return aplicarNegrita(raw);
- const palabra=palabrasAntonimiaSemana6[Number(q?.original_number)];
- if(!palabra)return aplicarNegrita(raw);
- const sinMarcas=raw.replace(/\*\*([^*\n]+)\*\*/g,'$1');
- const escaparRegex=t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
- const re=new RegExp('(^|[^\\p{L}])('+escaparRegex(palabra)+')(?=$|[^\\p{L}])','iu');
- // Se conserva todo el enunciado, y se pone en minúscula únicamente el término evaluado.
- const match=re.exec(sinMarcas);
- if(!match)return aplicarNegrita(raw);
- const inicio=match.index+match[1].length;
- return aplicarNegrita(sinMarcas.slice(0,inicio))+'<strong>'+esc(palabra)+'</strong>'+aplicarNegrita(sinMarcas.slice(inicio+match[2].length));
-}
 const ready=Boolean(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY);
 // Identificador de instalación de este navegador. No constituye identificación física infalible.
 const deviceKey='academia_unsm_device_v1';
@@ -399,7 +376,7 @@ function bankList(){
  liberarImagenesPrivadas(contenedor);
  const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();
  contenedor.innerHTML=questions.filter(q=>q.modality===selectedModality&&(!s||q.subject===s)
-&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${enunciadoFormateado(q)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
+&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
  contenedor.insertAdjacentHTML('beforeend',relationBankPanel());
  bindRelations();
  mostrarFormulas();
@@ -436,6 +413,23 @@ function bindBankSolutions(){
     };
   });
 }
+// Beca 18: panel compartido; el texto se obtiene de un recurso estático, sin exponer claves.
+let becaReadings={};
+fetch('beca18_readings.json').then(r=>r.ok?r.json():{}).then(d=>{becaReadings=d;}).catch(()=>{});
+function becaReadingNumber(q){
+ if(q?.modality!=='BECA18'||!String(q.cycle||'').includes('2023'))return 0;
+ const n=Number(q.original_number);
+ return n>=31&&n<=33?1:n>=34&&n<=37?2:n>=38&&n<=40?3:n>=41&&n<=44?4:n>=45&&n<=49?5:n>=50&&n<=53?6:n>=54&&n<=57?7:n>=58&&n<=60?8:0;
+}
+function becaReadingPanel(q){
+ const n=becaReadingNumber(q);if(!n)return '';
+ if(n===1)return `<section class="reading-panel"><h3>📖 Texto 1 · Lectura e infografía original</h3><div class="reading-scroll"><img src="beca18_texto1.png" alt="Texto e infografía originales del examen Beca 18 de 2023" style="max-width:100%;height:auto"></div></section>`;
+ return `<section class="reading-panel"><h3>📖 Texto ${n} · Lectura compartida</h3><div class="reading-scroll" style="white-space:pre-wrap">${esc(becaReadings[String(n)]||'Lectura en preparación. No publicar este bloque hasta verificar el texto original.')}</div></section>`;
+}
+function timeFmt(ms){const sec=Math.max(0,Math.floor(ms/1000));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
+function tickQuizTime(){if(!quiz||quiz.result)return;const now=Date.now();if(quiz.lastTick){quiz.elapsed[quiz.i]+=Math.max(0,now-quiz.lastTick)}quiz.lastTick=now;}
+let quizTimerHandle=null;
+function bindQuizTimer(){clearInterval(quizTimerHandle);if(!quiz||quiz.result)return;quizTimerHandle=setInterval(()=>{if(!quiz||quiz.result){clearInterval(quizTimerHandle);return}tickQuizTime();const e=document.getElementById('questionTimer');if(e)e.textContent=timeFmt(quiz.elapsed[quiz.i]);const t=document.getElementById('totalTimer');if(t)t.textContent=timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0));},1000)}
 function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(modalityQuestions().filter(q=>q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div>
 <div class="field">
   <label>Semana del examen</label>
@@ -452,7 +446,7 @@ function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><
       .join('')}
   </select>
 </div>
-<div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="card"><p>Pregunta ${quiz.i+1} de ${quiz.items.length}</p><h2>${enunciadoFormateado(q)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button><p id="quizError" class="muted"></p></div>`}
+<div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="exam-layout">${becaReadingPanel(q)}<div class="card exam-question"><p class="muted">Pregunta ${quiz.i+1} de ${quiz.items.length} · <strong>Tiempo de esta pregunta: <span id="questionTimer">${timeFmt(quiz.elapsed[quiz.i])}</span></strong> · Total: <span id="totalTimer">${timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0))}</span></p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button><p id="quizError" class="muted"></p></div></div>`}
 
 // Corrección de simulacros: solo se muestran claves recibidas tras grade_attempt.
 function quizReviewPage(){
@@ -484,9 +478,10 @@ function quizReviewPage(){
     const explanation=typeof d?.explanation==='string'?d.explanation.trim():'';
     const solutionImage=q.solution_image_path;
     const explanationHtml=explanation?`<p style="white-space:pre-wrap;line-height:1.75">${esc(explanation)}</p>`:(!solutionImage?'<p class="muted">Todavía no se ha registrado un desarrollo paso a paso para esta pregunta.</p>':'');
-    return `<div class="listitem"><p class="muted small">Pregunta ${i+1} · ${esc(q.subject||'')} · Semana ${esc(q.week??'—')}</p><strong>${enunciadoFormateado(q)}</strong>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<p style="font-weight:700;color:${stateColor}">${blankAnswer?'○':isCorrect?'✓':'✕'} ${esc(state)}</p>${options}${!hasKey?'<p class="muted">No se recibió una clave válida para esta pregunta. Consulta al administrador.</p>':''}<details style="margin-top:12px" ${explanation||solutionImage?'':'open'}><summary style="cursor:pointer;font-weight:700">Ver desarrollo paso a paso</summary><div class="card" style="margin-top:10px">${explanationHtml}${espacioImagenPrivada(solutionImage,'Imagen de la solución')}</div></details></div>`;
+    return `<div class="listitem"><p class="muted small">Pregunta ${i+1} · ${esc(q.subject||'')} · Semana ${esc(q.week??'—')}</p><strong>${esc(q.statement)}</strong>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<p style="font-weight:700;color:${stateColor}">${blankAnswer?'○':isCorrect?'✓':'✕'} ${esc(state)}</p>${options}${!hasKey?'<p class="muted">No se recibió una clave válida para esta pregunta. Consulta al administrador.</p>':''}<details style="margin-top:12px" ${explanation||solutionImage?'':'open'}><summary style="cursor:pointer;font-weight:700">Ver desarrollo paso a paso</summary><div class="card" style="margin-top:10px">${explanationHtml}${espacioImagenPrivada(solutionImage,'Imagen de la solución')}</div></details></div>`;
   }).join('');
-  return `<div class="card"><h2>Resultado del simulacro</h2><div class="stat">${correct}/${total}</div><p>${percent}% de aciertos</p><p><strong style="color:#2563eb">✓ ${correct} correctas</strong> · <strong style="color:#b91c1c">✕ ${wrong} incorrectas</strong> · <strong style="color:#64748b">○ ${blank} en blanco</strong></p><p class="muted small">Las soluciones se muestran únicamente después de entregar el simulacro.</p><button id="restartQuiz">Otro simulacro</button></div><div class="card"><h2>Revisión de respuestas</h2>${revision}</div>`;
+  const times=quiz.elapsed||[];const totalTime=times.reduce((a,b)=>a+b,0);const timeSummary=`<p><strong>Tiempo total medido:</strong> ${timeFmt(totalTime)} · <strong>Promedio por pregunta:</strong> ${timeFmt(total?totalTime/total:0)}</p><details><summary>Ver tiempo por pregunta</summary><div class="time-grid">${times.map((ms,i)=>`<span>Pregunta ${i+1}: <strong>${timeFmt(ms)}</strong></span>`).join('')}</div></details>`;
+  return `<div class="card"><h2>Resultado del simulacro</h2><div class="stat">${correct}/${total}</div><p>${percent}% de aciertos</p>${timeSummary}<p><strong style="color:#2563eb">✓ ${correct} correctas</strong> · <strong style="color:#b91c1c">✕ ${wrong} incorrectas</strong> · <strong style="color:#64748b">○ ${blank} en blanco</strong></p><p class="muted small">Las soluciones se muestran únicamente después de entregar el simulacro.</p><button id="restartQuiz">Otro simulacro</button></div><div class="card"><h2>Revisión de respuestas</h2>${revision}</div>`;
 }
 
 // La respuesta correcta nunca se obtiene antes de comprobar la pregunta en Supabase.
@@ -496,7 +491,7 @@ function practicePage(){
   const q=practice.items[practice.i];
   if(!q)return `<div class="card"><h2>Práctica finalizada</h2><p>Has completado ${practice.items.length} pregunta(s).</p><p>Aciertos en esta sesión: <strong>${practice.hits}/${practice.items.length}</strong></p><button id="finishPractice">Volver al inicio de práctica</button></div>`;
   const d=practice.feedback;
-  return `<div class="card"><p class="muted">Pregunta ${practice.i+1} de ${practice.items.length} · ${esc(q.subject)} · Semana ${esc(q.week)}</p><h2>${enunciadoFormateado(q)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="practiceChoice" value="${i}" ${d?'disabled':''} ${practice.selected===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}${!d?`<button id="checkPractice">Comprobar respuesta</button>`:`<div class="card"><h3>${d.is_correct?'¡Respuesta correcta!':'Respuesta incorrecta'}</h3><p>Tu respuesta: ${practice.selected===null?'Sin responder':`${'ABCDE'[practice.selected]}) ${esc(q.options[practice.selected])}`}</p><p><strong>Respuesta correcta: ${'ABCDE'[d.correct_index]}) ${esc(q.options[d.correct_index])}</strong></p><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap">${esc(d.explanation?.trim()||(q.solution_image_path?'':'Todavía no se ha registrado una explicación para esta pregunta.'))}</p>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}</div><button id="nextPractice">${practice.i===practice.items.length-1?'Ver resumen':'Siguiente pregunta'}</button>`}<p id="practiceError" class="muted"></p></div>`;
+  return `<div class="card"><p class="muted">Pregunta ${practice.i+1} de ${practice.items.length} · ${esc(q.subject)} · Semana ${esc(q.week)}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="practiceChoice" value="${i}" ${d?'disabled':''} ${practice.selected===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}${!d?`<button id="checkPractice">Comprobar respuesta</button>`:`<div class="card"><h3>${d.is_correct?'¡Respuesta correcta!':'Respuesta incorrecta'}</h3><p>Tu respuesta: ${practice.selected===null?'Sin responder':`${'ABCDE'[practice.selected]}) ${esc(q.options[practice.selected])}`}</p><p><strong>Respuesta correcta: ${'ABCDE'[d.correct_index]}) ${esc(q.options[d.correct_index])}</strong></p><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap">${esc(d.explanation?.trim()||(q.solution_image_path?'':'Todavía no se ha registrado una explicación para esta pregunta.'))}</p>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}</div><button id="nextPractice">${practice.i===practice.items.length-1?'Ver resumen':'Siguiente pregunta'}</button>`}<p id="practiceError" class="muted"></p></div>`;
 }
 async function startPractice(items){
   if(!items.length){$('practiceStatus').textContent='No hay preguntas disponibles con este criterio.';return}
@@ -712,7 +707,7 @@ function reviewPage(){
  const filtered=modalityQuestions().filter(q=>(!reviewFilter.subject||q.subject===reviewFilter.subject)&&(!reviewFilter.week||String(q.week)===reviewFilter.week)&&(!reviewFilter.status||q.status===reviewFilter.status));
  const detail=reviewSelected;
  const rels=relationItems.filter(q=>(!reviewFilter.subject||reviewFilter.subject==='Razonamiento Verbal')&&(!reviewFilter.week||String(q.semana)===reviewFilter.week)&&(!reviewFilter.status||(q.estado==='borrador'?'draft':q.estado==='publicado'?'published':q.estado==='revision'?'review':q.estado)===reviewFilter.status));
- return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todas las semanas</option>${weeks.map(w=>`<option value="${w}" ${String(w)===reviewFilter.week?'selected':''}>Semana ${w}</option>`).join('')}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length+rels.length} preguntas encontradas · ${modalityQuestions().filter(q=>q.status==='draft').length} borradores · ${modalityQuestions().filter(q=>q.status==='review').length} en revisión · ${modalityQuestions().filter(q=>q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${rels.map(q=>`<div class="listitem"><strong>Razonamiento Verbal · Semana ${Number(q.semana)||6} · N.º ${Number(q.numero_original)||'—'}</strong> <span class="tag">${esc(q.estado)}</span><p>${esc(q.titulo)}</p><button class="secondary" data-relation-review="${esc(q.id)}">Revisar pregunta</button></div>`).join('')}${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${enunciadoFormateado(q)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')}${!filtered.length&&!rels.length?'<p>No hay preguntas con estos filtros.</p>':''}${relationError?`<p style="color:#b91c1c">${esc(relationError)}</p>`:''}</div><div id="reviewDetail">${relationReview?relationReviewDetail(relationReview):(detail?reviewDetail(detail):'')}</div>`;
+ return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todas las semanas</option>${weeks.map(w=>`<option value="${w}" ${String(w)===reviewFilter.week?'selected':''}>Semana ${w}</option>`).join('')}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length+rels.length} preguntas encontradas · ${modalityQuestions().filter(q=>q.status==='draft').length} borradores · ${modalityQuestions().filter(q=>q.status==='review').length} en revisión · ${modalityQuestions().filter(q=>q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${rels.map(q=>`<div class="listitem"><strong>Razonamiento Verbal · Semana ${Number(q.semana)||6} · N.º ${Number(q.numero_original)||'—'}</strong> <span class="tag">${esc(q.estado)}</span><p>${esc(q.titulo)}</p><button class="secondary" data-relation-review="${esc(q.id)}">Revisar pregunta</button></div>`).join('')}${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · Semana ${q.week} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')}${!filtered.length&&!rels.length?'<p>No hay preguntas con estos filtros.</p>':''}${relationError?`<p style="color:#b91c1c">${esc(relationError)}</p>`:''}</div><div id="reviewDetail">${relationReview?relationReviewDetail(relationReview):(detail?reviewDetail(detail):'')}</div>`;
 }
 function reviewDetail(q){
  const editable=q.status!=='published'||admin();
@@ -866,6 +861,7 @@ if(page==='bulk') bindBulk();
 if(page==='review') bindReview();
 
 if(page==='quiz'){
+  bindQuizTimer();
   if($('startQuiz')) $('startQuiz').onclick=()=>{
 const subject = $('quizSubject').value;
 const week = $('quizWeek').value;
@@ -884,6 +880,8 @@ q.modality === selectedModality &&
     quiz={
       items:pool.sort(()=>Math.random()-.5).slice(0,count),
       answers:Array(count).fill(null),
+      elapsed:Array(count).fill(0),
+      lastTick:Date.now(),
       i:0
     };
     render();
@@ -893,8 +891,10 @@ q.modality === selectedModality &&
     const sel=document.querySelector('input[name=choice]:checked');
     quiz.answers[quiz.i]=sel?Number(sel.value):null;
 
+    tickQuizTime();
     if(quiz.i<quiz.items.length-1){
       quiz.i++;
+      quiz.lastTick=Date.now();
       render();
       return;
     }
@@ -915,6 +915,7 @@ q.modality === selectedModality &&
     }
 
     quiz.result=data;
+    clearInterval(quizTimerHandle);
     await refresh();
   };
 
