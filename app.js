@@ -395,6 +395,22 @@ function textoMatematicoVista(texto){
 function preguntasPublicadasVista(examId){
   return questions.filter(q=>q.exam_id===examId&&q.status==='published').sort(ordenarPreguntasPorNumero);
 }
+// Compacta saltos de línea redundantes alrededor de fórmulas en la vista previa.
+// No modifica el contenido guardado en Supabase.
+function explicacionCompactaVista(texto){
+  return String(texto??'').trim()
+    .replace(/\r\n?/g,'\n')
+    .replace(/\n[ \t]*(?=\\\[|\$\$)/g,'\n')
+    .replace(/(\\\]|\$\$)[ \t]*\n[ \t]*\n+/g,'$1\n')
+    .replace(/\n[ \t]*\n[ \t]*\n+/g,'\n\n');
+}
+const estiloCompactoVista=`<style>
+#examPreviewPanel .exam-preview-explanation{white-space:pre-line;line-height:1.45;margin:8px 0;overflow-wrap:anywhere}
+#examPreviewPanel .exam-preview-explanation .katex-display{margin:.25em 0;overflow-x:auto;overflow-y:hidden;text-align:left}
+#examPreviewPanel .exam-preview-explanation .katex-display>.katex{text-align:left}
+#examPreviewPanel details>.card{padding:14px 18px}
+#examPreviewPanel details h3{margin:8px 0}
+</style>`;
 function vistaPreviaExamen(){
   if(!admin()||!examPreview)return '';
   const e=examById(examPreview.examId);
@@ -410,7 +426,7 @@ function vistaPreviaExamen(){
   const opts=Array.isArray(q.options)?q.options:[];
   const idx=q.correct_index==null?null:Number(q.correct_index);
   const valid=idx!==null&&Number.isInteger(idx)&&idx>=0&&idx<opts.length;
-  return `<div class="card" id="examPreviewPanel">${encabezado}<h3>Pregunta N.º ${esc(q.original_number??'—')} · ${esc(q.subject)}</h3><p style="white-space:pre-wrap;line-height:1.8">${textoMatematicoVista(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Figura original')}${opts.map((o,i)=>`<div class="option">${'ABCDE'[i]}) ${textoMatematicoVista(o)}</div>`).join('')}<details style="margin-top:18px"><summary style="cursor:pointer;font-weight:700">Ver respuesta y desarrollo (solo administrador)</summary><div class="card"><p><strong>${valid?'Respuesta correcta: '+ 'ABCDE'[idx]+') '+textoMatematicoVista(opts[idx]):'Clave pendiente'}</strong></p><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap;line-height:1.9">${textoMatematicoVista(q.explanation||'Sin explicación registrada.')}</p>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}</div></details>${cerrar}</div>`;
+  return `<div class="card" id="examPreviewPanel">${estiloCompactoVista}${encabezado}<h3>Pregunta N.º ${esc(q.original_number??'—')} · ${esc(q.subject)}</h3><p style="white-space:pre-wrap;line-height:1.8">${textoMatematicoVista(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Figura original')}${opts.map((o,i)=>`<div class="option">${'ABCDE'[i]}) ${textoMatematicoVista(o)}</div>`).join('')}<details style="margin-top:18px"><summary style="cursor:pointer;font-weight:700">Ver respuesta y desarrollo (solo administrador)</summary><div class="card"><p><strong>${valid?'Respuesta correcta: '+ 'ABCDE'[idx]+') '+textoMatematicoVista(opts[idx]):'Clave pendiente'}</strong></p><h3>Desarrollo paso a paso</h3><div class="exam-preview-explanation">${textoMatematicoVista(explicacionCompactaVista(q.explanation||'Sin explicación registrada.'))}</div>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}</div></details>${cerrar}</div>`;
 }
 async function cargarPreguntaVistaPrevia(examId,questionId){
   if(!admin())return;
