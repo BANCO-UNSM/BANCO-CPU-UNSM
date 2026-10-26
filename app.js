@@ -422,7 +422,7 @@ function bindExams(){
   document.querySelectorAll('[data-review-exam]').forEach(b=>b.onclick=()=>{selectedModality='CPU-UNSM';reviewFilter={subject:'',week:'exam-'+b.dataset.reviewExam,status:''};reviewSelected=null;relationReview=null;page='review';render();});
  $('examType')?.addEventListener('change',e=>{examTypeFilter=e.target.value;examCycleFilter='';render()});
  $('examCycle')?.addEventListener('change',e=>{examCycleFilter=e.target.value;render()});
- document.querySelectorAll('[data-start-exam]').forEach(b=>b.onclick=()=>{const e=examById(b.dataset.startExam);const qs=questions.filter(q=>q.exam_id===e?.id&&q.status==='published').sort((a,b)=>(a.original_number??9999)-(b.original_number??9999));if(!e||e.status!=='published'||!qs.length)return;examSession={examId:e.id,items:qs,i:0,answers:Array(qs.length).fill(null),startedAt:Date.now(),result:null};render()});
+ document.querySelectorAll('[data-start-exam]').forEach(b=>b.onclick=()=>{const e=examById(b.dataset.startExam);const qs=questions.filter(q=>q.exam_id===e?.id&&q.status==='published').sort(ordenarPreguntasPorNumero);if(!e||e.status!=='published'||!qs.length)return;examSession={examId:e.id,items:qs,i:0,answers:Array(qs.length).fill(null),startedAt:Date.now(),result:null};render()});
  $('examFinish')?.addEventListener('click',()=>{examSession=null;render()});
  $('examCancel')?.addEventListener('click',()=>{if(confirm('¿Salir del examen? Se perderán las respuestas no entregadas.')){examSession=null;render()}});
  $('examPrev')?.addEventListener('click',()=>{const choice=document.querySelector('input[name="examChoice"]:checked');examSession.answers[examSession.i]=choice?Number(choice.value):null;examSession.i--;render()});
@@ -434,7 +434,7 @@ function bankList(){
  liberarImagenesPrivadas(contenedor);
  const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();
  contenedor.innerHTML=questions.filter(q=>!q.exam_id&&q.modality===selectedModality&&(!s||q.subject===s)
-&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · ${esc(etiquetaOrigen(q))} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
+&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).sort(ordenarPreguntasPorOrigenYNumero).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · ${esc(etiquetaOrigen(q))} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
  contenedor.insertAdjacentHTML('beforeend',relationBankPanel());
  bindRelations();
  mostrarFormulas();
@@ -495,7 +495,7 @@ function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><
     <option value="">Todas las semanas</option>
     ${[...new Set(
       modalityQuestions()
-        .filter(q => q.status === 'published')
+        .filter(q => !q.exam_id && q.status === 'published')
         .map(q => Number(q.week))
         .filter(w => Number.isInteger(w) && w > 0)
     )]
@@ -761,6 +761,15 @@ const examById=id=>exams.find(e=>e.id===id);
 const esExamenCPU=q=>Boolean(q.exam_id);
 const etiquetaOrigen=q=>q.exam_id?(examById(q.exam_id)?.title||'Examen registrado'):(q.week==null?'Semana sin asignar':`Semana ${q.week}`);
 const coincideOrigen=(q,f)=>!f||(f.startsWith('exam-')?q.exam_id===f.slice(5):f==='unassigned'?!q.exam_id&&q.week==null:f.startsWith('week-')&&!q.exam_id&&String(q.week)===f.slice(5));
+// Orden estable por numeración original; los números no asignados van al final.
+// Para vistas mixtas, primero se agrupa por origen (examen o separata).
+const numeroOriginal=q=>{const n=Number(q.original_number);return Number.isInteger(n)&&n>0?n:Number.MAX_SAFE_INTEGER;};
+const ordenarPreguntasPorNumero=(a,b)=>numeroOriginal(a)-numeroOriginal(b)||String(a.subject||'').localeCompare(String(b.subject||''),'es')||String(a.id||'').localeCompare(String(b.id||''));
+const ordenarPreguntasPorOrigenYNumero=(a,b)=>{
+ const origenA=a.exam_id?'exam-'+a.exam_id:'week-'+String(a.cycle||'')+'-'+String(a.week??'');
+ const origenB=b.exam_id?'exam-'+b.exam_id:'week-'+String(b.cycle||'')+'-'+String(b.week??'');
+ return origenA.localeCompare(origenB,'es',{numeric:true})||ordenarPreguntasPorNumero(a,b);
+};
 function reviewPage(){
  if(!teacher())return notice('Acceso exclusivo para docentes',true);
  if(selectedModality==='CPU-UNSM'&&!relationLoaded&&!relationBusy)queueMicrotask(loadRelations);
@@ -769,7 +778,7 @@ function reviewPage(){
  const examOptions=exams.filter(e=>modalityQuestions().some(q=>q.exam_id===e.id));
  const hasUnassigned=modalityQuestions().some(q=>q.week==null&&!esExamenCPU(q));
  const opts=(values,current)=>values.map(v=>`<option value="${esc(v)}" ${String(v)===String(current)?'selected':''}>${esc(v)}</option>`).join('');
- const filtered=modalityQuestions().filter(q=>(!reviewFilter.subject||q.subject===reviewFilter.subject)&&coincideOrigen(q,reviewFilter.week)&&(!reviewFilter.status||q.status===reviewFilter.status));
+ const filtered=modalityQuestions().filter(q=>(!reviewFilter.subject||q.subject===reviewFilter.subject)&&coincideOrigen(q,reviewFilter.week)&&(!reviewFilter.status||q.status===reviewFilter.status)).sort(reviewFilter.week?ordenarPreguntasPorNumero:ordenarPreguntasPorOrigenYNumero);
  const detail=reviewSelected;
  const rels=selectedModality==='CPU-UNSM'?relationItems.filter(q=>(!reviewFilter.subject||reviewFilter.subject==='Razonamiento Verbal')&&(!reviewFilter.week||(reviewFilter.week.startsWith('week-')&&String(q.semana)===reviewFilter.week.slice(5)))&&(!reviewFilter.status||(q.estado==='borrador'?'draft':q.estado==='publicado'?'published':q.estado==='revision'?'review':q.estado)===reviewFilter.status)):[];
  return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="field"><label for="reviewModality">Modalidad de preparación</label><select id="reviewModality"><option value="CPU-UNSM" ${selectedModality==='CPU-UNSM'?'selected':''}>🎓 CPU-UNSM</option><option value="BECA18" ${selectedModality==='BECA18'?'selected':''}>🏆 Beca 18</option></select></div><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todos los materiales</option>${examOptions.map(e=>`<option value="exam-${esc(e.id)}" ${reviewFilter.week===`exam-${e.id}`?'selected':''}>${esc(e.title)}</option>`).join('')}${weeks.map(w=>`<option value="week-${w}" ${`week-${w}`===reviewFilter.week?'selected':''}>Separata · Semana ${w}</option>`).join('')}${hasUnassigned?`<option value="unassigned" ${reviewFilter.week==='unassigned'?'selected':''}>Sin clasificar</option>`:''}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length+rels.length} preguntas encontradas · ${modalityQuestions().filter(q=>q.status==='draft').length} borradores · ${modalityQuestions().filter(q=>q.status==='review').length} en revisión · ${modalityQuestions().filter(q=>!q.exam_id&&q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${rels.map(q=>`<div class="listitem"><strong>Razonamiento Verbal · Semana ${Number(q.semana)||6} · N.º ${Number(q.numero_original)||'—'}</strong> <span class="tag">${esc(q.estado)}</span><p>${esc(q.titulo)}</p><button class="secondary" data-relation-review="${esc(q.id)}">Revisar pregunta</button></div>`).join('')}${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · ${esc(etiquetaOrigen(q))} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')}${!filtered.length&&!rels.length?'<p>No hay preguntas con estos filtros.</p>':''}${relationError?`<p style="color:#b91c1c">${esc(relationError)}</p>`:''}</div><div id="reviewDetail">${relationReview?relationReviewDetail(relationReview):(detail?reviewDetail(detail):'')}</div>`;
@@ -936,6 +945,7 @@ const week = $('quizWeek').value;
 
 const pool = questions.filter(q =>
 q.modality === selectedModality &&
+  !q.exam_id &&
   q.status === 'published' &&
   (!subject || q.subject === subject) &&
   (!week || Number(q.week) === Number(week))
