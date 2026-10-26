@@ -131,7 +131,7 @@ async function cargarImagenesPrivadas(raiz=document){
 
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
 let activityRows=[],activityLoaded=false,activityError='';
-let exams=[],examsError='',examTypeFilter='',examCycleFilter='',examActiveId='',examSession=null;
+let exams=[],examsError='',questionsError='',examTypeFilter='',examCycleFilter='',examActiveId='',examSession=null;
 let relationItems=[],relationBusy=false,relationLoaded=false,relationError='',relationSelected=null,relationAnswers=[],relationGrade=null,relationReview=null;
 let authMode='login';
 let selectedModality='CPU-UNSM';
@@ -155,7 +155,7 @@ const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':
 async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
 async function refresh(){
  relationLoaded=false;relationItems=[];relationReview=null;
- profile=null;access=null;questions=[];attempts=[];exams=[];examsError='';
+ profile=null;access=null;questions=[];attempts=[];exams=[];examsError='';questionsError='';
  if(user){
   const p=await db.from('profiles').select('role,name').eq('id',user.id).maybeSingle();profile=p.data;
   if(teacher()) access={status:'staff',allowed:true};
@@ -180,15 +180,26 @@ async function refresh(){
    const q=await db.from('questions')
 .select('id,exam_id,modality,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
    if(q.error){
-     console.error('Consulta de preguntas:',q.error.message);
+     console.error('Consulta de preguntas:',q.error.message);questionsError=q.error.message;
      // Compatibilidad con bases anteriores a la incorporación de modalidad.
      if(/modality|column|schema cache/i.test(q.error.message)){
        const old=await db.from('questions').select('id,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
-       if(old.error)console.error(old.error.message);else questions=(old.data||[]).map(x=>({...x,modality:'CPU-UNSM'}));
+       if(old.error)console.error(old.error.message);else {questions=(old.data||[]).map(x=>({...x,modality:'CPU-UNSM'}));questionsError='La consulta alternativa no incluye exam_id; actualiza el esquema o los permisos.';}
      }
    }else questions=(q.data||[]).map(x=>({...x,modality:x.modality||'CPU-UNSM'}));
    const ex=await db.from('exams').select('id,code,title,exam_type,exam_year,cycle,exam_number,exam_date,status').order('exam_year',{ascending:false}).order('exam_number',{ascending:true});
    if(ex.error){examsError=ex.error.message;console.error('Exámenes:',examsError)}else exams=ex.data||[];
+    // Solo en el panel docente: recuperar grupos visibles de preguntas si el catálogo está oculto por RLS.
+    // No se inventa un estado de publicación ni se habilita su resolución.
+    if(teacher()){
+      const known={'2ace1472-a5d9-4e4f-a69b-9b38770c72c9':{title:'2.º Examen CPU 2026-II',code:'CPU-UNSM-2026-II-E02',exam_type:'CPU',exam_year:2026,cycle:'2026-II',exam_number:2,exam_date:'2026-10-24'}};
+      for(const id of [...new Set(questions.filter(x=>x.exam_id).map(x=>x.exam_id))]){
+        if(exams.some(e=>e.id===id))continue;
+        const first=questions.find(x=>x.exam_id===id);
+        const meta=known[id]||{};
+        exams.push({id,code:meta.code||'',title:meta.title||('Examen · '+id.slice(0,8)),exam_type:meta.exam_type||'CPU',exam_year:meta.exam_year||Number(String(first?.cycle||'').slice(0,4))||null,cycle:meta.cycle||first?.cycle||'',exam_number:meta.exam_number||null,exam_date:meta.exam_date||null,status:'unknown',_localFallback:true});
+      }
+    }
    const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
   }
  }
@@ -375,13 +386,24 @@ function bindRelations(){
 
 // Módulo de exámenes: independiente de las separatas, sin mostrar claves antes de calificar.
 function examsPage(){
- if(examsError)return notice('No se pudo consultar el catálogo de exámenes: '+examsError+'. Verifica los permisos SELECT (RLS) de public.exams.',true);
+ if(examsError&&!teacher())return notice('No se pudo consultar el catálogo de exámenes. Contacta al administrador.',true);
  const available=exams.filter(e=>teacher()||e.status==='published');
- const types=[...new Set(available.map(e=>e.exam_type))];
- const filteredType=available.filter(e=>!examTypeFilter||e.exam_type===examTypeFilter);
+ // Categorías fijas: visibles aunque aún no existan exámenes cargados.
+ // Se admiten códigos históricos para ordinarios y quinto de secundaria.
+ const examCategory=t=>{
+  const v=String(t||'').trim().toUpperCase().replace(/[ÁÀ]/g,'A').replace(/[ÉÈ]/g,'E').replace(/[ÍÌ]/g,'I').replace(/[ÓÒ]/g,'O').replace(/[ÚÙ]/g,'U').replace(/[\s-]+/g,'_');
+  if(['CPU','CPU_UNSM','PREUNIVERSITARIO'].includes(v))return 'CPU';
+  if(['EXTRAORDINARIO','EXTRAORDINARIA','EXTRAORDINARIOS','ADMISION_EXTRAORDINARIA'].includes(v))return 'EXTRAORDINARIO';
+  if(['ADMISION','ORDINARIO','ORDINARIA','ORDINARIOS','ADMISION_ORDINARIA'].includes(v))return 'ORDINARIO';
+  if(['QUINTO_SECUNDARIA','QUINTO','5TO','5TO_SECUNDARIA','5_SECUNDARIA','QUINTO_ANO','QUINTO_ANIO'].includes(v))return 'QUINTO_SECUNDARIA';
+  return v;
+ };
+ const fixedTypes=['QUINTO_SECUNDARIA','EXTRAORDINARIO','ORDINARIO','CPU'];
+ const types=[...fixedTypes,...new Set(available.map(e=>examCategory(e.exam_type)).filter(t=>t&&!fixedTypes.includes(t)))];
+ const filteredType=available.filter(e=>!examTypeFilter||examCategory(e.exam_type)===examTypeFilter);
  const cycles=[...new Set(filteredType.map(e=>e.cycle||String(e.exam_year)))].sort().reverse();
  const visible=filteredType.filter(e=>!examCycleFilter||(e.cycle||String(e.exam_year))===examCycleFilter);
- const labels={CPU:'CPU-UNSM',ADMISION:'Admisión ordinaria',QUINTO_SECUNDARIA:'5.º de secundaria'};
+ const labels={CPU:'Exámenes CPU-UNSM',EXTRAORDINARIO:'Exámenes extraordinarios',ORDINARIO:'Exámenes ordinarios',QUINTO_SECUNDARIA:'Exámenes de 5.º de secundaria'};
  const filters=`<div class="filters"><select id="examType"><option value="">Todos los tipos</option>${types.map(t=>`<option value="${esc(t)}" ${examTypeFilter===t?'selected':''}>${esc(labels[t]||t)}</option>`).join('')}</select><select id="examCycle"><option value="">Todos los ciclos y años</option>${cycles.map(c=>`<option value="${esc(c)}" ${examCycleFilter===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div>`;
  if(examSession){
   const e=examById(examSession.examId),q=examSession.items[examSession.i];
@@ -393,9 +415,11 @@ function examsPage(){
   }
   return `<div class="card"><h2>${esc(e.title)}</h2><p class="muted">Pregunta ${examSession.i+1} de ${examSession.items.length} · N.º ${esc(q.original_number??'—')} · ${esc(q.subject)}</p><h3>${esc(q.statement)}</h3>${espacioImagenPrivada(q.statement_image_path,'Figura del examen')}${(Array.isArray(q.options)?q.options:[]).map((o,i)=>`<label class="option"><input type="radio" name="examChoice" value="${i}" ${examSession.answers[examSession.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<div class="actions"><button id="examPrev" class="secondary" ${examSession.i===0?'disabled':''}>Anterior</button><button id="examNext">${examSession.i===examSession.items.length-1?'Entregar examen':'Siguiente'}</button><button id="examCancel" class="secondary">Salir</button></div><p id="examStatus" class="muted" role="status"></p></div>`;
  }
- return `<div class="card"><h2>Exámenes de admisión</h2><p class="muted">Resuelve exámenes completos de CPU-UNSM, admisión ordinaria y 5.º de secundaria. Las separatas están en Banco académico.</p>${filters}${visible.map(e=>{const qs=questions.filter(q=>q.exam_id===e.id&&(teacher()||q.status==='published'));const ready=e.status==='published'&&qs.length>0&&qs.every(q=>q.status==='published');return `<div class="listitem"><strong>${esc(e.title)}</strong><p class="muted small">${esc(labels[e.exam_type]||e.exam_type)} · ${esc(e.cycle||e.exam_year)} · ${esc(e.exam_date||'Fecha por confirmar')} · ${qs.length} preguntas ${teacher()?'registradas':'publicadas'}</p>${teacher()?`<span class="tag">${esc(e.status)}</span> `:''}<button data-start-exam="${esc(e.id)}" ${ready?'':'disabled'}>${ready?'Resolver examen':'No disponible todavía'}</button></div>`}).join('')||'<p>Aún no hay exámenes disponibles con estos filtros.</p>'}</div>`;
+ return `<div class="card"><h2>Exámenes de admisión</h2><p class="muted">Resuelve exámenes completos de CPU-UNSM, admisión ordinaria y 5.º de secundaria. Las separatas están en Banco académico.</p>${filters}${visible.map(e=>{const qs=questions.filter(q=>q.exam_id===e.id&&(teacher()||q.status==='published'));const published=qs.filter(q=>q.status==='published').length;const ready=!e._localFallback&&e.status==='published'&&qs.length>0&&qs.every(q=>q.status==='published');return `<div class="listitem"><strong>${esc(e.title)}</strong><p class="muted small">${esc(labels[examCategory(e.exam_type)]||e.exam_type)} · ${esc(e.cycle||e.exam_year)} · ${esc(e.exam_date||'Fecha por confirmar')} · ${qs.length} preguntas ${teacher()?'registradas':'publicadas'}</p>${teacher()?`<p class="muted small">${published} publicadas · ${qs.filter(q=>q.status==='draft').length} borradores · ${qs.filter(q=>q.status==='review').length} en revisión</p><span class="tag">${esc(e._localFallback?'Estado no verificable (RLS)':e.status)}</span> <button type="button" class="secondary" data-review-exam="${esc(e.id)}">Revisar sus preguntas</button> `:''}<button data-start-exam="${esc(e.id)}" ${ready?'':'disabled'}>${ready?'Resolver examen':'No disponible todavía'}</button></div>`}).join('')||'<p>Todavía no hay exámenes registrados o disponibles en esta categoría.</p>'}</div>`;
 }
 function bindExams(){
+  $('examReload')?.addEventListener('click',refresh);
+  document.querySelectorAll('[data-review-exam]').forEach(b=>b.onclick=()=>{selectedModality='CPU-UNSM';reviewFilter={subject:'',week:'exam-'+b.dataset.reviewExam,status:''};reviewSelected=null;relationReview=null;page='review';render();});
  $('examType')?.addEventListener('change',e=>{examTypeFilter=e.target.value;examCycleFilter='';render()});
  $('examCycle')?.addEventListener('change',e=>{examCycleFilter=e.target.value;render()});
  document.querySelectorAll('[data-start-exam]').forEach(b=>b.onclick=()=>{const e=examById(b.dataset.startExam);const qs=questions.filter(q=>q.exam_id===e?.id&&q.status==='published').sort((a,b)=>(a.original_number??9999)-(b.original_number??9999));if(!e||e.status!=='published'||!qs.length)return;examSession={examId:e.id,items:qs,i:0,answers:Array(qs.length).fill(null),startedAt:Date.now(),result:null};render()});
