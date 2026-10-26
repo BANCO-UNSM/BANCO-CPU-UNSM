@@ -962,7 +962,8 @@ function bindReviewDetail(){
       const warning=keyChanged?'ATENCIÓN: cambiarás la respuesta correcta. Las calificaciones anteriores se conservarán sin recalcular, pero la revisión posterior mostrará la nueva clave. ¿Confirmas?':'¿Guardar los cambios de esta pregunta publicada? Las calificaciones anteriores se conservarán y el cambio quedará registrado.';
       if(!confirm(warning)){b.disabled=false;status.textContent='Edición cancelada.';return}
     }
-    if(q.exam_id&&published){status.textContent='Por seguridad, este editor no modifica exámenes ya publicados.';b.disabled=false;return;}
+    // Un administrador puede solicitar la edición de una pregunta de examen publicada.
+    // La autorización final se verifica en la función RPC de Supabase.
     if(!q.exam_id&&v.correct===''){status.textContent='Selecciona una clave antes de guardar esta separata.';b.disabled=false;return;}
     const args={p_question_id:q.id,p_cycle:v.cycle,p_week:v.week?Number(v.week):null,p_subject:v.subject,p_topic:v.topic,p_page:v.page?Number(v.page):null,p_number:v.number?Number(v.number):null,p_statement:v.statement,p_options:'ABCDE'.slice(0,Array.isArray(q.options)&&q.options.length===4?4:5).split('').map(c=>v['option'+c]),p_source:v.source||'',p_correct:v.correct===''?null:Number(v.correct),p_explanation:v.explanation||''};
     if(published&&!q.exam_id)args.p_confirm_key_change=keyChanged;
