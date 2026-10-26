@@ -131,6 +131,7 @@ async function cargarImagenesPrivadas(raiz=document){
 
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
 let activityRows=[],activityLoaded=false,activityError='';
+let exams=[],examsError='',examTypeFilter='',examCycleFilter='',examActiveId='',examSession=null;
 let relationItems=[],relationBusy=false,relationLoaded=false,relationError='',relationSelected=null,relationAnswers=[],relationGrade=null,relationReview=null;
 let authMode='login';
 let selectedModality='CPU-UNSM';
@@ -154,7 +155,7 @@ const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':
 async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
 async function refresh(){
  relationLoaded=false;relationItems=[];relationReview=null;
- profile=null;access=null;questions=[];attempts=[];
+ profile=null;access=null;questions=[];attempts=[];exams=[];examsError='';
  if(user){
   const p=await db.from('profiles').select('role,name').eq('id',user.id).maybeSingle();profile=p.data;
   if(teacher()) access={status:'staff',allowed:true};
@@ -177,7 +178,7 @@ async function refresh(){
   }
   if(teacher()||access?.allowed){
    const q=await db.from('questions')
-.select('id,modality,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
+.select('id,exam_id,modality,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
    if(q.error){
      console.error('Consulta de preguntas:',q.error.message);
      // Compatibilidad con bases anteriores a la incorporación de modalidad.
@@ -186,6 +187,8 @@ async function refresh(){
        if(old.error)console.error(old.error.message);else questions=(old.data||[]).map(x=>({...x,modality:'CPU-UNSM'}));
      }
    }else questions=(q.data||[]).map(x=>({...x,modality:x.modality||'CPU-UNSM'}));
+   const ex=await db.from('exams').select('id,code,title,exam_type,exam_year,cycle,exam_number,exam_date,status').order('exam_year',{ascending:false}).order('exam_number',{ascending:true});
+   if(ex.error){examsError=ex.error.message;console.error('Exámenes:',examsError)}else exams=ex.data||[];
    const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
   }
  }
@@ -193,15 +196,15 @@ async function refresh(){
 }
 function render(){
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['exams','Exámenes de admisión'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
- document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{page=x.dataset.page;quiz=null;practice=null;render()});
- $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
+ document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
+ $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',exams:'Exámenes de admisión',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
  bind();
  mostrarFormulas();
  // Carga imágenes privadas visibles después de dibujar cada pantalla.
@@ -370,12 +373,43 @@ function bindRelations(){
  });
 }
 
-function bank(){return `<div class="card"><h2>Banco académico · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(modalityQuestions().map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(modalityQuestions().map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
+// Módulo de exámenes: independiente de las separatas, sin mostrar claves antes de calificar.
+function examsPage(){
+ if(examsError)return notice('No se pudo consultar el catálogo de exámenes: '+examsError+'. Verifica los permisos SELECT (RLS) de public.exams.',true);
+ const available=exams.filter(e=>teacher()||e.status==='published');
+ const types=[...new Set(available.map(e=>e.exam_type))];
+ const filteredType=available.filter(e=>!examTypeFilter||e.exam_type===examTypeFilter);
+ const cycles=[...new Set(filteredType.map(e=>e.cycle||String(e.exam_year)))].sort().reverse();
+ const visible=filteredType.filter(e=>!examCycleFilter||(e.cycle||String(e.exam_year))===examCycleFilter);
+ const labels={CPU:'CPU-UNSM',ADMISION:'Admisión ordinaria',QUINTO_SECUNDARIA:'5.º de secundaria'};
+ const filters=`<div class="filters"><select id="examType"><option value="">Todos los tipos</option>${types.map(t=>`<option value="${esc(t)}" ${examTypeFilter===t?'selected':''}>${esc(labels[t]||t)}</option>`).join('')}</select><select id="examCycle"><option value="">Todos los ciclos y años</option>${cycles.map(c=>`<option value="${esc(c)}" ${examCycleFilter===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div>`;
+ if(examSession){
+  const e=examById(examSession.examId),q=examSession.items[examSession.i];
+  if(!e||!q){examSession=null;return notice('El examen ya no está disponible.');}
+  if(examSession.result){
+   const details=Array.isArray(examSession.result.details)?examSession.result.details:[];
+   const correct=Number(examSession.result.correct)||0,total=Number(examSession.result.total)||examSession.items.length;
+   return `<div class="card"><h2>${esc(e.title)} · Resultado</h2><div class="stat">${correct}/${total}</div><p>Tiempo empleado: ${timeFmt(Date.now()-examSession.startedAt)}</p><button id="examFinish">Volver a exámenes</button></div><div class="card"><h3>Revisión de respuestas</h3>${examSession.items.map((item,i)=>{const d=details.find(x=>String(x.id)===String(item.id));const k=Number(d?.correct_index),valid=Boolean(d)&&Number.isInteger(k)&&k>=0&&k<item.options.length;return `<div class="listitem"><strong>N.º ${esc(item.original_number??i+1)} · ${esc(item.subject)}</strong><p>${esc(item.statement)}</p>${espacioImagenPrivada(item.statement_image_path,'Figura del examen')}<p>Tu respuesta: ${examSession.answers[i]==null?'En blanco':esc('ABCDE'[examSession.answers[i]])} · Correcta: ${valid?'ABCDE'[k]:'Clave pendiente'}</p>${valid?`<p>${esc(d.explanation||'Desarrollo aún no disponible.')}</p>${espacioImagenPrivada(item.solution_image_path,'Solución')}`:''}</div>`}).join('')}</div>`;
+  }
+  return `<div class="card"><h2>${esc(e.title)}</h2><p class="muted">Pregunta ${examSession.i+1} de ${examSession.items.length} · N.º ${esc(q.original_number??'—')} · ${esc(q.subject)}</p><h3>${esc(q.statement)}</h3>${espacioImagenPrivada(q.statement_image_path,'Figura del examen')}${(Array.isArray(q.options)?q.options:[]).map((o,i)=>`<label class="option"><input type="radio" name="examChoice" value="${i}" ${examSession.answers[examSession.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<div class="actions"><button id="examPrev" class="secondary" ${examSession.i===0?'disabled':''}>Anterior</button><button id="examNext">${examSession.i===examSession.items.length-1?'Entregar examen':'Siguiente'}</button><button id="examCancel" class="secondary">Salir</button></div><p id="examStatus" class="muted" role="status"></p></div>`;
+ }
+ return `<div class="card"><h2>Exámenes de admisión</h2><p class="muted">Resuelve exámenes completos de CPU-UNSM, admisión ordinaria y 5.º de secundaria. Las separatas están en Banco académico.</p>${filters}${visible.map(e=>{const qs=questions.filter(q=>q.exam_id===e.id&&(teacher()||q.status==='published'));const ready=e.status==='published'&&qs.length>0&&qs.every(q=>q.status==='published');return `<div class="listitem"><strong>${esc(e.title)}</strong><p class="muted small">${esc(labels[e.exam_type]||e.exam_type)} · ${esc(e.cycle||e.exam_year)} · ${esc(e.exam_date||'Fecha por confirmar')} · ${qs.length} preguntas ${teacher()?'registradas':'publicadas'}</p>${teacher()?`<span class="tag">${esc(e.status)}</span> `:''}<button data-start-exam="${esc(e.id)}" ${ready?'':'disabled'}>${ready?'Resolver examen':'No disponible todavía'}</button></div>`}).join('')||'<p>Aún no hay exámenes disponibles con estos filtros.</p>'}</div>`;
+}
+function bindExams(){
+ $('examType')?.addEventListener('change',e=>{examTypeFilter=e.target.value;examCycleFilter='';render()});
+ $('examCycle')?.addEventListener('change',e=>{examCycleFilter=e.target.value;render()});
+ document.querySelectorAll('[data-start-exam]').forEach(b=>b.onclick=()=>{const e=examById(b.dataset.startExam);const qs=questions.filter(q=>q.exam_id===e?.id&&q.status==='published').sort((a,b)=>(a.original_number??9999)-(b.original_number??9999));if(!e||e.status!=='published'||!qs.length)return;examSession={examId:e.id,items:qs,i:0,answers:Array(qs.length).fill(null),startedAt:Date.now(),result:null};render()});
+ $('examFinish')?.addEventListener('click',()=>{examSession=null;render()});
+ $('examCancel')?.addEventListener('click',()=>{if(confirm('¿Salir del examen? Se perderán las respuestas no entregadas.')){examSession=null;render()}});
+ $('examPrev')?.addEventListener('click',()=>{const choice=document.querySelector('input[name="examChoice"]:checked');examSession.answers[examSession.i]=choice?Number(choice.value):null;examSession.i--;render()});
+ $('examNext')?.addEventListener('click',async()=>{const choice=document.querySelector('input[name="examChoice"]:checked');examSession.answers[examSession.i]=choice?Number(choice.value):null;if(examSession.i<examSession.items.length-1){examSession.i++;render();return}if(!confirm('¿Entregar el examen y recibir la calificación?'))return;const btn=$('examNext');btn.disabled=true;$('examStatus').textContent='Calificando...';const {data,error}=await db.rpc('grade_attempt',{p_answers:examSession.items.map((q,i)=>({id:q.id,selected:examSession.answers[i]}))});if(error){$('examStatus').textContent='No se pudo calificar: '+error.message;btn.disabled=false;return}examSession.result=data;render()});
+}
+function bank(){return `<div class="card"><h2>Banco académico · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(modalityQuestions().map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id&&q.week!=null).map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
 function bankList(){
  const contenedor=$('bankList');
  liberarImagenesPrivadas(contenedor);
  const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();
- contenedor.innerHTML=questions.filter(q=>q.modality===selectedModality&&(!s||q.subject===s)
+ contenedor.innerHTML=questions.filter(q=>!q.exam_id&&q.modality===selectedModality&&(!s||q.subject===s)
 &&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).map(q=>`<div class="listitem"><strong>${esc(q.subject)} · ${esc(etiquetaOrigen(q))} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.source||'Fuente pendiente')} · ${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
  contenedor.insertAdjacentHTML('beforeend',relationBankPanel());
  bindRelations();
@@ -430,7 +464,7 @@ function timeFmt(ms){const sec=Math.max(0,Math.floor(ms/1000));return `${String(
 function tickQuizTime(){if(!quiz||quiz.result)return;const now=Date.now();if(quiz.lastTick){quiz.elapsed[quiz.i]+=Math.max(0,now-quiz.lastTick)}quiz.lastTick=now;}
 let quizTimerHandle=null;
 function bindQuizTimer(){clearInterval(quizTimerHandle);if(!quiz||quiz.result)return;quizTimerHandle=setInterval(()=>{if(!quiz||quiz.result){clearInterval(quizTimerHandle);return}tickQuizTime();const e=document.getElementById('questionTimer');if(e)e.textContent=timeFmt(quiz.elapsed[quiz.i]);const t=document.getElementById('totalTimer');if(t)t.textContent=timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0));},1000)}
-function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(modalityQuestions().filter(q=>q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div>
+function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id&&q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div>
 <div class="field">
   <label>Semana del examen</label>
   <select id="quizWeek">
@@ -486,7 +520,7 @@ function quizReviewPage(){
 
 // La respuesta correcta nunca se obtiene antes de comprobar la pregunta en Supabase.
 function practicePage(){
-  const published=modalityQuestions().filter(q=>q.status==='published');
+  const published=modalityQuestions().filter(q=>!q.exam_id&&q.status==='published');
   if(!practice)return `<div class="card"><h2>Práctica inmediata</h2><p class="muted">Resuelve una pregunta y recibe la corrección al instante. Tus respuestas se guardan en Supabase.</p><div class="field"><label>Materia</label><select id="practiceSubject"><option value="">Todas las materias</option>${[...new Set(published.map(q=>q.subject))].sort().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select></div><div class="actions"><button id="startPractice" ${published.length?'':'disabled'}>Comenzar práctica</button><button id="reviewPractice" class="secondary">Repasar mis errores</button></div><p id="practiceStatus" class="muted">${published.length?`${published.length} pregunta(s) publicada(s) disponible(s).`:'Todavía no hay preguntas publicadas.'}</p></div>`;
   const q=practice.items[practice.i];
   if(!q)return `<div class="card"><h2>Práctica finalizada</h2><p>Has completado ${practice.items.length} pregunta(s).</p><p>Aciertos en esta sesión: <strong>${practice.hits}/${practice.items.length}</strong></p><button id="finishPractice">Volver al inicio de práctica</button></div>`;
@@ -499,14 +533,14 @@ async function startPractice(items){
 }
 function bindPractice(){
   if($('startPractice'))$('startPractice').onclick=()=>{const subject=$('practiceSubject').value;startPractice(
-questions.filter(q=>q.modality===selectedModality&&q.status==='published'
+questions.filter(q=>!q.exam_id&&q.modality===selectedModality&&q.status==='published'
 &&(!subject||q.subject===subject)))};
   if($('reviewPractice'))$('reviewPractice').onclick=async()=>{
     const button=$('reviewPractice');button.disabled=true;$('practiceStatus').textContent='Buscando tus preguntas pendientes...';
     const {data,error}=await db.rpc('questions_to_review',{p_limit:100});
     if(error){$('practiceStatus').textContent='No se pudo consultar el repaso: '+error.message;button.disabled=false;return}
     const ids=new Set((data||[]).map(x=>x.question_id));const items=
-questions.filter(q=>q.modality===selectedModality&&q.status==='published'&&ids.has(q.id))
+questions.filter(q=>!q.exam_id&&q.modality===selectedModality&&q.status==='published'&&ids.has(q.id))
 ;
     if(!items.length){$('practiceStatus').textContent='No tienes preguntas pendientes de repaso. ¡Buen trabajo!';button.disabled=false;return}
     startPractice(items);
@@ -699,26 +733,27 @@ function bindBulk(){
 // Panel protegido: las claves se consultan solo mediante RPC autorizadas.
 const admin=()=>profile?.role==='admin';
 // Clasificación visual compatible con los registros actuales, sin modificar Supabase.
-const esExamenCPU=q=>q.modality==='CPU-UNSM'&&(/2026-10-24/.test(String(q.cycle||''))||(/examen/i.test(String(q.source||''))&&q.week==null));
-const etiquetaOrigen=q=>esExamenCPU(q)?'2.º Examen CPU-UNSM · 24/10/2026':(q.week==null?'Semana sin asignar':`Semana ${q.week}`);
-const coincideOrigen=(q,f)=>!f||(f==='exam-2026-10-24'?esExamenCPU(q):f==='unassigned'?q.week==null&&!esExamenCPU(q):f.startsWith('week-')&&!esExamenCPU(q)&&String(q.week)===f.slice(5));
+const examById=id=>exams.find(e=>e.id===id);
+const esExamenCPU=q=>Boolean(q.exam_id);
+const etiquetaOrigen=q=>q.exam_id?(examById(q.exam_id)?.title||'Examen registrado'):(q.week==null?'Semana sin asignar':`Semana ${q.week}`);
+const coincideOrigen=(q,f)=>!f||(f.startsWith('exam-')?q.exam_id===f.slice(5):f==='unassigned'?!q.exam_id&&q.week==null:f.startsWith('week-')&&!q.exam_id&&String(q.week)===f.slice(5));
 function reviewPage(){
  if(!teacher())return notice('Acceso exclusivo para docentes',true);
  if(selectedModality==='CPU-UNSM'&&!relationLoaded&&!relationBusy)queueMicrotask(loadRelations);
  const subjects=[...new Set([...modalityQuestions().map(q=>q.subject),...(selectedModality==='CPU-UNSM'?['Razonamiento Verbal']:[])])].sort();
  const weeks=[...new Set([...modalityQuestions().filter(q=>!esExamenCPU(q)&&q.week!=null).map(q=>q.week),...(selectedModality==='CPU-UNSM'?[6]:[])])].sort((a,b)=>a-b);
- const hasExam=modalityQuestions().some(esExamenCPU);
+ const examOptions=exams.filter(e=>modalityQuestions().some(q=>q.exam_id===e.id));
  const hasUnassigned=modalityQuestions().some(q=>q.week==null&&!esExamenCPU(q));
  const opts=(values,current)=>values.map(v=>`<option value="${esc(v)}" ${String(v)===String(current)?'selected':''}>${esc(v)}</option>`).join('');
  const filtered=modalityQuestions().filter(q=>(!reviewFilter.subject||q.subject===reviewFilter.subject)&&coincideOrigen(q,reviewFilter.week)&&(!reviewFilter.status||q.status===reviewFilter.status));
  const detail=reviewSelected;
  const rels=selectedModality==='CPU-UNSM'?relationItems.filter(q=>(!reviewFilter.subject||reviewFilter.subject==='Razonamiento Verbal')&&(!reviewFilter.week||(reviewFilter.week.startsWith('week-')&&String(q.semana)===reviewFilter.week.slice(5)))&&(!reviewFilter.status||(q.estado==='borrador'?'draft':q.estado==='publicado'?'published':q.estado==='revision'?'review':q.estado)===reviewFilter.status)):[];
- return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="field"><label for="reviewModality">Modalidad de preparación</label><select id="reviewModality"><option value="CPU-UNSM" ${selectedModality==='CPU-UNSM'?'selected':''}>🎓 CPU-UNSM</option><option value="BECA18" ${selectedModality==='BECA18'?'selected':''}>🏆 Beca 18</option></select></div><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todos los materiales</option>${hasExam?`<option value="exam-2026-10-24" ${reviewFilter.week==='exam-2026-10-24'?'selected':''}>2.º Examen CPU-UNSM · 24/10/2026</option>`:''}${weeks.map(w=>`<option value="week-${w}" ${`week-${w}`===reviewFilter.week?'selected':''}>Separata · Semana ${w}</option>`).join('')}${hasUnassigned?`<option value="unassigned" ${reviewFilter.week==='unassigned'?'selected':''}>Sin clasificar</option>`:''}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length+rels.length} preguntas encontradas · ${modalityQuestions().filter(q=>q.status==='draft').length} borradores · ${modalityQuestions().filter(q=>q.status==='review').length} en revisión · ${modalityQuestions().filter(q=>q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${rels.map(q=>`<div class="listitem"><strong>Razonamiento Verbal · Semana ${Number(q.semana)||6} · N.º ${Number(q.numero_original)||'—'}</strong> <span class="tag">${esc(q.estado)}</span><p>${esc(q.titulo)}</p><button class="secondary" data-relation-review="${esc(q.id)}">Revisar pregunta</button></div>`).join('')}${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · ${esc(etiquetaOrigen(q))} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')}${!filtered.length&&!rels.length?'<p>No hay preguntas con estos filtros.</p>':''}${relationError?`<p style="color:#b91c1c">${esc(relationError)}</p>`:''}</div><div id="reviewDetail">${relationReview?relationReviewDetail(relationReview):(detail?reviewDetail(detail):'')}</div>`;
+ return `<div class="card"><h2>Revisión y publicación</h2><p class="muted">Las preguntas importadas permanecen en borrador hasta su aprobación. ${admin()?'Tu cuenta tiene permisos de administrador.':'Puedes enviar borradores a revisión; solo un administrador puede publicarlos.'}</p><div class="field"><label for="reviewModality">Modalidad de preparación</label><select id="reviewModality"><option value="CPU-UNSM" ${selectedModality==='CPU-UNSM'?'selected':''}>🎓 CPU-UNSM</option><option value="BECA18" ${selectedModality==='BECA18'?'selected':''}>🏆 Beca 18</option></select></div><div class="filters"><select id="reviewSubject"><option value="">Todas las materias</option>${opts(subjects,reviewFilter.subject)}</select><select id="reviewWeek"><option value="">Todos los materiales</option>${examOptions.map(e=>`<option value="exam-${esc(e.id)}" ${reviewFilter.week===`exam-${e.id}`?'selected':''}>${esc(e.title)}</option>`).join('')}${weeks.map(w=>`<option value="week-${w}" ${`week-${w}`===reviewFilter.week?'selected':''}>Separata · Semana ${w}</option>`).join('')}${hasUnassigned?`<option value="unassigned" ${reviewFilter.week==='unassigned'?'selected':''}>Sin clasificar</option>`:''}</select><select id="reviewStatus"><option value="">Todos los estados</option>${opts(['draft','review','published'],reviewFilter.status)}</select></div><p class="muted small">${filtered.length+rels.length} preguntas encontradas · ${modalityQuestions().filter(q=>q.status==='draft').length} borradores · ${modalityQuestions().filter(q=>q.status==='review').length} en revisión · ${modalityQuestions().filter(q=>!q.exam_id&&q.status==='published').length} publicadas</p><div id="reviewMessage" class="muted" role="status"></div>${rels.map(q=>`<div class="listitem"><strong>Razonamiento Verbal · Semana ${Number(q.semana)||6} · N.º ${Number(q.numero_original)||'—'}</strong> <span class="tag">${esc(q.estado)}</span><p>${esc(q.titulo)}</p><button class="secondary" data-relation-review="${esc(q.id)}">Revisar pregunta</button></div>`).join('')}${filtered.map(q=>`<div class="listitem"><strong>${esc(q.subject)} · ${esc(etiquetaOrigen(q))} · N.º ${q.original_number??'—'}</strong> <span class="tag">${esc(q.status)}</span><p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<button class="secondary" data-review-id="${q.id}">Revisar pregunta</button></div>`).join('')}${!filtered.length&&!rels.length?'<p>No hay preguntas con estos filtros.</p>':''}${relationError?`<p style="color:#b91c1c">${esc(relationError)}</p>`:''}</div><div id="reviewDetail">${relationReview?relationReviewDetail(relationReview):(detail?reviewDetail(detail):'')}</div>`;
 }
 function reviewDetail(q){
  const editable=q.status!=='published'||admin();
  const letters='ABCDE'.slice(0,Array.isArray(q.options)&&q.options.length===4?4:5);
- return `<div class="card"><h2>Pregunta N.º ${q.original_number??'—'} · ${esc(q.status)}</h2><p class="muted small">Materia: ${esc(q.subject)} · ${esc(etiquetaOrigen(q))}</p>${becaReadingPanel(q)}<form id="reviewForm"><div class="form-grid"><div class="field"><label>Ciclo</label><input name="cycle" value="${esc(q.cycle)}" required ${editable?'':'disabled'}></div><div class="field"><label>Semana</label><input type="number" name="week" min="1" max="60" value="${q.week??''}" ${esExamenCPU(q)?'':'required'} ${editable?'':'disabled'}></div><div class="field"><label>Materia</label><input name="subject" value="${esc(q.subject)}" required ${editable?'':'disabled'}></div><div class="field"><label>Tema</label><input name="topic" value="${esc(q.topic)}" required ${editable?'':'disabled'}></div><div class="field"><label>Página</label><input type="number" name="page" min="1" value="${q.page??''}" ${editable?'':'disabled'}></div><div class="field"><label>Número original</label><input type="number" name="number" min="1" value="${q.original_number??''}" ${editable?'':'disabled'}></div></div><div class="field"><label>Enunciado</label><textarea name="statement" required ${editable?'':'disabled'}>${esc(q.statement)}</textarea></div>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${letters.split('').map((letter,i)=>`<div class="field"><label>Alternativa ${letter}</label><input name="option${letter}" value="${esc(q.options[i]||'')}" required ${editable?'':'disabled'}></div>`).join('')}<div class="field"><label>Clave propuesta</label><select name="correct" ${editable?'':'disabled'}>${letters.split('').map((letter,i)=>`<option value="${i}" ${q.correct_index===i?'selected':''}>${letter}</option>`).join('')}</select></div><div class="field"><label>Explicación</label><textarea name="explanation" ${editable?'':'disabled'}>${esc(q.explanation||'')}</textarea></div>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}${admin()?`<div class="field"><label>Agregar o reemplazar imagen de la solución</label><input id="reviewSolutionImage" type="file" accept="image/png,image/jpeg,image/webp"><p class="muted small">PNG, JPG o WEBP, hasta 5 MB. Puedes guardar esta imagen sin modificar el texto, las alternativas ni la clave.</p><button type="button" id="reviewUploadSolution">Guardar imagen de solución</button><p id="reviewImageStatus" class="muted" role="status"></p></div>`:''}<div class="field"><label>Referencia</label><input name="source" value="${esc(q.source||'')}" ${editable?'':'disabled'}></div>${editable?'<button type="submit" id="reviewSave">'+(q.status==='published'?'Guardar cambios de pregunta publicada':'Guardar correcciones')+'</button>':''}</form><div class="actions" style="margin-top:12px">${q.status==='draft'?'<button id="reviewSubmit" class="secondary">Enviar a revisión</button>':''}${admin()&&q.status==='review'?'<button id="reviewPublish">Publicar pregunta</button>':''}<button id="reviewClose" class="secondary">Cerrar detalle</button></div><p id="reviewDetailStatus" class="muted" role="status"></p>${q.status==='published'?'<p class="muted small">'+(admin()?'Solo el administrador puede editar esta pregunta. Las calificaciones anteriores no se recalcularán. Cada cambio quedará registrado.':'Esta pregunta publicada solo puede ser editada por el administrador.')+'</p>':''}</div>`;
+ return `<div class="card"><h2>Pregunta N.º ${q.original_number??'—'} · ${esc(q.status)}</h2><p class="muted small">Materia: ${esc(q.subject)} · ${esc(etiquetaOrigen(q))}</p>${becaReadingPanel(q)}<form id="reviewForm"><div class="form-grid"><div class="field"><label>Ciclo</label><input name="cycle" value="${esc(q.cycle)}" required ${editable?'':'disabled'}></div><div class="field"><label>Semana</label><input type="number" name="week" min="1" max="60" value="${q.week??''}" ${q.exam_id?'disabled':'required'} ${editable?'':'disabled'}></div><div class="field"><label>Materia</label><input name="subject" value="${esc(q.subject)}" required ${editable?'':'disabled'}></div><div class="field"><label>Tema</label><input name="topic" value="${esc(q.topic)}" required ${editable?'':'disabled'}></div><div class="field"><label>Página</label><input type="number" name="page" min="1" value="${q.page??''}" ${editable?'':'disabled'}></div><div class="field"><label>Número original</label><input type="number" name="number" min="1" value="${q.original_number??''}" ${editable?'':'disabled'}></div></div><div class="field"><label>Enunciado</label><textarea name="statement" required ${editable?'':'disabled'}>${esc(q.statement)}</textarea></div>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${letters.split('').map((letter,i)=>`<div class="field"><label>Alternativa ${letter}</label><input name="option${letter}" value="${esc(q.options[i]||'')}" required ${editable?'':'disabled'}></div>`).join('')}<div class="field"><label>Clave propuesta</label><select name="correct" ${editable?'':'disabled'}>${letters.split('').map((letter,i)=>`<option value="${i}" ${q.correct_index===i?'selected':''}>${letter}</option>`).join('')}</select></div><div class="field"><label>Explicación</label><textarea name="explanation" ${editable?'':'disabled'}>${esc(q.explanation||'')}</textarea></div>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}${admin()?`<div class="field"><label>Agregar o reemplazar imagen de la solución</label><input id="reviewSolutionImage" type="file" accept="image/png,image/jpeg,image/webp"><p class="muted small">PNG, JPG o WEBP, hasta 5 MB. Puedes guardar esta imagen sin modificar el texto, las alternativas ni la clave.</p><button type="button" id="reviewUploadSolution">Guardar imagen de solución</button><p id="reviewImageStatus" class="muted" role="status"></p></div>`:''}<div class="field"><label>Referencia</label><input name="source" value="${esc(q.source||'')}" ${editable?'':'disabled'}></div>${editable&&!q.exam_id?'<button type="submit" id="reviewSave">'+(q.status==='published'?'Guardar cambios de pregunta publicada':'Guardar correcciones')+'</button>':q.exam_id?'<p class="muted small">Para corregir el contenido de una pregunta de examen se requiere una función de edición compatible con exam_id en Supabase. Puedes revisar, adjuntar imagen y cambiar el estado mediante los controles autorizados.</p>':''}</form><div class="actions" style="margin-top:12px">${q.status==='draft'?'<button id="reviewSubmit" class="secondary">Enviar a revisión</button>':''}${admin()&&q.status==='review'?'<button id="reviewPublish">Publicar pregunta</button>':''}<button id="reviewClose" class="secondary">Cerrar detalle</button></div><p id="reviewDetailStatus" class="muted" role="status"></p>${q.status==='published'?'<p class="muted small">'+(admin()?'Solo el administrador puede editar esta pregunta. Las calificaciones anteriores no se recalcularán. Cada cambio quedará registrado.':'Esta pregunta publicada solo puede ser editada por el administrador.')+'</p>':''}</div>`;
 }
 function bindReview(){
  document.querySelectorAll('[data-relation-review]').forEach(b=>b.onclick=async()=>{const msg=$('reviewMessage');msg.textContent='Cargando relaciones...';const {data,error}=await db.rpc('cachimbolab_revisar_relacion',{p_id:b.dataset.relationReview});if(error){msg.textContent=error.message;return}relationReview=data;reviewSelected=null;$('reviewDetail').innerHTML=relationReviewDetail(data);msg.textContent='';bindRelationReview();$('reviewDetail').scrollIntoView({behavior:'smooth',block:'start'});});
@@ -729,7 +764,7 @@ function bindReview(){
    const message=$('reviewMessage');message.textContent='Cargando pregunta y clave...';
    const {data,error}=await db.rpc('get_question_for_review',{p_question_id:btn.dataset.reviewId});
    if(error){message.textContent='Error: '+error.message;return}
-   reviewSelected={...data,statement_image_path:questions.find(q=>q.id===data.id)?.statement_image_path??data.statement_image_path,solution_image_path:questions.find(q=>q.id===data.id)?.solution_image_path??data.solution_image_path};liberarImagenesPrivadas($('reviewDetail'));$('reviewDetail').innerHTML=reviewDetail(reviewSelected);cargarImagenesPrivadas($('reviewDetail'));message.textContent='';bindReviewDetail();$('reviewDetail').scrollIntoView({behavior:'smooth',block:'start'});
+   reviewSelected={...data,exam_id:questions.find(q=>q.id===data.id)?.exam_id??data.exam_id,statement_image_path:questions.find(q=>q.id===data.id)?.statement_image_path??data.statement_image_path,solution_image_path:questions.find(q=>q.id===data.id)?.solution_image_path??data.solution_image_path};liberarImagenesPrivadas($('reviewDetail'));$('reviewDetail').innerHTML=reviewDetail(reviewSelected);cargarImagenesPrivadas($('reviewDetail'));message.textContent='';bindReviewDetail();$('reviewDetail').scrollIntoView({behavior:'smooth',block:'start'});
  });
  if(reviewSelected)bindReviewDetail();
 }
@@ -786,7 +821,7 @@ function bindReviewDetail(){
      if(ruta)console.warn('Imagen sin asociar en Storage:',ruta);
    }finally{imageButton.disabled=false;}
  };
- if(q.status!=='published'||admin())form.onsubmit=async e=>{
+ if(!q.exam_id&&(q.status!=='published'||admin()))form.onsubmit=async e=>{
    e.preventDefault();const b=$('reviewSave'),status=$('reviewDetailStatus');b.disabled=true;status.textContent='Guardando...';
    const v=Object.fromEntries(new FormData(form).entries());
     const published=q.status==='published';
@@ -864,6 +899,7 @@ if(page==='bank'){
   bankList();
 }
 
+if(page==='exams') bindExams();
 if(page==='practice') bindPractice();
 if(page==='bulk') bindBulk();
 if(page==='review') bindReview();
