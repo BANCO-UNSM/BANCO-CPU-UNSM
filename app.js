@@ -131,7 +131,7 @@ async function cargarImagenesPrivadas(raiz=document){
 
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',status:''};
 let activityRows=[],activityLoaded=false,activityError='';
-let exams=[],examsError='',questionsError='',examTypeFilter='',examCycleFilter='',examActiveId='',examSession=null;
+let exams=[],examsError='',questionsError='',examTypeFilter='',examCycleFilter='',examActiveId='',examSession=null,examPreview=null;
 let relationItems=[],relationBusy=false,relationLoaded=false,relationError='',relationSelected=null,relationAnswers=[],relationGrade=null,relationReview=null;
 let authMode='login';
 let selectedModality='CPU-UNSM';
@@ -384,6 +384,25 @@ function bindRelations(){
  });
 }
 
+// Vista previa exclusiva para administradores: no habilita el examen al estudiante.
+// Convierte fracciones sencillas del texto a LaTeX SOLO en la vista previa.
+function textoMatematicoVista(texto){
+  const raw=String(texto??'');
+  const safe=esc(raw);
+  return safe.replace(/\b(\d+)\s*\/\s*(\d+)\b/g,(_match,a,b)=>`\\(${`\\frac{${a}}{${b}}`}\\)`);
+}
+function vistaPreviaExamen(){
+  if(!admin()||!examPreview)return '';
+  const e=examById(examPreview.examId);
+  if(!e)return '';
+  const q=examPreview.data;
+  if(examPreview.error)return `<div class="card"><h3>Vista previa · ${esc(e.title)}</h3><p role="alert">${esc(examPreview.error)}</p><button class="secondary" id="examPreviewClose">Cerrar vista previa</button></div>`;
+  if(!q)return `<div class="card"><h3>Vista previa · ${esc(e.title)}</h3><p>Cargando pregunta publicada...</p><button class="secondary" id="examPreviewClose">Cerrar vista previa</button></div>`;
+  const opts=Array.isArray(q.options)?q.options:[];
+  const idx=q.correct_index==null?null:Number(q.correct_index);
+  const valid=idx!==null&&Number.isInteger(idx)&&idx>=0&&idx<opts.length;
+  return `<div class="card" id="examPreviewPanel"><h2>Vista previa de administrador · ${esc(e.title)}</h2><p class="muted">Esta vista no está disponible para estudiantes. Solo muestra una pregunta publicada.</p><h3>Pregunta N.º ${esc(q.original_number??'—')} · ${esc(q.subject)}</h3><p style="white-space:pre-wrap;line-height:1.8">${textoMatematicoVista(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Figura original')}${opts.map((o,i)=>`<div class="option">${'ABCDE'[i]}) ${textoMatematicoVista(o)}</div>`).join('')}<details style="margin-top:18px"><summary style="cursor:pointer;font-weight:700">Ver respuesta y desarrollo (solo administrador)</summary><div class="card"><p><strong>${valid?'Respuesta correcta: '+ 'ABCDE'[idx]+') '+esc(opts[idx]):'Clave pendiente'}</strong></p><h3>Desarrollo paso a paso</h3><p style="white-space:pre-wrap;line-height:1.9">${textoMatematicoVista(q.explanation||'Sin explicación registrada.')}</p>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}</div></details><div class="actions" style="margin-top:15px"><button class="secondary" id="examPreviewClose">Cerrar vista previa</button></div></div>`;
+}
 // Módulo de exámenes: independiente de las separatas, sin mostrar claves antes de calificar.
 function examsPage(){
  if(examsError&&!teacher())return notice('No se pudo consultar el catálogo de exámenes. Contacta al administrador.',true);
@@ -415,9 +434,24 @@ function examsPage(){
   }
   return `<div class="card"><h2>${esc(e.title)}</h2><p class="muted">Pregunta ${examSession.i+1} de ${examSession.items.length} · N.º ${esc(q.original_number??'—')} · ${esc(q.subject)}</p><h3>${esc(q.statement)}</h3>${espacioImagenPrivada(q.statement_image_path,'Figura del examen')}${(Array.isArray(q.options)?q.options:[]).map((o,i)=>`<label class="option"><input type="radio" name="examChoice" value="${i}" ${examSession.answers[examSession.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<div class="actions"><button id="examPrev" class="secondary" ${examSession.i===0?'disabled':''}>Anterior</button><button id="examNext">${examSession.i===examSession.items.length-1?'Entregar examen':'Siguiente'}</button><button id="examCancel" class="secondary">Salir</button></div><p id="examStatus" class="muted" role="status"></p></div>`;
  }
- return `<div class="card"><h2>Exámenes de admisión</h2><p class="muted">Resuelve exámenes completos de CPU-UNSM, admisión ordinaria y 5.º de secundaria. Las separatas están en Banco académico.</p>${filters}${visible.map(e=>{const qs=questions.filter(q=>q.exam_id===e.id&&(teacher()||q.status==='published'));const published=qs.filter(q=>q.status==='published').length;const ready=!e._localFallback&&e.status==='published'&&qs.length>0&&qs.every(q=>q.status==='published');return `<div class="listitem"><strong>${esc(e.title)}</strong><p class="muted small">${esc(labels[examCategory(e.exam_type)]||e.exam_type)} · ${esc(e.cycle||e.exam_year)} · ${esc(e.exam_date||'Fecha por confirmar')} · ${qs.length} preguntas ${teacher()?'registradas':'publicadas'}</p>${teacher()?`<p class="muted small">${published} publicadas · ${qs.filter(q=>q.status==='draft').length} borradores · ${qs.filter(q=>q.status==='review').length} en revisión</p><span class="tag">${esc(e._localFallback?'Estado no verificable (RLS)':e.status)}</span> <button type="button" class="secondary" data-review-exam="${esc(e.id)}">Revisar sus preguntas</button> `:''}<button data-start-exam="${esc(e.id)}" ${ready?'':'disabled'}>${ready?'Resolver examen':'No disponible todavía'}</button></div>`}).join('')||'<p>Todavía no hay exámenes registrados o disponibles en esta categoría.</p>'}</div>`;
+ return `<div class="card"><h2>Exámenes de admisión</h2><p class="muted">Resuelve exámenes completos de CPU-UNSM, admisión ordinaria y 5.º de secundaria. Las separatas están en Banco académico.</p>${filters}${visible.map(e=>{const qs=questions.filter(q=>q.exam_id===e.id&&(teacher()||q.status==='published'));const published=qs.filter(q=>q.status==='published').length;const ready=!e._localFallback&&e.status==='published'&&qs.length>0&&qs.every(q=>q.status==='published');return `<div class="listitem"><strong>${esc(e.title)}</strong><p class="muted small">${esc(labels[examCategory(e.exam_type)]||e.exam_type)} · ${esc(e.cycle||e.exam_year)} · ${esc(e.exam_date||'Fecha por confirmar')} · ${qs.length} preguntas ${teacher()?'registradas':'publicadas'}</p>${teacher()?`<p class="muted small">${published} publicadas · ${qs.filter(q=>q.status==='draft').length} borradores · ${qs.filter(q=>q.status==='review').length} en revisión</p><span class="tag">${esc(e._localFallback?'Estado no verificable (RLS)':e.status)}</span> <button type="button" class="secondary" data-review-exam="${esc(e.id)}">Revisar sus preguntas</button> ${admin()&&published?`<button type="button" class="secondary" data-preview-exam="${esc(e.id)}">Vista previa (${published})</button>`:''} `:''}<button data-start-exam="${esc(e.id)}" ${ready?'':'disabled'}>${ready?'Resolver examen':'No disponible todavía'}</button></div>`}).join('')||'<p>Todavía no hay exámenes registrados o disponibles en esta categoría.</p>'}</div>${vistaPreviaExamen()}`;
 }
 function bindExams(){
+  $('examPreviewClose')?.addEventListener('click',()=>{examPreview=null;render()});
+  document.querySelectorAll('[data-preview-exam]').forEach(b=>b.onclick=async()=>{
+    if(!admin())return;
+    const id=b.dataset.previewExam;
+    const first=questions.filter(q=>q.exam_id===id&&q.status==='published').sort(ordenarPreguntasPorNumero)[0];
+    if(!first)return;
+    examPreview={examId:id,data:null,error:''};render();
+    try{
+      const {data,error}=await db.rpc('get_question_for_review',{p_question_id:first.id});
+      if(error)throw error;
+      if(!data)throw Error('No se recibió información de la pregunta.');
+      examPreview={examId:id,data:{...first,...data},error:''};
+    }catch(err){examPreview={examId:id,data:null,error:'No se pudo cargar la vista previa: '+(err?.message||'Error desconocido')};}
+    if(page==='exams'){render();$('examPreviewPanel')?.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
   $('examReload')?.addEventListener('click',refresh);
   document.querySelectorAll('[data-review-exam]').forEach(b=>b.onclick=()=>{selectedModality='CPU-UNSM';reviewFilter={subject:'',week:'exam-'+b.dataset.reviewExam,status:''};reviewSelected=null;relationReview=null;page='review';render();});
  $('examType')?.addEventListener('change',e=>{examTypeFilter=e.target.value;examCycleFilter='';render()});
