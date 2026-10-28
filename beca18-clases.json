@@ -2751,14 +2751,14 @@
       "statement": "Expresa 0,000073 en notación científica.",
       "options": [
         "7,3×10⁻⁵",
-        "73×10⁻⁶",
+        "7,3×10⁻⁴",
         "7,3×10⁵",
-        "0,73×10⁻⁴"
+        "7,3×10⁻⁶"
       ],
       "correct_index": 0,
       "explanation": {
-        "correct": "RESPUESTA CORRECTA: A) 7,3×10⁻⁵. Se desplaza la coma cinco lugares a la derecha: 7,3×10⁻⁵.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: Se desplaza la coma cinco lugares a la derecha: 7,3×10⁻⁵. C) No corresponde al resultado: Se desplaza la coma cinco lugares a la derecha: 7,3×10⁻⁵. D) No corresponde al resultado: Se desplaza la coma cinco lugares a la derecha: 7,3×10⁻⁵.",
+        "correct": "RESPUESTA CORRECTA: A) 7,3×10⁻⁵. Se desplaza la coma cinco lugares a la derecha para obtener 7,3, por lo que el exponente es −5.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la notación científica correcta. B) Corresponde a 0,00073. C) Representa 730 000. D) Representa 0,0000073.",
         "memory": "CLAVE PARA RECORDAR: La mantisa debe tener valor absoluto entre 1 y 10.",
         "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
       }
