@@ -204,14 +204,16 @@ async function refresh(){
    const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
   }
  }
+ if(user&&(teacher()||access?.allowed))restoreTimedExam();
  render();
+ if(quiz?.deadlineAt&&!quiz.result&&quizRemaining()===0)submitQuizTimed();
 }
 function render(){
  const allowed=teacher()||access?.allowed;
  const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['exams','Exámenes de admisión'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
- document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
+ document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{if(quiz?.deadlineAt&&!quiz.result){alert('Hay un examen cronometrado en curso. Entrégalo antes de salir.');return;}page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
  $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',exams:'Exámenes de admisión',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
@@ -580,9 +582,115 @@ function becaReadingPanel(q){
  return `<section class="reading-panel"><h3>📖 Texto ${n} · Lectura compartida</h3><div class="reading-scroll" style="white-space:pre-wrap">${esc(becaReadings[String(n)]||'Lectura en preparación. No publicar este bloque hasta verificar el texto original.')}</div></section>`;
 }
 function timeFmt(ms){const sec=Math.max(0,Math.floor(ms/1000));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
-function tickQuizTime(){if(!quiz||quiz.result)return;const now=Date.now();if(quiz.lastTick){quiz.elapsed[quiz.i]+=Math.max(0,now-quiz.lastTick)}quiz.lastTick=now;}
+function tickQuizTime(){if(!quiz||quiz.result)return;const now=Date.now();if(quiz.lastTick){quiz.elapsed[quiz.i]+=Math.max(0,now-quiz.lastTick)}quiz.lastTick=now;saveTimedExam();}
 let quizTimerHandle=null;
-function bindQuizTimer(){clearInterval(quizTimerHandle);if(!quiz||quiz.result)return;quizTimerHandle=setInterval(()=>{if(!quiz||quiz.result){clearInterval(quizTimerHandle);return}tickQuizTime();const e=document.getElementById('questionTimer');if(e)e.textContent=timeFmt(quiz.elapsed[quiz.i]);const t=document.getElementById('totalTimer');if(t)t.textContent=timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0));},1000)}
+const THIRD_EXAM_DURATION=150*60*1000;
+let quizSubmitting=false;
+function timedExamStorageKey(){return 'cachimbolab_timed_exam_2026_ii_'+(user?.id||'anonymous');}
+function saveTimedExam(){
+ if(!user||!quiz?.deadlineAt||quiz.result)return;
+ try{
+  localStorage.setItem(timedExamStorageKey(),JSON.stringify({
+   questionIds:quiz.items.map(q=>q.id),answers:quiz.answers,
+   elapsed:quiz.elapsed,i:quiz.i,deadlineAt:quiz.deadlineAt,
+   lastTick:Date.now(),savedAt:Date.now()
+  }));
+ }catch(error){console.warn('No se pudo guardar el progreso del examen',error);}
+}
+function restoreTimedExam(){
+ if(!user||quiz)return;
+ let saved;
+ try{saved=JSON.parse(localStorage.getItem(timedExamStorageKey())||'null')}catch{return}
+ if(!saved||!Array.isArray(saved.questionIds)||saved.questionIds.length!==100||!Number.isFinite(saved.deadlineAt))return;
+ const byId=new Map(questions.map(q=>[q.id,q]));
+ const items=saved.questionIds.map(id=>byId.get(id));
+ if(items.some(q=>!q||q.status!=='published'))return;
+ quiz={items,answers:Array.from({length:100},(_,i)=>Number.isInteger(saved.answers?.[i])?saved.answers[i]:null),
+ elapsed:Array.from({length:100},(_,i)=>Number(saved.elapsed?.[i])||0),
+ i:Math.min(99,Math.max(0,Number(saved.i)||0)),
+ deadlineAt:saved.deadlineAt,lastTick:Date.now(),result:null};
+ page='quiz';selectedModality='CPU-UNSM';
+}
+function clearTimedExam(){try{localStorage.removeItem(timedExamStorageKey())}catch{}}
+
+// Orden, materias y cupos oficiales del III examen: nunca mezclar las posiciones.
+const THIRD_EXAM_DISTRIBUTION=Object.freeze([
+  ['Razonamiento Matemático',13],['Razonamiento Verbal',14],
+  ['Cultura General',3],['Álgebra',4],['Geometría',4],['Aritmética',3],
+  ['Trigonometría',3],['Física',6],['Biología',11],['Química',9],
+  ['Lengua',4],['Literatura',3],['Historia',4],['Geografía',4],
+  ['Economía',4],['Filosofía',4],['Psicología',3],['Educación Cívica',4]
+]);
+const THIRD_EXAM_HISTORY_KEY='cachimbolab_third_exam_2026_ii_history_v1';
+function normalizedThirdSubject(value){
+ const valueNormalized=String(value||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ');
+ const aliases={
+  'razonamiento matematico':'Razonamiento Matemático','razonamiento verbal':'Razonamiento Verbal',
+  'cultura general':'Cultura General','algebra':'Álgebra','geometria':'Geometría',
+  'aritmetica':'Aritmética','trigonometria':'Trigonometría','fisica':'Física',
+  'biologia':'Biología','quimica':'Química','lengua':'Lengua','lenguaje':'Lengua',
+  'lengua y literatura':'Lengua','literatura':'Literatura','historia':'Historia',
+  'historia del peru':'Historia','historia universal':'Historia',
+  'geografia':'Geografía','economia':'Economía','filosofia':'Filosofía',
+  'psicologia':'Psicología','civica':'Educación Cívica','educacion civica':'Educación Cívica'
+ };
+ return aliases[valueNormalized]||String(value||'').trim();
+}
+function thirdExamPool(){
+ return questions.filter(q=>q.modality==='CPU-UNSM'&&!q.exam_id&&q.cycle==='2026-II'&&Number(q.week)>=11&&Number(q.week)<=16&&q.status==='published');
+}
+function thirdExamAvailability(){
+ const pool=thirdExamPool();
+ const counts=new Map();
+ for(const q of pool){const subject=normalizedThirdSubject(q.subject);counts.set(subject,(counts.get(subject)||0)+1);}
+ const missing=THIRD_EXAM_DISTRIBUTION.map(([name,required])=>({name,required,available:counts.get(name)||0})).filter(x=>x.available<x.required);
+ return {pool,missing,ready:missing.length===0};
+}
+function thirdExamHistory(){
+ try{const h=JSON.parse(localStorage.getItem(THIRD_EXAM_HISTORY_KEY+'_'+(user?.id||'anonymous'))||'[]');return Array.isArray(h)?h.slice(-12):[];}catch{return [];}
+}
+function saveThirdExamHistory(ids){
+ try{const h=thirdExamHistory();h.push(ids);localStorage.setItem(THIRD_EXAM_HISTORY_KEY+'_'+(user?.id||'anonymous'),JSON.stringify(h.slice(-12)));}catch(error){console.warn('No se pudo conservar historial de variantes',error);}
+}
+function makeThirdExamItems(){
+ const {pool,missing}=thirdExamAvailability();
+ if(missing.length)throw new Error('Faltan preguntas publicadas: '+missing.map(x=>x.name+' ('+x.available+'/'+x.required+')').join(', '));
+ const previous=thirdExamHistory(),last=new Set(previous[previous.length-1]||[]);
+ const frequency=new Map();
+ for(const ids of previous)for(const id of ids)frequency.set(id,(frequency.get(id)||0)+1);
+ const selection=[];
+ for(const [subject,amount] of THIRD_EXAM_DISTRIBUTION){
+  const candidates=pool.filter(q=>normalizedThirdSubject(q.subject)===subject).map(q=>({q,tie:Math.random()}));
+  const weeks=new Map();
+  for(let i=0;i<amount;i++){
+   // Prefiere preguntas no usadas en el intento anterior, menos repetidas y distribuidas entre semanas.
+   candidates.sort((a,b)=>{
+    const score=o=>(last.has(o.q.id)?1000:0)+(frequency.get(o.q.id)||0)*15+(weeks.get(Number(o.q.week))||0)*3;
+    return score(a)-score(b)||a.tie-b.tie;
+   });
+   const chosen=candidates.shift();
+   if(!chosen)throw new Error('No hay suficientes preguntas en '+subject);
+   selection.push(chosen.q);
+   const week=Number(chosen.q.week);weeks.set(week,(weeks.get(week)||0)+1);
+  }
+ }
+ if(selection.length!==100||new Set(selection.map(q=>q.id)).size!==100)throw new Error('El simulacro no cumple las 100 preguntas únicas.');
+ if(previous.length&&selection.every(q=>last.has(q.id)))throw new Error('Todavía no hay suficientes preguntas distintas para generar una nueva versión del simulacro. Agrega y publica más preguntas del periodo 11–16.');
+ return selection;
+}
+function quizRemaining(){return quiz?.deadlineAt?Math.max(0,quiz.deadlineAt-Date.now()):null;}
+function examClock(ms){const seconds=Math.ceil(Math.max(0,ms)/1000);return [Math.floor(seconds/3600),Math.floor(seconds%3600/60),seconds%60].map(n=>String(n).padStart(2,'0')).join(':');}
+async function submitQuizTimed(){
+ if(!quiz||quiz.result||quizSubmitting)return;
+ quizSubmitting=true;clearInterval(quizTimerHandle);tickQuizTime();
+ const selected=document.querySelector('input[name=choice]:checked');if(selected)quiz.answers[quiz.i]=Number(selected.value);
+ const b=$('nextQuiz');if(b)b.disabled=true;
+ const st=$('quizError');if(st)st.textContent='Entregando y calificando...';
+ const {data,error}=await db.rpc('grade_attempt',{p_answers:quiz.items.map((q,i)=>({id:q.id,selected:quiz.answers[i]}))});
+ if(error){if(st)st.textContent='Error al entregar: '+error.message+'; reintenta.';if(b)b.disabled=false;quizSubmitting=false;return;}
+ quiz.result=data;quizSubmitting=false;clearTimedExam();await refresh();
+}
+function bindQuizTimer(){clearInterval(quizTimerHandle);if(!quiz||quiz.result)return;quizTimerHandle=setInterval(()=>{if(!quiz||quiz.result){clearInterval(quizTimerHandle);return}tickQuizTime();const e=document.getElementById('questionTimer');if(e)e.textContent=timeFmt(quiz.elapsed[quiz.i]);const t=document.getElementById('totalTimer');if(t)t.textContent=timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0));const left=document.getElementById('quizRemaining');if(left)left.textContent=examClock(quizRemaining());if(quiz.deadlineAt&&quizRemaining()===0)submitQuizTimed();},1000)}
 function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id&&q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div>
 <div class="field">
   <label>Semana del examen</label>
@@ -599,7 +707,7 @@ function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><
       .join('')}
   </select>
 </div>
-<div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="exam-layout">${becaReadingPanel(q)}<div class="card exam-question"><p class="muted">Pregunta ${quiz.i+1} de ${quiz.items.length} · <strong>Tiempo de esta pregunta: <span id="questionTimer">${timeFmt(quiz.elapsed[quiz.i])}</span></strong> · Total: <span id="totalTimer">${timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0))}</span></p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button><p id="quizError" class="muted"></p></div></div>`}
+${selectedModality==='CPU-UNSM'?`<div class="card"><h3>III Examen CPU-UNSM 2026-II</h3><p>Semanas 11–16 · 100 preguntas · 2 horas y 30 minutos.</p><p class="muted">Preguntas publicadas entre las semanas 11–16: ${thirdExamAvailability().pool.length}. ${thirdExamAvailability().ready?'Hay suficientes preguntas por curso.':'Faltan por curso: '+thirdExamAvailability().missing.map(x=>x.name+' ('+x.available+'/'+x.required+')').join(' · ')}</p><button id="startThirdExam" ${!thirdExamAvailability().ready?'disabled':''}>Iniciar III examen</button></div>`:''}<div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="exam-layout">${becaReadingPanel(q)}<div class="card exam-question"><p class="muted">Pregunta ${quiz.i+1} de ${quiz.items.length} · <strong>Tiempo de esta pregunta: <span id="questionTimer">${timeFmt(quiz.elapsed[quiz.i])}</span></strong> · Total: <span id="totalTimer">${timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0))}</span>${quiz.deadlineAt?' · Tiempo restante: <strong id="quizRemaining">'+examClock(quizRemaining())+'</strong>':''}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}${quiz.deadlineAt?'<button id="prevQuiz" class="secondary" '+(quiz.i===0?'disabled':'')+'>Anterior</button> ':''}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button>${quiz.deadlineAt?'<button id="deliverQuiz" class="secondary">Entregar ahora</button>':''}<p id="quizError" class="muted"></p></div></div>`}
 
 // Corrección de simulacros: solo se muestran claves recibidas tras grade_attempt.
 function quizReviewPage(){
@@ -1045,6 +1153,16 @@ if(page==='review') bindReview();
 
 if(page==='quiz'){
   bindQuizTimer();
+  if($('startThirdExam')) $('startThirdExam').onclick=()=>{
+    let items;
+    try{items=makeThirdExamItems();}catch(error){alert(error.message);return;}
+    selectedModality='CPU-UNSM';
+    const now=Date.now();
+    quiz={items,answers:Array(100).fill(null),elapsed:Array(100).fill(0),lastTick:now,deadlineAt:now+THIRD_EXAM_DURATION,i:0};
+    saveThirdExamHistory(items.map(q=>q.id));
+    saveTimedExam();
+    render();
+  };
   if($('startQuiz')) $('startQuiz').onclick=()=>{
 const subject = $('quizSubject').value;
 const week = $('quizWeek').value;
@@ -1071,11 +1189,15 @@ q.modality === selectedModality &&
     render();
   };
 
+  if($('prevQuiz')) $('prevQuiz').onclick=()=>{const choice=document.querySelector('input[name=choice]:checked');quiz.answers[quiz.i]=choice?Number(choice.value):null;tickQuizTime();quiz.i=Math.max(0,quiz.i-1);quiz.lastTick=Date.now();render();};
+  if($('deliverQuiz')) $('deliverQuiz').onclick=()=>{if(confirm('¿Entregar tus respuestas?'))submitQuizTimed();};
+  document.querySelectorAll('input[name=choice]').forEach(input=>input.onchange=()=>{if(!quiz?.deadlineAt)return;quiz.answers[quiz.i]=Number(input.value);saveTimedExam();});
   if($('nextQuiz')) $('nextQuiz').onclick=async()=>{
     const sel=document.querySelector('input[name=choice]:checked');
     quiz.answers[quiz.i]=sel?Number(sel.value):null;
 
     tickQuizTime();
+    if(quiz.deadlineAt&&quizRemaining()===0){await submitQuizTimed();return;}
     if(quiz.i<quiz.items.length-1){
       quiz.i++;
       quiz.lastTick=Date.now();
@@ -1083,6 +1205,7 @@ q.modality === selectedModality &&
       return;
     }
 
+    if(quiz.deadlineAt){await submitQuizTimed();return;}
     $('nextQuiz').disabled=true;
 
     const {data,error}=await db.rpc('grade_attempt',{
