@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'beca18-clases.*'
+      - 'beca18-verbal-pronabec.json'
       - 'app.js'
       - 'tests/beca18-validacion.mjs'
       - '.github/workflows/verificar-beca18.yml'
@@ -10,6 +11,7 @@ on:
     branches: [main]
     paths:
       - 'beca18-clases.*'
+      - 'beca18-verbal-pronabec.json'
       - 'app.js'
       - 'tests/beca18-validacion.mjs'
 jobs:

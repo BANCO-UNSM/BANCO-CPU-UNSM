@@ -43,4 +43,23 @@ assert.ok(lessonJs.includes('function progressSummary('),'Falta diagnóstico del
 assert.ok(html.includes('data-area="Álgebra"')&&html.includes('data-area="Letras"'),'Faltan las rutas independientes');
 assert.ok(html.includes('id="diagnostic"'),'Falta contenedor de diagnóstico');
 assert.ok(html.includes('id="clearProgress"'),'Falta botón para borrar progreso');
+const pronabec=JSON.parse(readFileSync('beca18-verbal-pronabec.json','utf8'));
+assert.equal(pronabec.lessons.length,24,'El libro contiene 24 sesiones verbales');
+assert.equal(pronabec.questions.length,72,'Se esperan 72 preguntas originales (3 por sesión)');
+assert.ok(html.includes('data-area="Refuerzo verbal"'),'Falta conservar el refuerzo verbal');
+assert.ok(lessonJs.includes("fetch('beca18-verbal-pronabec.json'"),'La interfaz no carga el libro de verbal');
+const allLessonIds=new Set([...d.lessons.filter(l=>l.area!=='Letras').map(l=>l.id),...d.lessons.filter(l=>l.area==='Letras').map(l=>'R'+l.id.slice(1)),...pronabec.lessons.map(l=>l.id)]);
+assert.equal(allLessonIds.size,60,'Las 60 clases deben tener identificadores únicos');
+for(let i=0;i<24;i++){
+ const id='L'+String(i+1).padStart(2,'0');
+ const l=pronabec.lessons.find(x=>x.id===id);
+ assert.ok(l,'Falta sesión '+id);
+ assert.ok(l.theory?.length>=3&&l.examples?.length>=3,'Contenido incompleto en '+id);
+ assert.equal(pronabec.questions.filter(q=>q.lesson_id===id).length,3,'Banco incompleto en '+id);
+}
+for(const q of pronabec.questions){
+ assert.equal(q.options.length,4,q.id+' requiere 4 alternativas');
+ assert.ok(q.options[q.correct_index],q.id+' clave inválida');
+ for(let i=0;i<4;i++)assert.ok(q.explanation[keys[i]]?.startsWith(prefixes[i]),'Bloque faltante: '+q.id);
+}
 console.log('VALIDACIÓN BECA 18 CORRECTA:',d.lessons.length,'clases y',d.questions.length,'preguntas originales.');
