@@ -181,6 +181,16 @@
             "Enumeración: 1,2,3,6,9,18."
           ],
           "answer": "6"
+        },
+        {
+          "title": "Divisibilidad por 9 y por 4",
+          "statement": "¿El número 2 376 es divisible entre 9 y entre 4?",
+          "steps": [
+            "Suma sus cifras: 2+3+7+6=18; es múltiplo de 9.",
+            "Observa las dos últimas cifras: 76 es múltiplo de 4.",
+            "Por lo tanto, 2 376 es divisible entre 9 y entre 4."
+          ],
+          "answer": "Sí, por ambos."
         }
       ],
       "mistakes": [
@@ -3574,7 +3584,7 @@
       "status": "borrador_para_revision",
       "level": "básico",
       "type": "alternativa_multiple",
-      "statement": "El triple de un número disminuido en 4 se expresa como:",
+      "statement": "El triple de un número, menos 4, se expresa como:",
       "options": [
         "3x−4",
         "3(x−4)",
