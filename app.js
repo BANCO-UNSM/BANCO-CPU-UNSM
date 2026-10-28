@@ -309,6 +309,7 @@ function home(){
           <button type="button" id="selectBeca">
             Prepararme para Beca 18
           </button>
+          <p><a href="beca18-clases.html" class="button" style="display:inline-block;text-decoration:none;background:#0d759b">📚 Estudiar Números y Letras</a></p>
         </div>
       </div>
     </div>
