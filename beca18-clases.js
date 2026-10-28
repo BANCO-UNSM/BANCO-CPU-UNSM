@@ -3,6 +3,10 @@ function latestFullAttempt(l){
  const p=progress[l.id];if(!p)return null;
  return [...(p.history||[])].reverse().find(a=>!a.wasRetry)||(!p.wasRetry?p:null);
 }
+function resetProgress(){
+ if(!confirm('¿Borrar el progreso de Beca 18 guardado en este navegador? Esta acción no se puede deshacer.'))return;
+ progress={};retryOnly=false;saveProgress();draw();
+}
 function progressSummary(){
  const done=lessons.filter(l=>latestFullAttempt(l)?.total>0);
  const sum=done.length,avg=sum?Math.round(done.reduce((n,l)=>{const a=latestFullAttempt(l);return n+100*a.score/a.total;},0)/sum):0;
@@ -55,5 +59,6 @@ function draw(){
  };
  }
 }
-document.querySelectorAll('[data-area]').forEach(b=>b.onclick=()=>{area=b.dataset.area;active=lessons.find(l=>l.area===area)?.id;retryOnly=false;draw()});async function validarAcceso(){if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw Error('No se encuentra la configuración de acceso.');const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session},error}=await client.auth.getSession();if(error||!session?.user)throw Error('Inicia sesión desde CachimboLab para acceder a las clases.');progressKey='beca18_progress_v1_'+session.user.id;try{progress=JSON.parse(localStorage.getItem(progressKey)||'{}')||{};}catch(e){progress={};}const {data:profile,error:profileError}=await client.from('profiles').select('role').eq('id',session.user.id).maybeSingle();if(profileError)throw Error('No se pudo validar tu perfil.');if(!['teacher','admin'].includes(profile?.role)){const {data:active,error:accessError}=await client.rpc('has_valid_subscription');if(accessError||!active)throw Error('Tu suscripción no está activa. Accede desde el panel de CachimboLab.');}}
+document.querySelectorAll('[data-area]').forEach(b=>b.onclick=()=>{area=b.dataset.area;active=lessons.find(l=>l.area===area)?.id;retryOnly=false;draw()});
+const clear=$('clearProgress');if(clear)clear.onclick=resetProgress;async function validarAcceso(){if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw Error('No se encuentra la configuración de acceso.');const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session},error}=await client.auth.getSession();if(error||!session?.user)throw Error('Inicia sesión desde CachimboLab para acceder a las clases.');progressKey='beca18_progress_v1_'+session.user.id;try{progress=JSON.parse(localStorage.getItem(progressKey)||'{}')||{};}catch(e){progress={};}const {data:profile,error:profileError}=await client.from('profiles').select('role').eq('id',session.user.id).maybeSingle();if(profileError)throw Error('No se pudo validar tu perfil.');if(!['teacher','admin'].includes(profile?.role)){const {data:active,error:accessError}=await client.rpc('has_valid_subscription');if(accessError||!active)throw Error('Tu suscripción no está activa. Accede desde el panel de CachimboLab.');}}
 validarAcceso().then(()=>fetch('beca18-clases.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('No se pudo cargar el temario');return r.json()}).then(d=>{lessons=d.lessons;questions=d.questions;draw()})).catch(e=>{$('lesson').textContent=e.message;});
