@@ -582,7 +582,21 @@ function becaReadingPanel(q){
 function timeFmt(ms){const sec=Math.max(0,Math.floor(ms/1000));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
 function tickQuizTime(){if(!quiz||quiz.result)return;const now=Date.now();if(quiz.lastTick){quiz.elapsed[quiz.i]+=Math.max(0,now-quiz.lastTick)}quiz.lastTick=now;}
 let quizTimerHandle=null;
-function bindQuizTimer(){clearInterval(quizTimerHandle);if(!quiz||quiz.result)return;quizTimerHandle=setInterval(()=>{if(!quiz||quiz.result){clearInterval(quizTimerHandle);return}tickQuizTime();const e=document.getElementById('questionTimer');if(e)e.textContent=timeFmt(quiz.elapsed[quiz.i]);const t=document.getElementById('totalTimer');if(t)t.textContent=timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0));},1000)}
+const THIRD_EXAM_DURATION=150*60*1000;
+let quizSubmitting=false;
+function thirdExamPool(){return questions.filter(q=>q.modality==='CPU-UNSM'&&!q.exam_id&&q.cycle==='2026-II'&&Number(q.week)>=11&&Number(q.week)<=16&&q.status==='published');}
+function quizRemaining(){return quiz?.deadlineAt?Math.max(0,quiz.deadlineAt-Date.now()):null;}
+async function submitQuizTimed(){
+ if(!quiz||quiz.result||quizSubmitting)return;
+ quizSubmitting=true;clearInterval(quizTimerHandle);tickQuizTime();
+ const selected=document.querySelector('input[name=choice]:checked');if(selected)quiz.answers[quiz.i]=Number(selected.value);
+ const b=$('nextQuiz');if(b)b.disabled=true;
+ const st=$('quizError');if(st)st.textContent='Entregando y calificando...';
+ const {data,error}=await db.rpc('grade_attempt',{p_answers:quiz.items.map((q,i)=>({id:q.id,selected:quiz.answers[i]}))});
+ if(error){if(st)st.textContent='Error al entregar: '+error.message+'; reintenta.';if(b)b.disabled=false;quizSubmitting=false;return;}
+ quiz.result=data;quizSubmitting=false;await refresh();
+}
+function bindQuizTimer(){clearInterval(quizTimerHandle);if(!quiz||quiz.result)return;quizTimerHandle=setInterval(()=>{if(!quiz||quiz.result){clearInterval(quizTimerHandle);return}tickQuizTime();const e=document.getElementById('questionTimer');if(e)e.textContent=timeFmt(quiz.elapsed[quiz.i]);const t=document.getElementById('totalTimer');if(t)t.textContent=timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0));const left=document.getElementById('quizRemaining');if(left)left.textContent=timeFmt(quizRemaining());if(quiz.deadlineAt&&quizRemaining()===0)submitQuizTimed();},1000)}
 function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id&&q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div>
 <div class="field">
   <label>Semana del examen</label>
@@ -599,7 +613,7 @@ function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><
       .join('')}
   </select>
 </div>
-<div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="exam-layout">${becaReadingPanel(q)}<div class="card exam-question"><p class="muted">Pregunta ${quiz.i+1} de ${quiz.items.length} · <strong>Tiempo de esta pregunta: <span id="questionTimer">${timeFmt(quiz.elapsed[quiz.i])}</span></strong> · Total: <span id="totalTimer">${timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0))}</span></p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button><p id="quizError" class="muted"></p></div></div>`}
+<div class="card"><h3>III Examen CPU-UNSM 2026-II</h3><p>Semanas 11–16 · 100 preguntas · 2 horas y 30 minutos.</p><p class="muted">Disponibles: ${thirdExamPool().length} preguntas publicadas. Se requieren al menos 100.</p><button id="startThirdExam" ${thirdExamPool().length<100?'disabled':''}>Iniciar III examen</button></div><div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="exam-layout">${becaReadingPanel(q)}<div class="card exam-question"><p class="muted">Pregunta ${quiz.i+1} de ${quiz.items.length} · <strong>Tiempo de esta pregunta: <span id="questionTimer">${timeFmt(quiz.elapsed[quiz.i])}</span></strong> · Total: <span id="totalTimer">${timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0))}</span>${quiz.deadlineAt?' · Tiempo restante: <strong id="quizRemaining">'+timeFmt(quizRemaining())+'</strong>':''}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}${quiz.deadlineAt?'<button id="prevQuiz" class="secondary" '+(quiz.i===0?'disabled':'')+'>Anterior</button> ':''}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button>${quiz.deadlineAt?'<button id="deliverQuiz" class="secondary">Entregar ahora</button>':''}<p id="quizError" class="muted"></p></div></div>`}
 
 // Corrección de simulacros: solo se muestran claves recibidas tras grade_attempt.
 function quizReviewPage(){
@@ -1045,6 +1059,7 @@ if(page==='review') bindReview();
 
 if(page==='quiz'){
   bindQuizTimer();
+  if($('startThirdExam')) $('startThirdExam').onclick=()=>{const pool=thirdExamPool();if(pool.length<100)return alert('Se necesitan 100 preguntas publicadas entre las semanas 11 y 16.');const items=[...pool].sort(()=>Math.random()-.5).slice(0,100);selectedModality='CPU-UNSM';quiz={items,answers:Array(100).fill(null),elapsed:Array(100).fill(0),lastTick:Date.now(),deadlineAt:Date.now()+THIRD_EXAM_DURATION,i:0};render();};
   if($('startQuiz')) $('startQuiz').onclick=()=>{
 const subject = $('quizSubject').value;
 const week = $('quizWeek').value;
@@ -1071,11 +1086,14 @@ q.modality === selectedModality &&
     render();
   };
 
+  if($('prevQuiz')) $('prevQuiz').onclick=()=>{const choice=document.querySelector('input[name=choice]:checked');quiz.answers[quiz.i]=choice?Number(choice.value):null;tickQuizTime();quiz.i=Math.max(0,quiz.i-1);quiz.lastTick=Date.now();render();};
+  if($('deliverQuiz')) $('deliverQuiz').onclick=()=>{if(confirm('¿Entregar tus respuestas?'))submitQuizTimed();};
   if($('nextQuiz')) $('nextQuiz').onclick=async()=>{
     const sel=document.querySelector('input[name=choice]:checked');
     quiz.answers[quiz.i]=sel?Number(sel.value):null;
 
     tickQuizTime();
+    if(quiz.deadlineAt&&quizRemaining()===0){await submitQuizTimed();return;}
     if(quiz.i<quiz.items.length-1){
       quiz.i++;
       quiz.lastTick=Date.now();
@@ -1083,6 +1101,7 @@ q.modality === selectedModality &&
       return;
     }
 
+    if(quiz.deadlineAt){await submitQuizTimed();return;}
     $('nextQuiz').disabled=true;
 
     const {data,error}=await db.rpc('grade_attempt',{
