@@ -3,10 +3,13 @@ import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 
 const d=JSON.parse(readFileSync('beca18-clases.json','utf8'));
-assert.equal(d.lessons.length,24,'El curso debe tener 24 clases');
+assert.equal(d.lessons.length,36,'El curso debe tener 36 clases');
 assert.equal(d.lessons.filter(l=>l.area==='Números').length,12);
 assert.equal(d.lessons.filter(l=>l.area==='Letras').length,12);
-assert.ok(d.questions.length>=120,'Debe existir una práctica por tema');
+assert.equal(d.lessons.filter(l=>l.area==='Álgebra').length,12);
+assert.ok(d.lessons.filter(l=>l.area==='Letras').every(l=>!/algebraico|polinomio|ecuaci[oó]n|factorizaci[oó]n|cuadr[aá]tic/i.test(l.title)),'Letras contiene temas de Álgebra');
+assert.ok(d.lessons.filter(l=>l.area==='Álgebra').every(l=>l.id.startsWith('A')),'Los temas de Álgebra deben tener códigos A');
+assert.ok(d.questions.length>=190,'Debe existir una práctica por tema');
 const lessonIds=new Set();
 for(const l of d.lessons){
  assert.ok(!lessonIds.has(l.id),'Clase duplicada: '+l.id);lessonIds.add(l.id);
@@ -37,6 +40,7 @@ assert.ok(lessonJs.includes('function latestFullAttempt('),'Falta cálculo de in
 assert.ok(lessonJs.includes('function resetProgress('),'Falta borrado del progreso');
 assert.ok(lessonJs.includes('wrongIds'),'Falta reintento de falladas');
 assert.ok(lessonJs.includes('function progressSummary('),'Falta diagnóstico del alumno');
+assert.ok(html.includes('data-area="Álgebra"')&&html.includes('data-area="Letras"'),'Faltan las rutas independientes');
 assert.ok(html.includes('id="diagnostic"'),'Falta contenedor de diagnóstico');
 assert.ok(html.includes('id="clearProgress"'),'Falta botón para borrar progreso');
 console.log('VALIDACIÓN BECA 18 CORRECTA:',d.lessons.length,'clases y',d.questions.length,'preguntas originales.');
