@@ -1,0 +1,30 @@
+name: Verificar Beca 18
+on:
+  pull_request:
+    paths:
+      - 'beca18-clases.*'
+      - 'app.js'
+      - 'tests/beca18-validacion.mjs'
+      - '.github/workflows/verificar-beca18.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'beca18-clases.*'
+      - 'app.js'
+      - 'tests/beca18-validacion.mjs'
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener codigo
+        uses: actions/checkout@v4
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validar sintaxis
+        run: |
+          node --check app.js
+          node --check beca18-clases.js
+      - name: Validar clases y preguntas
+        run: node tests/beca18-validacion.mjs

@@ -1,0 +1,14 @@
+:root{font-family:Inter,system-ui,sans-serif;color:#17304b;background:#f2f7fc}*{box-sizing:border-box}body{margin:0}header{background:linear-gradient(115deg,#062b54,#087f99);color:white;padding:24px max(20px,calc((100vw - 1180px)/2))}header a{color:#d4f7ff;text-decoration:none}h1{margin:15px 0 2px}header p{opacity:.85}main{max-width:1180px;margin:25px auto;padding:0 18px}.intro,article,.topic{background:#fff;border:1px solid #dce9f4;border-radius:14px;padding:20px;margin-bottom:15px;box-shadow:0 3px 12px #1538570b}.layout{display:grid;grid-template-columns:300px 1fr;gap:18px}.filter{display:flex;gap:10px}.filter button,.topic,button.check{border:0;cursor:pointer}.filter button,button.check{padding:11px 16px;border-radius:9px;background:#e4eff7;color:#123b5a;font-weight:700}.filter button.active,button.check{background:#037f9a;color:white}.topic{display:block;width:100%;text-align:left;margin:0 0 8px;font-size:14px}.topic.selected{outline:2px solid #0395c0}.muted{color:#62798e}.badge{display:inline-block;border-radius:20px;background:#e5f5fb;color:#036a88;padding:6px 12px;margin:5px 0}.box{background:#f1f9fd;border-left:4px solid #009ecb;border-radius:7px;padding:14px 17px;margin:16px 0}.question{border-top:1px solid #dce7ef;padding:17px 0}label{display:block;margin:9px 0;cursor:pointer}input{accent-color:#007da8}.feedback{margin-top:14px;background:#e4f6e9;padding:14px;border-radius:10px}.wrong{background:#fff1dc}footer{text-align:center;padding:22px;color:#60738c}@media(max-width:760px){.layout{display:block}#topics{max-height:270px;overflow:auto;margin-bottom:15px}}
+/* Contenido pedagógico y evaluaciones */
+.theory,.example{padding:16px 18px;border:1px solid #dae7f2;border-radius:12px;margin:13px 0;background:#fff}
+.theory h4,.example h4{margin:0 0 10px;color:#0c5680;font-size:17px}
+.theory p,.example p{line-height:1.65}
+.example ol{padding-left:23px;line-height:1.8}
+article ul{padding-left:23px;line-height:1.75}
+.question{min-width:0;border:0;border-top:1px solid #dce7ef;padding:18px 0;margin:0}
+.question legend{font-weight:700;padding:12px 0;line-height:1.5}
+.question label{padding:8px 10px;border-radius:8px}
+.question label:hover{background:#edf8fd}
+#feedback details{border-top:1px solid #cbdeda;padding:12px 2px;line-height:1.6}
+#feedback summary{cursor:pointer;font-weight:700}
+#feedback p{margin:9px 0}
