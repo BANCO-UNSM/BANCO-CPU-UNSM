@@ -1,0 +1,517 @@
+{
+  "course": "Beca 18 — Matemática",
+  "version": "piloto-1",
+  "lesson_count": 24,
+  "lessons": [
+    {
+      "id": "N01",
+      "area": "Números",
+      "title": "Sistemas numéricos y operaciones",
+      "topics": "Conjuntos numéricos; jerarquía; leyes de signos; operadores.",
+      "principle": "Primero resuelve agrupaciones, luego potencias y raíces, después productos y divisiones y finalmente sumas y restas.",
+      "worked_example": "(18-6)÷3+2² = 4+4 = 8.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "piloto_completo",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N02",
+      "area": "Números",
+      "title": "Divisibilidad",
+      "topics": "Divisores, múltiplos, criterios de divisibilidad y números primos.",
+      "principle": "Un número es divisible entre 3 si la suma de sus cifras es múltiplo de 3.",
+      "worked_example": "234 es divisible entre 3 porque 2+3+4=9.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N03",
+      "area": "Números",
+      "title": "MCD y MCM",
+      "topics": "Factorización prima; divisores comunes; múltiplos comunes.",
+      "principle": "El MCD usa los factores primos comunes con menor exponente; el MCM, todos con el mayor.",
+      "worked_example": "MCD(12,18)=6; MCM(12,18)=36.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N04",
+      "area": "Números",
+      "title": "Fracciones y decimales",
+      "topics": "Fracciones equivalentes; operaciones; decimales; redondeo.",
+      "principle": "Al sumar fracciones con distinto denominador, encuentra un denominador común.",
+      "worked_example": "1/3+1/6=2/6+1/6=1/2.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N05",
+      "area": "Números",
+      "title": "Potenciación y radicación",
+      "topics": "Exponentes enteros; radicales; notación científica.",
+      "principle": "Para potencias de igual base al multiplicar se suman exponentes.",
+      "worked_example": "2³·2⁴=2⁷=128.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N06",
+      "area": "Números",
+      "title": "Razones y proporciones",
+      "topics": "Razón; proporción; repartos y escalas.",
+      "principle": "Una proporción es una igualdad entre dos razones.",
+      "worked_example": "Si 2/3=x/12, entonces 3x=24 y x=8.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N07",
+      "area": "Números",
+      "title": "Magnitudes proporcionales",
+      "topics": "Regla de tres directa e inversa; problemas de trabajo.",
+      "principle": "Si aumenta una magnitud y la otra disminuye en la misma proporción, son inversamente proporcionales.",
+      "worked_example": "4 obreros demoran 6 días; 8 obreros demoran 3 días, a igual rendimiento.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N08",
+      "area": "Números",
+      "title": "Porcentajes I",
+      "topics": "Tanto por ciento; incrementos y descuentos.",
+      "principle": "Un aumento del p % multiplica el valor por (1+p/100).",
+      "worked_example": "S/200 con aumento de 15 % da S/230.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N09",
+      "area": "Números",
+      "title": "Porcentajes II",
+      "topics": "Descuentos sucesivos y variaciones porcentuales.",
+      "principle": "Los descuentos sucesivos se multiplican sobre el precio actualizado; no se suman.",
+      "worked_example": "S/100 con 20 % y luego 10 % de descuento queda en S/72.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N10",
+      "area": "Números",
+      "title": "Interés simple y compuesto",
+      "topics": "Capital; tasa; tiempo; interés; monto.",
+      "principle": "En interés simple I=C·r·t; para compuesto M=C(1+r)^t.",
+      "worked_example": "S/500 al 8 % simple mensual por 2 meses: I=80 y M=580.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N11",
+      "area": "Números",
+      "title": "Intervalos y operaciones",
+      "topics": "Intervalos reales; unión; intersección y diferencia.",
+      "principle": "La intersección contiene únicamente los elementos comunes.",
+      "worked_example": "[1,5]∩[3,7]=[3,5].",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "N12",
+      "area": "Números",
+      "title": "Repaso de razonamiento numérico",
+      "topics": "Problemas combinados y estrategias de examen.",
+      "principle": "Convierte unidades y verifica si el resultado responde realmente al enunciado.",
+      "worked_example": "Si 5 entradas cuestan S/60, cada entrada cuesta S/12.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de cantidad"
+    },
+    {
+      "id": "L01",
+      "area": "Letras",
+      "title": "Lenguaje algebraico",
+      "topics": "Variables; traducción de enunciados; patrones.",
+      "principle": "El doble de un número aumentado en tres se representa como 2x+3.",
+      "worked_example": "Si x=4, entonces 2x+3=11.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L02",
+      "area": "Letras",
+      "title": "Expresiones algebraicas",
+      "topics": "Monomios; polinomios; suma y resta de términos semejantes.",
+      "principle": "Solo se pueden sumar directamente términos con la misma parte literal.",
+      "worked_example": "3x+5x−2x=6x.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L03",
+      "area": "Letras",
+      "title": "Productos notables",
+      "topics": "Cuadrado de binomio y diferencia de cuadrados.",
+      "principle": "(a+b)²=a²+2ab+b².",
+      "worked_example": "(x+3)²=x²+6x+9.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L04",
+      "area": "Letras",
+      "title": "Factorización",
+      "topics": "Factor común; trinomios; diferencia de cuadrados.",
+      "principle": "Factorizar transforma una suma en un producto equivalente.",
+      "worked_example": "x²−9=(x−3)(x+3).",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L05",
+      "area": "Letras",
+      "title": "División de polinomios",
+      "topics": "División algebraica y cociente.",
+      "principle": "Comprueba la división: dividendo=divisor·cociente+residuo.",
+      "worked_example": "(x²−9)/(x−3)=x+3, para x≠3.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L06",
+      "area": "Letras",
+      "title": "Ecuaciones lineales",
+      "topics": "Despeje; problemas de edades y cantidades.",
+      "principle": "Aplica la misma operación a ambos miembros de una igualdad.",
+      "worked_example": "3x+5=20 → 3x=15 → x=5.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L07",
+      "area": "Letras",
+      "title": "Sistemas de ecuaciones",
+      "topics": "Sustitución; reducción; interpretación.",
+      "principle": "Una solución debe satisfacer ambas ecuaciones simultáneamente.",
+      "worked_example": "x+y=10; x−y=2 → x=6, y=4.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L08",
+      "area": "Letras",
+      "title": "Ecuaciones cuadráticas",
+      "topics": "Factorización; fórmula general; discriminante.",
+      "principle": "Para ax²+bx+c=0, x=(-b±√(b²−4ac))/(2a), a≠0.",
+      "worked_example": "x²−5x+6=0 → (x−2)(x−3)=0 → x=2 o 3.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L09",
+      "area": "Letras",
+      "title": "Inecuaciones",
+      "topics": "Inecuaciones lineales; intervalos; signos.",
+      "principle": "Cuando multiplicas o divides una desigualdad por un negativo, inviertes el signo.",
+      "worked_example": "−2x<6 → x>−3.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L10",
+      "area": "Letras",
+      "title": "Sucesiones y progresiones",
+      "topics": "Patrones; sucesiones aritméticas y geométricas.",
+      "principle": "PA: aₙ=a₁+(n−1)d; PG: aₙ=a₁r^(n−1).",
+      "worked_example": "5,8,11,14,... tiene a₉=29.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L11",
+      "area": "Letras",
+      "title": "Funciones lineales y cuadráticas",
+      "topics": "Modelación; pendiente; parábolas; vértice.",
+      "principle": "En f(x)=mx+b, m es la pendiente; una cuadrática f(x)=ax²+bx+c tiene parábola.",
+      "worked_example": "f(x)=2x+3 → f(4)=11.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    },
+    {
+      "id": "L12",
+      "area": "Letras",
+      "title": "Funciones exponenciales",
+      "topics": "Crecimiento y decrecimiento; base; modelos.",
+      "principle": "f(x)=a·b^x crece para b>1 (a>0) y decrece para 0<b<1.",
+      "worked_example": "Si P(t)=120·2^t, a los 3 periodos P(3)=960.",
+      "duration_minutes": 90,
+      "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
+      "status": "introduccion",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+    }
+  ],
+  "questions": [
+    {
+      "id": "B18-N01-ORI-001",
+      "lesson_id": "N01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Una tienda vendió 3 cuadernos a S/ 8 cada uno y aplicó un descuento de S/ 4 sobre el total. ¿Cuánto pagó el cliente?",
+      "options": [
+        "S/ 12",
+        "S/ 20",
+        "S/ 24",
+        "S/ 28"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) S/ 20. 3×8−4=24−4=20.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
+        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+      }
+    },
+    {
+      "id": "B18-N01-ORI-002",
+      "lesson_id": "N01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Calcula: 18−(4+2)×2.",
+      "options": [
+        "12",
+        "6",
+        "24",
+        "8"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 6. Primero paréntesis: 4+2=6; luego 6×2=12; finalmente 18−12=6.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
+        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+      }
+    },
+    {
+      "id": "B18-N01-ORI-003",
+      "lesson_id": "N01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál de los siguientes números es racional?",
+      "options": [
+        "√2",
+        "π",
+        "−7/3",
+        "√3"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) −7/3. −7/3 es cociente de enteros con denominador distinto de cero.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
+        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+      }
+    },
+    {
+      "id": "B18-N01-ORI-004",
+      "lesson_id": "N01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Si a★b=2a+b, ¿cuánto vale 3★5?",
+      "options": [
+        "11",
+        "16",
+        "8",
+        "13"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 11. Sustituye a=3 y b=5: 2(3)+5=11.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
+        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+      }
+    },
+    {
+      "id": "B18-N01-ORI-005",
+      "lesson_id": "N01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuánto vale 2³+√81?",
+      "options": [
+        "15",
+        "17",
+        "14",
+        "18"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 17. 2³=8 y √81=9; 8+9=17.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
+        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+      }
+    },
+    {
+      "id": "B18-N01-ORI-006",
+      "lesson_id": "N01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Evalúa (−3)²−2³.",
+      "options": [
+        "−17",
+        "1",
+        "17",
+        "−1"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 1. (−3)²=9, 2³=8; 9−8=1.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
+        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+      }
+    },
+    {
+      "id": "B18-N01-ORI-007",
+      "lesson_id": "N01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Si una caja contiene 12 lápices y se compran 5 cajas, ¿cuántos lápices hay?",
+      "options": [
+        "17",
+        "60",
+        "50",
+        "72"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 60. 5×12=60.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
+        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+      }
+    },
+    {
+      "id": "B18-N01-ORI-008",
+      "lesson_id": "N01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Calcula 3/4+1/8.",
+      "options": [
+        "4/12",
+        "1/2",
+        "7/8",
+        "5/8"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 7/8. 3/4=6/8; 6/8+1/8=7/8.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
+        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+      }
+    },
+    {
+      "id": "B18-N01-ORI-009",
+      "lesson_id": "N01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Una familia tenía S/ 250; gastó S/ 90 y recibió S/ 45. ¿Con cuánto termina?",
+      "options": [
+        "S/ 115",
+        "S/ 205",
+        "S/ 295",
+        "S/ 160"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) S/ 205. 250−90+45=205.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
+        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+      }
+    },
+    {
+      "id": "B18-N01-ORI-010",
+      "lesson_id": "N01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Si x=−2, halla x²+3x+1.",
+      "options": [
+        "−1",
+        "11",
+        "−9",
+        "3"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) −1. (−2)²+3(−2)+1=4−6+1=−1.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
+        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+      }
+    }
+  ]
+}
