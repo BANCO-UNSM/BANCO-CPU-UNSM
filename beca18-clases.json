@@ -1,6 +1,6 @@
 {
   "course": "Beca 18 — Matemática",
-  "version": "piloto-4",
+  "version": "piloto-5",
   "lesson_count": 24,
   "lessons": [
     {
@@ -2576,7 +2576,2317 @@
         "memory": "CLAVE PARA RECORDAR: No confundas el número de bolsas con el número de objetos por bolsa.",
         "strategy": "ESTRATEGIA DE EXAMEN: Tras obtener el MCD, vuelve a leer exactamente qué se pide."
       }
+    },
+    {
+      "id": "B18-N04-ORI-001",
+      "lesson_id": "N04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Calcula 1/2+3/4.",
+      "options": [
+        "1",
+        "5/4",
+        "4/6",
+        "3/8"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 5/4. 1/2=2/4; 2/4+3/4=5/4.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 1/2=2/4; 2/4+3/4=5/4. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 1/2=2/4; 2/4+3/4=5/4. D) No corresponde al resultado: 1/2=2/4; 2/4+3/4=5/4.",
+        "memory": "CLAVE PARA RECORDAR: Convierte a denominadores comunes.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N04-ORI-002",
+      "lesson_id": "N04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Simplifica la fracción 42/56.",
+      "options": [
+        "3/4",
+        "4/3",
+        "7/8",
+        "6/7"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 3/4. MCD(42,56)=14; 42/14=3 y 56/14=4.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: MCD(42,56)=14; 42/14=3 y 56/14=4. C) No corresponde al resultado: MCD(42,56)=14; 42/14=3 y 56/14=4. D) No corresponde al resultado: MCD(42,56)=14; 42/14=3 y 56/14=4.",
+        "memory": "CLAVE PARA RECORDAR: Divide numerador y denominador por su MCD.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N04-ORI-003",
+      "lesson_id": "N04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuánto vale 2/3×9/4?",
+      "options": [
+        "1/2",
+        "3/2",
+        "11/7",
+        "6"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 3/2. (2×9)/(3×4)=18/12=3/2.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: (2×9)/(3×4)=18/12=3/2. B) Corresponde al resultado demostrado. C) No corresponde al resultado: (2×9)/(3×4)=18/12=3/2. D) No corresponde al resultado: (2×9)/(3×4)=18/12=3/2.",
+        "memory": "CLAVE PARA RECORDAR: Multiplica numeradores entre sí y denominadores entre sí.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N04-ORI-004",
+      "lesson_id": "N04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Aproxima 7,846 a las centésimas.",
+      "options": [
+        "7,84",
+        "7,85",
+        "7,8",
+        "7,846"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 7,85. La milésima es 6; se aumenta la centésima de 4 a 5.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: La milésima es 6; se aumenta la centésima de 4 a 5. B) Corresponde al resultado demostrado. C) No corresponde al resultado: La milésima es 6; se aumenta la centésima de 4 a 5. D) No corresponde al resultado: La milésima es 6; se aumenta la centésima de 4 a 5.",
+        "memory": "CLAVE PARA RECORDAR: Para redondear a centésimas observa las milésimas.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N04-ORI-005",
+      "lesson_id": "N04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Se bebió 3/5 de una botella de 2 litros. ¿Cuántos litros quedan?",
+      "options": [
+        "0,4",
+        "0,8",
+        "1,2",
+        "1,4"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 0,8. Queda 2/5 de 2 litros: (2/5)×2=0,8.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Queda 2/5 de 2 litros: (2/5)×2=0,8. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Queda 2/5 de 2 litros: (2/5)×2=0,8. D) No corresponde al resultado: Queda 2/5 de 2 litros: (2/5)×2=0,8.",
+        "memory": "CLAVE PARA RECORDAR: Calcula la fracción restante antes de multiplicar por el total.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N05-ORI-001",
+      "lesson_id": "N05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Calcula 2³×2⁴.",
+      "options": [
+        "2⁷",
+        "2¹²",
+        "4⁷",
+        "2"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 2⁷. Con bases iguales se suman exponentes: 2^(3+4)=2⁷.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: Con bases iguales se suman exponentes: 2^(3+4)=2⁷. C) No corresponde al resultado: Con bases iguales se suman exponentes: 2^(3+4)=2⁷. D) No corresponde al resultado: Con bases iguales se suman exponentes: 2^(3+4)=2⁷.",
+        "memory": "CLAVE PARA RECORDAR: Al multiplicar potencias de igual base se suman exponentes.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N05-ORI-002",
+      "lesson_id": "N05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Simplifica √98.",
+      "options": [
+        "7√2",
+        "2√7",
+        "49√2",
+        "14"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 7√2. √98=√(49·2)=7√2.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: √98=√(49·2)=7√2. C) No corresponde al resultado: √98=√(49·2)=7√2. D) No corresponde al resultado: √98=√(49·2)=7√2.",
+        "memory": "CLAVE PARA RECORDAR: Extrae factores que sean cuadrados perfectos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N05-ORI-003",
+      "lesson_id": "N05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Expresa 0,000073 en notación científica.",
+      "options": [
+        "7,3×10⁻⁵",
+        "73×10⁻⁶",
+        "7,3×10⁵",
+        "0,73×10⁻⁴"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 7,3×10⁻⁵. Se desplaza la coma cinco lugares a la derecha: 7,3×10⁻⁵.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: Se desplaza la coma cinco lugares a la derecha: 7,3×10⁻⁵. C) No corresponde al resultado: Se desplaza la coma cinco lugares a la derecha: 7,3×10⁻⁵. D) No corresponde al resultado: Se desplaza la coma cinco lugares a la derecha: 7,3×10⁻⁵.",
+        "memory": "CLAVE PARA RECORDAR: La mantisa debe tener valor absoluto entre 1 y 10.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N05-ORI-004",
+      "lesson_id": "N05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Calcula (3²)³.",
+      "options": [
+        "3⁵",
+        "3⁶",
+        "9³²",
+        "3⁹"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 3⁶. Potencia de potencia: se multiplican exponentes, 2×3=6.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Potencia de potencia: se multiplican exponentes, 2×3=6. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Potencia de potencia: se multiplican exponentes, 2×3=6. D) No corresponde al resultado: Potencia de potencia: se multiplican exponentes, 2×3=6.",
+        "memory": "CLAVE PARA RECORDAR: (a^m)^n=a^(mn).",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N05-ORI-005",
+      "lesson_id": "N05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Una bacteria se duplica 5 veces a partir de una sola bacteria. ¿Cuántas hay?",
+      "options": [
+        "10",
+        "16",
+        "25",
+        "32"
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) 32. Después de cinco duplicaciones hay 2⁵=32.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Después de cinco duplicaciones hay 2⁵=32. B) No corresponde al resultado: Después de cinco duplicaciones hay 2⁵=32. C) No corresponde al resultado: Después de cinco duplicaciones hay 2⁵=32. D) Corresponde al resultado demostrado.",
+        "memory": "CLAVE PARA RECORDAR: Duplicar repetidamente implica multiplicar por potencias de 2.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N06-ORI-001",
+      "lesson_id": "N06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Si 3 kg de arroz cuestan S/ 18, ¿cuánto cuestan 5 kg?",
+      "options": [
+        "S/ 24",
+        "S/ 30",
+        "S/ 33",
+        "S/ 36"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) S/ 30. Precio unitario=18/3=6; 5×6=30.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Precio unitario=18/3=6; 5×6=30. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Precio unitario=18/3=6; 5×6=30. D) No corresponde al resultado: Precio unitario=18/3=6; 5×6=30.",
+        "memory": "CLAVE PARA RECORDAR: La razón precio/cantidad permanece constante.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N06-ORI-002",
+      "lesson_id": "N06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Reparte S/ 150 en razón 2:3. ¿Cuánto recibe la parte mayor?",
+      "options": [
+        "S/ 60",
+        "S/ 75",
+        "S/ 90",
+        "S/ 100"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 90. Hay 5 partes iguales; cada parte vale 30 y la mayor recibe 3×30=90.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Hay 5 partes iguales; cada parte vale 30 y la mayor recibe 3×30=90. B) No corresponde al resultado: Hay 5 partes iguales; cada parte vale 30 y la mayor recibe 3×30=90. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Hay 5 partes iguales; cada parte vale 30 y la mayor recibe 3×30=90.",
+        "memory": "CLAVE PARA RECORDAR: Suma las partes de la razón antes de distribuir.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N06-ORI-003",
+      "lesson_id": "N06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Si 4/7=x/21, halla x.",
+      "options": [
+        "8",
+        "10",
+        "12",
+        "16"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 12. 21 es tres veces 7; x=4×3=12.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 21 es tres veces 7; x=4×3=12. B) No corresponde al resultado: 21 es tres veces 7; x=4×3=12. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 21 es tres veces 7; x=4×3=12.",
+        "memory": "CLAVE PARA RECORDAR: Usa proporcionalidad y productos cruzados.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N06-ORI-004",
+      "lesson_id": "N06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "En un aula hay 12 varones y 18 mujeres. ¿Cuál es la razón varones:mujeres simplificada?",
+      "options": [
+        "3:2",
+        "2:3",
+        "12:30",
+        "5:6"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 2:3. 12:18 simplifica dividiendo entre 6: 2:3.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 12:18 simplifica dividiendo entre 6: 2:3. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 12:18 simplifica dividiendo entre 6: 2:3. D) No corresponde al resultado: 12:18 simplifica dividiendo entre 6: 2:3.",
+        "memory": "CLAVE PARA RECORDAR: Conserva el orden de la comparación.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N06-ORI-005",
+      "lesson_id": "N06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "En una maqueta a escala 1:100, una pared mide 7 cm. ¿Cuánto mide la pared real?",
+      "options": [
+        "0,7 m",
+        "7 m",
+        "70 m",
+        "700 m"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 7 m. 7×100=700 cm=7 m.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 7×100=700 cm=7 m. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 7×100=700 cm=7 m. D) No corresponde al resultado: 7×100=700 cm=7 m.",
+        "memory": "CLAVE PARA RECORDAR: Convierte las unidades al final.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N07-ORI-001",
+      "lesson_id": "N07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Si 6 obreros construyen un muro en 8 días, ¿cuántos días necesitan 12 obreros de igual rendimiento?",
+      "options": [
+        "4",
+        "6",
+        "12",
+        "16"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 4. Trabajo fijo: 6×8=12×t; t=4.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: Trabajo fijo: 6×8=12×t; t=4. C) No corresponde al resultado: Trabajo fijo: 6×8=12×t; t=4. D) No corresponde al resultado: Trabajo fijo: 6×8=12×t; t=4.",
+        "memory": "CLAVE PARA RECORDAR: Obreros y tiempo son inversamente proporcionales.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N07-ORI-002",
+      "lesson_id": "N07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Si 4 cuadernos cuestan S/ 20, ¿cuánto cuestan 9?",
+      "options": [
+        "S/ 36",
+        "S/ 40",
+        "S/ 45",
+        "S/ 50"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 45. Cada cuaderno vale S/ 5; nueve cuestan S/ 45.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Cada cuaderno vale S/ 5; nueve cuestan S/ 45. B) No corresponde al resultado: Cada cuaderno vale S/ 5; nueve cuestan S/ 45. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Cada cuaderno vale S/ 5; nueve cuestan S/ 45.",
+        "memory": "CLAVE PARA RECORDAR: Precio y cantidad son directamente proporcionales.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N07-ORI-003",
+      "lesson_id": "N07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Una máquina llena 15 botellas en 3 minutos. ¿Cuántas llena en 8 minutos al mismo ritmo?",
+      "options": [
+        "24",
+        "30",
+        "40",
+        "45"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 40. Tasa=15/3=5 botellas por minuto; 8×5=40.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Tasa=15/3=5 botellas por minuto; 8×5=40. B) No corresponde al resultado: Tasa=15/3=5 botellas por minuto; 8×5=40. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Tasa=15/3=5 botellas por minuto; 8×5=40.",
+        "memory": "CLAVE PARA RECORDAR: En proporcionalidad directa usa una tasa constante.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N07-ORI-004",
+      "lesson_id": "N07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Si 5 grifos iguales llenan un tanque en 12 horas, ¿cuánto tardan 3 grifos?",
+      "options": [
+        "7,2 h",
+        "15 h",
+        "20 h",
+        "24 h"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 20 h. 5×12=3×t, de donde t=20 horas.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 5×12=3×t, de donde t=20 horas. B) No corresponde al resultado: 5×12=3×t, de donde t=20 horas. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 5×12=3×t, de donde t=20 horas.",
+        "memory": "CLAVE PARA RECORDAR: Menos grifos implica más tiempo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N07-ORI-005",
+      "lesson_id": "N07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Un vehículo recorre 180 km en 3 h a rapidez constante. ¿Cuántos kilómetros recorre en 5 h?",
+      "options": [
+        "240",
+        "270",
+        "300",
+        "360"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 300. Rapidez=180/3=60 km/h; 60×5=300 km.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Rapidez=180/3=60 km/h; 60×5=300 km. B) No corresponde al resultado: Rapidez=180/3=60 km/h; 60×5=300 km. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Rapidez=180/3=60 km/h; 60×5=300 km.",
+        "memory": "CLAVE PARA RECORDAR: Distancia y tiempo son directamente proporcionales a rapidez constante.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N08-ORI-001",
+      "lesson_id": "N08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Calcula el 18 % de 250.",
+      "options": [
+        "35",
+        "40",
+        "45",
+        "50"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 45. 250×18/100=45.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 250×18/100=45. B) No corresponde al resultado: 250×18/100=45. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 250×18/100=45.",
+        "memory": "CLAVE PARA RECORDAR: Porcentaje p% equivale a p/100.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N08-ORI-002",
+      "lesson_id": "N08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Un producto de S/ 80 aumenta 25 %. ¿Cuál es su nuevo precio?",
+      "options": [
+        "S/ 85",
+        "S/ 95",
+        "S/ 100",
+        "S/ 105"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 100. 80×1,25=100.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 80×1,25=100. B) No corresponde al resultado: 80×1,25=100. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 80×1,25=100.",
+        "memory": "CLAVE PARA RECORDAR: Aumentar 25% equivale a multiplicar por 1,25.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N08-ORI-003",
+      "lesson_id": "N08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Un artículo de S/ 150 se rebaja 20 %. ¿Cuánto cuesta ahora?",
+      "options": [
+        "S/ 110",
+        "S/ 120",
+        "S/ 125",
+        "S/ 130"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) S/ 120. 150×0,8=120.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 150×0,8=120. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 150×0,8=120. D) No corresponde al resultado: 150×0,8=120.",
+        "memory": "CLAVE PARA RECORDAR: Descuento de 20% deja 80% del precio.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N08-ORI-004",
+      "lesson_id": "N08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Una población pasa de 200 a 230 habitantes. ¿Cuál fue el aumento porcentual?",
+      "options": [
+        "13 %",
+        "15 %",
+        "20 %",
+        "30 %"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 15 %. El aumento es 30; 30/200×100=15 %.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: El aumento es 30; 30/200×100=15 %. B) Corresponde al resultado demostrado. C) No corresponde al resultado: El aumento es 30; 30/200×100=15 %. D) No corresponde al resultado: El aumento es 30; 30/200×100=15 %.",
+        "memory": "CLAVE PARA RECORDAR: Divide el cambio entre el valor inicial.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N08-ORI-005",
+      "lesson_id": "N08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Si 24 estudiantes representan el 30 % de un colegio pequeño, ¿cuántos estudiantes hay en total?",
+      "options": [
+        "60",
+        "72",
+        "80",
+        "90"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 80. 0,30T=24, entonces T=24/0,30=80.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 0,30T=24, entonces T=24/0,30=80. B) No corresponde al resultado: 0,30T=24, entonces T=24/0,30=80. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 0,30T=24, entonces T=24/0,30=80.",
+        "memory": "CLAVE PARA RECORDAR: Para hallar el total divide la parte por la tasa decimal.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N09-ORI-001",
+      "lesson_id": "N09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Un producto cuesta S/ 200. Se aplican descuentos sucesivos de 20 % y 10 %. ¿Cuál es el precio final?",
+      "options": [
+        "S/ 140",
+        "S/ 144",
+        "S/ 150",
+        "S/ 160"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) S/ 144. 200×0,8×0,9=144.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 200×0,8×0,9=144. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 200×0,8×0,9=144. D) No corresponde al resultado: 200×0,8×0,9=144.",
+        "memory": "CLAVE PARA RECORDAR: Los descuentos sucesivos se multiplican, no se suman.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N09-ORI-002",
+      "lesson_id": "N09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Dos aumentos sucesivos de 10 % sobre S/ 100 producen un monto de:",
+      "options": [
+        "S/ 110",
+        "S/ 120",
+        "S/ 121",
+        "S/ 125"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 121. 100×1,1²=121.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 100×1,1²=121. B) No corresponde al resultado: 100×1,1²=121. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 100×1,1²=121.",
+        "memory": "CLAVE PARA RECORDAR: La segunda tasa se aplica sobre el monto aumentado.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N09-ORI-003",
+      "lesson_id": "N09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Un precio baja 20 % y luego sube 25 %. ¿Cómo queda respecto al precio inicial?",
+      "options": [
+        "5 % menor",
+        "Igual",
+        "5 % mayor",
+        "45 % mayor"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Igual. 0,8×1,25=1; retorna al precio original.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 0,8×1,25=1; retorna al precio original. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 0,8×1,25=1; retorna al precio original. D) No corresponde al resultado: 0,8×1,25=1; retorna al precio original.",
+        "memory": "CLAVE PARA RECORDAR: Usa factores multiplicativos para comparar variaciones.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N09-ORI-004",
+      "lesson_id": "N09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Un artículo de S/ 500 recibe descuentos de 30 % y luego 20 %. ¿Cuál es su precio final?",
+      "options": [
+        "S/ 250",
+        "S/ 280",
+        "S/ 300",
+        "S/ 350"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) S/ 280. 500×0,7×0,8=280.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 500×0,7×0,8=280. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 500×0,7×0,8=280. D) No corresponde al resultado: 500×0,7×0,8=280.",
+        "memory": "CLAVE PARA RECORDAR: El porcentaje adicional se calcula sobre el precio ya descontado.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N09-ORI-005",
+      "lesson_id": "N09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Un descuento del 10 % seguido de otro 20 % equivale a un único descuento de:",
+      "options": [
+        "28 %",
+        "30 %",
+        "32 %",
+        "25 %"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 28 %. Queda 0,9×0,8=0,72 del precio; descuento equivalente=28 %.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: Queda 0,9×0,8=0,72 del precio; descuento equivalente=28 %. C) No corresponde al resultado: Queda 0,9×0,8=0,72 del precio; descuento equivalente=28 %. D) No corresponde al resultado: Queda 0,9×0,8=0,72 del precio; descuento equivalente=28 %.",
+        "memory": "CLAVE PARA RECORDAR: Descuento equivalente=1−producto de factores restantes.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N10-ORI-001",
+      "lesson_id": "N10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál es el interés simple de S/ 600 al 5 % mensual durante 4 meses?",
+      "options": [
+        "S/ 30",
+        "S/ 90",
+        "S/ 120",
+        "S/ 150"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 120. I=600×0,05×4=120.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: I=600×0,05×4=120. B) No corresponde al resultado: I=600×0,05×4=120. C) Corresponde al resultado demostrado. D) No corresponde al resultado: I=600×0,05×4=120.",
+        "memory": "CLAVE PARA RECORDAR: Interés simple I=Crt.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N10-ORI-002",
+      "lesson_id": "N10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Un préstamo de S/ 1000 al 12 % simple anual se paga tras 6 meses. ¿Cuál es el monto?",
+      "options": [
+        "S/ 1060",
+        "S/ 1120",
+        "S/ 1200",
+        "S/ 1600"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) S/ 1060. I=1000×0,12×0,5=60; M=1060.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: I=1000×0,12×0,5=60; M=1060. C) No corresponde al resultado: I=1000×0,12×0,5=60; M=1060. D) No corresponde al resultado: I=1000×0,12×0,5=60; M=1060.",
+        "memory": "CLAVE PARA RECORDAR: Seis meses equivalen a medio año.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N10-ORI-003",
+      "lesson_id": "N10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Depositas S/ 500 al 10 % compuesto por dos años con capitalización anual. ¿Cuál es el monto?",
+      "options": [
+        "S/ 550",
+        "S/ 600",
+        "S/ 605",
+        "S/ 650"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 605. M=500×1,1²=605.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: M=500×1,1²=605. B) No corresponde al resultado: M=500×1,1²=605. C) Corresponde al resultado demostrado. D) No corresponde al resultado: M=500×1,1²=605.",
+        "memory": "CLAVE PARA RECORDAR: Interés compuesto: multiplica factores por periodo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N10-ORI-004",
+      "lesson_id": "N10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Si el interés simple es S/ 80 al 4 % por 2 años, ¿cuál fue el capital?",
+      "options": [
+        "S/ 800",
+        "S/ 900",
+        "S/ 1000",
+        "S/ 1200"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 1000. C=80/(0,04×2)=1000.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: C=80/(0,04×2)=1000. B) No corresponde al resultado: C=80/(0,04×2)=1000. C) Corresponde al resultado demostrado. D) No corresponde al resultado: C=80/(0,04×2)=1000.",
+        "memory": "CLAVE PARA RECORDAR: Despeja capital de I=Crt.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N10-ORI-005",
+      "lesson_id": "N10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Una inversión de S/ 400 al 5 % simple por tres años genera un monto de:",
+      "options": [
+        "S/ 420",
+        "S/ 440",
+        "S/ 460",
+        "S/ 480"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 460. I=400×0,05×3=60; monto=460.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: I=400×0,05×3=60; monto=460. B) No corresponde al resultado: I=400×0,05×3=60; monto=460. C) Corresponde al resultado demostrado. D) No corresponde al resultado: I=400×0,05×3=60; monto=460.",
+        "memory": "CLAVE PARA RECORDAR: Suma el capital y el interés.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N11-ORI-001",
+      "lesson_id": "N11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Halla [1,5] ∩ [3,8].",
+      "options": [
+        "[1,8]",
+        "[3,5]",
+        "[1,3]",
+        "(5,8]"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) [3,5]. La parte común está entre 3 y 5, incluidos ambos extremos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: La parte común está entre 3 y 5, incluidos ambos extremos. B) Corresponde al resultado demostrado. C) No corresponde al resultado: La parte común está entre 3 y 5, incluidos ambos extremos. D) No corresponde al resultado: La parte común está entre 3 y 5, incluidos ambos extremos.",
+        "memory": "CLAVE PARA RECORDAR: La intersección conserva solo los elementos comunes.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N11-ORI-002",
+      "lesson_id": "N11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué intervalo representa x≥−2 y x<4?",
+      "options": [
+        "(−2,4)",
+        "[−2,4)",
+        "[−2,4]",
+        "(−2,4]"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) [−2,4). −2 está incluido y 4 está excluido.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: −2 está incluido y 4 está excluido. B) Corresponde al resultado demostrado. C) No corresponde al resultado: −2 está incluido y 4 está excluido. D) No corresponde al resultado: −2 está incluido y 4 está excluido.",
+        "memory": "CLAVE PARA RECORDAR: Los símbolos ≥ y ≤ incluyen extremos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N11-ORI-003",
+      "lesson_id": "N11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Si A=[0,4] y B=[3,7], ¿cuál es A∪B?",
+      "options": [
+        "[3,4]",
+        "[0,7]",
+        "[0,3)",
+        "[4,7]"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) [0,7]. Se unen todos los valores desde 0 hasta 7.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Se unen todos los valores desde 0 hasta 7. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Se unen todos los valores desde 0 hasta 7. D) No corresponde al resultado: Se unen todos los valores desde 0 hasta 7.",
+        "memory": "CLAVE PARA RECORDAR: La unión agrupa los elementos de ambos conjuntos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N11-ORI-004",
+      "lesson_id": "N11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Para A=[1,6] y B=[4,8], ¿cuál es A−B?",
+      "options": [
+        "[1,4)",
+        "[1,4]",
+        "[4,6]",
+        "(6,8]"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) [1,4). Los valores de 4 a 6 están en B, y 4 debe excluirse.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: Los valores de 4 a 6 están en B, y 4 debe excluirse. C) No corresponde al resultado: Los valores de 4 a 6 están en B, y 4 debe excluirse. D) No corresponde al resultado: Los valores de 4 a 6 están en B, y 4 debe excluirse.",
+        "memory": "CLAVE PARA RECORDAR: La diferencia retiene elementos de A que no están en B.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N11-ORI-005",
+      "lesson_id": "N11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué número pertenece al intervalo (−1,2]?",
+      "options": [
+        "−1",
+        "−2",
+        "2",
+        "3"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 2. El extremo 2 está incluido; −1 no está incluido.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: El extremo 2 está incluido; −1 no está incluido. B) No corresponde al resultado: El extremo 2 está incluido; −1 no está incluido. C) Corresponde al resultado demostrado. D) No corresponde al resultado: El extremo 2 está incluido; −1 no está incluido.",
+        "memory": "CLAVE PARA RECORDAR: Paréntesis excluyen y corchetes incluyen.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N12-ORI-001",
+      "lesson_id": "N12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Una persona compra 4 artículos a S/ 25 cada uno y recibe un descuento del 10 % sobre el total. ¿Cuánto paga?",
+      "options": [
+        "S/ 80",
+        "S/ 85",
+        "S/ 90",
+        "S/ 95"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 90. Total inicial=100; descuento=10; pago=90.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Total inicial=100; descuento=10; pago=90. B) No corresponde al resultado: Total inicial=100; descuento=10; pago=90. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Total inicial=100; descuento=10; pago=90.",
+        "memory": "CLAVE PARA RECORDAR: Distingue precio inicial, descuento y pago final.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N12-ORI-002",
+      "lesson_id": "N12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Si 3 máquinas producen 90 unidades en una hora, ¿cuántas producirán 5 máquinas iguales en una hora?",
+      "options": [
+        "120",
+        "135",
+        "150",
+        "180"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 150. Una máquina produce 30 unidades; cinco producen 150.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Una máquina produce 30 unidades; cinco producen 150. B) No corresponde al resultado: Una máquina produce 30 unidades; cinco producen 150. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Una máquina produce 30 unidades; cinco producen 150.",
+        "memory": "CLAVE PARA RECORDAR: Plantea tasas por unidad para relaciones directas.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N12-ORI-003",
+      "lesson_id": "N12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Una alarma suena cada 12 minutos y otra cada 15. ¿Cuándo coinciden nuevamente?",
+      "options": [
+        "30 min",
+        "45 min",
+        "60 min",
+        "90 min"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 60 min. MCM(12,15)=60.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: MCM(12,15)=60. B) No corresponde al resultado: MCM(12,15)=60. C) Corresponde al resultado demostrado. D) No corresponde al resultado: MCM(12,15)=60.",
+        "memory": "CLAVE PARA RECORDAR: Para coincidir periodos usa el mínimo común múltiplo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N12-ORI-004",
+      "lesson_id": "N12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Si 2/5 de una clase son 16 alumnos, ¿cuántos hay en total?",
+      "options": [
+        "30",
+        "32",
+        "40",
+        "48"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 40. T=16×5/2=40.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: T=16×5/2=40. B) No corresponde al resultado: T=16×5/2=40. C) Corresponde al resultado demostrado. D) No corresponde al resultado: T=16×5/2=40.",
+        "memory": "CLAVE PARA RECORDAR: Si conoces una fracción del total, despeja dividiendo por ella.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-N12-ORI-005",
+      "lesson_id": "N12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Un producto baja 15 % desde S/ 200 y luego aumenta 10 %. ¿Cuál es el nuevo precio?",
+      "options": [
+        "S/ 170",
+        "S/ 185",
+        "S/ 187",
+        "S/ 190"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 187. 200×0,85×1,10=187.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 200×0,85×1,10=187. B) No corresponde al resultado: 200×0,85×1,10=187. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 200×0,85×1,10=187.",
+        "memory": "CLAVE PARA RECORDAR: Las variaciones sucesivas se multiplican.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L01-ORI-001",
+      "lesson_id": "L01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "El triple de un número disminuido en 4 se expresa como:",
+      "options": [
+        "3x−4",
+        "3(x−4)",
+        "x/3−4",
+        "3x+4"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 3x−4. Si el triple del número es 3x y luego disminuye 4, queda 3x−4.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: Si el triple del número es 3x y luego disminuye 4, queda 3x−4. C) No corresponde al resultado: Si el triple del número es 3x y luego disminuye 4, queda 3x−4. D) No corresponde al resultado: Si el triple del número es 3x y luego disminuye 4, queda 3x−4.",
+        "memory": "CLAVE PARA RECORDAR: Respeta el orden señalado por el enunciado.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L01-ORI-002",
+      "lesson_id": "L01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Si x=−3, calcula 2x²−1.",
+      "options": [
+        "−19",
+        "11",
+        "17",
+        "19"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 17. 2(−3)²−1=2×9−1=17.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 2(−3)²−1=2×9−1=17. B) No corresponde al resultado: 2(−3)²−1=2×9−1=17. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 2(−3)²−1=2×9−1=17.",
+        "memory": "CLAVE PARA RECORDAR: Sustituye negativos entre paréntesis.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L01-ORI-003",
+      "lesson_id": "L01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "El doble de un número más 7 es 19. ¿Qué ecuación lo representa?",
+      "options": [
+        "2x−7=19",
+        "2x+7=19",
+        "x/2+7=19",
+        "2(x+7)=19"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 2x+7=19. Doble=2x; más 7=2x+7; igual a 19.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Doble=2x; más 7=2x+7; igual a 19. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Doble=2x; más 7=2x+7; igual a 19. D) No corresponde al resultado: Doble=2x; más 7=2x+7; igual a 19.",
+        "memory": "CLAVE PARA RECORDAR: Convierte frases en operaciones manteniendo el orden.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L01-ORI-004",
+      "lesson_id": "L01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué expresión representa la suma de tres números enteros consecutivos empezando en n?",
+      "options": [
+        "3n",
+        "3n+1",
+        "3n+2",
+        "3n+3"
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) 3n+3. n+(n+1)+(n+2)=3n+3.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: n+(n+1)+(n+2)=3n+3. B) No corresponde al resultado: n+(n+1)+(n+2)=3n+3. C) No corresponde al resultado: n+(n+1)+(n+2)=3n+3. D) Corresponde al resultado demostrado.",
+        "memory": "CLAVE PARA RECORDAR: Consecutivos: n, n+1, n+2.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L01-ORI-005",
+      "lesson_id": "L01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "El perímetro de un rectángulo de base x+3 y altura x es:",
+      "options": [
+        "2x+3",
+        "4x+6",
+        "2x+6",
+        "x²+3x"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 4x+6. P=2((x+3)+x)=4x+6.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: P=2((x+3)+x)=4x+6. B) Corresponde al resultado demostrado. C) No corresponde al resultado: P=2((x+3)+x)=4x+6. D) No corresponde al resultado: P=2((x+3)+x)=4x+6.",
+        "memory": "CLAVE PARA RECORDAR: Para perímetro suma todos los lados.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L02-ORI-001",
+      "lesson_id": "L02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Simplifica 5x+3x−2x.",
+      "options": [
+        "10x",
+        "6x",
+        "6x²",
+        "0"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 6x. 5+3−2=6; resultado=6x.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 5+3−2=6; resultado=6x. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 5+3−2=6; resultado=6x. D) No corresponde al resultado: 5+3−2=6; resultado=6x.",
+        "memory": "CLAVE PARA RECORDAR: Agrupa términos con la misma parte literal.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L02-ORI-002",
+      "lesson_id": "L02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál es el grado de 4x⁵−2x²+7?",
+      "options": [
+        "2",
+        "4",
+        "5",
+        "7"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 5. La mayor potencia de x con coeficiente no nulo es 5.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: La mayor potencia de x con coeficiente no nulo es 5. B) No corresponde al resultado: La mayor potencia de x con coeficiente no nulo es 5. C) Corresponde al resultado demostrado. D) No corresponde al resultado: La mayor potencia de x con coeficiente no nulo es 5.",
+        "memory": "CLAVE PARA RECORDAR: El grado es el mayor exponente de la variable.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L02-ORI-003",
+      "lesson_id": "L02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Desarrolla 3x(x+4).",
+      "options": [
+        "3x²+12x",
+        "3x²+4",
+        "7x²",
+        "12x²"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 3x²+12x. 3x×x=3x² y 3x×4=12x.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: 3x×x=3x² y 3x×4=12x. C) No corresponde al resultado: 3x×x=3x² y 3x×4=12x. D) No corresponde al resultado: 3x×x=3x² y 3x×4=12x.",
+        "memory": "CLAVE PARA RECORDAR: Aplica distributividad a todos los términos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L02-ORI-004",
+      "lesson_id": "L02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Simplifica 2a²+3a−5a²+a.",
+      "options": [
+        "−3a²+4a",
+        "−3a²+3a",
+        "7a²+4a",
+        "−3a+4a²"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) −3a²+4a. 2a²−5a²=−3a² y 3a+a=4a.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: 2a²−5a²=−3a² y 3a+a=4a. C) No corresponde al resultado: 2a²−5a²=−3a² y 3a+a=4a. D) No corresponde al resultado: 2a²−5a²=−3a² y 3a+a=4a.",
+        "memory": "CLAVE PARA RECORDAR: No mezcles a² con a.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L02-ORI-005",
+      "lesson_id": "L02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Calcula (x+2)+(2x−5).",
+      "options": [
+        "3x+7",
+        "x−3",
+        "3x−3",
+        "2x−3"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 3x−3. x+2x=3x y 2−5=−3.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: x+2x=3x y 2−5=−3. B) No corresponde al resultado: x+2x=3x y 2−5=−3. C) Corresponde al resultado demostrado. D) No corresponde al resultado: x+2x=3x y 2−5=−3.",
+        "memory": "CLAVE PARA RECORDAR: Elimina paréntesis y reduce términos semejantes.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L03-ORI-001",
+      "lesson_id": "L03",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Expande (x+3)².",
+      "options": [
+        "x²+9",
+        "x²+6x+9",
+        "x²+3x+9",
+        "2x+9"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) x²+6x+9. (x+3)²=x²+2(x)(3)+9=x²+6x+9.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: (x+3)²=x²+2(x)(3)+9=x²+6x+9. B) Corresponde al resultado demostrado. C) No corresponde al resultado: (x+3)²=x²+2(x)(3)+9=x²+6x+9. D) No corresponde al resultado: (x+3)²=x²+2(x)(3)+9=x²+6x+9.",
+        "memory": "CLAVE PARA RECORDAR: No olvides el doble producto.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L03-ORI-002",
+      "lesson_id": "L03",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Factoriza x²−49.",
+      "options": [
+        "(x−7)²",
+        "(x+7)²",
+        "(x−7)(x+7)",
+        "(x−49)(x+1)"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) (x−7)(x+7). Diferencia de cuadrados: x²−7²=(x−7)(x+7).",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Diferencia de cuadrados: x²−7²=(x−7)(x+7). B) No corresponde al resultado: Diferencia de cuadrados: x²−7²=(x−7)(x+7). C) Corresponde al resultado demostrado. D) No corresponde al resultado: Diferencia de cuadrados: x²−7²=(x−7)(x+7).",
+        "memory": "CLAVE PARA RECORDAR: a²−b²=(a−b)(a+b).",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L03-ORI-003",
+      "lesson_id": "L03",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Simplifica (a−5)(a+5).",
+      "options": [
+        "a²−25",
+        "a²+25",
+        "a²−10a+25",
+        "a²+10a+25"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) a²−25. Binomios conjugados dan a²−5²=a²−25.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: Binomios conjugados dan a²−5²=a²−25. C) No corresponde al resultado: Binomios conjugados dan a²−5²=a²−25. D) No corresponde al resultado: Binomios conjugados dan a²−5²=a²−25.",
+        "memory": "CLAVE PARA RECORDAR: Conjugados eliminan términos cruzados.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L03-ORI-004",
+      "lesson_id": "L03",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Expande (2x−1)².",
+      "options": [
+        "4x²+1",
+        "4x²−2x+1",
+        "4x²−4x+1",
+        "2x²−4x+1"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 4x²−4x+1. (2x)²−2(2x)(1)+1²=4x²−4x+1.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: (2x)²−2(2x)(1)+1²=4x²−4x+1. B) No corresponde al resultado: (2x)²−2(2x)(1)+1²=4x²−4x+1. C) Corresponde al resultado demostrado. D) No corresponde al resultado: (2x)²−2(2x)(1)+1²=4x²−4x+1.",
+        "memory": "CLAVE PARA RECORDAR: Eleva al cuadrado ambos términos y resta el doble producto.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L03-ORI-005",
+      "lesson_id": "L03",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál es (x+2)(x−2)?",
+      "options": [
+        "x²+4",
+        "x²−4",
+        "x²−2x+4",
+        "x²+2x−4"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) x²−4. Diferencia de cuadrados x²−2²=x²−4.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Diferencia de cuadrados x²−2²=x²−4. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Diferencia de cuadrados x²−2²=x²−4. D) No corresponde al resultado: Diferencia de cuadrados x²−2²=x²−4.",
+        "memory": "CLAVE PARA RECORDAR: Reconoce binomios conjugados.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L04-ORI-001",
+      "lesson_id": "L04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Factoriza 6x²+9x.",
+      "options": [
+        "3x(2x+3)",
+        "3(2x²+3x²)",
+        "x(6x+9x)",
+        "9x(x+1)"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 3x(2x+3). El factor común máximo es 3x; queda 3x(2x+3).",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: El factor común máximo es 3x; queda 3x(2x+3). C) No corresponde al resultado: El factor común máximo es 3x; queda 3x(2x+3). D) No corresponde al resultado: El factor común máximo es 3x; queda 3x(2x+3).",
+        "memory": "CLAVE PARA RECORDAR: Extrae el máximo factor numérico y literal.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L04-ORI-002",
+      "lesson_id": "L04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Factoriza x²+7x+12.",
+      "options": [
+        "(x+2)(x+6)",
+        "(x+3)(x+4)",
+        "(x−3)(x−4)",
+        "(x+1)(x+12)"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) (x+3)(x+4). 3+4=7 y 3×4=12.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 3+4=7 y 3×4=12. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 3+4=7 y 3×4=12. D) No corresponde al resultado: 3+4=7 y 3×4=12.",
+        "memory": "CLAVE PARA RECORDAR: Busca dos números cuya suma sea b y producto c.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L04-ORI-003",
+      "lesson_id": "L04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Factoriza 4y²−25.",
+      "options": [
+        "(2y−5)(2y+5)",
+        "(4y−5)(y+5)",
+        "(2y−5)²",
+        "(4y+25)(y−1)"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) (2y−5)(2y+5). (2y)²−5²=(2y−5)(2y+5).",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: (2y)²−5²=(2y−5)(2y+5). C) No corresponde al resultado: (2y)²−5²=(2y−5)(2y+5). D) No corresponde al resultado: (2y)²−5²=(2y−5)(2y+5).",
+        "memory": "CLAVE PARA RECORDAR: Identifica primero cuadrados perfectos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L04-ORI-004",
+      "lesson_id": "L04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Factoriza x²−5x+6.",
+      "options": [
+        "(x−1)(x−6)",
+        "(x+2)(x+3)",
+        "(x−2)(x−3)",
+        "(x−3)²"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) (x−2)(x−3). −2−3=−5 y (−2)(−3)=6.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: −2−3=−5 y (−2)(−3)=6. B) No corresponde al resultado: −2−3=−5 y (−2)(−3)=6. C) Corresponde al resultado demostrado. D) No corresponde al resultado: −2−3=−5 y (−2)(−3)=6.",
+        "memory": "CLAVE PARA RECORDAR: Suma y producto determinan los factores.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L04-ORI-005",
+      "lesson_id": "L04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Factoriza 2x²+4x.",
+      "options": [
+        "2x(x+2)",
+        "2(x²+4x)",
+        "x(2x+4x)",
+        "2x(x+4)"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 2x(x+2). Se extrae 2x y queda x+2.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: Se extrae 2x y queda x+2. C) No corresponde al resultado: Se extrae 2x y queda x+2. D) No corresponde al resultado: Se extrae 2x y queda x+2.",
+        "memory": "CLAVE PARA RECORDAR: Comprueba expandiendo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L05-ORI-001",
+      "lesson_id": "L05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Divide x²−9 entre x−3; ¿cuál es el cociente?",
+      "options": [
+        "x−3",
+        "x+3",
+        "x²+3",
+        "x+9"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) x+3. x²−9=(x−3)(x+3).",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: x²−9=(x−3)(x+3). B) Corresponde al resultado demostrado. C) No corresponde al resultado: x²−9=(x−3)(x+3). D) No corresponde al resultado: x²−9=(x−3)(x+3).",
+        "memory": "CLAVE PARA RECORDAR: Una diferencia de cuadrados facilita la división exacta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L05-ORI-002",
+      "lesson_id": "L05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál es el residuo de dividir P(x)=x²+2x+1 entre x+1?",
+      "options": [
+        "−1",
+        "0",
+        "1",
+        "2"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 0. Teorema del residuo: P(−1)=1−2+1=0.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Teorema del residuo: P(−1)=1−2+1=0. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Teorema del residuo: P(−1)=1−2+1=0. D) No corresponde al resultado: Teorema del residuo: P(−1)=1−2+1=0.",
+        "memory": "CLAVE PARA RECORDAR: Para x−a el residuo es P(a).",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L05-ORI-003",
+      "lesson_id": "L05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Divide (x²+5x+6) entre x+2.",
+      "options": [
+        "x+3",
+        "x+2",
+        "x−3",
+        "x−2"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) x+3. x²+5x+6=(x+2)(x+3).",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: x²+5x+6=(x+2)(x+3). C) No corresponde al resultado: x²+5x+6=(x+2)(x+3). D) No corresponde al resultado: x²+5x+6=(x+2)(x+3).",
+        "memory": "CLAVE PARA RECORDAR: Comprueba multiplicando cociente por divisor.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L05-ORI-004",
+      "lesson_id": "L05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué identidad describe toda división polinómica?",
+      "options": [
+        "Dividendo=cociente+residuo",
+        "Dividendo=divisor+cociente",
+        "Dividendo=divisor×cociente+residuo",
+        "Divisor=dividendo×cociente"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Dividendo=divisor×cociente+residuo. Se utiliza la identidad del algoritmo de división.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Se utiliza la identidad del algoritmo de división. B) No corresponde al resultado: Se utiliza la identidad del algoritmo de división. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Se utiliza la identidad del algoritmo de división.",
+        "memory": "CLAVE PARA RECORDAR: El residuo debe ser de grado menor que el divisor.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L05-ORI-005",
+      "lesson_id": "L05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué residuo deja P(x)=x³−8 al dividir entre x−2?",
+      "options": [
+        "−8",
+        "−2",
+        "0",
+        "8"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 0. P(2)=2³−8=0.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: P(2)=2³−8=0. B) No corresponde al resultado: P(2)=2³−8=0. C) Corresponde al resultado demostrado. D) No corresponde al resultado: P(2)=2³−8=0.",
+        "memory": "CLAVE PARA RECORDAR: Evaluar en la raíz del divisor permite conocer el residuo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L06-ORI-001",
+      "lesson_id": "L06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve 3x+7=22.",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 5. 3x=15 y x=5.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 3x=15 y x=5. B) No corresponde al resultado: 3x=15 y x=5. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 3x=15 y x=5.",
+        "memory": "CLAVE PARA RECORDAR: Despeja manteniendo la igualdad.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L06-ORI-002",
+      "lesson_id": "L06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve 5(x−2)=20.",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "8"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 6. x−2=4 y x=6.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: x−2=4 y x=6. B) No corresponde al resultado: x−2=4 y x=6. C) Corresponde al resultado demostrado. D) No corresponde al resultado: x−2=4 y x=6.",
+        "memory": "CLAVE PARA RECORDAR: Divide primero ambos lados por 5.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L06-ORI-003",
+      "lesson_id": "L06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "El doble de un número más 5 es 29. ¿Cuál es el número?",
+      "options": [
+        "10",
+        "12",
+        "14",
+        "17"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 12. 2x+5=29 ⇒2x=24⇒x=12.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 2x+5=29 ⇒2x=24⇒x=12. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 2x+5=29 ⇒2x=24⇒x=12. D) No corresponde al resultado: 2x+5=29 ⇒2x=24⇒x=12.",
+        "memory": "CLAVE PARA RECORDAR: Traduce el enunciado a ecuación.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L06-ORI-004",
+      "lesson_id": "L06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve 7−2x=−5.",
+      "options": [
+        "−6",
+        "−1",
+        "1",
+        "6"
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) 6. −2x=−12; x=6.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: −2x=−12; x=6. B) No corresponde al resultado: −2x=−12; x=6. C) No corresponde al resultado: −2x=−12; x=6. D) Corresponde al resultado demostrado.",
+        "memory": "CLAVE PARA RECORDAR: Al dividir entre negativo respeta los signos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L06-ORI-005",
+      "lesson_id": "L06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve x/4+3=8.",
+      "options": [
+        "5",
+        "11",
+        "20",
+        "32"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 20. x/4=5 y x=20.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: x/4=5 y x=20. B) No corresponde al resultado: x/4=5 y x=20. C) Corresponde al resultado demostrado. D) No corresponde al resultado: x/4=5 y x=20.",
+        "memory": "CLAVE PARA RECORDAR: El denominador multiplica al despejar.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L07-ORI-001",
+      "lesson_id": "L07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve x+y=9, x−y=3. ¿Cuánto vale x?",
+      "options": [
+        "3",
+        "5",
+        "6",
+        "9"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 6. Sumando ecuaciones 2x=12⇒x=6.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Sumando ecuaciones 2x=12⇒x=6. B) No corresponde al resultado: Sumando ecuaciones 2x=12⇒x=6. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Sumando ecuaciones 2x=12⇒x=6.",
+        "memory": "CLAVE PARA RECORDAR: Elimina una variable sumando o restando ecuaciones.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L07-ORI-002",
+      "lesson_id": "L07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve 2x+y=11, x−y=1. ¿Cuánto vale y?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 3. Sumando 3x=12⇒x=4; y=11−8=3.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Sumando 3x=12⇒x=4; y=11−8=3. B) No corresponde al resultado: Sumando 3x=12⇒x=4; y=11−8=3. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Sumando 3x=12⇒x=4; y=11−8=3.",
+        "memory": "CLAVE PARA RECORDAR: Sustituye al final para recuperar la segunda variable.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L07-ORI-003",
+      "lesson_id": "L07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Si 3 cuadernos y 2 lápices cuestan S/ 16, y 1 cuaderno y 2 lápices S/ 8, ¿cuánto cuesta un cuaderno?",
+      "options": [
+        "S/ 2",
+        "S/ 4",
+        "S/ 5",
+        "S/ 8"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) S/ 4. Restando ambas ecuaciones: 2 cuadernos cuestan S/8, uno vale S/4.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Restando ambas ecuaciones: 2 cuadernos cuestan S/8, uno vale S/4. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Restando ambas ecuaciones: 2 cuadernos cuestan S/8, uno vale S/4. D) No corresponde al resultado: Restando ambas ecuaciones: 2 cuadernos cuestan S/8, uno vale S/4.",
+        "memory": "CLAVE PARA RECORDAR: Resta ecuaciones que comparten un mismo término.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L07-ORI-004",
+      "lesson_id": "L07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve x+y=10, 2x+y=14. ¿Cuánto vale x?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 4. Restando: (2x+y)−(x+y)=14−10 ⇒x=4.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Restando: (2x+y)−(x+y)=14−10 ⇒x=4. B) No corresponde al resultado: Restando: (2x+y)−(x+y)=14−10 ⇒x=4. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Restando: (2x+y)−(x+y)=14−10 ⇒x=4.",
+        "memory": "CLAVE PARA RECORDAR: Restar dos ecuaciones puede eliminar y.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L07-ORI-005",
+      "lesson_id": "L07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Si a+b=7 y a−b=1, ¿cuánto vale ab?",
+      "options": [
+        "6",
+        "10",
+        "12",
+        "14"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 12. 2a=8⇒a=4, b=3, ab=12.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 2a=8⇒a=4, b=3, ab=12. B) No corresponde al resultado: 2a=8⇒a=4, b=3, ab=12. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 2a=8⇒a=4, b=3, ab=12.",
+        "memory": "CLAVE PARA RECORDAR: Halla ambas incógnitas antes de operar.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L08-ORI-001",
+      "lesson_id": "L08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve x²−5x+6=0. ¿Cuál es la raíz mayor?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "6"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 3. (x−2)(x−3)=0; raíces 2 y 3, mayor 3.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: (x−2)(x−3)=0; raíces 2 y 3, mayor 3. B) No corresponde al resultado: (x−2)(x−3)=0; raíces 2 y 3, mayor 3. C) Corresponde al resultado demostrado. D) No corresponde al resultado: (x−2)(x−3)=0; raíces 2 y 3, mayor 3.",
+        "memory": "CLAVE PARA RECORDAR: Factoriza y compara las dos soluciones.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L08-ORI-002",
+      "lesson_id": "L08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuántas raíces reales distintas tiene x²+4x+4=0?",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "4"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 1. Discriminante D=4²−4×1×4=0; raíz doble.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Discriminante D=4²−4×1×4=0; raíz doble. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Discriminante D=4²−4×1×4=0; raíz doble. D) No corresponde al resultado: Discriminante D=4²−4×1×4=0; raíz doble.",
+        "memory": "CLAVE PARA RECORDAR: D=0 significa una raíz real distinta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L08-ORI-003",
+      "lesson_id": "L08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve x²−9=0. ¿Cuál es la raíz positiva?",
+      "options": [
+        "−9",
+        "−3",
+        "3",
+        "9"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 3. x²=9 ⇒x=±3; positiva 3.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: x²=9 ⇒x=±3; positiva 3. B) No corresponde al resultado: x²=9 ⇒x=±3; positiva 3. C) Corresponde al resultado demostrado. D) No corresponde al resultado: x²=9 ⇒x=±3; positiva 3.",
+        "memory": "CLAVE PARA RECORDAR: Considera ambas raíces al extraer una raíz cuadrada.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L08-ORI-004",
+      "lesson_id": "L08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál es el discriminante de 2x²−3x+1=0?",
+      "options": [
+        "1",
+        "5",
+        "9",
+        "17"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 1. D=b²−4ac=9−8=1.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: D=b²−4ac=9−8=1. C) No corresponde al resultado: D=b²−4ac=9−8=1. D) No corresponde al resultado: D=b²−4ac=9−8=1.",
+        "memory": "CLAVE PARA RECORDAR: Sustituye a, b y c con sus signos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L08-ORI-005",
+      "lesson_id": "L08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Una pelota tiene altura h(t)=−t²+4t en metros. ¿En qué instante alcanza altura máxima?",
+      "options": [
+        "1 s",
+        "2 s",
+        "3 s",
+        "4 s"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 2 s. Vértice de la parábola: t=−b/(2a)=−4/(−2)=2.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Vértice de la parábola: t=−b/(2a)=−4/(−2)=2. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Vértice de la parábola: t=−b/(2a)=−4/(−2)=2. D) No corresponde al resultado: Vértice de la parábola: t=−b/(2a)=−4/(−2)=2.",
+        "memory": "CLAVE PARA RECORDAR: El vértice da el máximo si a<0.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L09-ORI-001",
+      "lesson_id": "L09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve 3x+2<11.",
+      "options": [
+        "x<3",
+        "x>3",
+        "x≤3",
+        "x>9"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) x<3. 3x<9 ⇒x<3.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: 3x<9 ⇒x<3. C) No corresponde al resultado: 3x<9 ⇒x<3. D) No corresponde al resultado: 3x<9 ⇒x<3.",
+        "memory": "CLAVE PARA RECORDAR: Si divides entre positivo el signo se conserva.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L09-ORI-002",
+      "lesson_id": "L09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve −2x≤8.",
+      "options": [
+        "x≤−4",
+        "x≥−4",
+        "x≥4",
+        "x≤4"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) x≥−4. Dividir entre −2 invierte el signo: x≥−4.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Dividir entre −2 invierte el signo: x≥−4. B) Corresponde al resultado demostrado. C) No corresponde al resultado: Dividir entre −2 invierte el signo: x≥−4. D) No corresponde al resultado: Dividir entre −2 invierte el signo: x≥−4.",
+        "memory": "CLAVE PARA RECORDAR: Al dividir por negativo se invierte la desigualdad.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L09-ORI-003",
+      "lesson_id": "L09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué intervalo representa x>1 y x≤5?",
+      "options": [
+        "[1,5]",
+        "(1,5]",
+        "[1,5)",
+        "(1,5)"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) (1,5]. 1 no está incluido; 5 sí.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 1 no está incluido; 5 sí. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 1 no está incluido; 5 sí. D) No corresponde al resultado: 1 no está incluido; 5 sí.",
+        "memory": "CLAVE PARA RECORDAR: Paréntesis excluyen y corchetes incluyen.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L09-ORI-004",
+      "lesson_id": "L09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Resuelve 5−x>2.",
+      "options": [
+        "x<3",
+        "x>3",
+        "x<−3",
+        "x>−3"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) x<3. −x>−3 y al multiplicar por −1: x<3.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: −x>−3 y al multiplicar por −1: x<3. C) No corresponde al resultado: −x>−3 y al multiplicar por −1: x<3. D) No corresponde al resultado: −x>−3 y al multiplicar por −1: x<3.",
+        "memory": "CLAVE PARA RECORDAR: Invierte el sentido cuando cambias el signo de ambos lados.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L09-ORI-005",
+      "lesson_id": "L09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Para comprar al menos 7 cuadernos de S/ 4 cada uno, ¿cuál es el gasto mínimo?",
+      "options": [
+        "S/ 11",
+        "S/ 24",
+        "S/ 28",
+        "S/ 32"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 28. Al menos 7 significa 7 o más; mínimo 7×4=28.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Al menos 7 significa 7 o más; mínimo 7×4=28. B) No corresponde al resultado: Al menos 7 significa 7 o más; mínimo 7×4=28. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Al menos 7 significa 7 o más; mínimo 7×4=28.",
+        "memory": "CLAVE PARA RECORDAR: Traduce «al menos» por ≥.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L10-ORI-001",
+      "lesson_id": "L10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "En la sucesión 4,7,10,... ¿cuál es el décimo término?",
+      "options": [
+        "28",
+        "30",
+        "31",
+        "34"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 31. a10=4+(10−1)×3=31.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: a10=4+(10−1)×3=31. B) No corresponde al resultado: a10=4+(10−1)×3=31. C) Corresponde al resultado demostrado. D) No corresponde al resultado: a10=4+(10−1)×3=31.",
+        "memory": "CLAVE PARA RECORDAR: PA: aₙ=a₁+(n−1)d.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L10-ORI-002",
+      "lesson_id": "L10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "La sucesión 3,6,12,24,... tiene quinto término:",
+      "options": [
+        "36",
+        "48",
+        "54",
+        "72"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 48. La razón es 2; quinto=24×2=48.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: La razón es 2; quinto=24×2=48. B) Corresponde al resultado demostrado. C) No corresponde al resultado: La razón es 2; quinto=24×2=48. D) No corresponde al resultado: La razón es 2; quinto=24×2=48.",
+        "memory": "CLAVE PARA RECORDAR: PG: multiplica siempre por la misma razón.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L10-ORI-003",
+      "lesson_id": "L10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Halla la suma de los primeros 10 números naturales positivos.",
+      "options": [
+        "45",
+        "50",
+        "55",
+        "60"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 55. 10×11/2=55.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 10×11/2=55. B) No corresponde al resultado: 10×11/2=55. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 10×11/2=55.",
+        "memory": "CLAVE PARA RECORDAR: Suma 1+...+n=n(n+1)/2.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L10-ORI-004",
+      "lesson_id": "L10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "En una PA con primer término 5 y diferencia 4, ¿cuál es a6?",
+      "options": [
+        "20",
+        "25",
+        "29",
+        "30"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 25. a6=5+(6−1)×4=25.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: a6=5+(6−1)×4=25. B) Corresponde al resultado demostrado. C) No corresponde al resultado: a6=5+(6−1)×4=25. D) No corresponde al resultado: a6=5+(6−1)×4=25.",
+        "memory": "CLAVE PARA RECORDAR: Cuenta n−1 saltos desde el primer término.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L10-ORI-005",
+      "lesson_id": "L10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Si a₁=2 y razón geométrica r=3, ¿cuál es a₄?",
+      "options": [
+        "18",
+        "27",
+        "54",
+        "81"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 54. a4=2×3³=54.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: a4=2×3³=54. B) No corresponde al resultado: a4=2×3³=54. C) Corresponde al resultado demostrado. D) No corresponde al resultado: a4=2×3³=54.",
+        "memory": "CLAVE PARA RECORDAR: PG: aₙ=a₁r^(n−1).",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L11-ORI-001",
+      "lesson_id": "L11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Para f(x)=3x+2, calcula f(4).",
+      "options": [
+        "10",
+        "12",
+        "14",
+        "16"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 14. f(4)=3×4+2=14.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: f(4)=3×4+2=14. B) No corresponde al resultado: f(4)=3×4+2=14. C) Corresponde al resultado demostrado. D) No corresponde al resultado: f(4)=3×4+2=14.",
+        "memory": "CLAVE PARA RECORDAR: Sustituye x por el argumento.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L11-ORI-002",
+      "lesson_id": "L11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál es la pendiente de y=−2x+5?",
+      "options": [
+        "−5",
+        "−2",
+        "2",
+        "5"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) −2. En y=mx+b, la pendiente es m=−2.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: En y=mx+b, la pendiente es m=−2. B) Corresponde al resultado demostrado. C) No corresponde al resultado: En y=mx+b, la pendiente es m=−2. D) No corresponde al resultado: En y=mx+b, la pendiente es m=−2.",
+        "memory": "CLAVE PARA RECORDAR: La pendiente es el coeficiente de x.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L11-ORI-003",
+      "lesson_id": "L11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Halla el vértice de f(x)=x²−6x+8.",
+      "options": [
+        "(3,−1)",
+        "(−3,−1)",
+        "(3,1)",
+        "(6,8)"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) (3,−1). x_v=−(−6)/(2)=3; f(3)=9−18+8=−1.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Corresponde al resultado demostrado. B) No corresponde al resultado: x_v=−(−6)/(2)=3; f(3)=9−18+8=−1. C) No corresponde al resultado: x_v=−(−6)/(2)=3; f(3)=9−18+8=−1. D) No corresponde al resultado: x_v=−(−6)/(2)=3; f(3)=9−18+8=−1.",
+        "memory": "CLAVE PARA RECORDAR: El vértice está en x=−b/(2a).",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L11-ORI-004",
+      "lesson_id": "L11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Un servicio cobra S/ 25 fijos más S/ 4 por cada kilómetro. ¿Cuál es C(3)?",
+      "options": [
+        "S/ 12",
+        "S/ 29",
+        "S/ 37",
+        "S/ 75"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) S/ 37. C(x)=25+4x; C(3)=37.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: C(x)=25+4x; C(3)=37. B) No corresponde al resultado: C(x)=25+4x; C(3)=37. C) Corresponde al resultado demostrado. D) No corresponde al resultado: C(x)=25+4x; C(3)=37.",
+        "memory": "CLAVE PARA RECORDAR: Identifica costo fijo y costo variable.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L11-ORI-005",
+      "lesson_id": "L11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "¿En qué punto corta al eje vertical la función y=5x−7?",
+      "options": [
+        "(−7,0)",
+        "(0,−7)",
+        "(0,5)",
+        "(7,0)"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) (0,−7). En el eje vertical x=0; y=−7.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: En el eje vertical x=0; y=−7. B) Corresponde al resultado demostrado. C) No corresponde al resultado: En el eje vertical x=0; y=−7. D) No corresponde al resultado: En el eje vertical x=0; y=−7.",
+        "memory": "CLAVE PARA RECORDAR: Evalúa en x=0 para hallar la intersección con el eje y.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L12-ORI-001",
+      "lesson_id": "L12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Una población inicia con 50 bacterias y se duplica cada hora. ¿Cuántas hay tras 4 horas?",
+      "options": [
+        "200",
+        "400",
+        "800",
+        "1600"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 800. 50×2⁴=50×16=800.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 50×2⁴=50×16=800. B) No corresponde al resultado: 50×2⁴=50×16=800. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 50×2⁴=50×16=800.",
+        "memory": "CLAVE PARA RECORDAR: Crecimiento por duplicación usa potencias.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L12-ORI-002",
+      "lesson_id": "L12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Calcula f(3) para f(x)=3·2^x.",
+      "options": [
+        "18",
+        "24",
+        "27",
+        "48"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 24. f(3)=3×2³=24.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: f(3)=3×2³=24. B) Corresponde al resultado demostrado. C) No corresponde al resultado: f(3)=3×2³=24. D) No corresponde al resultado: f(3)=3×2³=24.",
+        "memory": "CLAVE PARA RECORDAR: Evalúa primero la potencia y luego multiplica.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L12-ORI-003",
+      "lesson_id": "L12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál función es decreciente para x real?",
+      "options": [
+        "2^x",
+        "3^x",
+        "(1/2)^x",
+        "5^x"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) (1/2)^x. Una exponencial de base entre 0 y 1 es decreciente.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: Una exponencial de base entre 0 y 1 es decreciente. B) No corresponde al resultado: Una exponencial de base entre 0 y 1 es decreciente. C) Corresponde al resultado demostrado. D) No corresponde al resultado: Una exponencial de base entre 0 y 1 es decreciente.",
+        "memory": "CLAVE PARA RECORDAR: Identifica si la base está entre 0 y 1.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L12-ORI-004",
+      "lesson_id": "L12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Una cantidad de 160 se reduce a la mitad cada día. ¿Cuánto queda tras 3 días?",
+      "options": [
+        "10",
+        "20",
+        "40",
+        "80"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 20. 160×(1/2)³=160/8=20.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 160×(1/2)³=160/8=20. B) Corresponde al resultado demostrado. C) No corresponde al resultado: 160×(1/2)³=160/8=20. D) No corresponde al resultado: 160×(1/2)³=160/8=20.",
+        "memory": "CLAVE PARA RECORDAR: Tres periodos de mitad equivalen a dividir entre 2³.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
+    },
+    {
+      "id": "B18-L12-ORI-005",
+      "lesson_id": "L12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Una cantidad crece 10 % por periodo desde 100 unidades. ¿Cuántas hay después de 2 periodos?",
+      "options": [
+        "110",
+        "120",
+        "121",
+        "130"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 121. 100×1,1²=121.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde al resultado: 100×1,1²=121. B) No corresponde al resultado: 100×1,1²=121. C) Corresponde al resultado demostrado. D) No corresponde al resultado: 100×1,1²=121.",
+        "memory": "CLAVE PARA RECORDAR: Crecimiento porcentual compuesto usa exponentes.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
+      }
     }
   ],
-  "question_count": 28
+  "question_count": 133
 }
