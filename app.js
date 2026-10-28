@@ -204,14 +204,16 @@ async function refresh(){
    const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
   }
  }
+ if(user&&(teacher()||access?.allowed))restoreTimedExam();
  render();
+ if(quiz?.deadlineAt&&!quiz.result&&quizRemaining()===0)submitQuizTimed();
 }
 function render(){
  const allowed=teacher()||access?.allowed;
  const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['exams','Exámenes de admisión'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
- document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
+ document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{if(quiz?.deadlineAt&&!quiz.result){alert('Hay un examen cronometrado en curso. Entrégalo antes de salir.');return;}page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
  $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',exams:'Exámenes de admisión',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
@@ -580,10 +582,37 @@ function becaReadingPanel(q){
  return `<section class="reading-panel"><h3>📖 Texto ${n} · Lectura compartida</h3><div class="reading-scroll" style="white-space:pre-wrap">${esc(becaReadings[String(n)]||'Lectura en preparación. No publicar este bloque hasta verificar el texto original.')}</div></section>`;
 }
 function timeFmt(ms){const sec=Math.max(0,Math.floor(ms/1000));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
-function tickQuizTime(){if(!quiz||quiz.result)return;const now=Date.now();if(quiz.lastTick){quiz.elapsed[quiz.i]+=Math.max(0,now-quiz.lastTick)}quiz.lastTick=now;}
+function tickQuizTime(){if(!quiz||quiz.result)return;const now=Date.now();if(quiz.lastTick){quiz.elapsed[quiz.i]+=Math.max(0,now-quiz.lastTick)}quiz.lastTick=now;saveTimedExam();}
 let quizTimerHandle=null;
 const THIRD_EXAM_DURATION=150*60*1000;
 let quizSubmitting=false;
+function timedExamStorageKey(){return 'cachimbolab_timed_exam_2026_ii_'+(user?.id||'anonymous');}
+function saveTimedExam(){
+ if(!user||!quiz?.deadlineAt||quiz.result)return;
+ try{
+  localStorage.setItem(timedExamStorageKey(),JSON.stringify({
+   questionIds:quiz.items.map(q=>q.id),answers:quiz.answers,
+   elapsed:quiz.elapsed,i:quiz.i,deadlineAt:quiz.deadlineAt,
+   lastTick:Date.now(),savedAt:Date.now()
+  }));
+ }catch(error){console.warn('No se pudo guardar el progreso del examen',error);}
+}
+function restoreTimedExam(){
+ if(!user||quiz)return;
+ let saved;
+ try{saved=JSON.parse(localStorage.getItem(timedExamStorageKey())||'null')}catch{return}
+ if(!saved||!Array.isArray(saved.questionIds)||saved.questionIds.length!==100||!Number.isFinite(saved.deadlineAt))return;
+ const byId=new Map(questions.map(q=>[q.id,q]));
+ const items=saved.questionIds.map(id=>byId.get(id));
+ if(items.some(q=>!q||q.status!=='published'))return;
+ quiz={items,answers:Array.from({length:100},(_,i)=>Number.isInteger(saved.answers?.[i])?saved.answers[i]:null),
+ elapsed:Array.from({length:100},(_,i)=>Number(saved.elapsed?.[i])||0),
+ i:Math.min(99,Math.max(0,Number(saved.i)||0)),
+ deadlineAt:saved.deadlineAt,lastTick:Date.now(),result:null};
+ page='quiz';selectedModality='CPU-UNSM';
+}
+function clearTimedExam(){try{localStorage.removeItem(timedExamStorageKey())}catch{}}
+
 // Orden, materias y cupos oficiales del III examen: nunca mezclar las posiciones.
 const THIRD_EXAM_DISTRIBUTION=Object.freeze([
   ['Razonamiento Matemático',13],['Razonamiento Verbal',14],
@@ -659,7 +688,7 @@ async function submitQuizTimed(){
  const st=$('quizError');if(st)st.textContent='Entregando y calificando...';
  const {data,error}=await db.rpc('grade_attempt',{p_answers:quiz.items.map((q,i)=>({id:q.id,selected:quiz.answers[i]}))});
  if(error){if(st)st.textContent='Error al entregar: '+error.message+'; reintenta.';if(b)b.disabled=false;quizSubmitting=false;return;}
- quiz.result=data;quizSubmitting=false;await refresh();
+ quiz.result=data;quizSubmitting=false;clearTimedExam();await refresh();
 }
 function bindQuizTimer(){clearInterval(quizTimerHandle);if(!quiz||quiz.result)return;quizTimerHandle=setInterval(()=>{if(!quiz||quiz.result){clearInterval(quizTimerHandle);return}tickQuizTime();const e=document.getElementById('questionTimer');if(e)e.textContent=timeFmt(quiz.elapsed[quiz.i]);const t=document.getElementById('totalTimer');if(t)t.textContent=timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0));const left=document.getElementById('quizRemaining');if(left)left.textContent=examClock(quizRemaining());if(quiz.deadlineAt&&quizRemaining()===0)submitQuizTimed();},1000)}
 function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id&&q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div>
@@ -1131,6 +1160,7 @@ if(page==='quiz'){
     const now=Date.now();
     quiz={items,answers:Array(100).fill(null),elapsed:Array(100).fill(0),lastTick:now,deadlineAt:now+THIRD_EXAM_DURATION,i:0};
     saveThirdExamHistory(items.map(q=>q.id));
+    saveTimedExam();
     render();
   };
   if($('startQuiz')) $('startQuiz').onclick=()=>{
@@ -1161,6 +1191,7 @@ q.modality === selectedModality &&
 
   if($('prevQuiz')) $('prevQuiz').onclick=()=>{const choice=document.querySelector('input[name=choice]:checked');quiz.answers[quiz.i]=choice?Number(choice.value):null;tickQuizTime();quiz.i=Math.max(0,quiz.i-1);quiz.lastTick=Date.now();render();};
   if($('deliverQuiz')) $('deliverQuiz').onclick=()=>{if(confirm('¿Entregar tus respuestas?'))submitQuizTimed();};
+  document.querySelectorAll('input[name=choice]').forEach(input=>input.onchange=()=>{if(!quiz?.deadlineAt)return;quiz.answers[quiz.i]=Number(input.value);saveTimedExam();});
   if($('nextQuiz')) $('nextQuiz').onclick=async()=>{
     const sel=document.querySelector('input[name=choice]:checked');
     quiz.answers[quiz.i]=sel?Number(sel.value):null;
