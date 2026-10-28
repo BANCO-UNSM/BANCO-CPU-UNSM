@@ -646,6 +646,7 @@ function makeThirdExamItems(){
   }
  }
  if(selection.length!==100||new Set(selection.map(q=>q.id)).size!==100)throw new Error('El simulacro no cumple las 100 preguntas únicas.');
+ if(previous.length&&selection.every((q,i)=>q.id===previous[previous.length-1][i]))throw new Error('Todavía no hay suficientes preguntas distintas para generar una nueva versión del simulacro. Agrega y publica más preguntas del periodo 11–16.');
  return selection;
 }
 function quizRemaining(){return quiz?.deadlineAt?Math.max(0,quiz.deadlineAt-Date.now()):null;}
