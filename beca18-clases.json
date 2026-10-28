@@ -1,6 +1,6 @@
 {
   "course": "Beca 18 — Matemática",
-  "version": "piloto-1",
+  "version": "piloto-2",
   "lesson_count": 24,
   "lessons": [
     {
@@ -12,8 +12,116 @@
       "worked_example": "(18-6)÷3+2² = 4+4 = 8.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "piloto_completo",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Reconocer números naturales, enteros, racionales, irracionales y reales.",
+        "Resolver operaciones combinadas sin alterar la jerarquía.",
+        "Aplicar signos, potencias, raíces y operadores definidos.",
+        "Modelar situaciones cotidianas mediante expresiones numéricas y verificar la respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Conjuntos numéricos",
+          "content": "Los naturales (N) sirven para contar; según la convención, pueden incluir o excluir al cero. Los enteros (Z) contienen positivos, negativos y cero. Los racionales (Q) pueden expresarse como a/b con a y b enteros y b distinto de cero; su representación decimal es finita o periódica. Los irracionales no pueden expresarse como fracción de enteros. Los reales (R) incluyen racionales e irracionales.",
+          "key": "N ⊆ Z ⊆ Q ⊆ R; √2 y π son irracionales."
+        },
+        {
+          "heading": "2. Sistema de numeración decimal",
+          "content": "El sistema decimal es posicional y de base diez: el valor de cada cifra depende de su posición. Un número puede descomponerse en unidades, decenas, centenas, etc.",
+          "key": "4 305 = 4×1 000 + 3×100 + 0×10 + 5."
+        },
+        {
+          "heading": "3. Jerarquía de operaciones",
+          "content": "Resuelve primero signos de agrupación (desde los más internos), luego potencias y raíces, después multiplicaciones y divisiones de izquierda a derecha y, finalmente, sumas y restas de izquierda a derecha. No calcules siempre de izquierda a derecha sin respetar las prioridades.",
+          "key": "18−(4+2)×2=18−6×2=6."
+        },
+        {
+          "heading": "4. Leyes de signos",
+          "content": "En multiplicaciones y divisiones, signos iguales producen un resultado positivo y signos distintos uno negativo. En sumas de signos opuestos se restan valores absolutos y se conserva el signo del mayor valor absoluto.",
+          "key": "(−3)(−4)=12; (−3)(4)=−12; −8+5=−3."
+        },
+        {
+          "heading": "5. Potencias y raíces",
+          "content": "La potencia a^n representa la multiplicación repetida de la base a, cuando n es un entero positivo. La raíz cuadrada principal de un número no negativo es el número no negativo cuyo cuadrado da ese valor. Los paréntesis alrededor de una base negativa cambian la interpretación.",
+          "key": "(−3)²=9, pero −3²=−9; √81=9."
+        },
+        {
+          "heading": "6. Operadores definidos",
+          "content": "Un símbolo como ★ puede representar una operación creada por una regla explícita. Sustituye cuidadosamente el primer y el segundo argumento por sus respectivos valores, manteniendo paréntesis si son negativos.",
+          "key": "Si a★b=2a+b, entonces 3★5=2(3)+5=11."
+        },
+        {
+          "heading": "7. Estrategias de resolución",
+          "content": "Lee lo que se pregunta, identifica unidades y operaciones, elabora una expresión, calcula respetando prioridades y comprueba que tu respuesta tenga sentido. Para preguntas con alternativas, puedes estimar resultados para descartar distractores.",
+          "key": "Si algo cuesta S/ 24 y descuentan S/ 4, el pago debe ser menor que S/ 24."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo básico · jerarquía",
+          "statement": "Calcula 25−3(4+1)+2².",
+          "steps": [
+            "Primero el paréntesis: 4+1=5.",
+            "Luego la potencia: 2²=4.",
+            "Multiplicación: 3×5=15.",
+            "Calculamos 25−15+4=14."
+          ],
+          "answer": "14"
+        },
+        {
+          "title": "Ejemplo intermedio · fracciones",
+          "statement": "Calcula 2/3+5/6−1/2.",
+          "steps": [
+            "Usa denominador común 6.",
+            "2/3=4/6 y 1/2=3/6.",
+            "4/6+5/6−3/6=6/6."
+          ],
+          "answer": "1"
+        },
+        {
+          "title": "Ejemplo intermedio · operadores",
+          "statement": "Si a◇b=a²−2b, encuentra (−2)◇3.",
+          "steps": [
+            "Identifica a=−2 y b=3.",
+            "Sustituye: (−2)²−2(3).",
+            "Obtén 4−6=−2."
+          ],
+          "answer": "−2"
+        },
+        {
+          "title": "Ejemplo aplicado · compras",
+          "statement": "Ana tiene S/ 100, compra 3 libros a S/ 18 y recibe S/ 15. ¿Cuánto le queda?",
+          "steps": [
+            "El gasto total es 3×18=54.",
+            "Saldo luego de comprar: 100−54=46.",
+            "Sumamos los S/ 15 recibidos: 46+15=61."
+          ],
+          "answer": "S/ 61"
+        },
+        {
+          "title": "Ejemplo tipo examen · clasificación",
+          "statement": "Determina cuál es racional entre √5, π, 0,125 y √7.",
+          "steps": [
+            "Los decimales finitos son racionales.",
+            "0,125=125/1000=1/8.",
+            "√5, √7 y π son irracionales."
+          ],
+          "answer": "0,125"
+        }
+      ],
+      "mistakes": [
+        "Confundir −3² con (−3)².",
+        "Aplicar sumas antes que multiplicaciones.",
+        "Olvidar que el denominador de una fracción nunca puede ser cero.",
+        "Cambiar el orden de los argumentos de un operador definido.",
+        "Responder con el gasto cuando el problema pide el saldo."
+      ],
+      "evaluation": "10 preguntas originales de alternativa múltiple. Se registra el resultado localmente en este navegador, no en Supabase.",
+      "references": [
+        "PRONABEC, Prepárate, segunda edición (2023), Razonamiento Matemático, sesión 1: Números y operaciones I, pp. 373–388.",
+        "Temario compartido: competencia Resuelve problemas de cantidad, capacidad Traduce cantidades a expresiones numéricas."
+      ]
     },
     {
       "id": "N02",
@@ -24,8 +132,65 @@
       "worked_example": "234 es divisible entre 3 porque 2+3+4=9.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Definir múltiplos, divisores y números primos.",
+        "Aplicar criterios de divisibilidad por 2, 3, 4, 5, 6, 9 y 10.",
+        "Resolver situaciones de reparto y agrupación basadas en divisibilidad."
+      ],
+      "theory": [
+        {
+          "heading": "Múltiplos y divisores",
+          "content": "a es divisor de b si existe un entero k tal que b=a·k. Equivalentemente, b es múltiplo de a. Para los ejercicios usuales se consideran divisores positivos.",
+          "key": "6 divide 42 porque 42=6×7."
+        },
+        {
+          "heading": "Criterios rápidos de divisibilidad",
+          "content": "Por 2: última cifra par. Por 3: suma de cifras múltiplo de 3. Por 4: dos últimas cifras forman un múltiplo de 4. Por 5: termina en 0 o 5. Por 6: cumple 2 y 3. Por 9: suma de cifras múltiplo de 9. Por 10: termina en 0.",
+          "key": "2 376 es divisible entre 2, 3, 4, 6 y 9."
+        },
+        {
+          "heading": "Primos y compuestos",
+          "content": "Un número primo es un entero positivo mayor que 1 con exactamente dos divisores positivos: 1 y él mismo. Un compuesto es mayor que 1 y tiene más de dos divisores positivos. El 1 no es primo ni compuesto.",
+          "key": "2 es el único primo par; 9 es compuesto (1, 3 y 9)."
+        },
+        {
+          "heading": "Descomposición en factores primos",
+          "content": "Expresar un entero mayor que 1 como producto de primos ayuda a reconocer sus divisores y se empleará en las clases de MCD y MCM.",
+          "key": "60=2²·3·5."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Criterio combinado",
+          "statement": "¿Es 1 458 divisible entre 6?",
+          "steps": [
+            "Termina en 8: es divisible entre 2.",
+            "Sus cifras suman 1+4+5+8=18, múltiplo de 3.",
+            "Es divisible por 2 y 3, por tanto entre 6."
+          ],
+          "answer": "Sí"
+        },
+        {
+          "title": "Contar divisores",
+          "statement": "¿Cuántos divisores positivos tiene 18?",
+          "steps": [
+            "Factorizamos: 18=2×3².",
+            "Cantidad de divisores: (1+1)(2+1)=6.",
+            "Enumeración: 1,2,3,6,9,18."
+          ],
+          "answer": "6"
+        }
+      ],
+      "mistakes": [
+        "Creer que el número 1 es primo.",
+        "Aplicar el criterio de 3 a un número sin sumar todas sus cifras.",
+        "Confundir divisible por 6 con divisible por 2 o por 3: debe cumplir ambos."
+      ],
+      "references": [
+        "PRONABEC, Prepárate, segunda edición (2023), Razonamiento Matemático, sesión 3: Números y operaciones III: Divisibilidad, pp. 408–425."
+      ]
     },
     {
       "id": "N03",
@@ -310,9 +475,9 @@
       "correct_index": 1,
       "explanation": {
         "correct": "RESPUESTA CORRECTA: B) S/ 20. 3×8−4=24−4=20.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
-        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
-        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) S/ 12 resulta de calcular solo una parte del gasto. C) S/ 24 es el precio sin descuento. D) S/ 28 suma indebidamente el descuento.",
+        "memory": "CLAVE PARA RECORDAR: Multiplica primero el precio unitario por la cantidad y luego resta el descuento.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Si preguntan cuánto se pagó, evita responder con el precio original."
       }
     },
     {
@@ -332,9 +497,9 @@
       "correct_index": 1,
       "explanation": {
         "correct": "RESPUESTA CORRECTA: B) 6. Primero paréntesis: 4+2=6; luego 6×2=12; finalmente 18−12=6.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
-        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
-        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) 12 surge de ignorar o alterar una operación. C) 24 suma resultados que no corresponden. D) 8 no respeta la agrupación.",
+        "memory": "CLAVE PARA RECORDAR: Paréntesis → multiplicación → resta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: No hagas la resta 18−4 antes del paréntesis."
       }
     },
     {
@@ -354,9 +519,9 @@
       "correct_index": 2,
       "explanation": {
         "correct": "RESPUESTA CORRECTA: C) −7/3. −7/3 es cociente de enteros con denominador distinto de cero.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
-        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
-        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) √2 es irracional. B) π es irracional. D) √3 es irracional.",
+        "memory": "CLAVE PARA RECORDAR: Todo cociente de enteros con denominador distinto de cero es racional.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Clasifica por definición, no por apariencia decimal."
       }
     },
     {
@@ -376,9 +541,9 @@
       "correct_index": 0,
       "explanation": {
         "correct": "RESPUESTA CORRECTA: A) 11. Sustituye a=3 y b=5: 2(3)+5=11.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
-        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
-        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: B) 16 es incompatible con 2×3+5. C) 8 omite parte de la regla. D) 13 no resulta de la sustitución.",
+        "memory": "CLAVE PARA RECORDAR: Los operadores se calculan respetando la regla dada.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Escribe primero la fórmula con paréntesis y sustituye."
       }
     },
     {
@@ -398,9 +563,9 @@
       "correct_index": 1,
       "explanation": {
         "correct": "RESPUESTA CORRECTA: B) 17. 2³=8 y √81=9; 8+9=17.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
-        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
-        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) 15 resta 2 al resultado correcto. C) 14 y D) 18 no corresponden a sumar 8 y 9.",
+        "memory": "CLAVE PARA RECORDAR: Eleva al cubo y calcula la raíz antes de sumar.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Resuelve potencias y raíces por separado para no confundirlas."
       }
     },
     {
@@ -420,9 +585,9 @@
       "correct_index": 1,
       "explanation": {
         "correct": "RESPUESTA CORRECTA: B) 1. (−3)²=9, 2³=8; 9−8=1.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
-        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
-        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) −17 proviene de interpretar mal los signos. C) 17 suma 9 y 8. D) −1 invierte el orden de la resta.",
+        "memory": "CLAVE PARA RECORDAR: Una base negativa entre paréntesis elevada a exponente par da positivo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Distingue (−3)² de −3²."
       }
     },
     {
@@ -442,9 +607,9 @@
       "correct_index": 1,
       "explanation": {
         "correct": "RESPUESTA CORRECTA: B) 60. 5×12=60.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
-        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
-        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) 17 suma cajas y lápices. C) 50 equivale a 10 por caja. D) 72 equivale a 6 cajas.",
+        "memory": "CLAVE PARA RECORDAR: Total = cantidad de cajas × unidades por caja.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Estima: cinco docenas son sesenta."
       }
     },
     {
@@ -464,9 +629,9 @@
       "correct_index": 2,
       "explanation": {
         "correct": "RESPUESTA CORRECTA: C) 7/8. 3/4=6/8; 6/8+1/8=7/8.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
-        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
-        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) 4/12 suma numeradores y denominadores, lo que es incorrecto. B) 1/2 y D) 5/8 no suman las fracciones dadas.",
+        "memory": "CLAVE PARA RECORDAR: Usa denominadores comunes antes de sumar fracciones.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Convierte 3/4 a 6/8 y añade 1/8."
       }
     },
     {
@@ -486,9 +651,9 @@
       "correct_index": 1,
       "explanation": {
         "correct": "RESPUESTA CORRECTA: B) S/ 205. 250−90+45=205.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
-        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
-        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) S/ 115 omite el ingreso recibido. C) S/ 295 suma gastos como si fueran ingresos. D) S/ 160 omite el segundo movimiento.",
+        "memory": "CLAVE PARA RECORDAR: Saldo final = saldo inicial − gastos + ingresos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: La respuesta debe quedar entre S/ 160 y S/ 250."
       }
     },
     {
@@ -508,10 +673,143 @@
       "correct_index": 0,
       "explanation": {
         "correct": "RESPUESTA CORRECTA: A) −1. (−2)²+3(−2)+1=4−6+1=−1.",
-        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: Revisa el orden de operaciones y compara cada distractor con el resultado obtenido.",
-        "memory": "CLAVE PARA RECORDAR: Identifica los datos, respeta la jerarquía de operaciones y comprueba la respuesta.",
-        "strategy": "ESTRATEGIA DE EXAMEN: Descarta alternativas imposibles y sustituye el resultado cuando sea posible."
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: B) 11 trata el término 3x incorrectamente. C) −9 y D) 3 no resultan al reemplazar x=−2.",
+        "memory": "CLAVE PARA RECORDAR: Sustituye con paréntesis los números negativos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Comprueba 4−6+1=−1."
+      }
+    },
+    {
+      "id": "B18-N02-ORI-001",
+      "lesson_id": "N02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál de los siguientes números es divisible entre 9?",
+      "options": [
+        "425",
+        "513",
+        "734",
+        "821"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 513. 5+1+3=9 y 9 es múltiplo de 9.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) 4+2+5=11, no múltiplo de 9. B) Es la correcta. C) 7+3+4=14, no múltiplo de 9. D) 8+2+1=11, no múltiplo de 9.",
+        "memory": "CLAVE PARA RECORDAR: Divisible entre 9: suma de cifras múltiplo de 9.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Comprueba los criterios antes de marcar la alternativa."
+      }
+    },
+    {
+      "id": "B18-N02-ORI-002",
+      "lesson_id": "N02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál de estos números es primo?",
+      "options": [
+        "21",
+        "29",
+        "33",
+        "39"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 29. 29 solo tiene divisores positivos 1 y 29.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) 21=3×7, compuesto. B) Es la correcta. C) 33=3×11, compuesto. D) 39=3×13, compuesto.",
+        "memory": "CLAVE PARA RECORDAR: Primo: exactamente dos divisores positivos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Comprueba los criterios antes de marcar la alternativa."
+      }
+    },
+    {
+      "id": "B18-N02-ORI-003",
+      "lesson_id": "N02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuántos divisores positivos tiene el número 12?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "8"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 6. Son 1, 2, 3, 4, 6 y 12, en total 6.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Omite dos divisores. B) Omite un divisor. C) Es la correcta. D) Sobrestima la cantidad.",
+        "memory": "CLAVE PARA RECORDAR: Descompón 12=2²·3; (2+1)(1+1)=6.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Comprueba los criterios antes de marcar la alternativa."
+      }
+    },
+    {
+      "id": "B18-N02-ORI-004",
+      "lesson_id": "N02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué cifra debe reemplazar a x para que 36x sea divisible entre 5 y entre 3?",
+      "options": [
+        "0",
+        "2",
+        "5",
+        "8"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) 0. Para ser divisible entre 5, x es 0 o 5. Con x=0, 3+6+0=9, divisible entre 3; con x=5, suma 14. Solo x=0.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la correcta. B) No termina en 0 o 5. C) 3+6+5=14, no divisible entre 3. D) No termina en 0 o 5.",
+        "memory": "CLAVE PARA RECORDAR: Comprueba simultáneamente todos los criterios.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Comprueba los criterios antes de marcar la alternativa."
+      }
+    },
+    {
+      "id": "B18-N02-ORI-005",
+      "lesson_id": "N02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál es la descomposición en factores primos de 72?",
+      "options": [
+        "2²×3²",
+        "2³×3²",
+        "2³×9²",
+        "2⁴×3"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 2³×3². 72=8×9=2³×3².",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) 2²×3²=36. B) Es la correcta. C) 9 no es primo. D) 2⁴×3=48.",
+        "memory": "CLAVE PARA RECORDAR: Descompón hasta dejar solo factores primos.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Comprueba los criterios antes de marcar la alternativa."
+      }
+    },
+    {
+      "id": "B18-N02-ORI-006",
+      "lesson_id": "N02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Una cantidad de 144 caramelos se reparte en bolsas de 12 unidades cada una. ¿Cuántas bolsas completas se obtienen?",
+      "options": [
+        "10",
+        "11",
+        "12",
+        "14"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) 12. 144÷12=12 bolsas.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) 10 bolsas contienen 120 caramelos. B) 11 bolsas contienen 132 caramelos. C) Es la correcta. D) 14 bolsas necesitarían 168 caramelos.",
+        "memory": "CLAVE PARA RECORDAR: Para bolsas iguales, divide total entre unidades por bolsa.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Comprueba los criterios antes de marcar la alternativa."
       }
     }
-  ]
+  ],
+  "question_count": 16
 }
