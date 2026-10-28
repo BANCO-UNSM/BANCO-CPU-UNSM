@@ -1,7 +1,7 @@
 {
   "course": "Beca 18 — Matemática",
-  "version": "piloto-6",
-  "lesson_count": 24,
+  "version": "beca18-verbal-1",
+  "lesson_count": 36,
   "lessons": [
     {
       "id": "N01",
@@ -1303,6 +1303,918 @@
     {
       "id": "L01",
       "area": "Letras",
+      "title": "Idea principal y tema",
+      "topics": "Distinguir el tema general del mensaje central del texto.",
+      "principle": "El tema se expresa como una frase nominal breve; la idea principal afirma algo importante sobre ese tema.",
+      "worked_example": "Tema: árboles urbanos. Idea principal: Los árboles urbanos ayudan a reducir el calor en las ciudades.",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Distinguir el tema general del mensaje central del texto.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Distinguir el tema general del mensaje central del texto. El tema se expresa como una frase nominal breve; la idea principal afirma algo importante sobre ese tema.",
+          "key": "Tema: árboles urbanos. Idea principal: Los árboles urbanos ayudan a reducir el calor en las ciudades."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "El tema se expresa como una frase nominal breve; la idea principal afirma algo importante sobre ese tema.",
+            "Tema: árboles urbanos. Idea principal: Los árboles urbanos ayudan a reducir el calor en las ciudades.",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "Tema: árboles urbanos. Idea principal: Los árboles urbanos ayudan a reducir el calor en las ciudades."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "Tema: árboles urbanos. Idea principal: Los árboles urbanos ayudan a reducir el calor en las ciudades.",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "Tema: árboles urbanos. Idea principal: Los árboles urbanos ayudan a reducir el calor en las ciudades."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "El tema se expresa como una frase nominal breve; la idea principal afirma algo importante sobre ese tema.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L02",
+      "area": "Letras",
+      "title": "Información explícita",
+      "topics": "Localizar datos expresados directamente en una lectura.",
+      "principle": "La información literal aparece de forma directa; no agregues conclusiones que el texto no afirma.",
+      "worked_example": "«El museo abre los sábados a las nueve». Pregunta literal: ¿a qué hora abre los sábados? A las nueve.",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Localizar datos expresados directamente en una lectura.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Localizar datos expresados directamente en una lectura. La información literal aparece de forma directa; no agregues conclusiones que el texto no afirma.",
+          "key": "«El museo abre los sábados a las nueve». Pregunta literal: ¿a qué hora abre los sábados? A las nueve."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "La información literal aparece de forma directa; no agregues conclusiones que el texto no afirma.",
+            "«El museo abre los sábados a las nueve». Pregunta literal: ¿a qué hora abre los sábados? A las nueve.",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "«El museo abre los sábados a las nueve». Pregunta literal: ¿a qué hora abre los sábados? A las nueve."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "«El museo abre los sábados a las nueve». Pregunta literal: ¿a qué hora abre los sábados? A las nueve.",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "«El museo abre los sábados a las nueve». Pregunta literal: ¿a qué hora abre los sábados? A las nueve."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "La información literal aparece de forma directa; no agregues conclusiones que el texto no afirma.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L03",
+      "area": "Letras",
+      "title": "Inferencias y conclusiones",
+      "topics": "Deducir información sustentada por indicios del texto.",
+      "principle": "Una inferencia razonable se apoya en pistas del texto; no es una ocurrencia ni una generalización absoluta.",
+      "worked_example": "«Luis llevó paraguas al ver nubes oscuras». Puede inferirse que esperaba lluvia.",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Deducir información sustentada por indicios del texto.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Deducir información sustentada por indicios del texto. Una inferencia razonable se apoya en pistas del texto; no es una ocurrencia ni una generalización absoluta.",
+          "key": "«Luis llevó paraguas al ver nubes oscuras». Puede inferirse que esperaba lluvia."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "Una inferencia razonable se apoya en pistas del texto; no es una ocurrencia ni una generalización absoluta.",
+            "«Luis llevó paraguas al ver nubes oscuras». Puede inferirse que esperaba lluvia.",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "«Luis llevó paraguas al ver nubes oscuras». Puede inferirse que esperaba lluvia."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "«Luis llevó paraguas al ver nubes oscuras». Puede inferirse que esperaba lluvia.",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "«Luis llevó paraguas al ver nubes oscuras». Puede inferirse que esperaba lluvia."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "Una inferencia razonable se apoya en pistas del texto; no es una ocurrencia ni una generalización absoluta.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L04",
+      "area": "Letras",
+      "title": "Propósito e intención comunicativa",
+      "topics": "Reconocer para qué fue escrito un texto.",
+      "principle": "El propósito puede ser informar, convencer, instruir o entretener; distingue hechos y opiniones.",
+      "worked_example": "Un aviso que invita a reciclar busca persuadir y promover una conducta.",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Reconocer para qué fue escrito un texto.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Reconocer para qué fue escrito un texto. El propósito puede ser informar, convencer, instruir o entretener; distingue hechos y opiniones.",
+          "key": "Un aviso que invita a reciclar busca persuadir y promover una conducta."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "El propósito puede ser informar, convencer, instruir o entretener; distingue hechos y opiniones.",
+            "Un aviso que invita a reciclar busca persuadir y promover una conducta.",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "Un aviso que invita a reciclar busca persuadir y promover una conducta."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "Un aviso que invita a reciclar busca persuadir y promover una conducta.",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "Un aviso que invita a reciclar busca persuadir y promover una conducta."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "El propósito puede ser informar, convencer, instruir o entretener; distingue hechos y opiniones.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L05",
+      "area": "Letras",
+      "title": "Vocabulario en contexto",
+      "topics": "Deducir el sentido de palabras según la oración.",
+      "principle": "El contexto puede modificar el significado habitual de una palabra; considera toda la oración.",
+      "worked_example": "«Su respuesta fue clara»: clara significa comprensible.",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Deducir el sentido de palabras según la oración.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Deducir el sentido de palabras según la oración. El contexto puede modificar el significado habitual de una palabra; considera toda la oración.",
+          "key": "«Su respuesta fue clara»: clara significa comprensible."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "El contexto puede modificar el significado habitual de una palabra; considera toda la oración.",
+            "«Su respuesta fue clara»: clara significa comprensible.",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "«Su respuesta fue clara»: clara significa comprensible."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "«Su respuesta fue clara»: clara significa comprensible.",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "«Su respuesta fue clara»: clara significa comprensible."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "El contexto puede modificar el significado habitual de una palabra; considera toda la oración.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L06",
+      "area": "Letras",
+      "title": "Sinónimos y antónimos",
+      "topics": "Identificar palabras de significado equivalente u opuesto.",
+      "principle": "Un sinónimo conserva el sentido en un contexto específico; un antónimo expresa oposición semántica.",
+      "worked_example": "«Breve» tiene como sinónimo «corto» y como antónimo «extenso».",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Identificar palabras de significado equivalente u opuesto.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Identificar palabras de significado equivalente u opuesto. Un sinónimo conserva el sentido en un contexto específico; un antónimo expresa oposición semántica.",
+          "key": "«Breve» tiene como sinónimo «corto» y como antónimo «extenso»."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "Un sinónimo conserva el sentido en un contexto específico; un antónimo expresa oposición semántica.",
+            "«Breve» tiene como sinónimo «corto» y como antónimo «extenso».",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "«Breve» tiene como sinónimo «corto» y como antónimo «extenso»."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "«Breve» tiene como sinónimo «corto» y como antónimo «extenso».",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "«Breve» tiene como sinónimo «corto» y como antónimo «extenso»."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "Un sinónimo conserva el sentido en un contexto específico; un antónimo expresa oposición semántica.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L07",
+      "area": "Letras",
+      "title": "Analogías verbales",
+      "topics": "Reconocer relaciones entre pares de palabras.",
+      "principle": "Una analogía exige identificar la misma relación entre dos pares, como parte-todo, función o causa-efecto.",
+      "worked_example": "Pincel : pintar :: lápiz : escribir (instrumento y función).",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Reconocer relaciones entre pares de palabras.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Reconocer relaciones entre pares de palabras. Una analogía exige identificar la misma relación entre dos pares, como parte-todo, función o causa-efecto.",
+          "key": "Pincel : pintar :: lápiz : escribir (instrumento y función)."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "Una analogía exige identificar la misma relación entre dos pares, como parte-todo, función o causa-efecto.",
+            "Pincel : pintar :: lápiz : escribir (instrumento y función).",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "Pincel : pintar :: lápiz : escribir (instrumento y función)."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "Pincel : pintar :: lápiz : escribir (instrumento y función).",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "Pincel : pintar :: lápiz : escribir (instrumento y función)."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "Una analogía exige identificar la misma relación entre dos pares, como parte-todo, función o causa-efecto.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L08",
+      "area": "Letras",
+      "title": "Conectores lógicos",
+      "topics": "Elegir enlaces adecuados según la relación entre ideas.",
+      "principle": "Los conectores expresan causa, consecuencia, contraste, adición, condición y orden.",
+      "worked_example": "«Estudió mucho; por eso, aprobó» indica consecuencia.",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Elegir enlaces adecuados según la relación entre ideas.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Elegir enlaces adecuados según la relación entre ideas. Los conectores expresan causa, consecuencia, contraste, adición, condición y orden.",
+          "key": "«Estudió mucho; por eso, aprobó» indica consecuencia."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "Los conectores expresan causa, consecuencia, contraste, adición, condición y orden.",
+            "«Estudió mucho; por eso, aprobó» indica consecuencia.",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "«Estudió mucho; por eso, aprobó» indica consecuencia."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "«Estudió mucho; por eso, aprobó» indica consecuencia.",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "«Estudió mucho; por eso, aprobó» indica consecuencia."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "Los conectores expresan causa, consecuencia, contraste, adición, condición y orden.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L09",
+      "area": "Letras",
+      "title": "Ordenamiento de oraciones",
+      "topics": "Organizar ideas para formar un texto coherente.",
+      "principle": "Una secuencia suele comenzar por la presentación del tema, seguir con explicación y terminar con conclusión.",
+      "worked_example": "Primero se presenta el problema; después se detallan causas; por último se propone una solución.",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Organizar ideas para formar un texto coherente.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Organizar ideas para formar un texto coherente. Una secuencia suele comenzar por la presentación del tema, seguir con explicación y terminar con conclusión.",
+          "key": "Primero se presenta el problema; después se detallan causas; por último se propone una solución."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "Una secuencia suele comenzar por la presentación del tema, seguir con explicación y terminar con conclusión.",
+            "Primero se presenta el problema; después se detallan causas; por último se propone una solución.",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "Primero se presenta el problema; después se detallan causas; por último se propone una solución."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "Primero se presenta el problema; después se detallan causas; por último se propone una solución.",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "Primero se presenta el problema; después se detallan causas; por último se propone una solución."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "Una secuencia suele comenzar por la presentación del tema, seguir con explicación y terminar con conclusión.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L10",
+      "area": "Letras",
+      "title": "Oraciones intrusas",
+      "topics": "Identificar la oración que rompe la unidad temática.",
+      "principle": "Una oración intrusa puede ser verdadera, pero no contribuye al tema o a la progresión lógica del párrafo.",
+      "worked_example": "En un párrafo sobre los beneficios de leer, una frase sobre precios de automóviles es intrusa.",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Identificar la oración que rompe la unidad temática.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Identificar la oración que rompe la unidad temática. Una oración intrusa puede ser verdadera, pero no contribuye al tema o a la progresión lógica del párrafo.",
+          "key": "En un párrafo sobre los beneficios de leer, una frase sobre precios de automóviles es intrusa."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "Una oración intrusa puede ser verdadera, pero no contribuye al tema o a la progresión lógica del párrafo.",
+            "En un párrafo sobre los beneficios de leer, una frase sobre precios de automóviles es intrusa.",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "En un párrafo sobre los beneficios de leer, una frase sobre precios de automóviles es intrusa."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "En un párrafo sobre los beneficios de leer, una frase sobre precios de automóviles es intrusa.",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "En un párrafo sobre los beneficios de leer, una frase sobre precios de automóviles es intrusa."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "Una oración intrusa puede ser verdadera, pero no contribuye al tema o a la progresión lógica del párrafo.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L11",
+      "area": "Letras",
+      "title": "Tipos y estructura de textos",
+      "topics": "Diferenciar textos narrativos, descriptivos, expositivos y argumentativos.",
+      "principle": "El narrativo cuenta hechos; el descriptivo presenta rasgos; el expositivo explica; el argumentativo defiende una tesis.",
+      "worked_example": "«El agua cambia de estado con la temperatura» corresponde a explicación expositiva.",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Diferenciar textos narrativos, descriptivos, expositivos y argumentativos.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Diferenciar textos narrativos, descriptivos, expositivos y argumentativos. El narrativo cuenta hechos; el descriptivo presenta rasgos; el expositivo explica; el argumentativo defiende una tesis.",
+          "key": "«El agua cambia de estado con la temperatura» corresponde a explicación expositiva."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "El narrativo cuenta hechos; el descriptivo presenta rasgos; el expositivo explica; el argumentativo defiende una tesis.",
+            "«El agua cambia de estado con la temperatura» corresponde a explicación expositiva.",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "«El agua cambia de estado con la temperatura» corresponde a explicación expositiva."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "«El agua cambia de estado con la temperatura» corresponde a explicación expositiva.",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "«El agua cambia de estado con la temperatura» corresponde a explicación expositiva."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "El narrativo cuenta hechos; el descriptivo presenta rasgos; el expositivo explica; el argumentativo defiende una tesis.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "L12",
+      "area": "Letras",
+      "title": "Argumentación y lectura crítica",
+      "topics": "Reconocer tesis, argumentos y evidencia.",
+      "principle": "Una tesis es una postura; los argumentos la sustentan; la evidencia verificable fortalece un razonamiento.",
+      "worked_example": "«Conviene ampliar las bibliotecas porque favorecen el acceso a información» contiene una tesis y una razón.",
+      "duration_minutes": 90,
+      "source": "Ejercicios originales CachimboLab; competencias de comprensión lectora y razonamiento verbal",
+      "status": "desarrollada_para_revision",
+      "competence": "Comprensión lectora y razonamiento verbal",
+      "objectives": [
+        "Reconocer tesis, argumentos y evidencia.",
+        "Identificar información textual pertinente y descartar alternativas sin sustento.",
+        "Resolver preguntas en tiempo limitado y justificar cada respuesta."
+      ],
+      "theory": [
+        {
+          "heading": "1. Concepto central",
+          "content": "Reconocer tesis, argumentos y evidencia. Una tesis es una postura; los argumentos la sustentan; la evidencia verificable fortalece un razonamiento.",
+          "key": "«Conviene ampliar las bibliotecas porque favorecen el acceso a información» contiene una tesis y una razón."
+        },
+        {
+          "heading": "2. Cómo reconocerlo",
+          "content": "Lee el enunciado completo, identifica el propósito de la pregunta y subraya las palabras que determinan la respuesta. Contrasta cada opción con lo que el texto permite afirmar.",
+          "key": "La opción correcta debe responder exactamente a lo preguntado."
+        },
+        {
+          "heading": "3. Estrategia para el examen",
+          "content": "Primero comprende el texto o la relación verbal. Responde antes de revisar los distractores si es posible; elimina las opciones que cambian el sentido, agregan información o no respetan el orden lógico.",
+          "key": "No confundas una suposición personal con la información sustentada."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo de concepto",
+          "statement": "Situación de aprendizaje",
+          "steps": [
+            "Una tesis es una postura; los argumentos la sustentan; la evidencia verificable fortalece un razonamiento.",
+            "«Conviene ampliar las bibliotecas porque favorecen el acceso a información» contiene una tesis y una razón.",
+            "Verifica que la respuesta no añada información no indicada."
+          ],
+          "answer": "«Conviene ampliar las bibliotecas porque favorecen el acceso a información» contiene una tesis y una razón."
+        },
+        {
+          "title": "Ejemplo de interpretación",
+          "statement": "Aplicación de la regla verbal",
+          "steps": [
+            "Lee la frase completa y ubica las palabras clave.",
+            "«Conviene ampliar las bibliotecas porque favorecen el acceso a información» contiene una tesis y una razón.",
+            "Contrasta con las alternativas antes de seleccionar."
+          ],
+          "answer": "«Conviene ampliar las bibliotecas porque favorecen el acceso a información» contiene una tesis y una razón."
+        },
+        {
+          "title": "Ejemplo de estrategia",
+          "statement": "Cómo descartar distractores",
+          "steps": [
+            "Identifica el tipo de pregunta.",
+            "Una tesis es una postura; los argumentos la sustentan; la evidencia verificable fortalece un razonamiento.",
+            "Descarta las opciones que contradicen la lectura o cambian la relación."
+          ],
+          "answer": "Respuesta apoyada en el texto y la regla."
+        }
+      ],
+      "mistakes": [
+        "Responder según conocimientos externos sin atender al texto.",
+        "Elegir una alternativa parcialmente relacionada que no responde la pregunta.",
+        "Confundir una conclusión sustentada con una afirmación absoluta.",
+        "Leer demasiado rápido sin reconocer conectores o relaciones."
+      ],
+      "evaluation": "Cinco preguntas originales con retroalimentación y tiempo de resolución.",
+      "references": [
+        "Material original CachimboLab para desarrollar habilidades de comprensión lectora y razonamiento verbal; no son preguntas oficiales de PRONABEC."
+      ]
+    },
+    {
+      "id": "A01",
+      "area": "Álgebra",
       "title": "Lenguaje algebraico",
       "topics": "Variables; traducción de enunciados; patrones.",
       "principle": "El doble de un número aumentado en tres se representa como 2x+3.",
@@ -1401,8 +2313,8 @@
       ]
     },
     {
-      "id": "L02",
-      "area": "Letras",
+      "id": "A02",
+      "area": "Álgebra",
       "title": "Expresiones algebraicas",
       "topics": "Monomios; polinomios; suma y resta de términos semejantes.",
       "principle": "Solo se pueden sumar directamente términos con la misma parte literal.",
@@ -1487,8 +2399,8 @@
       ]
     },
     {
-      "id": "L03",
-      "area": "Letras",
+      "id": "A03",
+      "area": "Álgebra",
       "title": "Productos notables",
       "topics": "Cuadrado de binomio y diferencia de cuadrados.",
       "principle": "(a+b)²=a²+2ab+b².",
@@ -1573,8 +2485,8 @@
       ]
     },
     {
-      "id": "L04",
-      "area": "Letras",
+      "id": "A04",
+      "area": "Álgebra",
       "title": "Factorización",
       "topics": "Factor común; trinomios; diferencia de cuadrados.",
       "principle": "Factorizar transforma una suma en un producto equivalente.",
@@ -1659,8 +2571,8 @@
       ]
     },
     {
-      "id": "L05",
-      "area": "Letras",
+      "id": "A05",
+      "area": "Álgebra",
       "title": "División de polinomios",
       "topics": "División algebraica y cociente.",
       "principle": "Comprueba la división: dividendo=divisor·cociente+residuo.",
@@ -1745,8 +2657,8 @@
       ]
     },
     {
-      "id": "L06",
-      "area": "Letras",
+      "id": "A06",
+      "area": "Álgebra",
       "title": "Ecuaciones lineales",
       "topics": "Despeje; problemas de edades y cantidades.",
       "principle": "Aplica la misma operación a ambos miembros de una igualdad.",
@@ -1845,8 +2757,8 @@
       ]
     },
     {
-      "id": "L07",
-      "area": "Letras",
+      "id": "A07",
+      "area": "Álgebra",
       "title": "Sistemas de ecuaciones",
       "topics": "Sustitución; reducción; interpretación.",
       "principle": "Una solución debe satisfacer ambas ecuaciones simultáneamente.",
@@ -1938,8 +2850,8 @@
       ]
     },
     {
-      "id": "L08",
-      "area": "Letras",
+      "id": "A08",
+      "area": "Álgebra",
       "title": "Ecuaciones cuadráticas",
       "topics": "Factorización; fórmula general; discriminante.",
       "principle": "Para ax²+bx+c=0, x=(-b±√(b²−4ac))/(2a), a≠0.",
@@ -2038,8 +2950,8 @@
       ]
     },
     {
-      "id": "L09",
-      "area": "Letras",
+      "id": "A09",
+      "area": "Álgebra",
       "title": "Inecuaciones",
       "topics": "Inecuaciones lineales; intervalos; signos.",
       "principle": "Cuando multiplicas o divides una desigualdad por un negativo, inviertes el signo.",
@@ -2138,8 +3050,8 @@
       ]
     },
     {
-      "id": "L10",
-      "area": "Letras",
+      "id": "A10",
+      "area": "Álgebra",
       "title": "Sucesiones y progresiones",
       "topics": "Patrones; sucesiones aritméticas y geométricas.",
       "principle": "PA: aₙ=a₁+(n−1)d; PG: aₙ=a₁r^(n−1).",
@@ -2231,8 +3143,8 @@
       ]
     },
     {
-      "id": "L11",
-      "area": "Letras",
+      "id": "A11",
+      "area": "Álgebra",
       "title": "Funciones lineales y cuadráticas",
       "topics": "Modelación; pendiente; parábolas; vértice.",
       "principle": "En f(x)=mx+b, m es la pendiente; una cuadrática f(x)=ax²+bx+c tiene parábola.",
@@ -2338,8 +3250,8 @@
       ]
     },
     {
-      "id": "L12",
-      "area": "Letras",
+      "id": "A12",
+      "area": "Álgebra",
       "title": "Funciones exponenciales",
       "topics": "Crecimiento y decrecimiento; base; modelos.",
       "principle": "f(x)=a·b^x crece para b>1 (a>0) y decrece para 0<b<1.",
@@ -4032,8 +4944,8 @@
       }
     },
     {
-      "id": "B18-L01-ORI-001",
-      "lesson_id": "L01",
+      "id": "B18-A01-ORI-001",
+      "lesson_id": "A01",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -4054,8 +4966,8 @@
       }
     },
     {
-      "id": "B18-L01-ORI-002",
-      "lesson_id": "L01",
+      "id": "B18-A01-ORI-002",
+      "lesson_id": "A01",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4076,8 +4988,8 @@
       }
     },
     {
-      "id": "B18-L01-ORI-003",
-      "lesson_id": "L01",
+      "id": "B18-A01-ORI-003",
+      "lesson_id": "A01",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4098,8 +5010,8 @@
       }
     },
     {
-      "id": "B18-L01-ORI-004",
-      "lesson_id": "L01",
+      "id": "B18-A01-ORI-004",
+      "lesson_id": "A01",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4120,8 +5032,8 @@
       }
     },
     {
-      "id": "B18-L01-ORI-005",
-      "lesson_id": "L01",
+      "id": "B18-A01-ORI-005",
+      "lesson_id": "A01",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4142,8 +5054,8 @@
       }
     },
     {
-      "id": "B18-L02-ORI-001",
-      "lesson_id": "L02",
+      "id": "B18-A02-ORI-001",
+      "lesson_id": "A02",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -4164,8 +5076,8 @@
       }
     },
     {
-      "id": "B18-L02-ORI-002",
-      "lesson_id": "L02",
+      "id": "B18-A02-ORI-002",
+      "lesson_id": "A02",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4186,8 +5098,8 @@
       }
     },
     {
-      "id": "B18-L02-ORI-003",
-      "lesson_id": "L02",
+      "id": "B18-A02-ORI-003",
+      "lesson_id": "A02",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4208,8 +5120,8 @@
       }
     },
     {
-      "id": "B18-L02-ORI-004",
-      "lesson_id": "L02",
+      "id": "B18-A02-ORI-004",
+      "lesson_id": "A02",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4230,8 +5142,8 @@
       }
     },
     {
-      "id": "B18-L02-ORI-005",
-      "lesson_id": "L02",
+      "id": "B18-A02-ORI-005",
+      "lesson_id": "A02",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4252,8 +5164,8 @@
       }
     },
     {
-      "id": "B18-L03-ORI-001",
-      "lesson_id": "L03",
+      "id": "B18-A03-ORI-001",
+      "lesson_id": "A03",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -4274,8 +5186,8 @@
       }
     },
     {
-      "id": "B18-L03-ORI-002",
-      "lesson_id": "L03",
+      "id": "B18-A03-ORI-002",
+      "lesson_id": "A03",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4296,8 +5208,8 @@
       }
     },
     {
-      "id": "B18-L03-ORI-003",
-      "lesson_id": "L03",
+      "id": "B18-A03-ORI-003",
+      "lesson_id": "A03",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4318,8 +5230,8 @@
       }
     },
     {
-      "id": "B18-L03-ORI-004",
-      "lesson_id": "L03",
+      "id": "B18-A03-ORI-004",
+      "lesson_id": "A03",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4340,8 +5252,8 @@
       }
     },
     {
-      "id": "B18-L03-ORI-005",
-      "lesson_id": "L03",
+      "id": "B18-A03-ORI-005",
+      "lesson_id": "A03",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4362,8 +5274,8 @@
       }
     },
     {
-      "id": "B18-L04-ORI-001",
-      "lesson_id": "L04",
+      "id": "B18-A04-ORI-001",
+      "lesson_id": "A04",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -4384,8 +5296,8 @@
       }
     },
     {
-      "id": "B18-L04-ORI-002",
-      "lesson_id": "L04",
+      "id": "B18-A04-ORI-002",
+      "lesson_id": "A04",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4406,8 +5318,8 @@
       }
     },
     {
-      "id": "B18-L04-ORI-003",
-      "lesson_id": "L04",
+      "id": "B18-A04-ORI-003",
+      "lesson_id": "A04",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4428,8 +5340,8 @@
       }
     },
     {
-      "id": "B18-L04-ORI-004",
-      "lesson_id": "L04",
+      "id": "B18-A04-ORI-004",
+      "lesson_id": "A04",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4450,8 +5362,8 @@
       }
     },
     {
-      "id": "B18-L04-ORI-005",
-      "lesson_id": "L04",
+      "id": "B18-A04-ORI-005",
+      "lesson_id": "A04",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4472,8 +5384,8 @@
       }
     },
     {
-      "id": "B18-L05-ORI-001",
-      "lesson_id": "L05",
+      "id": "B18-A05-ORI-001",
+      "lesson_id": "A05",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -4494,8 +5406,8 @@
       }
     },
     {
-      "id": "B18-L05-ORI-002",
-      "lesson_id": "L05",
+      "id": "B18-A05-ORI-002",
+      "lesson_id": "A05",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4516,8 +5428,8 @@
       }
     },
     {
-      "id": "B18-L05-ORI-003",
-      "lesson_id": "L05",
+      "id": "B18-A05-ORI-003",
+      "lesson_id": "A05",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4538,8 +5450,8 @@
       }
     },
     {
-      "id": "B18-L05-ORI-004",
-      "lesson_id": "L05",
+      "id": "B18-A05-ORI-004",
+      "lesson_id": "A05",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4560,8 +5472,8 @@
       }
     },
     {
-      "id": "B18-L05-ORI-005",
-      "lesson_id": "L05",
+      "id": "B18-A05-ORI-005",
+      "lesson_id": "A05",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4582,8 +5494,8 @@
       }
     },
     {
-      "id": "B18-L06-ORI-001",
-      "lesson_id": "L06",
+      "id": "B18-A06-ORI-001",
+      "lesson_id": "A06",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -4604,8 +5516,8 @@
       }
     },
     {
-      "id": "B18-L06-ORI-002",
-      "lesson_id": "L06",
+      "id": "B18-A06-ORI-002",
+      "lesson_id": "A06",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4626,8 +5538,8 @@
       }
     },
     {
-      "id": "B18-L06-ORI-003",
-      "lesson_id": "L06",
+      "id": "B18-A06-ORI-003",
+      "lesson_id": "A06",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4648,8 +5560,8 @@
       }
     },
     {
-      "id": "B18-L06-ORI-004",
-      "lesson_id": "L06",
+      "id": "B18-A06-ORI-004",
+      "lesson_id": "A06",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4670,8 +5582,8 @@
       }
     },
     {
-      "id": "B18-L06-ORI-005",
-      "lesson_id": "L06",
+      "id": "B18-A06-ORI-005",
+      "lesson_id": "A06",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4692,8 +5604,8 @@
       }
     },
     {
-      "id": "B18-L07-ORI-001",
-      "lesson_id": "L07",
+      "id": "B18-A07-ORI-001",
+      "lesson_id": "A07",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -4714,8 +5626,8 @@
       }
     },
     {
-      "id": "B18-L07-ORI-002",
-      "lesson_id": "L07",
+      "id": "B18-A07-ORI-002",
+      "lesson_id": "A07",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4736,8 +5648,8 @@
       }
     },
     {
-      "id": "B18-L07-ORI-003",
-      "lesson_id": "L07",
+      "id": "B18-A07-ORI-003",
+      "lesson_id": "A07",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4758,8 +5670,8 @@
       }
     },
     {
-      "id": "B18-L07-ORI-004",
-      "lesson_id": "L07",
+      "id": "B18-A07-ORI-004",
+      "lesson_id": "A07",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4780,8 +5692,8 @@
       }
     },
     {
-      "id": "B18-L07-ORI-005",
-      "lesson_id": "L07",
+      "id": "B18-A07-ORI-005",
+      "lesson_id": "A07",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4802,8 +5714,8 @@
       }
     },
     {
-      "id": "B18-L08-ORI-001",
-      "lesson_id": "L08",
+      "id": "B18-A08-ORI-001",
+      "lesson_id": "A08",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -4824,8 +5736,8 @@
       }
     },
     {
-      "id": "B18-L08-ORI-002",
-      "lesson_id": "L08",
+      "id": "B18-A08-ORI-002",
+      "lesson_id": "A08",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4846,8 +5758,8 @@
       }
     },
     {
-      "id": "B18-L08-ORI-003",
-      "lesson_id": "L08",
+      "id": "B18-A08-ORI-003",
+      "lesson_id": "A08",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4868,8 +5780,8 @@
       }
     },
     {
-      "id": "B18-L08-ORI-004",
-      "lesson_id": "L08",
+      "id": "B18-A08-ORI-004",
+      "lesson_id": "A08",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4890,8 +5802,8 @@
       }
     },
     {
-      "id": "B18-L08-ORI-005",
-      "lesson_id": "L08",
+      "id": "B18-A08-ORI-005",
+      "lesson_id": "A08",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -4912,8 +5824,8 @@
       }
     },
     {
-      "id": "B18-L09-ORI-001",
-      "lesson_id": "L09",
+      "id": "B18-A09-ORI-001",
+      "lesson_id": "A09",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -4934,8 +5846,8 @@
       }
     },
     {
-      "id": "B18-L09-ORI-002",
-      "lesson_id": "L09",
+      "id": "B18-A09-ORI-002",
+      "lesson_id": "A09",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4956,8 +5868,8 @@
       }
     },
     {
-      "id": "B18-L09-ORI-003",
-      "lesson_id": "L09",
+      "id": "B18-A09-ORI-003",
+      "lesson_id": "A09",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -4978,8 +5890,8 @@
       }
     },
     {
-      "id": "B18-L09-ORI-004",
-      "lesson_id": "L09",
+      "id": "B18-A09-ORI-004",
+      "lesson_id": "A09",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -5000,8 +5912,8 @@
       }
     },
     {
-      "id": "B18-L09-ORI-005",
-      "lesson_id": "L09",
+      "id": "B18-A09-ORI-005",
+      "lesson_id": "A09",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -5022,8 +5934,8 @@
       }
     },
     {
-      "id": "B18-L10-ORI-001",
-      "lesson_id": "L10",
+      "id": "B18-A10-ORI-001",
+      "lesson_id": "A10",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -5044,8 +5956,8 @@
       }
     },
     {
-      "id": "B18-L10-ORI-002",
-      "lesson_id": "L10",
+      "id": "B18-A10-ORI-002",
+      "lesson_id": "A10",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -5066,8 +5978,8 @@
       }
     },
     {
-      "id": "B18-L10-ORI-003",
-      "lesson_id": "L10",
+      "id": "B18-A10-ORI-003",
+      "lesson_id": "A10",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -5088,8 +6000,8 @@
       }
     },
     {
-      "id": "B18-L10-ORI-004",
-      "lesson_id": "L10",
+      "id": "B18-A10-ORI-004",
+      "lesson_id": "A10",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -5110,8 +6022,8 @@
       }
     },
     {
-      "id": "B18-L10-ORI-005",
-      "lesson_id": "L10",
+      "id": "B18-A10-ORI-005",
+      "lesson_id": "A10",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -5132,8 +6044,8 @@
       }
     },
     {
-      "id": "B18-L11-ORI-001",
-      "lesson_id": "L11",
+      "id": "B18-A11-ORI-001",
+      "lesson_id": "A11",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -5154,8 +6066,8 @@
       }
     },
     {
-      "id": "B18-L11-ORI-002",
-      "lesson_id": "L11",
+      "id": "B18-A11-ORI-002",
+      "lesson_id": "A11",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -5176,8 +6088,8 @@
       }
     },
     {
-      "id": "B18-L11-ORI-003",
-      "lesson_id": "L11",
+      "id": "B18-A11-ORI-003",
+      "lesson_id": "A11",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -5198,8 +6110,8 @@
       }
     },
     {
-      "id": "B18-L11-ORI-004",
-      "lesson_id": "L11",
+      "id": "B18-A11-ORI-004",
+      "lesson_id": "A11",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -5220,8 +6132,8 @@
       }
     },
     {
-      "id": "B18-L11-ORI-005",
-      "lesson_id": "L11",
+      "id": "B18-A11-ORI-005",
+      "lesson_id": "A11",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -5242,8 +6154,8 @@
       }
     },
     {
-      "id": "B18-L12-ORI-001",
-      "lesson_id": "L12",
+      "id": "B18-A12-ORI-001",
+      "lesson_id": "A12",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "básico",
@@ -5264,8 +6176,8 @@
       }
     },
     {
-      "id": "B18-L12-ORI-002",
-      "lesson_id": "L12",
+      "id": "B18-A12-ORI-002",
+      "lesson_id": "A12",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -5286,8 +6198,8 @@
       }
     },
     {
-      "id": "B18-L12-ORI-003",
-      "lesson_id": "L12",
+      "id": "B18-A12-ORI-003",
+      "lesson_id": "A12",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "intermedio",
@@ -5308,8 +6220,8 @@
       }
     },
     {
-      "id": "B18-L12-ORI-004",
-      "lesson_id": "L12",
+      "id": "B18-A12-ORI-004",
+      "lesson_id": "A12",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -5330,8 +6242,8 @@
       }
     },
     {
-      "id": "B18-L12-ORI-005",
-      "lesson_id": "L12",
+      "id": "B18-A12-ORI-005",
+      "lesson_id": "A12",
       "origin": "original_cachimbolab",
       "status": "borrador_para_revision",
       "level": "aplicación",
@@ -5350,9 +6262,1329 @@
         "memory": "CLAVE PARA RECORDAR: Crecimiento porcentual compuesto usa exponentes.",
         "strategy": "ESTRATEGIA DE EXAMEN: Identifica los datos, resuelve con el método adecuado y compara tu resultado con cada alternativa."
       }
+    },
+    {
+      "id": "B18-L01-ORI-001",
+      "lesson_id": "L01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Un texto afirma: «La lectura diaria amplía el vocabulario y fortalece la comprensión». ¿Cuál es su idea principal?",
+      "options": [
+        "Los libros son costosos.",
+        "La lectura frecuente aporta beneficios lingüísticos.",
+        "Las bibliotecas cierran temprano.",
+        "La escritura siempre es difícil."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) La lectura frecuente aporta beneficios lingüísticos. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de idea principal y tema.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El tema se expresa como una frase nominal breve; la idea principal afirma algo importante sobre ese tema.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L01-ORI-002",
+      "lesson_id": "L01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué es el tema de un texto?",
+      "options": [
+        "Su asunto general.",
+        "Un detalle secundario.",
+        "El último ejemplo.",
+        "Una opinión del lector."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Su asunto general. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de idea principal y tema.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El tema se expresa como una frase nominal breve; la idea principal afirma algo importante sobre ese tema.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L01-ORI-003",
+      "lesson_id": "L01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Texto: «Los huertos escolares permiten aprender ciencias y trabajar en equipo». ¿Qué título resume mejor el contenido?",
+      "options": [
+        "Los recreos escolares",
+        "Las notas del curso",
+        "Beneficios de los huertos escolares",
+        "Tipos de exámenes"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Beneficios de los huertos escolares Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de idea principal y tema.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El tema se expresa como una frase nominal breve; la idea principal afirma algo importante sobre ese tema.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L01-ORI-004",
+      "lesson_id": "L01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál enunciado presenta una idea principal y no un simple dato aislado?",
+      "options": [
+        "El experimento duró dos horas.",
+        "La semilla midió tres centímetros.",
+        "María tomó una fotografía.",
+        "El cuidado del agua es esencial para las comunidades."
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) El cuidado del agua es esencial para las comunidades. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de idea principal y tema.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: El tema se expresa como una frase nominal breve; la idea principal afirma algo importante sobre ese tema.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L01-ORI-005",
+      "lesson_id": "L01",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "«El transporte público puede reducir la congestión y la contaminación». ¿Cuál es el tema?",
+      "options": [
+        "La biografía de un conductor",
+        "Las ventajas del transporte público",
+        "Las carreteras antiguas",
+        "La historia del automóvil"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Las ventajas del transporte público Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de idea principal y tema.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El tema se expresa como una frase nominal breve; la idea principal afirma algo importante sobre ese tema.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L02-ORI-001",
+      "lesson_id": "L02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Texto: «El taller empieza el viernes a las 15:00». ¿Qué día inicia?",
+      "options": [
+        "Lunes",
+        "Miércoles",
+        "Viernes",
+        "Domingo"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Viernes Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de información explícita.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: La información literal aparece de forma directa; no agregues conclusiones que el texto no afirma.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L02-ORI-002",
+      "lesson_id": "L02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Texto: «El equipo recolectó 32 botellas de plástico». ¿Cuántas botellas recolectó?",
+      "options": [
+        "23",
+        "32",
+        "42",
+        "52"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) 32 Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de información explícita.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: La información literal aparece de forma directa; no agregues conclusiones que el texto no afirma.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L02-ORI-003",
+      "lesson_id": "L02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Texto: «La biblioteca abre de martes a sábado». ¿En cuál de estos días abre?",
+      "options": [
+        "Lunes",
+        "Domingo",
+        "Sábado",
+        "Ninguno"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Sábado Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de información explícita.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: La información literal aparece de forma directa; no agregues conclusiones que el texto no afirma.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L02-ORI-004",
+      "lesson_id": "L02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Texto: «Ana visitó primero el laboratorio y después la biblioteca». ¿Qué lugar visitó primero?",
+      "options": [
+        "La biblioteca",
+        "El laboratorio",
+        "El museo",
+        "El auditorio"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) El laboratorio Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de información explícita.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: La información literal aparece de forma directa; no agregues conclusiones que el texto no afirma.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L02-ORI-005",
+      "lesson_id": "L02",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Texto: «La exposición será en el auditorio central». ¿Dónde se realizará?",
+      "options": [
+        "En el patio",
+        "En la biblioteca",
+        "En el laboratorio",
+        "En el auditorio central"
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) En el auditorio central Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de información explícita.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: La información literal aparece de forma directa; no agregues conclusiones que el texto no afirma.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L03-ORI-001",
+      "lesson_id": "L03",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "«Sofía salió con abrigo y bufanda». ¿Qué inferencia es más razonable?",
+      "options": [
+        "Hacía calor intenso.",
+        "Probablemente hacía frío.",
+        "Sofía iba a nadar.",
+        "Había olvidado su ropa."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Probablemente hacía frío. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de inferencias y conclusiones.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una inferencia razonable se apoya en pistas del texto; no es una ocurrencia ni una generalización absoluta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L03-ORI-002",
+      "lesson_id": "L03",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "«La calle estaba mojada y varias personas cerraban sus paraguas». ¿Qué se puede inferir?",
+      "options": [
+        "Probablemente acababa de llover.",
+        "Nunca llueve allí.",
+        "La calle siempre está mojada.",
+        "Todos salieron a correr."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Probablemente acababa de llover. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de inferencias y conclusiones.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una inferencia razonable se apoya en pistas del texto; no es una ocurrencia ni una generalización absoluta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L03-ORI-003",
+      "lesson_id": "L03",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "«Al llegar al aula, Pedro vio las luces apagadas y las carpetas vacías». ¿Qué conclusión está mejor sustentada?",
+      "options": [
+        "Había una fiesta.",
+        "Se había perdido un libro.",
+        "No había estudiantes en ese momento.",
+        "La escuela estaba cerrada para siempre."
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) No había estudiantes en ese momento. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de inferencias y conclusiones.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una inferencia razonable se apoya en pistas del texto; no es una ocurrencia ni una generalización absoluta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L03-ORI-004",
+      "lesson_id": "L03",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "«Camila volvió a leer la pregunta antes de responder». ¿Qué se infiere con mayor prudencia?",
+      "options": [
+        "No sabía leer.",
+        "Quería verificar lo que se pedía.",
+        "No rendiría el examen.",
+        "La pregunta era imposible."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Quería verificar lo que se pedía. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de inferencias y conclusiones.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una inferencia razonable se apoya en pistas del texto; no es una ocurrencia ni una generalización absoluta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L03-ORI-005",
+      "lesson_id": "L03",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué inferencia es válida a partir de «Todos los asistentes recibieron una constancia; Elisa asistió»?",
+      "options": [
+        "Elisa recibió una constancia.",
+        "Elisa organizó el evento.",
+        "Elisa faltó al evento.",
+        "Nadie recibió constancia."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Elisa recibió una constancia. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de inferencias y conclusiones.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una inferencia razonable se apoya en pistas del texto; no es una ocurrencia ni una generalización absoluta.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L04-ORI-001",
+      "lesson_id": "L04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Un folleto explica cómo separar residuos en casa. ¿Cuál es su propósito principal?",
+      "options": [
+        "Narrar una aventura.",
+        "Dar instrucciones.",
+        "Defender una novela.",
+        "Describir un paisaje imaginario."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Dar instrucciones. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de propósito e intención comunicativa.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El propósito puede ser informar, convencer, instruir o entretener; distingue hechos y opiniones.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L04-ORI-002",
+      "lesson_id": "L04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "«¡Participa en la jornada de limpieza del río!» busca principalmente:",
+      "options": [
+        "Informar el horario de un tren.",
+        "Contar hechos históricos.",
+        "Persuadir a participar.",
+        "Definir un término médico."
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Persuadir a participar. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de propósito e intención comunicativa.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El propósito puede ser informar, convencer, instruir o entretener; distingue hechos y opiniones.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L04-ORI-003",
+      "lesson_id": "L04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Una noticia sobre un sismo busca principalmente:",
+      "options": [
+        "Informar un hecho.",
+        "Vender un producto.",
+        "Inventar personajes.",
+        "Explicar una receta."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Informar un hecho. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de propósito e intención comunicativa.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El propósito puede ser informar, convencer, instruir o entretener; distingue hechos y opiniones.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L04-ORI-004",
+      "lesson_id": "L04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Un cuento que relata el viaje de una niña tiene finalidad predominante de:",
+      "options": [
+        "Explicar una fórmula.",
+        "Dar una orden.",
+        "Presentar estadísticas.",
+        "Narrar y entretener."
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) Narrar y entretener. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de propósito e intención comunicativa.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: El propósito puede ser informar, convencer, instruir o entretener; distingue hechos y opiniones.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L04-ORI-005",
+      "lesson_id": "L04",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "«Para encender el dispositivo, presiona el botón azul». La intención es:",
+      "options": [
+        "Convencer mediante opiniones.",
+        "Instruir sobre un procedimiento.",
+        "Narrar un recuerdo.",
+        "Criticar una medida."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Instruir sobre un procedimiento. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de propósito e intención comunicativa.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El propósito puede ser informar, convencer, instruir o entretener; distingue hechos y opiniones.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L05-ORI-001",
+      "lesson_id": "L05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "En «La explicación fue precisa», precisa significa:",
+      "options": [
+        "Confusa.",
+        "Exacta.",
+        "Extensa.",
+        "Ruidosa."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Exacta. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de vocabulario en contexto.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El contexto puede modificar el significado habitual de una palabra; considera toda la oración.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L05-ORI-002",
+      "lesson_id": "L05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "En «La charla resultó amena», amena significa:",
+      "options": [
+        "Agradable.",
+        "Complicada.",
+        "Obligatoria.",
+        "Breve necesariamente."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Agradable. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de vocabulario en contexto.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El contexto puede modificar el significado habitual de una palabra; considera toda la oración.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L05-ORI-003",
+      "lesson_id": "L05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "«El científico refutó la hipótesis con nuevos datos». Refutó significa:",
+      "options": [
+        "Confirmó sin pruebas.",
+        "Olvidó.",
+        "Cuestionó y mostró su falsedad.",
+        "Repitió literalmente."
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Cuestionó y mostró su falsedad. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de vocabulario en contexto.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El contexto puede modificar el significado habitual de una palabra; considera toda la oración.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L05-ORI-004",
+      "lesson_id": "L05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "En «Las medidas fueron oportunas», oportunas equivale a:",
+      "options": [
+        "Innecesarias.",
+        "Demoradas.",
+        "Aleatorias.",
+        "Tomadas en el momento adecuado."
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) Tomadas en el momento adecuado. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de vocabulario en contexto.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: El contexto puede modificar el significado habitual de una palabra; considera toda la oración.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L05-ORI-005",
+      "lesson_id": "L05",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "«Su actitud fue prudente ante la incertidumbre». Prudente significa:",
+      "options": [
+        "Temeraria.",
+        "Cautelosa.",
+        "Impulsiva.",
+        "Indiferente."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Cautelosa. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de vocabulario en contexto.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El contexto puede modificar el significado habitual de una palabra; considera toda la oración.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L06-ORI-001",
+      "lesson_id": "L06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "El sinónimo más cercano de «efímero» es:",
+      "options": [
+        "Duradero.",
+        "Pasajero.",
+        "Eterno.",
+        "Permanente."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Pasajero. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de sinónimos y antónimos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Un sinónimo conserva el sentido en un contexto específico; un antónimo expresa oposición semántica.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L06-ORI-002",
+      "lesson_id": "L06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "El antónimo de «escaso» es:",
+      "options": [
+        "Raro.",
+        "Limitado.",
+        "Abundante.",
+        "Reducido."
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Abundante. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de sinónimos y antónimos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Un sinónimo conserva el sentido en un contexto específico; un antónimo expresa oposición semántica.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L06-ORI-003",
+      "lesson_id": "L06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "El sinónimo de «nítido», referido a una imagen, es:",
+      "options": [
+        "Borrosa.",
+        "Lejana.",
+        "Oscura.",
+        "Clara."
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) Clara. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de sinónimos y antónimos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: Un sinónimo conserva el sentido en un contexto específico; un antónimo expresa oposición semántica.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L06-ORI-004",
+      "lesson_id": "L06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "El antónimo de «hostil» es:",
+      "options": [
+        "Amistoso.",
+        "Agresivo.",
+        "Amenazante.",
+        "Beligerante."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Amistoso. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de sinónimos y antónimos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Un sinónimo conserva el sentido en un contexto específico; un antónimo expresa oposición semántica.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L06-ORI-005",
+      "lesson_id": "L06",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "El sinónimo de «diligente» es:",
+      "options": [
+        "Negligente.",
+        "Perezoso.",
+        "Aplicado.",
+        "Distraído."
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Aplicado. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de sinónimos y antónimos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Un sinónimo conserva el sentido en un contexto específico; un antónimo expresa oposición semántica.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L07-ORI-001",
+      "lesson_id": "L07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Pincel es a pintar como lápiz es a:",
+      "options": [
+        "Borrar.",
+        "Escribir.",
+        "Leer.",
+        "Medir."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Escribir. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de analogías verbales.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una analogía exige identificar la misma relación entre dos pares, como parte-todo, función o causa-efecto.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L07-ORI-002",
+      "lesson_id": "L07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Semilla es a árbol como huevo es a:",
+      "options": [
+        "Nido.",
+        "Pluma.",
+        "Ave.",
+        "Vuelo."
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Ave. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de analogías verbales.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una analogía exige identificar la misma relación entre dos pares, como parte-todo, función o causa-efecto.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L07-ORI-003",
+      "lesson_id": "L07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Termómetro es a temperatura como balanza es a:",
+      "options": [
+        "Masa.",
+        "Longitud.",
+        "Velocidad.",
+        "Tiempo."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Masa. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de analogías verbales.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una analogía exige identificar la misma relación entre dos pares, como parte-todo, función o causa-efecto.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L07-ORI-004",
+      "lesson_id": "L07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Página es a libro como ladrillo es a:",
+      "options": [
+        "Casa.",
+        "Tinta.",
+        "Lectura.",
+        "Autor."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Casa. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de analogías verbales.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una analogía exige identificar la misma relación entre dos pares, como parte-todo, función o causa-efecto.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L07-ORI-005",
+      "lesson_id": "L07",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Médico es a hospital como docente es a:",
+      "options": [
+        "Mercado.",
+        "Taller.",
+        "Estadio.",
+        "Escuela."
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) Escuela. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de analogías verbales.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: Una analogía exige identificar la misma relación entre dos pares, como parte-todo, función o causa-efecto.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L08-ORI-001",
+      "lesson_id": "L08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "«Había estudiado; ___, obtuvo un buen resultado».",
+      "options": [
+        "sin embargo",
+        "por eso",
+        "aunque",
+        "mientras"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) por eso Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de conectores lógicos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Los conectores expresan causa, consecuencia, contraste, adición, condición y orden.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L08-ORI-002",
+      "lesson_id": "L08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "«Quería salir; ___, empezó a llover».",
+      "options": [
+        "además",
+        "por lo tanto",
+        "sin embargo",
+        "porque"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) sin embargo Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de conectores lógicos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Los conectores expresan causa, consecuencia, contraste, adición, condición y orden.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L08-ORI-003",
+      "lesson_id": "L08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "«No asistió ___ estaba enfermo».",
+      "options": [
+        "porque",
+        "pero",
+        "aunque",
+        "sin embargo"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) porque Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de conectores lógicos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Los conectores expresan causa, consecuencia, contraste, adición, condición y orden.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L08-ORI-004",
+      "lesson_id": "L08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "«Puedes participar ___ terminas la tarea».",
+      "options": [
+        "así que",
+        "por ejemplo",
+        "a pesar de",
+        "si"
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) si Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de conectores lógicos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: Los conectores expresan causa, consecuencia, contraste, adición, condición y orden.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L08-ORI-005",
+      "lesson_id": "L08",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "«Le gusta leer y, ___, escribir cuentos».",
+      "options": [
+        "en cambio",
+        "además",
+        "por tanto",
+        "porque"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) además Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de conectores lógicos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Los conectores expresan causa, consecuencia, contraste, adición, condición y orden.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L09-ORI-001",
+      "lesson_id": "L09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Selecciona el orden lógico: I. Finalmente, se cosecha. II. Primero, se siembra. III. Después, se riega.",
+      "options": [
+        "I–II–III",
+        "II–I–III",
+        "II–III–I",
+        "III–II–I"
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) II–III–I Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de ordenamiento de oraciones.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una secuencia suele comenzar por la presentación del tema, seguir con explicación y terminar con conclusión.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L09-ORI-002",
+      "lesson_id": "L09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Ordena: I. El agua se evapora. II. El vapor se condensa. III. Se forman gotas y precipitan.",
+      "options": [
+        "I–II–III",
+        "II–I–III",
+        "III–I–II",
+        "II–III–I"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) I–II–III Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de ordenamiento de oraciones.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una secuencia suele comenzar por la presentación del tema, seguir con explicación y terminar con conclusión.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L09-ORI-003",
+      "lesson_id": "L09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Ordena: I. Se redacta el informe. II. Se recogen los datos. III. Se analizan los resultados.",
+      "options": [
+        "I–II–III",
+        "II–III–I",
+        "III–I–II",
+        "I–III–II"
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) II–III–I Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de ordenamiento de oraciones.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una secuencia suele comenzar por la presentación del tema, seguir con explicación y terminar con conclusión.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L09-ORI-004",
+      "lesson_id": "L09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Ordena: I. Se revisa el resultado. II. Se plantea el problema. III. Se resuelve.",
+      "options": [
+        "I–II–III",
+        "III–II–I",
+        "II–I–III",
+        "II–III–I"
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) II–III–I Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de ordenamiento de oraciones.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: Una secuencia suele comenzar por la presentación del tema, seguir con explicación y terminar con conclusión.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L09-ORI-005",
+      "lesson_id": "L09",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Ordena: I. Se prepara la masa. II. Se hornea. III. Se mezclan ingredientes.",
+      "options": [
+        "III–I–II",
+        "II–III–I",
+        "I–II–III",
+        "II–I–III"
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) III–I–II Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de ordenamiento de oraciones.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una secuencia suele comenzar por la presentación del tema, seguir con explicación y terminar con conclusión.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L10-ORI-001",
+      "lesson_id": "L10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "En un texto sobre el ciclo del agua, ¿cuál oración sería intrusa?",
+      "options": [
+        "El agua se evapora por el calor.",
+        "El vapor se condensa.",
+        "Los satélites artificiales orbitan la Tierra.",
+        "La lluvia devuelve agua a la superficie."
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Los satélites artificiales orbitan la Tierra. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de oraciones intrusas.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una oración intrusa puede ser verdadera, pero no contribuye al tema o a la progresión lógica del párrafo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L10-ORI-002",
+      "lesson_id": "L10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "En un párrafo sobre hábitos de estudio, señala la intrusa.",
+      "options": [
+        "Un horario ayuda a organizar el aprendizaje.",
+        "Las constelaciones tienen distintos nombres.",
+        "Revisar apuntes favorece el recuerdo.",
+        "Dormir bien ayuda a concentrarse."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Las constelaciones tienen distintos nombres. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de oraciones intrusas.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una oración intrusa puede ser verdadera, pero no contribuye al tema o a la progresión lógica del párrafo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L10-ORI-003",
+      "lesson_id": "L10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Tema: importancia de los árboles. ¿Cuál oración no corresponde?",
+      "options": [
+        "Los árboles producen sombra.",
+        "Algunas especies capturan carbono.",
+        "Las raíces ayudan a estabilizar el suelo.",
+        "Un teléfono incluye distintas aplicaciones."
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) Un teléfono incluye distintas aplicaciones. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de oraciones intrusas.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: Una oración intrusa puede ser verdadera, pero no contribuye al tema o a la progresión lógica del párrafo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L10-ORI-004",
+      "lesson_id": "L10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Tema: alimentación saludable. Señala la intrusa.",
+      "options": [
+        "Las bicicletas tienen dos ruedas.",
+        "Las frutas aportan vitaminas.",
+        "Tomar agua ayuda a la hidratación.",
+        "Una dieta variada aporta nutrientes."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Las bicicletas tienen dos ruedas. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de oraciones intrusas.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una oración intrusa puede ser verdadera, pero no contribuye al tema o a la progresión lógica del párrafo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L10-ORI-005",
+      "lesson_id": "L10",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Tema: cuidado de los libros. Identifica la intrusa.",
+      "options": [
+        "Evitar la humedad protege el papel.",
+        "Usar separadores evita doblar páginas.",
+        "Los planetas orbitan alrededor del Sol.",
+        "Guardar libros limpios prolonga su vida."
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Los planetas orbitan alrededor del Sol. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de oraciones intrusas.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una oración intrusa puede ser verdadera, pero no contribuye al tema o a la progresión lógica del párrafo.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L11-ORI-001",
+      "lesson_id": "L11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "Un texto explica qué es la fotosíntesis y cómo ocurre. Predomina el tipo:",
+      "options": [
+        "Narrativo.",
+        "Expositivo.",
+        "Poético.",
+        "Dialogado."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Expositivo. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de tipos y estructura de textos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El narrativo cuenta hechos; el descriptivo presenta rasgos; el expositivo explica; el argumentativo defiende una tesis.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L11-ORI-002",
+      "lesson_id": "L11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "«El bosque era húmedo, oscuro y silencioso». Predomina la:",
+      "options": [
+        "Descripción.",
+        "Argumentación.",
+        "Instrucción.",
+        "Noticia."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Descripción. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de tipos y estructura de textos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El narrativo cuenta hechos; el descriptivo presenta rasgos; el expositivo explica; el argumentativo defiende una tesis.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L11-ORI-003",
+      "lesson_id": "L11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "«Ayer caminamos hasta el río y volvimos al anochecer». Predomina la:",
+      "options": [
+        "Exposición científica.",
+        "Argumentación.",
+        "Narración.",
+        "Definición."
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) Narración. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de tipos y estructura de textos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El narrativo cuenta hechos; el descriptivo presenta rasgos; el expositivo explica; el argumentativo defiende una tesis.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L11-ORI-004",
+      "lesson_id": "L11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "Un artículo plantea una tesis y la sustenta con razones. Es principalmente:",
+      "options": [
+        "Descriptivo.",
+        "Narrativo.",
+        "Instructivo.",
+        "Argumentativo."
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) Argumentativo. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de tipos y estructura de textos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: El narrativo cuenta hechos; el descriptivo presenta rasgos; el expositivo explica; el argumentativo defiende una tesis.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L11-ORI-005",
+      "lesson_id": "L11",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué estructura corresponde mejor a un texto narrativo sencillo?",
+      "options": [
+        "Problema–datos–operaciones.",
+        "Inicio–nudo–desenlace.",
+        "Tesis–argumento–refutación.",
+        "Ingredientes–preparación–servicio."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Inicio–nudo–desenlace. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de tipos y estructura de textos.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: El narrativo cuenta hechos; el descriptivo presenta rasgos; el expositivo explica; el argumentativo defiende una tesis.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L12-ORI-001",
+      "lesson_id": "L12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "En «Deben ampliarse las bibliotecas porque facilitan el acceso a la información», la tesis es:",
+      "options": [
+        "Las bibliotecas deben ampliarse.",
+        "La información existe.",
+        "Los libros son pesados.",
+        "Todas las bibliotecas son iguales."
+      ],
+      "correct_index": 0,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: A) Las bibliotecas deben ampliarse. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de argumentación y lectura crítica.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) Es la respuesta sustentada en la información disponible. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una tesis es una postura; los argumentos la sustentan; la evidencia verificable fortalece un razonamiento.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L12-ORI-002",
+      "lesson_id": "L12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "básico",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál opción es una evidencia verificable y no una opinión personal?",
+      "options": [
+        "«Creo que leer es aburrido».",
+        "«Los libros son hermosos».",
+        "«La encuesta registró 80 participantes».",
+        "«Esa idea es la mejor». "
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) «La encuesta registró 80 participantes». Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de argumentación y lectura crítica.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una tesis es una postura; los argumentos la sustentan; la evidencia verificable fortalece un razonamiento.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L12-ORI-003",
+      "lesson_id": "L12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Qué es un argumento?",
+      "options": [
+        "Una palabra sin contexto.",
+        "Una razón que apoya una postura.",
+        "Una descripción física.",
+        "Una pregunta sin relación."
+      ],
+      "correct_index": 1,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: B) Una razón que apoya una postura. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de argumentación y lectura crítica.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) Es la respuesta sustentada en la información disponible. C) No corresponde a la relación o información que solicita el enunciado. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una tesis es una postura; los argumentos la sustentan; la evidencia verificable fortalece un razonamiento.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L12-ORI-004",
+      "lesson_id": "L12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "intermedio",
+      "type": "alternativa_multiple",
+      "statement": "¿Cuál enunciado expresa una generalización injustificada?",
+      "options": [
+        "Algunos estudiantes leen por la tarde.",
+        "Esta encuesta tuvo 25 respuestas.",
+        "Ayer llovió en la ciudad.",
+        "Todos los jóvenes odian leer."
+      ],
+      "correct_index": 3,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: D) Todos los jóvenes odian leer. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de argumentación y lectura crítica.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) No corresponde a la relación o información que solicita el enunciado. D) Es la respuesta sustentada en la información disponible.",
+        "memory": "CLAVE PARA RECORDAR: Una tesis es una postura; los argumentos la sustentan; la evidencia verificable fortalece un razonamiento.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
+    },
+    {
+      "id": "B18-L12-ORI-005",
+      "lesson_id": "L12",
+      "origin": "original_cachimbolab",
+      "status": "borrador_para_revision",
+      "level": "aplicación",
+      "type": "alternativa_multiple",
+      "statement": "Para evaluar la confiabilidad de un dato conviene revisar:",
+      "options": [
+        "Solo el color de la página.",
+        "Solo la extensión del texto.",
+        "La fuente, fecha y método de obtención.",
+        "Únicamente la opinión del autor."
+      ],
+      "correct_index": 2,
+      "explanation": {
+        "correct": "RESPUESTA CORRECTA: C) La fuente, fecha y método de obtención. Esta alternativa responde a lo que pide el enunciado, de acuerdo con el concepto de argumentación y lectura crítica.",
+        "alternatives": "ANÁLISIS DE LAS OTRAS ALTERNATIVAS: A) No corresponde a la relación o información que solicita el enunciado. B) No corresponde a la relación o información que solicita el enunciado. C) Es la respuesta sustentada en la información disponible. D) No corresponde a la relación o información que solicita el enunciado.",
+        "memory": "CLAVE PARA RECORDAR: Una tesis es una postura; los argumentos la sustentan; la evidencia verificable fortalece un razonamiento.",
+        "strategy": "ESTRATEGIA DE EXAMEN: Vuelve al enunciado, localiza la evidencia y descarta opciones que agregan información o cambian el significado."
+      }
     }
   ],
-  "question_count": 133,
+  "question_count": 193,
   "source_catalog": [
     {
       "year": 2023,

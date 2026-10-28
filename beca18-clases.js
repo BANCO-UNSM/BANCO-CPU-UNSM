@@ -14,7 +14,7 @@ function progressSummary(){
  if(el)el.textContent='Clases practicadas: '+sum+'/'+lessons.length+' · Promedio de últimos intentos: '+avg+' % · Progreso local (no sincronizado entre dispositivos).';
  const diag=$('diagnostic');
  if(!diag)return;
- const byArea=['Números','Letras'].map(a=>{const rows=lessons.filter(l=>l.area===a&&latestFullAttempt(l)?.total>0);const av=rows.length?Math.round(rows.reduce((v,l)=>v+100*latestFullAttempt(l).score/latestFullAttempt(l).total,0)/rows.length):0;return '<div class="box"><strong>'+esc(a)+'</strong><p>'+rows.length+'/12 clases practicadas · Promedio '+av+' %</p></div>'}).join('');
+ const byArea=['Números','Letras','Álgebra'].map(a=>{const rows=lessons.filter(l=>l.area===a&&latestFullAttempt(l)?.total>0);const av=rows.length?Math.round(rows.reduce((v,l)=>v+100*latestFullAttempt(l).score/latestFullAttempt(l).total,0)/rows.length):0;return '<div class="box"><strong>'+esc(a)+'</strong><p>'+rows.length+'/'+lessons.filter(l=>l.area===a).length+' clases practicadas · Promedio '+av+' %</p></div>'}).join('');
  const weakest=done.filter(l=>latestFullAttempt(l).score/latestFullAttempt(l).total<0.7).sort((a,b)=>latestFullAttempt(a).score/latestFullAttempt(a).total-latestFullAttempt(b).score/latestFullAttempt(b).total).slice(0,3);
  diag.innerHTML='<h3>Mi diagnóstico</h3>'+byArea+(weakest.length?'<p><strong>Refuerza:</strong> '+weakest.map(l=>esc(l.id)+' — '+esc(l.title)).join('; ')+'</p>':'<p class="muted">Completa prácticas para identificar temas que requieran refuerzo.</p>');
 }
