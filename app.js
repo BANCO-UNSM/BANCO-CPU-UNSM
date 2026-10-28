@@ -647,10 +647,10 @@ function thirdExamAvailability(){
  return {pool,missing,ready:missing.length===0};
 }
 function thirdExamHistory(){
- try{const h=JSON.parse(localStorage.getItem(THIRD_EXAM_HISTORY_KEY)||'[]');return Array.isArray(h)?h.slice(-12):[];}catch{return [];}
+ try{const h=JSON.parse(localStorage.getItem(THIRD_EXAM_HISTORY_KEY+'_'+(user?.id||'anonymous'))||'[]');return Array.isArray(h)?h.slice(-12):[];}catch{return [];}
 }
 function saveThirdExamHistory(ids){
- try{const h=thirdExamHistory();h.push(ids);localStorage.setItem(THIRD_EXAM_HISTORY_KEY,JSON.stringify(h.slice(-12)));}catch(error){console.warn('No se pudo conservar historial de variantes',error);}
+ try{const h=thirdExamHistory();h.push(ids);localStorage.setItem(THIRD_EXAM_HISTORY_KEY+'_'+(user?.id||'anonymous'),JSON.stringify(h.slice(-12)));}catch(error){console.warn('No se pudo conservar historial de variantes',error);}
 }
 function makeThirdExamItems(){
  const {pool,missing}=thirdExamAvailability();
@@ -675,7 +675,7 @@ function makeThirdExamItems(){
   }
  }
  if(selection.length!==100||new Set(selection.map(q=>q.id)).size!==100)throw new Error('El simulacro no cumple las 100 preguntas únicas.');
- if(previous.length&&selection.every((q,i)=>q.id===previous[previous.length-1][i]))throw new Error('Todavía no hay suficientes preguntas distintas para generar una nueva versión del simulacro. Agrega y publica más preguntas del periodo 11–16.');
+ if(previous.length&&selection.every(q=>last.has(q.id)))throw new Error('Todavía no hay suficientes preguntas distintas para generar una nueva versión del simulacro. Agrega y publica más preguntas del periodo 11–16.');
  return selection;
 }
 function quizRemaining(){return quiz?.deadlineAt?Math.max(0,quiz.deadlineAt-Date.now()):null;}
@@ -707,7 +707,7 @@ function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><
       .join('')}
   </select>
 </div>
-<div class="card"><h3>III Examen CPU-UNSM 2026-II</h3><p>Semanas 11–16 · 100 preguntas · 2 horas y 30 minutos.</p><p class="muted">Preguntas publicadas entre las semanas 11–16: ${thirdExamAvailability().pool.length}. ${thirdExamAvailability().ready?'Hay suficientes preguntas por curso.':'Faltan por curso: '+thirdExamAvailability().missing.map(x=>x.name+' ('+x.available+'/'+x.required+')').join(' · ')}</p><button id="startThirdExam" ${!thirdExamAvailability().ready?'disabled':''}>Iniciar III examen</button></div><div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="exam-layout">${becaReadingPanel(q)}<div class="card exam-question"><p class="muted">Pregunta ${quiz.i+1} de ${quiz.items.length} · <strong>Tiempo de esta pregunta: <span id="questionTimer">${timeFmt(quiz.elapsed[quiz.i])}</span></strong> · Total: <span id="totalTimer">${timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0))}</span>${quiz.deadlineAt?' · Tiempo restante: <strong id="quizRemaining">'+examClock(quizRemaining())+'</strong>':''}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}${quiz.deadlineAt?'<button id="prevQuiz" class="secondary" '+(quiz.i===0?'disabled':'')+'>Anterior</button> ':''}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button>${quiz.deadlineAt?'<button id="deliverQuiz" class="secondary">Entregar ahora</button>':''}<p id="quizError" class="muted"></p></div></div>`}
+${selectedModality==='CPU-UNSM'?`<div class="card"><h3>III Examen CPU-UNSM 2026-II</h3><p>Semanas 11–16 · 100 preguntas · 2 horas y 30 minutos.</p><p class="muted">Preguntas publicadas entre las semanas 11–16: ${thirdExamAvailability().pool.length}. ${thirdExamAvailability().ready?'Hay suficientes preguntas por curso.':'Faltan por curso: '+thirdExamAvailability().missing.map(x=>x.name+' ('+x.available+'/'+x.required+')').join(' · ')}</p><button id="startThirdExam" ${!thirdExamAvailability().ready?'disabled':''}>Iniciar III examen</button></div>`:''}<div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="exam-layout">${becaReadingPanel(q)}<div class="card exam-question"><p class="muted">Pregunta ${quiz.i+1} de ${quiz.items.length} · <strong>Tiempo de esta pregunta: <span id="questionTimer">${timeFmt(quiz.elapsed[quiz.i])}</span></strong> · Total: <span id="totalTimer">${timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0))}</span>${quiz.deadlineAt?' · Tiempo restante: <strong id="quizRemaining">'+examClock(quizRemaining())+'</strong>':''}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}${quiz.deadlineAt?'<button id="prevQuiz" class="secondary" '+(quiz.i===0?'disabled':'')+'>Anterior</button> ':''}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button>${quiz.deadlineAt?'<button id="deliverQuiz" class="secondary">Entregar ahora</button>':''}<p id="quizError" class="muted"></p></div></div>`}
 
 // Corrección de simulacros: solo se muestran claves recibidas tras grade_attempt.
 function quizReviewPage(){
