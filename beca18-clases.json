@@ -1,6 +1,6 @@
 {
   "course": "Beca 18 — Matemática",
-  "version": "piloto-5",
+  "version": "piloto-6",
   "lesson_count": 24,
   "lessons": [
     {
@@ -121,6 +121,29 @@
       "references": [
         "PRONABEC, Prepárate, segunda edición (2023), Razonamiento Matemático, sesión 1: Números y operaciones I, pp. 373–388.",
         "Temario compartido: competencia Resuelve problemas de cantidad, capacidad Traduce cantidades a expresiones numéricas."
+      ],
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 5,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 1,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 3,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
       ]
     },
     {
@@ -200,6 +223,15 @@
       ],
       "references": [
         "PRONABEC, Prepárate, segunda edición (2023), Razonamiento Matemático, sesión 3: Números y operaciones III: Divisibilidad, pp. 408–425."
+      ],
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 1,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
       ]
     },
     {
@@ -350,6 +382,29 @@
         "PRONABEC (2023), Prepárate, segunda edición, Razonamiento Matemático, sesión 4: Números y operaciones IV: Mínimo común múltiplo y máximo común divisor, pp. 426–440.",
         "PRONABEC, Examen Nacional de Preselección Beca 18 – convocatoria 2023, pregunta 3: corte de rollos de alambre de 720, 280 y 216 metros.",
         "Competencia del temario proporcionado: Resuelve problemas de cantidad; capacidades Traduce cantidades a expresiones numéricas y Usa estrategias y procedimientos de estimación y cálculo."
+      ],
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 1,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2023,
+          "question": 2,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2023,
+          "question": 3,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
       ]
     },
     {
@@ -427,7 +482,44 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 5,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 1,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 11,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 4,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 6,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "N05",
@@ -504,7 +596,44 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 2,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 5,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 1,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 4,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 5,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "N06",
@@ -581,7 +710,23 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 11,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 13,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "N07",
@@ -658,7 +803,23 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 13,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 10,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "N08",
@@ -735,7 +896,37 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 6,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2023,
+          "question": 10,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 14,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 8,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "N09",
@@ -812,7 +1003,23 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 14,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 8,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "N10",
@@ -889,7 +1096,23 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 4,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 2,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "N11",
@@ -966,7 +1189,23 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 12,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 7,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "N12",
@@ -1043,7 +1282,23 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 5,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 10,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L01",
@@ -1120,7 +1375,30 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 9,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 9,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 11,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L02",
@@ -1197,7 +1475,16 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 11,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L03",
@@ -1274,7 +1561,16 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 11,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L04",
@@ -1351,7 +1647,16 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 11,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L05",
@@ -1428,7 +1733,16 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 11,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L06",
@@ -1505,7 +1819,30 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 12,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 23,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 10,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L07",
@@ -1582,7 +1919,23 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 16,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 15,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L08",
@@ -1659,7 +2012,30 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 3,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 24,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 13,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L09",
@@ -1736,7 +2112,30 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2023,
+          "question": 16,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 12,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 16,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L10",
@@ -1813,7 +2212,23 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 5,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 14,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L11",
@@ -1890,7 +2305,37 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2024,
+          "question": 9,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2024,
+          "question": 24,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 9,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        },
+        {
+          "year": 2025,
+          "question": 12,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     },
     {
       "id": "L12",
@@ -1967,7 +2412,16 @@
         "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
         "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
       ],
-      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica.",
+      "exam_references": [
+        {
+          "year": 2025,
+          "question": 17,
+          "source": "Examen PRONABEC adjunto",
+          "kind": "correspondencia_temática",
+          "note": "Referencia orientativa al tema; no se ha copiado ni publicado la pregunta oficial."
+        }
+      ]
     }
   ],
   "questions": [
@@ -4898,5 +5352,22 @@
       }
     }
   ],
-  "question_count": 133
+  "question_count": 133,
+  "source_catalog": [
+    {
+      "year": 2023,
+      "description": "Examen 01 de Beca 18, convocatoria 2023 (archivo del usuario).",
+      "scope": "Razonamiento matemático"
+    },
+    {
+      "year": 2024,
+      "description": "Examen 02 de Beca 18, convocatoria 2024 (archivo del usuario).",
+      "scope": "Competencia matemática"
+    },
+    {
+      "year": 2025,
+      "description": "Examen 03 de Beca 18, convocatoria 2025 (archivo del usuario).",
+      "scope": "Competencias matemáticas"
+    }
+  ]
 }
