@@ -12,3 +12,12 @@ article ul{padding-left:23px;line-height:1.75}
 #feedback details{border-top:1px solid #cbdeda;padding:12px 2px;line-height:1.6}
 #feedback summary{cursor:pointer;font-weight:700}
 #feedback p{margin:9px 0}
+
+/* Panel diagnóstico y reintentos */
+.diagnostic{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.diagnostic h3,.diagnostic>p{grid-column:1/-1;margin:0}
+.diagnostic .box{margin:0;line-height:1.5}
+button.secondary{margin-left:8px;background:#e4eff7;color:#123b5a}
+#practiceQuestions fieldset{margin:0;padding-left:0}
+#feedback{scroll-margin-top:20px}
+@media(max-width:700px){.diagnostic{grid-template-columns:1fr}button.secondary{display:block;margin:10px 0 0}}
