@@ -584,7 +584,70 @@ function tickQuizTime(){if(!quiz||quiz.result)return;const now=Date.now();if(qui
 let quizTimerHandle=null;
 const THIRD_EXAM_DURATION=150*60*1000;
 let quizSubmitting=false;
-function thirdExamPool(){return questions.filter(q=>q.modality==='CPU-UNSM'&&!q.exam_id&&q.cycle==='2026-II'&&Number(q.week)>=11&&Number(q.week)<=16&&q.status==='published');}
+// Orden, materias y cupos oficiales del III examen: nunca mezclar las posiciones.
+const THIRD_EXAM_DISTRIBUTION=Object.freeze([
+  ['Razonamiento Matemático',13],['Razonamiento Verbal',14],
+  ['Cultura General',3],['Álgebra',4],['Geometría',4],['Aritmética',3],
+  ['Trigonometría',3],['Física',6],['Biología',11],['Química',9],
+  ['Lengua',4],['Literatura',3],['Historia',4],['Geografía',4],
+  ['Economía',4],['Filosofía',4],['Psicología',3],['Educación Cívica',4]
+]);
+const THIRD_EXAM_HISTORY_KEY='cachimbolab_third_exam_2026_ii_history_v1';
+function normalizedThirdSubject(value){
+ const valueNormalized=String(value||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ');
+ const aliases={
+  'razonamiento matematico':'Razonamiento Matemático','razonamiento verbal':'Razonamiento Verbal',
+  'cultura general':'Cultura General','algebra':'Álgebra','geometria':'Geometría',
+  'aritmetica':'Aritmética','trigonometria':'Trigonometría','fisica':'Física',
+  'biologia':'Biología','quimica':'Química','lengua':'Lengua','lenguaje':'Lengua',
+  'lengua y literatura':'Lengua','literatura':'Literatura','historia':'Historia',
+  'historia del peru':'Historia','historia universal':'Historia',
+  'geografia':'Geografía','economia':'Economía','filosofia':'Filosofía',
+  'psicologia':'Psicología','civica':'Educación Cívica','educacion civica':'Educación Cívica'
+ };
+ return aliases[valueNormalized]||String(value||'').trim();
+}
+function thirdExamPool(){
+ return questions.filter(q=>q.modality==='CPU-UNSM'&&!q.exam_id&&q.cycle==='2026-II'&&Number(q.week)>=11&&Number(q.week)<=16&&q.status==='published');
+}
+function thirdExamAvailability(){
+ const pool=thirdExamPool();
+ const counts=new Map();
+ for(const q of pool){const subject=normalizedThirdSubject(q.subject);counts.set(subject,(counts.get(subject)||0)+1);}
+ const missing=THIRD_EXAM_DISTRIBUTION.map(([name,required])=>({name,required,available:counts.get(name)||0})).filter(x=>x.available<x.required);
+ return {pool,missing,ready:missing.length===0};
+}
+function thirdExamHistory(){
+ try{const h=JSON.parse(localStorage.getItem(THIRD_EXAM_HISTORY_KEY)||'[]');return Array.isArray(h)?h.slice(-12):[];}catch{return [];}
+}
+function saveThirdExamHistory(ids){
+ try{const h=thirdExamHistory();h.push(ids);localStorage.setItem(THIRD_EXAM_HISTORY_KEY,JSON.stringify(h.slice(-12)));}catch(error){console.warn('No se pudo conservar historial de variantes',error);}
+}
+function makeThirdExamItems(){
+ const {pool,missing}=thirdExamAvailability();
+ if(missing.length)throw new Error('Faltan preguntas publicadas: '+missing.map(x=>x.name+' ('+x.available+'/'+x.required+')').join(', '));
+ const previous=thirdExamHistory(),last=new Set(previous[previous.length-1]||[]);
+ const frequency=new Map();
+ for(const ids of previous)for(const id of ids)frequency.set(id,(frequency.get(id)||0)+1);
+ const selection=[];
+ for(const [subject,amount] of THIRD_EXAM_DISTRIBUTION){
+  const candidates=pool.filter(q=>normalizedThirdSubject(q.subject)===subject).map(q=>({q,tie:Math.random()}));
+  const weeks=new Map();
+  for(let i=0;i<amount;i++){
+   // Prefiere preguntas no usadas en el intento anterior, menos repetidas y distribuidas entre semanas.
+   candidates.sort((a,b)=>{
+    const score=o=>(last.has(o.q.id)?1000:0)+(frequency.get(o.q.id)||0)*15+(weeks.get(Number(o.q.week))||0)*3;
+    return score(a)-score(b)||a.tie-b.tie;
+   });
+   const chosen=candidates.shift();
+   if(!chosen)throw new Error('No hay suficientes preguntas en '+subject);
+   selection.push(chosen.q);
+   const week=Number(chosen.q.week);weeks.set(week,(weeks.get(week)||0)+1);
+  }
+ }
+ if(selection.length!==100||new Set(selection.map(q=>q.id)).size!==100)throw new Error('El simulacro no cumple las 100 preguntas únicas.');
+ return selection;
+}
 function quizRemaining(){return quiz?.deadlineAt?Math.max(0,quiz.deadlineAt-Date.now()):null;}
 function examClock(ms){const seconds=Math.ceil(Math.max(0,ms)/1000);return [Math.floor(seconds/3600),Math.floor(seconds%3600/60),seconds%60].map(n=>String(n).padStart(2,'0')).join(':');}
 async function submitQuizTimed(){
@@ -614,7 +677,7 @@ function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><
       .join('')}
   </select>
 </div>
-<div class="card"><h3>III Examen CPU-UNSM 2026-II</h3><p>Semanas 11–16 · 100 preguntas · 2 horas y 30 minutos.</p><p class="muted">Disponibles: ${thirdExamPool().length} preguntas publicadas. Se requieren al menos 100.</p><button id="startThirdExam" ${thirdExamPool().length<100?'disabled':''}>Iniciar III examen</button></div><div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="exam-layout">${becaReadingPanel(q)}<div class="card exam-question"><p class="muted">Pregunta ${quiz.i+1} de ${quiz.items.length} · <strong>Tiempo de esta pregunta: <span id="questionTimer">${timeFmt(quiz.elapsed[quiz.i])}</span></strong> · Total: <span id="totalTimer">${timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0))}</span>${quiz.deadlineAt?' · Tiempo restante: <strong id="quizRemaining">'+examClock(quizRemaining())+'</strong>':''}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}${quiz.deadlineAt?'<button id="prevQuiz" class="secondary" '+(quiz.i===0?'disabled':'')+'>Anterior</button> ':''}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button>${quiz.deadlineAt?'<button id="deliverQuiz" class="secondary">Entregar ahora</button>':''}<p id="quizError" class="muted"></p></div></div>`}
+<div class="card"><h3>III Examen CPU-UNSM 2026-II</h3><p>Semanas 11–16 · 100 preguntas · 2 horas y 30 minutos.</p><p class="muted">Preguntas publicadas entre las semanas 11–16: ${thirdExamAvailability().pool.length}. ${thirdExamAvailability().ready?'Hay suficientes preguntas por curso.':'Faltan por curso: '+thirdExamAvailability().missing.map(x=>x.name+' ('+x.available+'/'+x.required+')').join(' · ')}</p><button id="startThirdExam" ${!thirdExamAvailability().ready?'disabled':''}>Iniciar III examen</button></div><div class="field"><label>Número de preguntas</label><input id="quizCount" type="number" min="1" max="100" value="10"></div><button id="startQuiz">Comenzar</button></div>`;if(quiz.result){return quizReviewPage();}const q=quiz.items[quiz.i];return `<div class="exam-layout">${becaReadingPanel(q)}<div class="card exam-question"><p class="muted">Pregunta ${quiz.i+1} de ${quiz.items.length} · <strong>Tiempo de esta pregunta: <span id="questionTimer">${timeFmt(quiz.elapsed[quiz.i])}</span></strong> · Total: <span id="totalTimer">${timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0))}</span>${quiz.deadlineAt?' · Tiempo restante: <strong id="quizRemaining">'+examClock(quizRemaining())+'</strong>':''}</p><h2>${esc(q.statement)}</h2>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${q.options.map((o,i)=>`<label class="option"><input type="radio" name="choice" value="${i}" ${quiz.answers[quiz.i]===i?'checked':''}>${'ABCDE'[i]}) ${esc(o)}</label>`).join('')}${quiz.deadlineAt?'<button id="prevQuiz" class="secondary" '+(quiz.i===0?'disabled':'')+'>Anterior</button> ':''}<button id="nextQuiz">${quiz.i===quiz.items.length-1?'Entregar simulacro':'Siguiente'}</button>${quiz.deadlineAt?'<button id="deliverQuiz" class="secondary">Entregar ahora</button>':''}<p id="quizError" class="muted"></p></div></div>`}
 
 // Corrección de simulacros: solo se muestran claves recibidas tras grade_attempt.
 function quizReviewPage(){
@@ -1060,7 +1123,15 @@ if(page==='review') bindReview();
 
 if(page==='quiz'){
   bindQuizTimer();
-  if($('startThirdExam')) $('startThirdExam').onclick=()=>{const pool=thirdExamPool();if(pool.length<100)return alert('Se necesitan 100 preguntas publicadas entre las semanas 11 y 16.');const items=[...pool].sort(()=>Math.random()-.5).slice(0,100);selectedModality='CPU-UNSM';quiz={items,answers:Array(100).fill(null),elapsed:Array(100).fill(0),lastTick:Date.now(),deadlineAt:Date.now()+THIRD_EXAM_DURATION,i:0};render();};
+  if($('startThirdExam')) $('startThirdExam').onclick=()=>{
+    let items;
+    try{items=makeThirdExamItems();}catch(error){alert(error.message);return;}
+    selectedModality='CPU-UNSM';
+    const now=Date.now();
+    quiz={items,answers:Array(100).fill(null),elapsed:Array(100).fill(0),lastTick:now,deadlineAt:now+THIRD_EXAM_DURATION,i:0};
+    saveThirdExamHistory(items.map(q=>q.id));
+    render();
+  };
   if($('startQuiz')) $('startQuiz').onclick=()=>{
 const subject = $('quizSubject').value;
 const week = $('quizWeek').value;
