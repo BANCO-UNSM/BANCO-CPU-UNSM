@@ -1,19 +1,23 @@
 'use strict';let lessons=[],questions=[],area='Números',active='N01',progress={},progressKey='',startedAt=0,retryOnly=false;const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function saveProgress(){try{if(progressKey)localStorage.setItem(progressKey,JSON.stringify(progress));}catch(e){console.warn('El navegador no pudo guardar el progreso local.',e);}}
+function latestFullAttempt(l){
+ const p=progress[l.id];if(!p)return null;
+ return [...(p.history||[])].reverse().find(a=>!a.wasRetry)||(!p.wasRetry?p:null);
+}
 function progressSummary(){
- const done=lessons.filter(l=>progress[l.id]?.total>0);
- const sum=done.length,avg=sum?Math.round(done.reduce((n,l)=>n+100*progress[l.id].score/progress[l.id].total,0)/sum):0;
+ const done=lessons.filter(l=>latestFullAttempt(l)?.total>0);
+ const sum=done.length,avg=sum?Math.round(done.reduce((n,l)=>{const a=latestFullAttempt(l);return n+100*a.score/a.total;},0)/sum):0;
  const el=$('progressSummary');
  if(el)el.textContent='Clases practicadas: '+sum+'/'+lessons.length+' · Promedio de últimos intentos: '+avg+' % · Progreso local (no sincronizado entre dispositivos).';
  const diag=$('diagnostic');
  if(!diag)return;
- const byArea=['Números','Letras'].map(a=>{const rows=lessons.filter(l=>l.area===a&&progress[l.id]?.total>0);const av=rows.length?Math.round(rows.reduce((v,l)=>v+100*progress[l.id].score/progress[l.id].total,0)/rows.length):0;return '<div class="box"><strong>'+esc(a)+'</strong><p>'+rows.length+'/12 clases practicadas · Promedio '+av+' %</p></div>'}).join('');
- const weakest=done.filter(l=>progress[l.id].score/progress[l.id].total<0.7).sort((a,b)=>progress[a.id].score/progress[a.id].total-progress[b.id].score/progress[b.id].total).slice(0,3);
+ const byArea=['Números','Letras'].map(a=>{const rows=lessons.filter(l=>l.area===a&&latestFullAttempt(l)?.total>0);const av=rows.length?Math.round(rows.reduce((v,l)=>v+100*latestFullAttempt(l).score/latestFullAttempt(l).total,0)/rows.length):0;return '<div class="box"><strong>'+esc(a)+'</strong><p>'+rows.length+'/12 clases practicadas · Promedio '+av+' %</p></div>'}).join('');
+ const weakest=done.filter(l=>latestFullAttempt(l).score/latestFullAttempt(l).total<0.7).sort((a,b)=>latestFullAttempt(a).score/latestFullAttempt(a).total-latestFullAttempt(b).score/latestFullAttempt(b).total).slice(0,3);
  diag.innerHTML='<h3>Mi diagnóstico</h3>'+byArea+(weakest.length?'<p><strong>Refuerza:</strong> '+weakest.map(l=>esc(l.id)+' — '+esc(l.title)).join('; ')+'</p>':'<p class="muted">Completa prácticas para identificar temas que requieran refuerzo.</p>');
 }
 function draw(){
  startedAt=Date.now();
  document.querySelectorAll('[data-area]').forEach(b=>b.classList.toggle('active',b.dataset.area===area));
- $('topics').innerHTML=lessons.filter(x=>x.area===area).map(x=>'<button class="topic '+(x.id===active?'selected':'')+'" data-id="'+esc(x.id)+'"><strong>'+esc(x.id)+' · '+esc(x.title)+'</strong><br><small class="muted">'+(progress[x.id]?'Último intento: '+progress[x.id].score+'/'+progress[x.id].total:(x.status==='desarrollada_para_revision'?'Teoría y práctica':'Introducción disponible'))+'</small></button>').join('');
+ $('topics').innerHTML=lessons.filter(x=>x.area===area).map(x=>'<button class="topic '+(x.id===active?'selected':'')+'" data-id="'+esc(x.id)+'"><strong>'+esc(x.id)+' · '+esc(x.title)+'</strong><br><small class="muted">'+(latestFullAttempt(x)?'Última práctica: '+latestFullAttempt(x).score+'/'+latestFullAttempt(x).total:(x.status==='desarrollada_para_revision'?'Teoría y práctica':'Introducción disponible'))+'</small></button>').join('');
  document.querySelectorAll('.topic').forEach(b=>b.onclick=()=>{active=b.dataset.id;retryOnly=false;draw();});progressSummary();
  const x=lessons.find(z=>z.id===active);if(!x)return;
  const allQs=questions.filter(q=>q.lesson_id===x.id);
