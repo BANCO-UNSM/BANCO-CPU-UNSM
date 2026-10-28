@@ -14,7 +14,7 @@ function progressSummary(){
  if(el)el.textContent='Clases practicadas: '+sum+'/'+lessons.length+' · Promedio de últimos intentos: '+avg+' % · Progreso local (no sincronizado entre dispositivos).';
  const diag=$('diagnostic');
  if(!diag)return;
- const byArea=['Números','Letras','Álgebra'].map(a=>{const rows=lessons.filter(l=>l.area===a&&latestFullAttempt(l)?.total>0);const av=rows.length?Math.round(rows.reduce((v,l)=>v+100*latestFullAttempt(l).score/latestFullAttempt(l).total,0)/rows.length):0;return '<div class="box"><strong>'+esc(a)+'</strong><p>'+rows.length+'/'+lessons.filter(l=>l.area===a).length+' clases practicadas · Promedio '+av+' %</p></div>'}).join('');
+ const byArea=['Números','Letras','Álgebra','Refuerzo verbal'].map(a=>{const rows=lessons.filter(l=>l.area===a&&latestFullAttempt(l)?.total>0);const av=rows.length?Math.round(rows.reduce((v,l)=>v+100*latestFullAttempt(l).score/latestFullAttempt(l).total,0)/rows.length):0;return '<div class="box"><strong>'+esc(a)+'</strong><p>'+rows.length+'/'+lessons.filter(l=>l.area===a).length+' clases practicadas · Promedio '+av+' %</p></div>'}).join('');
  const weakest=done.filter(l=>latestFullAttempt(l).score/latestFullAttempt(l).total<0.7).sort((a,b)=>latestFullAttempt(a).score/latestFullAttempt(a).total-latestFullAttempt(b).score/latestFullAttempt(b).total).slice(0,3);
  diag.innerHTML='<h3>Mi diagnóstico</h3>'+byArea+(weakest.length?'<p><strong>Refuerza:</strong> '+weakest.map(l=>esc(l.id)+' — '+esc(l.title)).join('; ')+'</p>':'<p class="muted">Completa prácticas para identificar temas que requieran refuerzo.</p>');
 }
@@ -61,4 +61,18 @@ function draw(){
 }
 document.querySelectorAll('[data-area]').forEach(b=>b.onclick=()=>{area=b.dataset.area;active=lessons.find(l=>l.area===area)?.id;retryOnly=false;draw()});
 const clear=$('clearProgress');if(clear)clear.onclick=resetProgress;async function validarAcceso(){if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw Error('No se encuentra la configuración de acceso.');const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session},error}=await client.auth.getSession();if(error||!session?.user)throw Error('Inicia sesión desde CachimboLab para acceder a las clases.');progressKey='beca18_progress_v1_'+session.user.id;try{progress=JSON.parse(localStorage.getItem(progressKey)||'{}')||{};}catch(e){progress={};}const {data:profile,error:profileError}=await client.from('profiles').select('role').eq('id',session.user.id).maybeSingle();if(profileError)throw Error('No se pudo validar tu perfil.');if(!['teacher','admin'].includes(profile?.role)){const {data:active,error:accessError}=await client.rpc('has_valid_subscription');if(accessError||!active)throw Error('Tu suscripción no está activa. Accede desde el panel de CachimboLab.');}}
-validarAcceso().then(()=>fetch('beca18-clases.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('No se pudo cargar el temario');return r.json()}).then(d=>{lessons=d.lessons;questions=d.questions;draw()})).catch(e=>{$('lesson').textContent=e.message;});
+validarAcceso().then(async()=>{
+ const [a,b]=await Promise.all([fetch('beca18-clases.json',{cache:'no-store'}),fetch('beca18-verbal-pronabec.json',{cache:'no-store'})]);
+ if(!a.ok||!b.ok)throw Error('No se pudieron cargar las clases de Beca 18');
+ const original=await a.json(),verbal=await b.json();
+ if(!Array.isArray(original.lessons)||!Array.isArray(verbal.lessons)||!Array.isArray(verbal.questions))throw Error('El archivo de clases no tiene el formato esperado');
+ // Los primeros 12 temas verbales no se eliminan: pasan a refuerzo y se renumeran para evitar colisiones.
+ const refuerzo=new Map(original.lessons.filter(l=>l.area==='Letras').map(l=>[l.id,'R'+l.id.slice(1)]));
+ original.lessons.forEach(l=>{if(refuerzo.has(l.id)){l.id=refuerzo.get(l.id);l.area='Refuerzo verbal';}});
+ original.questions.forEach(q=>{if(refuerzo.has(q.lesson_id)){q.lesson_id=refuerzo.get(q.lesson_id);q.id=q.id.replace('-L','-R');}});
+ lessons=[...original.lessons,...verbal.lessons];
+ questions=[...original.questions,...verbal.questions];
+ // Se abre directamente la primera sesión de Letras al visitar el curso.
+ area='Letras';active=verbal.lessons[0]?.id||'L01';
+ draw();
+}).catch(e=>{$('lesson').textContent=e.message;});
