@@ -1,6 +1,6 @@
 {
   "course": "Beca 18 — Matemática",
-  "version": "piloto-3",
+  "version": "piloto-4",
   "lesson_count": 24,
   "lessons": [
     {
@@ -351,8 +351,73 @@
       "worked_example": "1/3+1/6=2/6+1/6=1/2.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Explicar y aplicar los conceptos de fracciones y decimales.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Fracciones equivalentes y representación",
+          "content": "Una fracción a/b requiere b≠0. Las fracciones equivalentes se obtienen multiplicando o dividiendo numerador y denominador por el mismo entero no nulo.",
+          "key": "Simplifica siempre mediante un divisor común; 18/24=3/4."
+        },
+        {
+          "heading": "2. Operaciones entre fracciones",
+          "content": "Para sumar o restar usa un denominador común; para multiplicar multiplica numeradores y denominadores; para dividir multiplica por el recíproco no nulo.",
+          "key": "1/3+1/6=1/2; (2/3)÷(4/5)=5/6."
+        },
+        {
+          "heading": "3. Decimales, racionales y redondeo",
+          "content": "Un decimal exacto o periódico representa un número racional; al aproximar, observa la siguiente cifra decimal para decidir si aumenta la anterior.",
+          "key": "2,746 aproximado a centésimas es 2,75."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Fracciones equivalentes; operaciones; decimales; redondeo.",
+          "steps": [
+            "Una fracción a/b requiere b≠0. Las fracciones equivalentes se obtienen multiplicando o dividiendo numerador y denominador por el mismo entero no nulo.",
+            "Simplifica siempre mediante un divisor común; 18/24=3/4."
+          ],
+          "answer": "Simplifica siempre mediante un divisor común; 18/24=3/4."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Para sumar o restar usa un denominador común; para multiplicar multiplica numeradores y denominadores; para dividir multiplica por el recíproco no nulo.",
+            "1/3+1/6=1/2; (2/3)÷(4/5)=5/6.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "1/3+1/6=1/2; (2/3)÷(4/5)=5/6."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Un decimal exacto o periódico representa un número racional; al aproximar, observa la siguiente cifra decimal para decidir si aumenta la anterior.",
+            "2,746 aproximado a centésimas es 2,75.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "2,746 aproximado a centésimas es 2,75."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "N05",
@@ -363,8 +428,73 @@
       "worked_example": "2³·2⁴=2⁷=128.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Explicar y aplicar los conceptos de potenciación y radicación.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Propiedades de las potencias",
+          "content": "Para base a≠0: a^m·a^n=a^(m+n), a^m/a^n=a^(m−n), (a^m)^n=a^(mn). En una suma no se suman exponentes.",
+          "key": "2³·2⁴=2⁷=128."
+        },
+        {
+          "heading": "2. Raíces y racionalización conceptual",
+          "content": "√a representa la raíz principal no negativa cuando a≥0. √(ab)=√a·√b para a,b≥0.",
+          "key": "√72=√(36·2)=6√2."
+        },
+        {
+          "heading": "3. Notación científica",
+          "content": "Un número no nulo se escribe como a×10^n con 1≤|a|<10 y n entero; es útil con magnitudes grandes o pequeñas.",
+          "key": "0,00045=4,5×10^−4."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Exponentes enteros; radicales; notación científica.",
+          "steps": [
+            "Para base a≠0: a^m·a^n=a^(m+n), a^m/a^n=a^(m−n), (a^m)^n=a^(mn). En una suma no se suman exponentes.",
+            "2³·2⁴=2⁷=128."
+          ],
+          "answer": "2³·2⁴=2⁷=128."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "√a representa la raíz principal no negativa cuando a≥0. √(ab)=√a·√b para a,b≥0.",
+            "√72=√(36·2)=6√2.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "√72=√(36·2)=6√2."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Un número no nulo se escribe como a×10^n con 1≤|a|<10 y n entero; es útil con magnitudes grandes o pequeñas.",
+            "0,00045=4,5×10^−4.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "0,00045=4,5×10^−4."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "N06",
@@ -375,8 +505,73 @@
       "worked_example": "Si 2/3=x/12, entonces 3x=24 y x=8.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Explicar y aplicar los conceptos de razones y proporciones.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Razón",
+          "content": "Una razón compara dos magnitudes mediante un cociente, indicando claramente cuál se coloca primero.",
+          "key": "Si hay 3 niños y 5 niñas, razón niños:niñas=3:5."
+        },
+        {
+          "heading": "2. Proporción",
+          "content": "Es una igualdad de dos razones; si a/b=c/d con b,d≠0, entonces ad=bc.",
+          "key": "2/3=x/12 implica x=8."
+        },
+        {
+          "heading": "3. Reparto proporcional",
+          "content": "En un reparto directamente proporcional, cada parte se calcula usando la razón de su peso respecto al total de pesos.",
+          "key": "S/120 en razón 2:3 se reparte S/48 y S/72."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Razón; proporción; repartos y escalas.",
+          "steps": [
+            "Una razón compara dos magnitudes mediante un cociente, indicando claramente cuál se coloca primero.",
+            "Si hay 3 niños y 5 niñas, razón niños:niñas=3:5."
+          ],
+          "answer": "Si hay 3 niños y 5 niñas, razón niños:niñas=3:5."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Es una igualdad de dos razones; si a/b=c/d con b,d≠0, entonces ad=bc.",
+            "2/3=x/12 implica x=8.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "2/3=x/12 implica x=8."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "En un reparto directamente proporcional, cada parte se calcula usando la razón de su peso respecto al total de pesos.",
+            "S/120 en razón 2:3 se reparte S/48 y S/72.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "S/120 en razón 2:3 se reparte S/48 y S/72."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "N07",
@@ -387,8 +582,73 @@
       "worked_example": "4 obreros demoran 6 días; 8 obreros demoran 3 días, a igual rendimiento.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Explicar y aplicar los conceptos de magnitudes proporcionales.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Proporcionalidad directa",
+          "content": "Dos magnitudes positivas son directamente proporcionales cuando su cociente es constante.",
+          "key": "Si 3 cuadernos cuestan S/18, 5 cuestan S/30."
+        },
+        {
+          "heading": "2. Proporcionalidad inversa",
+          "content": "Dos magnitudes positivas son inversamente proporcionales cuando su producto es constante.",
+          "key": "Si 4 trabajadores tardan 6 días, 8 trabajadores tardan 3 días, en iguales condiciones."
+        },
+        {
+          "heading": "3. Regla de tres y unidades",
+          "content": "Identifica primero si la relación es directa o inversa; homogeneiza unidades antes de calcular.",
+          "key": "Para 6 m de tela a S/42, 10 m cuestan S/70."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Regla de tres directa e inversa; problemas de trabajo.",
+          "steps": [
+            "Dos magnitudes positivas son directamente proporcionales cuando su cociente es constante.",
+            "Si 3 cuadernos cuestan S/18, 5 cuestan S/30."
+          ],
+          "answer": "Si 3 cuadernos cuestan S/18, 5 cuestan S/30."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Dos magnitudes positivas son inversamente proporcionales cuando su producto es constante.",
+            "Si 4 trabajadores tardan 6 días, 8 trabajadores tardan 3 días, en iguales condiciones.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "Si 4 trabajadores tardan 6 días, 8 trabajadores tardan 3 días, en iguales condiciones."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Identifica primero si la relación es directa o inversa; homogeneiza unidades antes de calcular.",
+            "Para 6 m de tela a S/42, 10 m cuestan S/70.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "Para 6 m de tela a S/42, 10 m cuestan S/70."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "N08",
@@ -399,8 +659,73 @@
       "worked_example": "S/200 con aumento de 15 % da S/230.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Explicar y aplicar los conceptos de porcentajes i.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Porcentaje como proporción",
+          "content": "p% equivale a p/100; para hallar p% de una cantidad x se multiplica x·p/100.",
+          "key": "15% de 200 es 30."
+        },
+        {
+          "heading": "2. Aumentos y disminuciones",
+          "content": "Aumentar p% equivale a multiplicar por 1+p/100; disminuir p% equivale a multiplicar por 1−p/100.",
+          "key": "S/80 con aumento de 25% pasa a S/100."
+        },
+        {
+          "heading": "3. Porcentaje respecto a una base",
+          "content": "El porcentaje siempre se calcula respecto a una cantidad de referencia, que debe identificarse.",
+          "key": "Un cambio de 50 a 60 representa 20% de aumento sobre 50."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Tanto por ciento; incrementos y descuentos.",
+          "steps": [
+            "p% equivale a p/100; para hallar p% de una cantidad x se multiplica x·p/100.",
+            "15% de 200 es 30."
+          ],
+          "answer": "15% de 200 es 30."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Aumentar p% equivale a multiplicar por 1+p/100; disminuir p% equivale a multiplicar por 1−p/100.",
+            "S/80 con aumento de 25% pasa a S/100.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "S/80 con aumento de 25% pasa a S/100."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "El porcentaje siempre se calcula respecto a una cantidad de referencia, que debe identificarse.",
+            "Un cambio de 50 a 60 representa 20% de aumento sobre 50.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "Un cambio de 50 a 60 representa 20% de aumento sobre 50."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "N09",
@@ -411,8 +736,73 @@
       "worked_example": "S/100 con 20 % y luego 10 % de descuento queda en S/72.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Explicar y aplicar los conceptos de porcentajes ii.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Descuentos sucesivos",
+          "content": "Los descuentos se aplican sobre el saldo actualizado, no se suman en forma directa.",
+          "key": "20% y luego 10% dejan 0,8·0,9=72% del precio."
+        },
+        {
+          "heading": "2. Aumentos sucesivos",
+          "content": "Los factores de variación se multiplican: dos aumentos de 10% dejan un factor de 1,1²=1,21.",
+          "key": "S/100 llega a S/121 luego de dos aumentos de 10%."
+        },
+        {
+          "heading": "3. Variación neta",
+          "content": "Para la variación neta resta 1 al producto de los factores y expresa en porcentaje.",
+          "key": "Disminución de 20% y aumento de 25%: 0,8·1,25=1, sin cambio."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Descuentos sucesivos y variaciones porcentuales.",
+          "steps": [
+            "Los descuentos se aplican sobre el saldo actualizado, no se suman en forma directa.",
+            "20% y luego 10% dejan 0,8·0,9=72% del precio."
+          ],
+          "answer": "20% y luego 10% dejan 0,8·0,9=72% del precio."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Los factores de variación se multiplican: dos aumentos de 10% dejan un factor de 1,1²=1,21.",
+            "S/100 llega a S/121 luego de dos aumentos de 10%.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "S/100 llega a S/121 luego de dos aumentos de 10%."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Para la variación neta resta 1 al producto de los factores y expresa en porcentaje.",
+            "Disminución de 20% y aumento de 25%: 0,8·1,25=1, sin cambio.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "Disminución de 20% y aumento de 25%: 0,8·1,25=1, sin cambio."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "N10",
@@ -423,8 +813,73 @@
       "worked_example": "S/500 al 8 % simple mensual por 2 meses: I=80 y M=580.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Explicar y aplicar los conceptos de interés simple y compuesto.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Interés simple",
+          "content": "I=C·r·t, donde r se expresa en forma decimal y t en unidades correspondientes a la tasa.",
+          "key": "S/500 al 8% mensual durante 2 meses: interés S/80."
+        },
+        {
+          "heading": "2. Monto y capital",
+          "content": "Monto final M=C+I. Antes de calcular, convierte correctamente meses y años.",
+          "key": "S/1000 al 12% anual por 6 meses: M=1000+60=1060."
+        },
+        {
+          "heading": "3. Interés compuesto",
+          "content": "M=C(1+r)^t cuando el interés se capitaliza al final de cada periodo especificado.",
+          "key": "S/1000 al 10% por dos periodos: M=1210."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Capital; tasa; tiempo; interés; monto.",
+          "steps": [
+            "I=C·r·t, donde r se expresa en forma decimal y t en unidades correspondientes a la tasa.",
+            "S/500 al 8% mensual durante 2 meses: interés S/80."
+          ],
+          "answer": "S/500 al 8% mensual durante 2 meses: interés S/80."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Monto final M=C+I. Antes de calcular, convierte correctamente meses y años.",
+            "S/1000 al 12% anual por 6 meses: M=1000+60=1060.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "S/1000 al 12% anual por 6 meses: M=1000+60=1060."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "M=C(1+r)^t cuando el interés se capitaliza al final de cada periodo especificado.",
+            "S/1000 al 10% por dos periodos: M=1210.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "S/1000 al 10% por dos periodos: M=1210."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "N11",
@@ -435,8 +890,73 @@
       "worked_example": "[1,5]∩[3,7]=[3,5].",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Explicar y aplicar los conceptos de intervalos y operaciones.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Interpretación de intervalos",
+          "content": "[a,b] incluye ambos extremos; (a,b) los excluye; los corchetes y paréntesis indican si cada extremo pertenece al conjunto.",
+          "key": "[−2,3) incluye −2 pero no 3."
+        },
+        {
+          "heading": "2. Intersección y unión",
+          "content": "La intersección A∩B son los elementos comunes; la unión A∪B contiene los de al menos uno de ellos.",
+          "key": "[1,5]∩[3,7]=[3,5]."
+        },
+        {
+          "heading": "3. Diferencia y recta real",
+          "content": "A−B son los elementos que pertenecen a A pero no a B; la recta numérica ayuda a revisar extremos.",
+          "key": "[1,5]−[3,7]=[1,3)."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Intervalos reales; unión; intersección y diferencia.",
+          "steps": [
+            "[a,b] incluye ambos extremos; (a,b) los excluye; los corchetes y paréntesis indican si cada extremo pertenece al conjunto.",
+            "[−2,3) incluye −2 pero no 3."
+          ],
+          "answer": "[−2,3) incluye −2 pero no 3."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "La intersección A∩B son los elementos comunes; la unión A∪B contiene los de al menos uno de ellos.",
+            "[1,5]∩[3,7]=[3,5].",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "[1,5]∩[3,7]=[3,5]."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "A−B son los elementos que pertenecen a A pero no a B; la recta numérica ayuda a revisar extremos.",
+            "[1,5]−[3,7]=[1,3).",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "[1,5]−[3,7]=[1,3)."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "N12",
@@ -447,8 +967,73 @@
       "worked_example": "Si 5 entradas cuestan S/60, cada entrada cuesta S/12.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de cantidad"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de cantidad",
+      "objectives": [
+        "Explicar y aplicar los conceptos de repaso de razonamiento numérico.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Modelación aritmética",
+          "content": "Extrae cantidades, unidades, restricciones y la pregunta real antes de operar.",
+          "key": "Si se venden 6 unidades a S/12, ingreso S/72."
+        },
+        {
+          "heading": "2. Estimación y contraste",
+          "content": "Una estimación previa ayuda a descartar alternativas absurdas o errores de orden de magnitud.",
+          "key": "48×19≈50×20=1000; resultado exacto 912."
+        },
+        {
+          "heading": "3. Resolución estratégica",
+          "content": "Comprende, plantea, ejecuta y revisa. Relaciona divisibilidad, proporcionalidad y porcentajes en contextos.",
+          "key": "El 25% de 80 se obtiene como 80÷4=20."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Problemas combinados y estrategias de examen.",
+          "steps": [
+            "Extrae cantidades, unidades, restricciones y la pregunta real antes de operar.",
+            "Si se venden 6 unidades a S/12, ingreso S/72."
+          ],
+          "answer": "Si se venden 6 unidades a S/12, ingreso S/72."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Una estimación previa ayuda a descartar alternativas absurdas o errores de orden de magnitud.",
+            "48×19≈50×20=1000; resultado exacto 912.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "48×19≈50×20=1000; resultado exacto 912."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Comprende, plantea, ejecuta y revisa. Relaciona divisibilidad, proporcionalidad y porcentajes en contextos.",
+            "El 25% de 80 se obtiene como 80÷4=20.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "El 25% de 80 se obtiene como 80÷4=20."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L01",
@@ -459,8 +1044,73 @@
       "worked_example": "Si x=4, entonces 2x+3=11.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de lenguaje algebraico.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Variables y expresiones",
+          "content": "Una variable representa un valor desconocido o cambiante; traduce la situación a símbolos.",
+          "key": "El triple de un número menos 5 es 3x−5."
+        },
+        {
+          "heading": "2. Enunciados y ecuaciones",
+          "content": "«El doble de un número es 18» se expresa 2x=18; una expresión no necesita igualdad.",
+          "key": "x+7=12 es una ecuación."
+        },
+        {
+          "heading": "3. Evaluación algebraica",
+          "content": "Para evaluar una expresión sustituye la variable respetando paréntesis y signos.",
+          "key": "Si x=−2, x²+3=7."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Variables; traducción de enunciados; patrones.",
+          "steps": [
+            "Una variable representa un valor desconocido o cambiante; traduce la situación a símbolos.",
+            "El triple de un número menos 5 es 3x−5."
+          ],
+          "answer": "El triple de un número menos 5 es 3x−5."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "«El doble de un número es 18» se expresa 2x=18; una expresión no necesita igualdad.",
+            "x+7=12 es una ecuación.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "x+7=12 es una ecuación."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Para evaluar una expresión sustituye la variable respetando paréntesis y signos.",
+            "Si x=−2, x²+3=7.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "Si x=−2, x²+3=7."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L02",
@@ -471,8 +1121,73 @@
       "worked_example": "3x+5x−2x=6x.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de expresiones algebraicas.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Términos semejantes",
+          "content": "Solo se suman términos de igual parte literal y exponentes iguales.",
+          "key": "3x²+5x²=8x²."
+        },
+        {
+          "heading": "2. Polinomios y grados",
+          "content": "El grado de un polinomio no nulo en una variable es el mayor exponente de esa variable con coeficiente no nulo.",
+          "key": "2x³−x+4 es de grado 3."
+        },
+        {
+          "heading": "3. Productos de expresiones",
+          "content": "Distribuye cada término y reduce semejantes; verifica el resultado si es posible.",
+          "key": "2x(x+3)=2x²+6x."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Monomios; polinomios; suma y resta de términos semejantes.",
+          "steps": [
+            "Solo se suman términos de igual parte literal y exponentes iguales.",
+            "3x²+5x²=8x²."
+          ],
+          "answer": "3x²+5x²=8x²."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "El grado de un polinomio no nulo en una variable es el mayor exponente de esa variable con coeficiente no nulo.",
+            "2x³−x+4 es de grado 3.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "2x³−x+4 es de grado 3."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Distribuye cada término y reduce semejantes; verifica el resultado si es posible.",
+            "2x(x+3)=2x²+6x.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "2x(x+3)=2x²+6x."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L03",
@@ -483,8 +1198,73 @@
       "worked_example": "(x+3)²=x²+6x+9.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de productos notables.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Cuadrado de binomio",
+          "content": "(a+b)²=a²+2ab+b²; (a−b)²=a²−2ab+b².",
+          "key": "(x+4)²=x²+8x+16."
+        },
+        {
+          "heading": "2. Diferencia de cuadrados",
+          "content": "a²−b²=(a−b)(a+b).",
+          "key": "x²−25=(x−5)(x+5)."
+        },
+        {
+          "heading": "3. Producto de binomios conjugados",
+          "content": "(a+b)(a−b)=a²−b², útil para multiplicación y factorización.",
+          "key": "(x+7)(x−7)=x²−49."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Cuadrado de binomio y diferencia de cuadrados.",
+          "steps": [
+            "(a+b)²=a²+2ab+b²; (a−b)²=a²−2ab+b².",
+            "(x+4)²=x²+8x+16."
+          ],
+          "answer": "(x+4)²=x²+8x+16."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "a²−b²=(a−b)(a+b).",
+            "x²−25=(x−5)(x+5).",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "x²−25=(x−5)(x+5)."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "(a+b)(a−b)=a²−b², útil para multiplicación y factorización.",
+            "(x+7)(x−7)=x²−49.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "(x+7)(x−7)=x²−49."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L04",
@@ -495,8 +1275,73 @@
       "worked_example": "x²−9=(x−3)(x+3).",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de factorización.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Factor común",
+          "content": "Busca un factor numérico y literal compartido y extrae el máximo factor posible.",
+          "key": "6x²+9x=3x(2x+3)."
+        },
+        {
+          "heading": "2. Trinomio cuadrático",
+          "content": "En x²+bx+c busca dos enteros de suma b y producto c cuando existan.",
+          "key": "x²+5x+6=(x+2)(x+3)."
+        },
+        {
+          "heading": "3. Factorización e identidad",
+          "content": "Comprobar una factorización consiste en volver a expandir el producto.",
+          "key": "x²−16=(x−4)(x+4)."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Factor común; trinomios; diferencia de cuadrados.",
+          "steps": [
+            "Busca un factor numérico y literal compartido y extrae el máximo factor posible.",
+            "6x²+9x=3x(2x+3)."
+          ],
+          "answer": "6x²+9x=3x(2x+3)."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "En x²+bx+c busca dos enteros de suma b y producto c cuando existan.",
+            "x²+5x+6=(x+2)(x+3).",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "x²+5x+6=(x+2)(x+3)."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Comprobar una factorización consiste en volver a expandir el producto.",
+            "x²−16=(x−4)(x+4).",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "x²−16=(x−4)(x+4)."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L05",
@@ -507,8 +1352,73 @@
       "worked_example": "(x²−9)/(x−3)=x+3, para x≠3.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de división de polinomios.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Algoritmo de división",
+          "content": "Se cumple dividendo=divisor×cociente+residuo, con grado del residuo menor que el del divisor.",
+          "key": "(x²−9)/(x−3)=x+3 si x≠3."
+        },
+        {
+          "heading": "2. División por binomio lineal",
+          "content": "Para dividir por x−a, el residuo es P(a) según el teorema del residuo.",
+          "key": "P(x)=x²−4; al dividir por x−2 el residuo es 0."
+        },
+        {
+          "heading": "3. Comprobación",
+          "content": "Multiplica divisor por cociente y suma residuo; debe reproducir el dividendo.",
+          "key": "(x−1)(x+1)+2=x²+1."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "División algebraica y cociente.",
+          "steps": [
+            "Se cumple dividendo=divisor×cociente+residuo, con grado del residuo menor que el del divisor.",
+            "(x²−9)/(x−3)=x+3 si x≠3."
+          ],
+          "answer": "(x²−9)/(x−3)=x+3 si x≠3."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Para dividir por x−a, el residuo es P(a) según el teorema del residuo.",
+            "P(x)=x²−4; al dividir por x−2 el residuo es 0.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "P(x)=x²−4; al dividir por x−2 el residuo es 0."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Multiplica divisor por cociente y suma residuo; debe reproducir el dividendo.",
+            "(x−1)(x+1)+2=x²+1.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "(x−1)(x+1)+2=x²+1."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L06",
@@ -519,8 +1429,73 @@
       "worked_example": "3x+5=20 → 3x=15 → x=5.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de ecuaciones lineales.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Ecuaciones equivalentes",
+          "content": "Sumar o restar lo mismo en ambos lados preserva la igualdad; al multiplicar/dividir se usa un número no nulo.",
+          "key": "3x+4=19 ⇒ x=5."
+        },
+        {
+          "heading": "2. Traducción de situaciones",
+          "content": "Define la variable, arma la ecuación, resuelve y responde con la unidad pedida.",
+          "key": "El doble de una edad más 3 es 23 ⇒ edad 10."
+        },
+        {
+          "heading": "3. Verificación",
+          "content": "Sustituye la solución en la ecuación original para comprobarla.",
+          "key": "2·10+3=23."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Despeje; problemas de edades y cantidades.",
+          "steps": [
+            "Sumar o restar lo mismo en ambos lados preserva la igualdad; al multiplicar/dividir se usa un número no nulo.",
+            "3x+4=19 ⇒ x=5."
+          ],
+          "answer": "3x+4=19 ⇒ x=5."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Define la variable, arma la ecuación, resuelve y responde con la unidad pedida.",
+            "El doble de una edad más 3 es 23 ⇒ edad 10.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "El doble de una edad más 3 es 23 ⇒ edad 10."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Sustituye la solución en la ecuación original para comprobarla.",
+            "2·10+3=23.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "2·10+3=23."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L07",
@@ -531,8 +1506,73 @@
       "worked_example": "x+y=10; x−y=2 → x=6, y=4.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de sistemas de ecuaciones.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Sistemas lineales 2×2",
+          "content": "Dos ecuaciones con dos incógnitas pueden resolverse por sustitución, igualación o eliminación.",
+          "key": "x+y=10 y x−y=2 ⇒ x=6, y=4."
+        },
+        {
+          "heading": "2. Método de reducción",
+          "content": "Suma o resta ecuaciones tras multiplicarlas por factores convenientes para eliminar una incógnita.",
+          "key": "2x+y=11; x−y=1 ⇒ 3x=12 ⇒ x=4, y=3."
+        },
+        {
+          "heading": "3. Interpretación",
+          "content": "La solución es un par ordenado que satisface simultáneamente todas las ecuaciones.",
+          "key": "Comprueba el par en ambas ecuaciones."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Sustitución; reducción; interpretación.",
+          "steps": [
+            "Dos ecuaciones con dos incógnitas pueden resolverse por sustitución, igualación o eliminación.",
+            "x+y=10 y x−y=2 ⇒ x=6, y=4."
+          ],
+          "answer": "x+y=10 y x−y=2 ⇒ x=6, y=4."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Suma o resta ecuaciones tras multiplicarlas por factores convenientes para eliminar una incógnita.",
+            "2x+y=11; x−y=1 ⇒ 3x=12 ⇒ x=4, y=3.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "2x+y=11; x−y=1 ⇒ 3x=12 ⇒ x=4, y=3."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "La solución es un par ordenado que satisface simultáneamente todas las ecuaciones.",
+            "Comprueba el par en ambas ecuaciones.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "Comprueba el par en ambas ecuaciones."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L08",
@@ -543,8 +1583,73 @@
       "worked_example": "x²−5x+6=0 → (x−2)(x−3)=0 → x=2 o 3.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de ecuaciones cuadráticas.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Forma general",
+          "content": "Una ecuación cuadrática tiene forma ax²+bx+c=0 con a≠0.",
+          "key": "x²−5x+6=0."
+        },
+        {
+          "heading": "2. Factorización",
+          "content": "Si un producto es cero, alguno de sus factores debe ser cero.",
+          "key": "(x−2)(x−3)=0 ⇒ x=2 o 3."
+        },
+        {
+          "heading": "3. Fórmula general y discriminante",
+          "content": "x=(−b±√(b²−4ac))/(2a). El discriminante D=b²−4ac indica cuántas raíces reales distintas hay.",
+          "key": "D>0: dos raíces reales distintas; D=0: una doble; D<0: ninguna real."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Factorización; fórmula general; discriminante.",
+          "steps": [
+            "Una ecuación cuadrática tiene forma ax²+bx+c=0 con a≠0.",
+            "x²−5x+6=0."
+          ],
+          "answer": "x²−5x+6=0."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Si un producto es cero, alguno de sus factores debe ser cero.",
+            "(x−2)(x−3)=0 ⇒ x=2 o 3.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "(x−2)(x−3)=0 ⇒ x=2 o 3."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "x=(−b±√(b²−4ac))/(2a). El discriminante D=b²−4ac indica cuántas raíces reales distintas hay.",
+            "D>0: dos raíces reales distintas; D=0: una doble; D<0: ninguna real.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "D>0: dos raíces reales distintas; D=0: una doble; D<0: ninguna real."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L09",
@@ -555,8 +1660,73 @@
       "worked_example": "−2x<6 → x>−3.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de inecuaciones.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Desigualdades lineales",
+          "content": "Resuelve como una ecuación, pero si divides o multiplicas por un negativo, invierte el sentido de la desigualdad.",
+          "key": "−2x<6 ⇒ x>−3."
+        },
+        {
+          "heading": "2. Conjunto solución",
+          "content": "Una desigualdad describe un intervalo o unión de intervalos, con extremos abiertos o cerrados.",
+          "key": "x≥2 se representa [2,+∞)."
+        },
+        {
+          "heading": "3. Problemas con límites",
+          "content": "Expresa restricciones como «al menos», «a lo sumo» y «menor que» antes de operar.",
+          "key": "Al menos 10 unidades significa x≥10."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Inecuaciones lineales; intervalos; signos.",
+          "steps": [
+            "Resuelve como una ecuación, pero si divides o multiplicas por un negativo, invierte el sentido de la desigualdad.",
+            "−2x<6 ⇒ x>−3."
+          ],
+          "answer": "−2x<6 ⇒ x>−3."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Una desigualdad describe un intervalo o unión de intervalos, con extremos abiertos o cerrados.",
+            "x≥2 se representa [2,+∞).",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "x≥2 se representa [2,+∞)."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Expresa restricciones como «al menos», «a lo sumo» y «menor que» antes de operar.",
+            "Al menos 10 unidades significa x≥10.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "Al menos 10 unidades significa x≥10."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L10",
@@ -567,8 +1737,73 @@
       "worked_example": "5,8,11,14,... tiene a₉=29.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de sucesiones y progresiones.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Sucesiones",
+          "content": "Una sucesión asigna un término a cada posición natural y puede seguir una regla.",
+          "key": "5,8,11,14,… aumenta 3 cada vez."
+        },
+        {
+          "heading": "2. Progresión aritmética",
+          "content": "aₙ=a₁+(n−1)d; la diferencia común d permanece constante.",
+          "key": "En 5,8,11,… el término 9 es 29."
+        },
+        {
+          "heading": "3. Progresión geométrica",
+          "content": "aₙ=a₁·r^(n−1) y la razón r entre términos consecutivos no nulos es constante.",
+          "key": "2,6,18,… tiene a₄=54."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Patrones; sucesiones aritméticas y geométricas.",
+          "steps": [
+            "Una sucesión asigna un término a cada posición natural y puede seguir una regla.",
+            "5,8,11,14,… aumenta 3 cada vez."
+          ],
+          "answer": "5,8,11,14,… aumenta 3 cada vez."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "aₙ=a₁+(n−1)d; la diferencia común d permanece constante.",
+            "En 5,8,11,… el término 9 es 29.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "En 5,8,11,… el término 9 es 29."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "aₙ=a₁·r^(n−1) y la razón r entre términos consecutivos no nulos es constante.",
+            "2,6,18,… tiene a₄=54.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "2,6,18,… tiene a₄=54."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L11",
@@ -579,8 +1814,73 @@
       "worked_example": "f(x)=2x+3 → f(4)=11.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de funciones lineales y cuadráticas.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Funciones lineales y afines",
+          "content": "En f(x)=mx+b, m es la pendiente y b el corte con el eje vertical; en la función lineal estricta b=0.",
+          "key": "f(x)=2x+3 implica f(4)=11."
+        },
+        {
+          "heading": "2. Funciones cuadráticas",
+          "content": "f(x)=ax²+bx+c con a≠0 representa una parábola; si a>0 abre hacia arriba y si a<0 hacia abajo.",
+          "key": "f(x)=x²−4x+3 tiene vértice (2,−1)."
+        },
+        {
+          "heading": "3. Gráficas y modelación",
+          "content": "Lee ejes, dominio, intersecciones, crecimiento y valor en situaciones contextualizadas.",
+          "key": "Costo C(x)=100+5x tiene fijo 100 y variable 5 por unidad."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Modelación; pendiente; parábolas; vértice.",
+          "steps": [
+            "En f(x)=mx+b, m es la pendiente y b el corte con el eje vertical; en la función lineal estricta b=0.",
+            "f(x)=2x+3 implica f(4)=11."
+          ],
+          "answer": "f(x)=2x+3 implica f(4)=11."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "f(x)=ax²+bx+c con a≠0 representa una parábola; si a>0 abre hacia arriba y si a<0 hacia abajo.",
+            "f(x)=x²−4x+3 tiene vértice (2,−1).",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "f(x)=x²−4x+3 tiene vértice (2,−1)."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Lee ejes, dominio, intersecciones, crecimiento y valor en situaciones contextualizadas.",
+            "Costo C(x)=100+5x tiene fijo 100 y variable 5 por unidad.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "Costo C(x)=100+5x tiene fijo 100 y variable 5 por unidad."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     },
     {
       "id": "L12",
@@ -591,8 +1891,73 @@
       "worked_example": "Si P(t)=120·2^t, a los 3 periodos P(3)=960.",
       "duration_minutes": 90,
       "source": "Malla CachimboLab inspirada en competencias matemáticas y libro Prepárate, PRONABEC 2.ª edición",
-      "status": "introduccion",
-      "competence": "Resuelve problemas de regularidad, equivalencia y cambio"
+      "status": "desarrollada_para_revision",
+      "competence": "Resuelve problemas de regularidad, equivalencia y cambio",
+      "objectives": [
+        "Explicar y aplicar los conceptos de funciones exponenciales.",
+        "Traducir situaciones problemáticas a operaciones y procedimientos matemáticos.",
+        "Resolver preguntas de alternativa múltiple, justificar la clave y detectar errores frecuentes.",
+        "Comprobar resultados y administrar el tiempo en una evaluación."
+      ],
+      "theory": [
+        {
+          "heading": "1. Función exponencial",
+          "content": "Una función exponencial se expresa como f(x)=a·b^x, con a≠0, b>0 y b≠1.",
+          "key": "P(t)=100·2^t se duplica en cada periodo."
+        },
+        {
+          "heading": "2. Crecimiento y decrecimiento",
+          "content": "Para a>0, si b>1 crece y si 0<b<1 decrece; el exponente es la variable.",
+          "key": "100(1/2)^3=12,5."
+        },
+        {
+          "heading": "3. Contextos y verificación",
+          "content": "Expresa tiempos en los periodos indicados y diferencia crecimiento exponencial de aumento lineal.",
+          "key": "Un cultivo que se duplica cada 3 h se multiplica por 2^5 en 15 h."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Ejemplo introductorio",
+          "statement": "Crecimiento y decrecimiento; base; modelos.",
+          "steps": [
+            "Una función exponencial se expresa como f(x)=a·b^x, con a≠0, b>0 y b≠1.",
+            "P(t)=100·2^t se duplica en cada periodo."
+          ],
+          "answer": "P(t)=100·2^t se duplica en cada periodo."
+        },
+        {
+          "title": "Ejemplo de aplicación",
+          "statement": "Aplicación de la propiedad principal del tema",
+          "steps": [
+            "Para a>0, si b>1 crece y si 0<b<1 decrece; el exponente es la variable.",
+            "100(1/2)^3=12,5.",
+            "Comprobar que el resultado respeta las condiciones del problema."
+          ],
+          "answer": "100(1/2)^3=12,5."
+        },
+        {
+          "title": "Ejemplo de profundización",
+          "statement": "Reconocer el procedimiento y evitar errores habituales",
+          "steps": [
+            "Expresa tiempos en los periodos indicados y diferencia crecimiento exponencial de aumento lineal.",
+            "Un cultivo que se duplica cada 3 h se multiplica por 2^5 en 15 h.",
+            "Identificar cuál sería el error más frecuente en un examen."
+          ],
+          "answer": "Un cultivo que se duplica cada 3 h se multiplica por 2^5 en 15 h."
+        }
+      ],
+      "mistakes": [
+        "No identificar qué pide exactamente el problema.",
+        "Aplicar una fórmula sin comprobar sus condiciones de uso.",
+        "Descuidar signos, unidades, dominio o restricciones.",
+        "No sustituir el resultado para comprobar que resuelve el enunciado."
+      ],
+      "references": [
+        "PRONABEC, libro Prepárate, segunda edición, Razonamiento Matemático (temas afines).",
+        "Temario de competencias matemáticas proporcionado para la preparación Beca 18."
+      ],
+      "evaluation": "Práctica de selección múltiple con retroalimentación. Contenido original de CachimboLab y en revisión pedagógica."
     }
   ],
   "questions": [
