@@ -139,6 +139,7 @@ let authMode='login';
 let selectedModality='CPU-UNSM';
 let authorizedServices=[];
 let learningProgress=null,learningProgressError='';
+let weeklyHistory=[],weeklyHistoryError='';
 const hasService=m=>teacher()||authorizedServices.includes(m);
 const modalityQuestions=()=>questions.filter(q=>q.modality===selectedModality&&hasService(q.modality));
 
@@ -160,7 +161,7 @@ const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':
 async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
 async function refresh(){
  relationLoaded=false;relationItems=[];relationReview=null;
- profile=null;access=null;authorizedServices=[];learningProgress=null;learningProgressError='';questions=[];attempts=[];exams=[];examsError='';questionsError='';
+ profile=null;access=null;authorizedServices=[];learningProgress=null;learningProgressError='';weeklyHistory=[];weeklyHistoryError='';questions=[];attempts=[];exams=[];examsError='';questionsError='';
  if(user){
   const p=await db.from('profiles').select('role,name').eq('id',user.id).maybeSingle();profile=p.data;
   if(teacher()) access={status:'staff',allowed:true};
@@ -209,7 +210,7 @@ async function refresh(){
         exams.push({id,code:meta.code||'',title:meta.title||('Examen · '+id.slice(0,8)),exam_type:meta.exam_type||'CPU',exam_year:meta.exam_year||Number(String(first?.cycle||'').slice(0,4))||null,cycle:meta.cycle||first?.cycle||'',exam_number:meta.exam_number||null,exam_date:meta.exam_date||null,status:'unknown',_localFallback:true});
       }
     }
-   const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];await loadLearningProgress();
+   const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];await loadLearningProgress();if(hasService('CPU-UNSM'))await loadWeeklyHistory();
   }
  }
  if(user&&(teacher()||access?.allowed))restoreTimedExam();
@@ -218,18 +219,19 @@ async function refresh(){
 }
 function render(){
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],...(hasService('CPU-UNSM')?[['exams','Exámenes de admisión']]:[]),['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],...(hasService('CPU-UNSM')?[['exams','Exámenes de admisión'],['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[])]:[['access','Mi acceso']]):[];
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
  document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{if(quiz?.deadlineAt&&!quiz.result){alert('Hay un examen cronometrado en curso. Entrégalo antes de salir.');return;}page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
- $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',exams:'Exámenes de admisión',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica'})[page];
+ $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage})[page]();
  bind();
  bindProgress();
  bindAcademicQuality();
+ bindWeeklyChallenge();
  mostrarFormulas();
  // Carga imágenes privadas visibles después de dibujar cada pantalla.
  cargarImagenesPrivadas($('app'));
@@ -737,6 +739,47 @@ function makeThirdExamItems(){
  if(previous.length&&selection.every(q=>last.has(q.id)))throw new Error('Todavía no hay suficientes preguntas distintas para generar una nueva versión del simulacro. Agrega y publica más preguntas del periodo 11–16.');
  return selection;
 }
+
+const WEEKLY_CHALLENGE_DURATION=25*60*1000;
+function weeklyOptions(){
+ if(!hasService('CPU-UNSM'))return [];
+ const groups=new Map();
+ for(const q of questions){
+  if(q.modality!=='CPU-UNSM'||q.status!=='published'||q.exam_id||q.week==null)continue;
+  const key=String(q.cycle)+'|'+String(q.week);
+  if(!groups.has(key))groups.set(key,{cycle:q.cycle,week:Number(q.week),items:[]});
+  groups.get(key).items.push(q);
+ }
+ return [...groups.values()].filter(x=>x.items.length).sort((a,b)=>String(b.cycle).localeCompare(String(a.cycle),'es')||b.week-a.week);
+}
+async function loadWeeklyHistory(){
+ const {data,error}=await db.rpc('my_weekly_challenges');
+ weeklyHistoryError=error?.message||'';
+ weeklyHistory=error?[]:(Array.isArray(data)?data:[]);
+}
+function weeklyPage(){
+ if(!hasService('CPU-UNSM'))return notice('El Reto Semanal requiere CPU-UNSM.',true);
+ const options=weeklyOptions();
+ return `<div class="card"><h2>🏆 Reto semanal CPU-UNSM</h2><p>¡Semana hecha, semana estudiada! Comprueba cuánto aprendiste.</p><div class="learning-stats"><div><strong>${options.length}</strong><span>Semanas disponibles</span></div><div><strong>25 min</strong><span>Duración</span></div><div><strong>${weeklyHistory.length}</strong><span>Retos completados</span></div></div><p class="muted">Cada reto contiene hasta 20 preguntas publicadas de una sola semana. La clave se muestra al entregar. Puedes repetir el reto para mejorar.</p></div><div class="card"><h3>Selecciona tu semana</h3>${options.map(x=>{const count=Math.min(20,x.items.length),old=weeklyHistory.filter(h=>h.cycle===x.cycle&&Number(h.week)===x.week);const best=old.length?Math.max(...old.map(h=>Number(h.total)?Math.round(100*Number(h.correct)/Number(h.total)):0)):null;return `<div class="listitem"><strong>${esc(x.cycle)} · Semana ${x.week}</strong><p class="muted">${x.items.length} preguntas disponibles · ${count} por intento · ${old.length} reto(s) completado(s)${best===null?'':' · Mejor: '+best+'%'}</p><button data-weekly-start="${esc(x.cycle+'|'+x.week)}">Iniciar reto</button></div>`}).join('')||'<p>Aún no hay semanas con preguntas publicadas.</p>'}</div><div class="card"><h3>📊 Historial de retos</h3>${weeklyHistoryError?`<p role="alert">${esc(weeklyHistoryError)}</p>`:weeklyHistory.length?weeklyHistory.slice(0,20).map(h=>`<div class="listitem"><strong>${esc(h.cycle)} · Semana ${Number(h.week)}</strong><p class="muted">${new Date(h.submitted_at).toLocaleString('es-PE')} · ${Number(h.correct)}/${Number(h.total)} correctas · ${Number(h.total)?Math.round(100*Number(h.correct)/Number(h.total)):0}%</p></div>`).join(''):'<p>Aún no has completado ningún reto semanal.</p>'}</div>`;
+}
+function bindWeeklyChallenge(){
+ document.querySelectorAll('[data-weekly-start]').forEach(b=>b.onclick=()=>{
+  if(!hasService('CPU-UNSM'))return;
+  const [cycle,rawWeek]=b.dataset.weeklyStart.split('|'),week=Number(rawWeek);
+  const x=weeklyOptions().find(v=>v.cycle===cycle&&v.week===week);
+  if(!x?.items.length){alert('No hay preguntas disponibles.');return;}
+  const selected=[...x.items].sort(()=>Math.random()-.5).slice(0,20),now=Date.now();
+  quiz={items:selected,answers:Array(selected.length).fill(null),elapsed:Array(selected.length).fill(0),i:0,lastTick:now,deadlineAt:now+WEEKLY_CHALLENGE_DURATION,challengeCycle:cycle,challengeWeek:week,result:null};
+  selectedModality='CPU-UNSM';page='quiz';saveTimedExam();render();
+ });
+}
+async function saveWeeklyResult(){
+ if(!quiz?.challengeWeek||!quiz?.result?.attempt_id)return;
+ const {error}=await db.rpc('save_weekly_challenge',{p_attempt_id:quiz.result.attempt_id,p_cycle:quiz.challengeCycle,p_week:quiz.challengeWeek});
+ if(error){quiz.challengeSaveError=error.message;return;}
+ quiz.challengeSaveError='';await loadWeeklyHistory();
+}
+
 function quizRemaining(){return quiz?.deadlineAt?Math.max(0,quiz.deadlineAt-Date.now()):null;}
 function examClock(ms){const seconds=Math.ceil(Math.max(0,ms)/1000);return [Math.floor(seconds/3600),Math.floor(seconds%3600/60),seconds%60].map(n=>String(n).padStart(2,'0')).join(':');}
 async function submitQuizTimed(){
@@ -747,7 +790,7 @@ async function submitQuizTimed(){
  const st=$('quizError');if(st)st.textContent='Entregando y calificando...';
  const {data,error}=await db.rpc('grade_attempt',{p_answers:quiz.items.map((q,i)=>({id:q.id,selected:quiz.answers[i]}))});
  if(error){if(st)st.textContent='Error al entregar: '+error.message+'; reintenta.';if(b)b.disabled=false;quizSubmitting=false;return;}
- quiz.result=data;quizSubmitting=false;clearTimedExam();await refresh();
+ quiz.result=data;quizSubmitting=false;clearTimedExam();await saveWeeklyResult();await refresh();
 }
 function bindQuizTimer(){clearInterval(quizTimerHandle);if(!quiz||quiz.result)return;quizTimerHandle=setInterval(()=>{if(!quiz||quiz.result){clearInterval(quizTimerHandle);return}tickQuizTime();const e=document.getElementById('questionTimer');if(e)e.textContent=timeFmt(quiz.elapsed[quiz.i]);const t=document.getElementById('totalTimer');if(t)t.textContent=timeFmt(quiz.elapsed.reduce((a,b)=>a+b,0));const left=document.getElementById('quizRemaining');if(left)left.textContent=examClock(quizRemaining());if(quiz.deadlineAt&&quizRemaining()===0)submitQuizTimed();},1000)}
 function quizPage(){if(!quiz)return `<div class="card"><h2>Nuevo simulacro</h2><p class="muted">Se seleccionarán preguntas publicadas. Las claves no se descargan antes de enviar tus respuestas.</p><div class="field"><label>Materia</label><select id="quizSubject"><option value="">Todas</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id&&q.status==='published').map(q=>q.subject))].map(s=>`<option>${esc(s)}</option>`).join('')}</select></div>
@@ -1339,6 +1382,7 @@ q.modality === selectedModality &&
 
     quiz.result=data;
     clearInterval(quizTimerHandle);
+    await saveWeeklyResult();
     await refresh();
   };
 
