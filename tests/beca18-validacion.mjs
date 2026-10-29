@@ -131,4 +131,8 @@ assert.ok(examHtml.includes('overflow-y:auto!important'),'El texto debe permanec
 assert.ok(examHtml.includes('.exam-questions{')&&examHtml.includes('overscroll-behavior:contain'),'Las preguntas deben desplazarse sin mover el texto');
 assert.ok(examJs.includes('lastReadingId===g.id'),'No debe reiniciarse la lectura con cada pregunta del mismo bloque');
 assert.ok(examJs.includes('IntersectionObserver'),'Al cambiar de bloque debe actualizarse la lectura');
+assert.ok(examHtml.includes('id="readingSelect"'),'Falta selector de textos');
+assert.ok(examHtml.includes('id="previousReading"')&&examHtml.includes('id="nextReading"'),'Faltan botones para cambiar texto');
+assert.ok(examJs.includes('function navigateToGroup('),'Falta navegación por lectura');
+assert.ok(examJs.includes('current.groups.map((g,i)'),'La navegación debe mostrar todos los textos');
 console.log('VALIDACIÓN BECA 18 CORRECTA:',d.lessons.length,'clases y',d.questions.length,'preguntas originales.');
