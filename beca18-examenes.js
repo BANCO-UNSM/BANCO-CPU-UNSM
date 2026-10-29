@@ -1,10 +1,14 @@
 'use strict';
 const el=id=>document.getElementById(id);
 const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-let exams=[],current=null,answers={},graded=false;
+let exams=[],current=null,answers={},graded=false,lastReadingId=null,questionObserver=null;
 function questionGroup(q){return current.groups[q.group]||{passage:'Lectura no disponible',pages:'—'};}
 function showReading(q){
  const g=questionGroup(q);
+ if(lastReadingId===g.id)return;
+ lastReadingId=g.id;
+ const left=document.querySelector('.exam-reading');
+ if(left)left.scrollTop=0;
  el('readingTitle').textContent='Lectura del examen '+current.year+' · preguntas '+g.first+'–'+g.last;
  el('readingInfo').textContent='Lee el texto y observa las imágenes o infografías que aparecen al final.';
  el('readingText').textContent=g.passage||'Texto pendiente de cotejo con el cuadernillo original.';
@@ -18,6 +22,8 @@ function showReading(q){
 }
 
 function showExam(year){
+ if(questionObserver){questionObserver.disconnect();questionObserver=null;}
+ lastReadingId=null;
  current=exams.find(e=>e.year===year)||exams[0];answers={};graded=false;
  el('examNav').innerHTML=exams.map(e=>'<button type="button" data-year="'+e.year+'" class="'+(e.year===current.year?'selected':'')+'">Examen '+e.year+'</button>').join('')+'<a href="beca18-clases.html">📚 Volver a clases</a>';
  el('questionsTitle').textContent='Preguntas 31 a 60 · '+current.year;
@@ -37,6 +43,21 @@ function showExam(year){
   fs.addEventListener('focusin',()=>showReading(q));
   fs.addEventListener('click',()=>showReading(q));
  });
+ // Al desplazarse por la lista de preguntas, cambiar de lectura solo cuando comienza otro bloque.
+ // Durante las preguntas de un mismo texto, el panel izquierdo permanece inmóvil.
+ const right=document.querySelector('.exam-questions');
+ if(right&&'IntersectionObserver' in window){
+  questionObserver=new IntersectionObserver(entries=>{
+   const visible=entries.filter(x=>x.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
+   if(visible.length){
+    const num=Number(visible[0].target.dataset.number);
+    const q=current.questions.find(x=>x.number===num);
+    if(q)showReading(q);
+   }
+  },{root:right,rootMargin:'-12px 0px -72% 0px',threshold:0});
+  right.querySelectorAll('fieldset.question').forEach(fs=>questionObserver.observe(fs));
+ }
+ if(right)right.scrollTop=0;
 }
 function evaluate(){
  if(!current)return;
@@ -55,7 +76,9 @@ function evaluate(){
  graded=true;
  el('result').innerHTML='<h3>Resultado: '+correct+'/'+current.questions.length+' correctas ('+Math.round(correct/current.questions.length*100)+' %)</h3><p>Respondiste '+answered+' preguntas; '+(current.questions.length-answered)+' quedaron sin marcar. La calificación se basa en las claves publicadas en el cuadernillo y está sujeta a revisión de los textos digitalizados.</p>';
  el('grade').disabled=true;
- el('result').scrollIntoView({behavior:'smooth',block:'center'});
+ const right=document.querySelector('.exam-questions');
+ if(right&&window.matchMedia('(min-width:851px)').matches)right.scrollTo({top:right.scrollHeight,behavior:'smooth'});
+ else el('result').scrollIntoView({behavior:'smooth',block:'center'});
 }
 async function init(){
  try{
