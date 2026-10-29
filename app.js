@@ -183,6 +183,7 @@ async function refresh(){
    const servicesResponse=await db.rpc('my_authorized_services');
    authorizedServices=teacher()?['CPU-UNSM','BECA18']:(Array.isArray(servicesResponse.data)?servicesResponse.data:[]);
    if(servicesResponse.error){console.error('Servicios autorizados:',servicesResponse.error.message);authorizedServices=[];}
+   if(hasService('BECA18'))await obtenerLecturasBeca();
    const q=await db.from('questions')
 .select('id,exam_id,modality,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
    if(q.error){
@@ -228,6 +229,7 @@ function render(){
  mostrarFormulas();
  // Carga imágenes privadas visibles después de dibujar cada pantalla.
  cargarImagenesPrivadas($('app'));
+ cargarImagenesEspecialesBeca($('app'));
 }
 function accessPage(){
  const status=access?.status==='pending'?'Pendiente de autorización':access?.status==='suspended'?'Cuenta suspendida':access?.status==='device_blocked'?'Dispositivo no autorizado':access?.status==='setup_error'?'Actualización pendiente en Supabase':'Suscripción vencida';
@@ -584,7 +586,18 @@ function bindBankSolutions(){
 }
 // Beca 18: panel compartido; el texto se obtiene de un recurso estático, sin exponer claves.
 let becaReadings={};
-fetch('beca18_readings.json').then(r=>r.ok?r.json():{}).then(d=>{becaReadings=d;}).catch(()=>{});
+async function obtenerLecturasBeca(){
+ if(!hasService('BECA18')||Object.keys(becaReadings).length)return;
+ try{becaReadings=await window.becaPrivate.document('beca18_readings.json');}
+ catch(error){console.error('No se pudieron obtener lecturas Beca 18:',error.message);}
+}
+async function cargarImagenesEspecialesBeca(raiz){
+ if(!hasService('BECA18'))return;
+ for(const img of raiz.querySelectorAll('img[data-beca-private-src]')){
+  try{const src=await window.becaPrivate.image(img.dataset.becaPrivateSrc);if(img.isConnected)img.src=src;}
+  catch(error){if(img.isConnected)img.alt='Imagen no disponible: '+error.message;}
+ }
+}
 function becaReadingNumber(q){
  if(q?.modality!=='BECA18'||!String(q.cycle||'').includes('2023'))return 0;
  const n=Number(q.original_number);
@@ -592,7 +605,7 @@ function becaReadingNumber(q){
 }
 function becaReadingPanel(q){
  const n=becaReadingNumber(q);if(!n)return '';
- if(n===1)return `<section class="reading-panel"><h3>📖 Texto 1 · Lectura e infografía original</h3><div class="reading-scroll"><img src="beca18_texto1.png" alt="Texto e infografía originales del examen Beca 18 de 2023" style="max-width:100%;height:auto"></div></section>`;
+ if(n===1)return `<section class="reading-panel"><h3>📖 Texto 1 · Lectura e infografía original</h3><div class="reading-scroll"><img data-beca-private-src="beca18_texto1.png" alt="Texto e infografía originales del examen Beca 18 de 2023" style="max-width:100%;height:auto"></div></section>`;
  return `<section class="reading-panel"><h3>📖 Texto ${n} · Lectura compartida</h3><div class="reading-scroll" style="white-space:pre-wrap">${esc(becaReadings[String(n)]||'Lectura en preparación. No publicar este bloque hasta verificar el texto original.')}</div></section>`;
 }
 function timeFmt(ms){const sec=Math.max(0,Math.floor(ms/1000));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
