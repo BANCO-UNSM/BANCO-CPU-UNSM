@@ -1,0 +1,48 @@
+name: Extraer solo ilustraciones y gráficos del texto
+on:
+  push:
+    branches: [fix/beca18-transcripcion-directa-ilustraciones]
+    paths: ['.github/workflows/extraer-ilustraciones-beca18.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  ilustraciones:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet Pillow
+      - name: Recortar exclusivamente el gráfico o infografía, sin el encabezado ni preguntas
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          items=[["2023","page-15.jpg","sustitucion-pescado.jpg",[0.12,0.535,0.90,0.96]],["2024","page-18.jpg","radiacion-uv.jpg",[0.093,0.055,0.84,0.83]],["2024","page-24.jpg","sueno-grafico.jpg",[0.185,0.65,0.73,0.82]],["2025","page-15.jpg","desinformacion-grafico.jpg",[0.258,0.235,0.66,0.472]],["2025","page-17.jpg","lesion-cerebral.jpg",[0.105,0.24,0.84,0.855]],["2025","page-24.jpg","oceanos-plastico.jpg",[0.11,0.195,0.762,0.47]]]
+          for year,filename,dest,box in items:
+              source=Path('beca18-images')/year/filename
+              assert source.exists(), str(source)
+              output=Path('beca18-illustrations')/year/dest
+              output.parent.mkdir(parents=True,exist_ok=True)
+              with Image.open(source) as im:
+                  w,h=im.size
+                  crop=tuple(round(v*dim) for v,dim in zip(box,(w,h,w,h)))
+                  im.crop(crop).convert('RGB').save(output,quality=90,optimize=True)
+                  print(f'{output}: {crop}')
+          assert len(list(Path('beca18-illustrations').glob('*/*.jpg')))==6
+          PY
+      - name: Guardar las ilustraciones recortadas
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add beca18-illustrations/
+          if ! git diff --cached --quiet; then
+            git commit -m 'assets(beca18): seis infografías recortadas sin textos de página'
+            git fetch origin fix/beca18-transcripcion-directa-ilustraciones
+            git rebase origin/fix/beca18-transcripcion-directa-ilustraciones
+            git push origin HEAD:fix/beca18-transcripcion-directa-ilustraciones
+          fi

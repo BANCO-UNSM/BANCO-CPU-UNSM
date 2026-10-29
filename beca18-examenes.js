@@ -6,25 +6,23 @@ function questionGroup(q){return current.groups[q.group]||{passage:'Lectura no d
 function showReading(q){
  const g=questionGroup(q);
  el('readingTitle').textContent='Lectura del examen '+current.year+' · preguntas '+g.first+'–'+g.last;
- el('readingInfo').textContent='Texto e imagen originales del cuadernillo, sin encabezados ni numeración.';
- const pages=Array.isArray(g.images)?g.images:[];
- const original=el('originalPages');
- if(original){
-  original.innerHTML=pages.map((src,i)=>{
-   const filename=src.split('/').pop();
-   const page=filename.match(/page-([0-9]+)[.]jpg/)?.[1]||String(i+1);
-   return '<figure class="exam-page"><a href="'+escapeHtml(src)+'?v=recorte-20261028" target="_blank" rel="noopener" title="Ampliar texto e imagen"><img src="'+escapeHtml(src)+'?v=recorte-20261028" loading="'+(i===0?'eager':'lazy')+'" alt="Texto e ilustración original del examen Beca 18 '+current.year+'" data-fallback="0"></a></figure>';
-  }).join('');
-  original.querySelectorAll('img').forEach(img=>{img.addEventListener('error',()=>{img.closest('figure').innerHTML='<div class="warning">La imagen original de esta página todavía no está disponible. Consulta el PDF oficial.</div>';},{once:true});});
+ el('readingInfo').textContent='Lee el texto y observa las imágenes o infografías que aparecen al final.';
+ el('readingText').textContent=g.passage||'Texto pendiente de cotejo con el cuadernillo original.';
+ const images=Array.isArray(g.images)?g.images:[];
+ const holder=el('originalPages');
+ if(holder){
+  holder.innerHTML=images.map((src,i)=>'<figure class="exam-illustration"><a href="'+escapeHtml(src)+'" target="_blank" rel="noopener" title="Ampliar ilustración"><img src="'+escapeHtml(src)+'" loading="lazy" alt="Gráfico o ilustración '+(i+1)+' correspondiente a la lectura '+escapeHtml(g.id)+'"></a></figure>').join('');
+  holder.hidden=images.length===0;
+  holder.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{img.closest('figure').innerHTML='<p class="warning">La imagen correspondiente no está disponible. Consulta el PDF original.</p>';},{once:true}));
  }
- el('readingText').textContent=g.passage||'Transcripción opcional no disponible.';
 }
+
 function showExam(year){
  current=exams.find(e=>e.year===year)||exams[0];answers={};graded=false;
  el('examNav').innerHTML=exams.map(e=>'<button type="button" data-year="'+e.year+'" class="'+(e.year===current.year?'selected':'')+'">Examen '+e.year+'</button>').join('')+'<a href="beca18-clases.html">📚 Volver a clases</a>';
  el('questionsTitle').textContent='Preguntas 31 a 60 · '+current.year;
  el('questions').innerHTML=current.questions.map(q=>{
- const label=q.needs_visual?'<p class="warning small">Observa la imagen original del texto y la infografía en el panel izquierdo antes de responder.</p>':'';
+ const label=q.needs_visual?'<p class="warning small">Observa la infografía o ilustración que aparece debajo de la lectura, en el panel izquierdo.</p>':'';
  return '<fieldset class="question" data-number="'+q.number+'" id="p'+q.number+'"><legend>Pregunta '+q.number+'. '+escapeHtml(q.statement)+'</legend>'+label+
  q.options.map((opt,i)=>'<label><input type="radio" name="q'+q.number+'" value="'+i+'"> <strong>'+String.fromCharCode(65+i)+')</strong> '+escapeHtml(opt)+'</label>').join('')+'<div class="feedback"></div></fieldset>';
  }).join('');
