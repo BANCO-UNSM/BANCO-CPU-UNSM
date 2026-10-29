@@ -59,10 +59,12 @@ function renderImages(){
  const embedded=uploadedReading!==null?uploadedReading:(q?.images||[]).filter(isEmbeddedImage);
  const images=[...paths,...embedded];
  $('imagePreview').innerHTML=images.map(src=>'<div><img alt="Vista previa de ilustración" src="'+esc(src)+'"></div>').join('');
+ actualizarImagenesPrivadasEditor();
 }
 function renderQuestionImage(){
  const src=uploadedQuestion!==null?uploadedQuestion:(selectedItem()?.image||'');
  $('questionImagePreview').innerHTML=src?'<img alt="Imagen del enunciado" src="'+esc(src)+'">':'<span class="muted">Sin imagen en el enunciado.</span>';
+ actualizarImagenesPrivadasEditor();
 }
 async function compressImage(file){
  if(!file||!['image/png','image/jpeg','image/webp'].includes(file.type))throw Error('Selecciona una imagen PNG, JPG o WEBP.');
@@ -198,6 +200,15 @@ async function auth(){
  userId=session.user.id;
  const {data:profile,error:profileError}=await client.from('profiles').select('role').eq('id',userId).maybeSingle();
  if(profileError||profile?.role!=='admin')throw Error('Acceso restringido: solo usuarios administradores pueden abrir el editor.');
+}
+async function actualizarImagenesPrivadasEditor(){
+ const imgs=[...document.querySelectorAll('img[src^="beca18-illustrations/"],img[src^="beca18_texto1.png"]')];
+ await Promise.all(imgs.map(async img=>{
+  const ruta=img.getAttribute('src');
+  if(!ruta)return;
+  try{const src=await window.becaPrivate.image(ruta);if(img.isConnected)img.src=src;}
+  catch(error){if(img.isConnected)img.alt='Ilustración privada no disponible';}
+ }));
 }
 async function init(){
  try{
