@@ -1,0 +1,47 @@
+name: Recortar encabezados y pies de lecturas Beca 18
+on:
+  push:
+    branches: [fix/beca18-crop-page-headers-footers]
+    paths:
+      - '.github/workflows/recortar-lecturas-beca18.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  recortar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar Pillow
+        run: python -m pip install --quiet Pillow
+      - name: Retirar encabezados y numeración impresa sin alterar el contenido central
+        run: |
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          files=list(Path('beca18-images').glob('*/page-*.jpg'))
+          assert len(files)==37, f'Esperadas 37 páginas originales; encontradas {len(files)}'
+          for path in files:
+              with Image.open(path) as source:
+                  img=source.convert('RGB')
+                  w,h=img.size
+                  top=round(h*0.055)
+                  bottom=round(h*0.045)
+                  assert h-top-bottom>1000
+                  img.crop((0,top,w,h-bottom)).save(path,quality=88,optimize=True)
+                  print(path, 'recorte superior',top,'inferior',bottom)
+          PY
+      - name: Guardar las imágenes limpias
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add beca18-images/
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(beca18): quitar encabezado institucional y pie con número de página"
+            git push origin HEAD:fix/beca18-crop-page-headers-footers
+          fi
