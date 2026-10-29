@@ -6,14 +6,14 @@ function questionGroup(q){return current.groups[q.group]||{passage:'Lectura no d
 function showReading(q){
  const g=questionGroup(q);
  el('readingTitle').textContent='Lectura del examen '+current.year+' · preguntas '+g.first+'–'+g.last;
- el('readingInfo').textContent='Referencia del PDF original: páginas '+g.pages+'.';
+ el('readingInfo').textContent='Texto e imagen originales del cuadernillo, sin encabezados ni numeración.';
  const pages=Array.isArray(g.images)?g.images:[];
  const original=el('originalPages');
  if(original){
   original.innerHTML=pages.map((src,i)=>{
    const filename=src.split('/').pop();
    const page=filename.match(/page-([0-9]+)[.]jpg/)?.[1]||String(i+1);
-   return '<figure class="exam-page"><a href="'+escapeHtml(src)+'" target="_blank" rel="noopener" title="Abrir imagen para ampliar"><img src="'+escapeHtml(src)+'" loading="'+(i===0?'eager':'lazy')+'" alt="Página original '+escapeHtml(page)+' del examen Beca 18 '+current.year+': contiene el texto y sus imágenes, gráficos o infografías tal como aparecen en el cuadernillo" data-fallback="0"></a><figcaption>Página original '+escapeHtml(page)+' · Haz clic para ampliar</figcaption></figure>';
+   return '<figure class="exam-page"><a href="'+escapeHtml(src)+'?v=recorte-20261028" target="_blank" rel="noopener" title="Ampliar texto e imagen"><img src="'+escapeHtml(src)+'?v=recorte-20261028" loading="'+(i===0?'eager':'lazy')+'" alt="Texto e ilustración original del examen Beca 18 '+current.year+'" data-fallback="0"></a></figure>';
   }).join('');
   original.querySelectorAll('img').forEach(img=>{img.addEventListener('error',()=>{img.closest('figure').innerHTML='<div class="warning">La imagen original de esta página todavía no está disponible. Consulta el PDF oficial.</div>';},{once:true});});
  }
