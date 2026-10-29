@@ -184,6 +184,10 @@ function renderMobileSequentialExam(){
  const host=el('questions');
  if(!mobileView()||!current||!host)return;
  document.body.classList.add('mobile-sequential-exam');
+ const legacyReading=document.querySelector('.exam-reading');
+ if(legacyReading){legacyReading.hidden=true;legacyReading.style.setProperty('display','none','important');}
+ const legacyGuide=el('mobileReadingGuide');
+ if(legacyGuide){legacyGuide.hidden=true;legacyGuide.style.setProperty('display','none','important');}
  const nodes=[...host.querySelectorAll('fieldset.question')];
  const groups=current.groups;
  host.replaceChildren();
@@ -241,6 +245,8 @@ function showExam(year){
  current=exams.find(e=>e.year===year)||exams[0];answers={};graded=false;
  el('examNav').innerHTML=exams.map(e=>'<button type="button" data-year="'+e.year+'" class="'+(e.year===current.year?'selected':'')+'">Examen '+e.year+'</button>').join('')+'<a href="beca18-clases.html">📚 Volver a clases</a>';
  document.body.classList.toggle('mobile-sequential-exam',mobileView());
+ const legacyReading=document.querySelector('.exam-reading');
+ if(legacyReading){legacyReading.hidden=mobileView();legacyReading.style.setProperty('display',mobileView()?'none':'','important');}
  el('questionsTitle').textContent='Preguntas 31 a 60 · '+current.year;
  el('readingSelect').innerHTML=current.groups.map((g,i)=>'<option value="'+i+'">Texto '+(i+1)+' · preguntas '+g.first+'–'+g.last+'</option>').join('');
  el('readingSelect').onchange=e=>navigateToGroup(Number(e.target.value));
