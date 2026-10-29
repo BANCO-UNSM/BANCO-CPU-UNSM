@@ -363,6 +363,12 @@ function home(){
       </div>
     </div>
 
+    <div class="card" style="border:1px solid #93c5fd;background:linear-gradient(115deg,#eff6ff,#fff)">
+      <h2>🧠 Laboratorio 3D de anatomía</h2>
+      <p>Explora el cerebro y el cráneo en tres dimensiones. Selecciona estructuras, descubre sus funciones y practica su identificación.</p>
+      <p><a href="laboratorio3d.html" class="button" style="display:inline-block;text-decoration:none;background:#2563eb;color:#fff;padding:12px 16px;border-radius:9px">Abrir laboratorio anatómico 3D ↗</a></p>
+      <p class="muted small">Próximamente: esqueleto humano, arterias y aorta.</p>
+    </div>
     ${!teacher()?progressSnapshot():''}
     <div class="grid">
       <div class="card">
