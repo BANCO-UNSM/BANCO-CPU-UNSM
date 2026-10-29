@@ -62,4 +62,25 @@ for(const q of pronabec.questions){
  assert.ok(q.options[q.correct_index],q.id+' clave inválida');
  for(let i=0;i<4;i++)assert.ok(q.explanation[keys[i]]?.startsWith(prefixes[i]),'Bloque faltante: '+q.id);
 }
+
+const previous=JSON.parse(readFileSync('beca18-examenes-verbal.json','utf8'));
+assert.equal(previous.exams.length,3,'Se requieren tres convocatorias');
+for(const exam of previous.exams){
+ assert.ok([2023,2024,2025].includes(exam.year));
+ assert.equal(exam.questions.length,30,'Se requieren 30 preguntas lectoras de '+exam.year);
+ const expected=Array.from({length:30},(_,i)=>31+i);
+ assert.deepEqual(exam.questions.map(q=>q.number),expected,'Numeración original incompleta: '+exam.year);
+ for(const q of exam.questions){
+  assert.equal(q.options.length,4,'Alternativas incorrectas en '+q.id);
+  assert.ok(q.options.every(x=>typeof x==='string'&&x.trim().length>1),'Opción vacía '+q.id);
+  assert.ok(q.statement.length>15,'Enunciado corto '+q.id);
+  assert.ok(Number.isInteger(q.correct_index)&&q.correct_index>=0&&q.correct_index<4,'Clave inválida '+q.id);
+  assert.ok(exam.groups[q.group]?.passage.length>50,'Falta lectura '+q.id);
+ }
+}
+assert.ok(html.includes('beca18-examenes.html'),'Falta enlace de exámenes desde clases');
+const examHtml=readFileSync('beca18-examenes.html','utf8');
+const examJs=readFileSync('beca18-examenes.js','utf8');
+assert.ok(examHtml.includes('beca18-examenes.js')&&examJs.includes('function evaluate('));
+
 console.log('VALIDACIÓN BECA 18 CORRECTA:',d.lessons.length,'clases y',d.questions.length,'preguntas originales.');
