@@ -94,4 +94,15 @@ for (const exam of previous.exams) {
 }
 
 
+// Vista de lectura: texto directo seguido de gráficos sin imágenes de página completa.
+assert.ok(examHtml.includes('id="readingText"'),'Falta texto transcrito');
+assert.ok(examHtml.includes('id="originalPages"'),'Falta contenedor de ilustraciones');
+assert.ok(!examHtml.includes('Mostrar transcripción de apoyo (opcional)'),'La transcripción no debe ocultarse tras un desplegable');
+assert.ok(examJs.indexOf("el('readingText').textContent")<examJs.indexOf("el('originalPages')"),'El texto debe cargarse antes que las ilustraciones');
+const illustrated=previous.exams.flatMap(e=>e.groups.flatMap(g=>g.images||[]));
+assert.equal(illustrated.length,6,'Se requieren seis infografías recortadas y no las páginas enteras');
+for(const path of illustrated){
+ assert.ok(path.startsWith('beca18-illustrations/'),'No mostrar páginas completas: '+path);
+ assert.ok(readFileSync(path).length>5000,'Infografía ausente o vacía: '+path);
+}
 console.log('VALIDACIÓN BECA 18 CORRECTA:',d.lessons.length,'clases y',d.questions.length,'preguntas originales.');
