@@ -85,7 +85,7 @@ function collect(){
  const status=$('status').value;
  if(!['borrador','en_revision','publicada'].includes(status))throw Error('Estado desconocido.');
  if(status==='publicada'&&!confirm('¿Confirmas marcar este contenido como PUBLICADA? No se enviará al sitio automáticamente; tendrás que subir el JSON a GitHub.'))return null;
- let next={...q,editor_status:status,editor_updated_at:new Date().toISOString(),editor_updated_by:userId};
+ let next={...q,editor_status:status,editor_updated_at:new Date().toISOString()};
  if(kind==='reading'){
   const passage=$('passage').value.trim();
   if(passage.length<30)throw Error('La lectura debe contener al menos 30 caracteres.');
