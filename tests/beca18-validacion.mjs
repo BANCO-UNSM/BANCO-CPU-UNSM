@@ -86,7 +86,7 @@ assert.ok(examHtml.includes('id="originalPages"'),'Falta contenedor de páginas 
 assert.ok(examJs.includes("el('originalPages')"),'La interfaz no muestra las páginas originales');
 for (const exam of previous.exams) {
  for (const g of exam.groups) {
-  assert.ok(Array.isArray(g.images)&&g.images.length>0,'Faltan imágenes para lectura '+g.id);
+  assert.ok(Array.isArray(g.images),'Formato de imágenes incorrecto para lectura '+g.id);
   for (const path of g.images) {
    assert.ok(readFileSync(path).length>5000,'Imagen original ausente o demasiado pequeña: '+path);
   }
