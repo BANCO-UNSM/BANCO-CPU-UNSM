@@ -42,3 +42,16 @@
   #app .card {padding:15px;}
   #app .katex-display {font-size:0.88em; margin:0.3em 0;}
 }
+
+/* Progreso académico: usable en escritorio y pantallas pequeñas */
+.learning-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 20px}
+.learning-stats>div{background:#eef6ff;border:1px solid #d8e8fa;border-radius:14px;padding:16px;text-align:center;min-width:0}
+.learning-stats strong{display:block;font-size:clamp(1.45rem,4vw,2.1rem);color:#154e91;line-height:1.25}
+.learning-stats span{display:block;margin-top:5px;font-size:.81rem;color:#41556a}
+.learning-row{padding:16px 0;border-bottom:1px solid #e6edf4}
+.learning-row:last-child{border-bottom:0}
+.learning-row-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:11px}
+.learning-row-head span{font-size:.84rem;color:#51677d}
+.learning-track{width:100%;height:12px;background:#e5edf7;overflow:hidden;border-radius:999px;margin-bottom:13px}
+.learning-fill{height:100%;background:linear-gradient(90deg,#0b81b7,#37bfa1);border-radius:999px}
+@media(max-width:600px){.learning-stats{gap:7px}.learning-stats>div{padding:10px 5px;border-radius:10px}.learning-stats span{font-size:.74rem}.learning-row-head{align-items:flex-start;flex-direction:column}}
