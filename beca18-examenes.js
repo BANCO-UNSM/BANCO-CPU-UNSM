@@ -12,7 +12,7 @@ function showReading(q){
  if(original){
   original.innerHTML=pages.map((src,i)=>{
    const filename=src.split('/').pop();
-   const page=filename.match(/page-(\\d+)\\.jpg/)?.[1]||String(i+1);
+   const page=filename.match(/page-([0-9]+)[.]jpg/)?.[1]||String(i+1);
    return '<figure class="exam-page"><a href="'+escapeHtml(src)+'" target="_blank" rel="noopener" title="Abrir imagen para ampliar"><img src="'+escapeHtml(src)+'" loading="'+(i===0?'eager':'lazy')+'" alt="Página original '+escapeHtml(page)+' del examen Beca 18 '+current.year+': contiene el texto y sus imágenes, gráficos o infografías tal como aparecen en el cuadernillo" data-fallback="0"></a><figcaption>Página original '+escapeHtml(page)+' · Haz clic para ampliar</figcaption></figure>';
   }).join('');
   original.querySelectorAll('img').forEach(img=>{img.addEventListener('error',()=>{img.closest('figure').innerHTML='<div class="warning">La imagen original de esta página todavía no está disponible. Consulta el PDF oficial.</div>';},{once:true});});
