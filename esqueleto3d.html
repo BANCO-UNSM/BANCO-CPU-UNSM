@@ -66,6 +66,23 @@ function drawCatalog(){
 }
 $('catalogSearch').addEventListener('input',drawCatalog);
 const terms=[
+ ['manubrium of sternum','Manubrio del esternón'],
+ ['manubrium','Manubrio del esternón'],['manubrial','Manubrio del esternón'],
+ ['xiphoid process','Apófisis xifoides del esternón'],
+ ['xiphoid','Apófisis xifoides del esternón'],
+ ['body of sternum','Cuerpo del esternón'],['sternal body','Cuerpo del esternón'],
+ ['sternal angle','Ángulo esternal'],['sternal','Esternón'],
+ ['auditory ossicle','Huesecillo del oído'],
+ ['malleus','Martillo'],['incus','Yunque'],['stapes','Estribo'],
+ ['styloid process','Apófisis estiloides'],['odontoid','Apófisis odontoides'],
+ ['zygomatic arch','Arco cigomático'],['zygomatic bone','Cigomático'],
+ ['mandibular','Mandíbula'],['inferior turbinate','Cornete nasal inferior'],
+ ['greater horn of hyoid','Asta mayor del hioides'],
+ ['lesser horn of hyoid','Asta menor del hioides'],
+ ['dens','Apófisis odontoides'],['coccygeal','Cóccix'],
+ ['sacral','Sacro'],['coxal','Hueso coxal'],
+ ['first rib','Primera costilla'],['second rib','Segunda costilla'],
+
  ['middle phalanx','Falange media'],['distal phalanx','Falange distal'],['proximal phalanx','Falange proximal'],
  ['metacarpal','Metacarpiano'],['metatarsal','Metatarsiano'],
  ['lateral cuneiform','Cuneiforme lateral'],['medial cuneiform','Cuneiforme medial'],['intermediate cuneiform','Cuneiforme intermedio'],
@@ -91,7 +108,11 @@ function nameOf(o){return String(o.userData?.name||o.name||'').replace(/_/g,' ')
 const normalized=x=>String(x).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 function baseSpanish(raw){
  const key=normalized(raw);const match=terms.find(([english])=>key.includes(english));
- let base=match?match[1]:'Hueso por identificar';
+ let base=match?match[1]:null;
+ if(!base){
+   // Identificación auxiliar por ubicación anatómica; no inventar el nombre de un hueso.
+   base='Estructura ósea pendiente de clasificación';
+ }
  const finger=digitNames.find(([name])=>key.includes(name));
  if(finger)base+=' del '+finger[1];
  const side=/\bleft\b/.test(key)?'izquierdo':/\bright\b/.test(key)?'derecho':null;
@@ -120,7 +141,8 @@ function assignSpanishNames(){
     if(isRib){
       namesES.set(m,(i+1)+'\.ª costilla'+(label.includes('izquierda')?' izquierda':label.includes('derecha')?' derecha':''));
     }else{
-      namesES.set(m,label+' · '+(i+1));
+      namesES.set(m,label.startsWith('Estructura ósea pendiente')
+      ?label+' (registro '+(i+1)+')':label+' · '+(i+1));
     }
   });
  }
@@ -144,7 +166,7 @@ outline=new THREE.Mesh(mesh.geometry,borde);
 outline.name='Borde amarillo del hueso seleccionado';
 outline.renderOrder=10;
 mesh.add(outline)}
-function select(mesh){clearHighlight();chosen=mesh;highlight(mesh);$('hideSelected').disabled=!mesh;$('isolateSelected').disabled=!mesh;$('focusSelected').disabled=!mesh;$('detail').textContent=mesh?spanish(mesh)+'. Resaltado turquesa y borde naranja de alto contraste. Usa «Ocultar» o «Aislar» para explorar la anatomía.':'Selecciona un hueso para ver su nombre.';drawList()}
+function select(mesh){clearHighlight();chosen=mesh;highlight(mesh);$('hideSelected').disabled=!mesh;$('isolateSelected').disabled=!mesh;$('focusSelected').disabled=!mesh;$('detail').textContent=mesh?spanish(mesh)+'. '+(spanish(mesh).startsWith('Estructura ósea pendiente')?'Nombre específico aún no validado. ':'')+'Resaltado turquesa y borde naranja de alto contraste. Usa «Ocultar» o «Aislar» para explorar la anatomía.':'Selecciona un hueso para ver su nombre.';drawList()}
 function drawList(){const q=$('search').value.trim().toLowerCase();$('bones').replaceChildren();let matches=meshes.filter(m=>normalized(spanish(m)).includes(normalized(q)));for(const m of matches.slice(0,100)){const b=document.createElement('button');b.textContent=(m.visible?'👁 ':'◌ ')+spanish(m);if(m===chosen)b.classList.add('selected');b.onclick=()=>select(m);$('bones').appendChild(b)}if(!matches.length)$('bones').textContent='No se encontraron huesos con ese nombre.'}
 function reset(){camera.position.copy(center).add(new THREE.Vector3(0,radius*.06,radius*3.5));controls.target.copy(center);controls.update()}$('resetCamera').onclick=reset;$('showAll').onclick=()=>{meshes.forEach(m=>m.visible=true);drawList()};$('hideSelected').onclick=()=>{if(chosen){chosen.visible=false;drawList()}};$('isolateSelected').onclick=()=>{if(chosen){meshes.forEach(m=>m.visible=m===chosen);drawList()}};$('focusSelected').onclick=()=>{if(!chosen)return;const box=new THREE.Box3().setFromObject(chosen);const target=box.getCenter(new THREE.Vector3());const size=box.getSize(new THREE.Vector3()).length();controls.target.copy(target);camera.position.copy(target).add(new THREE.Vector3(0,Math.max(.03,size*.2),Math.max(.23,size*2.8)));controls.update()};$('search').oninput=drawList;drawCatalog();
 const raycaster=new THREE.Raycaster();renderer.domElement.addEventListener('click',e=>{const rect=renderer.domElement.getBoundingClientRect();const mouse=new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects(meshes.filter(m=>m.visible),false);if(hits.length)select(hits[0].object)});
@@ -165,6 +187,8 @@ function loaded(gltf){
   if(isBone)all.push(o);
  });
  meshes=all;assignSpanishNames();drawCatalog();
+ const pendientes=meshes.filter(m=>spanish(m).startsWith('Estructura ósea pendiente'));
+ if(pendientes.length)console.warn('Estructuras sin correspondencia anatómica en el diccionario:',pendientes.map(m=>({nombreOriginal:nameOf(m),posicion:new THREE.Box3().setFromObject(m).getCenter(new THREE.Vector3()).toArray()})));
  if(!meshes.length){
   $('status').textContent='El archivo 3D cargó, pero no se encontraron huesos. Comprueba los datos del modelo.';
   return;
