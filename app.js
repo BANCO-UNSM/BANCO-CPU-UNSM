@@ -137,6 +137,7 @@ let relationItems=[],relationBusy=false,relationLoaded=false,relationError='',re
 let authMode='login';
 let selectedModality='CPU-UNSM';
 let authorizedServices=[];
+let learningProgress=null,learningProgressError='';
 const hasService=m=>teacher()||authorizedServices.includes(m);
 const modalityQuestions=()=>questions.filter(q=>q.modality===selectedModality&&hasService(q.modality));
 
@@ -158,7 +159,7 @@ const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':
 async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
 async function refresh(){
  relationLoaded=false;relationItems=[];relationReview=null;
- profile=null;access=null;authorizedServices=[];questions=[];attempts=[];exams=[];examsError='';questionsError='';
+ profile=null;access=null;authorizedServices=[];learningProgress=null;learningProgressError='';questions=[];attempts=[];exams=[];examsError='';questionsError='';
  if(user){
   const p=await db.from('profiles').select('role,name').eq('id',user.id).maybeSingle();profile=p.data;
   if(teacher()) access={status:'staff',allowed:true};
@@ -207,7 +208,7 @@ async function refresh(){
         exams.push({id,code:meta.code||'',title:meta.title||('Examen · '+id.slice(0,8)),exam_type:meta.exam_type||'CPU',exam_year:meta.exam_year||Number(String(first?.cycle||'').slice(0,4))||null,cycle:meta.cycle||first?.cycle||'',exam_number:meta.exam_number||null,exam_date:meta.exam_date||null,status:'unknown',_localFallback:true});
       }
     }
-   const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
+   const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];await loadLearningProgress();
   }
  }
  if(user&&(teacher()||access?.allowed))restoreTimedExam();
@@ -216,16 +217,17 @@ async function refresh(){
 }
 function render(){
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],...(hasService('CPU-UNSM')?[['exams','Exámenes de admisión']]:[]),['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],...(hasService('CPU-UNSM')?[['exams','Exámenes de admisión']]:[]),['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
  document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{if(quiz?.deadlineAt&&!quiz.result){alert('Hay un examen cronometrado en curso. Entrégalo antes de salir.');return;}page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
- $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',exams:'Exámenes de admisión',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
+ $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',exams:'Exámenes de admisión',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,quiz:quizPage,practice:practicePage,results,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage})[page]();
  bind();
+ bindProgress();
  mostrarFormulas();
  // Carga imágenes privadas visibles después de dibujar cada pantalla.
  cargarImagenesPrivadas($('app'));
@@ -331,6 +333,7 @@ function home(){
       </div>
     </div>
 
+    ${!teacher()?progressSnapshot():''}
     <div class="grid">
       <div class="card">
         <div class="muted">Preguntas visibles</div>
@@ -807,10 +810,56 @@ questions.filter(q=>!q.exam_id&&q.modality===selectedModality&&q.status==='publi
     const answer=Number(selected.value),q=practice.items[practice.i];
     const {data,error}=await db.rpc('check_practice_answer',{p_question_id:q.id,p_selected_index:answer});
     if(error){$('practiceError').textContent='No se pudo comprobar: '+error.message;button.disabled=false;return}
-    practice.selected=answer;practice.feedback=data;if(data.is_correct)practice.hits++;render();
+    practice.selected=answer;practice.feedback=data;if(data.is_correct)practice.hits++;await loadLearningProgress();render();
   };
   if($('nextPractice'))$('nextPractice').onclick=()=>{practice.i++;practice.selected=null;practice.feedback=null;render()};
   if($('finishPractice'))$('finishPractice').onclick=()=>{practice=null;render()};
+}
+
+
+async function loadLearningProgress(){
+ const {data,error}=await db.rpc('student_progress_overview');
+ learningProgressError=error?.message||data?.error||'';
+ learningProgress=learningProgressError?null:(data||null);
+}
+const progressSubjects=()=>Array.isArray(learningProgress?.by_subject)?learningProgress.by_subject.filter(x=>hasService(x.modality)):[];
+const progressErrors=()=>Array.isArray(learningProgress?.review)?learningProgress.review.filter(x=>hasService(x.modality)):[];
+const percent=(correct,total)=>total?Math.round(100*Number(correct)/Number(total)):0;
+function progressSnapshot(){
+ if(learningProgressError)return '<div class="card"><p>Tu progreso está temporalmente indisponible.</p></div>';
+ const n=Number(learningProgress?.total)||0,c=Number(learningProgress?.correct)||0,errors=progressErrors().length;
+ return `<div class="card"><h2>📈 Tu progreso académico</h2><p class="muted">Cada pregunta se cuenta una sola vez, usando la respuesta más reciente.</p><div class="learning-stats"><div><strong>${n}</strong><span>Preguntas trabajadas</span></div><div><strong>${percent(c,n)}%</strong><span>Acierto actual</span></div><div><strong>${errors}</strong><span>Por repasar</span></div></div><div class="actions"><button class="secondary" id="goProgress">Ver progreso por materia</button><button class="secondary" id="goMistakes">Mis errores</button></div></div>`;
+}
+function progressPage(){
+ if(learningProgressError)return notice('No se pudo cargar tu progreso: '+learningProgressError,true);
+ const n=Number(learningProgress?.total)||0,c=Number(learningProgress?.correct)||0;
+ if(!n)return '<div class="card"><h2>📈 Mi progreso</h2><p>Todavía no has practicado preguntas registradas. Comienza una práctica o simulacro.</p><button id="progressStart">Comenzar práctica</button></div>';
+ const subjects=progressSubjects().sort((a,b)=>percent(a.correct,a.total)-percent(b.correct,b.total));
+ return `<div class="card"><h2>📈 Mi progreso</h2><p>Las estadísticas provienen de tus prácticas y simulacros. Se considera la última respuesta de cada pregunta.</p><div class="learning-stats"><div><strong>${n}</strong><span>Preguntas distintas</span></div><div><strong>${c}</strong><span>Dominadas actualmente</span></div><div><strong>${percent(c,n)}%</strong><span>Aciertos</span></div></div></div><div class="card"><h3>Tu rendimiento por materia</h3>${subjects.map(x=>{const p=percent(x.correct,x.total);return `<div class="learning-row"><div class="learning-row-head"><strong>${esc(x.subject)}</strong><span>${esc(x.modality==='BECA18'?'Beca 18':'CPU-UNSM')} · ${x.correct}/${x.total} · ${p}%</span></div><div class="learning-track"><div class="learning-fill" style="width:${p}%"></div></div><button class="secondary" data-progress-modality="${esc(x.modality)}" data-progress-subject="${esc(x.subject)}">Practicar materia</button></div>`}).join('')}</div><div class="card"><h3>💡 Recomendación de estudio</h3><p>Refuerza primero <strong>${esc(subjects[0]?.subject||'las materias pendientes')}</strong>. Esta sugerencia se basa en tu porcentaje de respuestas correctas; no sustituye la orientación docente.</p><button id="goMistakes" class="secondary">Repasar mis errores</button></div>`;
+}
+function mistakesPage(){
+ if(learningProgressError)return notice('No se pudieron cargar los errores: '+learningProgressError,true);
+ const errors=progressErrors(),visible=new Map(questions.filter(q=>q.status==='published'&&!q.exam_id&&hasService(q.modality)).map(q=>[q.id,q]));
+ const retry=errors.filter(x=>visible.has(x.id));
+ return `<div class="card"><h2>🧠 Mis errores</h2><p>Preguntas cuya última respuesta fue incorrecta. Para ver la solución tendrás que responder otra vez.</p><div class="learning-stats"><div><strong>${errors.length}</strong><span>Pendientes de repaso</span></div><div><strong>${retry.length}</strong><span>Disponibles para practicar</span></div></div><div class="actions"><button id="retryMistakes" ${retry.length?'':'disabled'}>Repasar mis errores</button><button id="goProgress" class="secondary">Ver progreso</button></div></div><div class="card"><h3>Mis preguntas por reforzar</h3>${errors.length?errors.slice(0,80).map(x=>`<div class="listitem"><strong>${esc(x.subject)}</strong> <span class="muted small">${esc(x.modality==='BECA18'?'Beca 18':'CPU-UNSM')}</span><p class="muted">${esc(x.topic||'Tema general')}${x.week?' · Semana '+esc(x.week):''}</p>${visible.has(x.id)?`<button class="secondary" data-retry-question="${esc(x.id)}">Volver a resolver</button>`:'<p class="muted small">Disponible en historial de examen; no en práctica inmediata.</p>'}</div>`).join(''):'<p>¡Buen trabajo! No tienes preguntas pendientes según tu último intento.</p>'}${errors.length>80?'<p>Se muestran las primeras 80 preguntas pendientes.</p>':''}</div>`;
+}
+function bindProgress(){
+ $('goProgress')?.addEventListener('click',()=>{page='progress';render()});
+ $('goMistakes')?.addEventListener('click',()=>{page='mistakes';render()});
+ $('progressStart')?.addEventListener('click',()=>{page='practice';render()});
+ function practiceItems(items){if(!items.length)return;selectedModality=items[0].modality;page='practice';practice=null;startPractice(items.filter(x=>x.modality===selectedModality));}
+ document.querySelectorAll('[data-progress-modality]').forEach(b=>b.addEventListener('click',()=>{
+  const items=questions.filter(q=>q.status==='published'&&!q.exam_id&&q.modality===b.dataset.progressModality&&q.subject===b.dataset.progressSubject&&hasService(q.modality));
+  if(items.length)practiceItems(items);else{selectedModality=b.dataset.progressModality;page='practice';render();}
+ }));
+ $('retryMistakes')?.addEventListener('click',()=>{
+  const ids=new Set(progressErrors().map(x=>x.id));
+  practiceItems(questions.filter(q=>ids.has(q.id)&&q.status==='published'&&!q.exam_id&&hasService(q.modality)));
+ });
+ document.querySelectorAll('[data-retry-question]').forEach(b=>b.addEventListener('click',()=>{
+  const q=questions.find(x=>x.id===b.dataset.retryQuestion&&x.status==='published'&&!x.exam_id&&hasService(x.modality));
+  if(q)practiceItems([q]);
+ }));
 }
 
 function results(){return `<div class="card"><h2>Mis resultados</h2>${attempts.map(a=>`<div class="listitem"><strong>${new Date(a.submitted_at).toLocaleString('es-PE')}</strong> · ${a.correct}/${a.total} (${Math.round(100*a.correct/a.total)}%)</div>`).join('')||'<p>Todavía no hay resultados.</p>'}</div>`}
