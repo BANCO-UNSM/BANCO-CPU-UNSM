@@ -16,3 +16,29 @@
 .time-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin:12px 0}
 .time-grid span{background:#f0f6fd;padding:8px;border-radius:8px}
 @media(max-width:900px){.exam-layout{grid-template-columns:1fr}.reading-panel{position:static}.reading-scroll{max-height:38vh}}
+
+
+/* Desarrollo de soluciones: fracciones alineadas a la izquierda, sin recortes.
+   KaTeX mantiene la notación vertical y permite desplazarse si es muy ancha. */
+#app .katex-display {
+  width:100%;
+  max-width:100%;
+  margin:0.45em 0;
+  padding:2px 0 5px;
+  text-align:left;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+#app .katex-display > .katex {
+  display:block;
+  width:max-content;
+  min-width:0;
+  text-align:left;
+  white-space:nowrap;
+}
+#app .card,#app .listitem,#app details {min-width:0;}
+@media(max-width:600px) {
+  #app .card {padding:15px;}
+  #app .katex-display {font-size:0.88em; margin:0.3em 0;}
+}
