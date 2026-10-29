@@ -21,4 +21,7 @@ assert.ok(privateJs.includes("api().rpc('beca_private_read'"),'El banco necesita
 assert.ok(!html.includes('Mostrar transcripción de apoyo (opcional)'),'El texto debe mostrarse directamente');
 assert.ok(editor.includes('id="readingUpload"')&&editor.includes('id="questionUpload"'),'Faltan herramientas para imágenes');
 assert.ok(app.includes('Abrir editor de textos, preguntas e imágenes'),'Falta acceso desde revisión y publicación');
+assert.ok(js.includes('function renderPassage('),'Falta separación del título de las lecturas');
+assert.ok(js.includes('passage-title'),'Falta el encabezado visible del título');
+assert.ok(html.includes('.reading-text .passage-title'),'Falta estilo del título centrado');
 console.log('VALIDACIÓN DE INTERFAZ BECA 18 CORRECTA: selector de textos y lectura privada.');
