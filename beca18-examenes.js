@@ -13,6 +13,53 @@ async function cargarImagenesBeca(raiz){
  }
 }
 
+// Presentación de las lecturas: separar títulos, subtítulos y párrafos de su contenido.
+const readingTitles={
+ '2024-T1':'¡Todos a usar uniforme!',
+ '2024-T2':'Medición de radiación UV a nivel nacional',
+ '2024-T3':'¿Se debería prohibir la tarea?',
+ '2024-T4':'Rosita',
+ '2024-T5':'Dulces sueños',
+ '2024-T6':'Cómo prepararse para un examen: estos son los mejores consejos para tener éxito',
+ '2025-T1':'La Desinformación en Redes Sociales: ¿Es posible combatirla?',
+ '2025-T2':'¿Qué ocurre cuando se produce una lesión cerebral?',
+ '2025-T3':'La Inseguridad Ciudadana en el Perú',
+ '2025-T4':'El Alma Turbulenta de Julián',
+ '2025-T5':'Océanos de Plástico: Una Amenaza Invisible que Ahoga Nuestro Planeta',
+ '2025-T6':'Cómo Organizar tu Tiempo con un Horario Efectivo'
+};
+function renderPassage(group){
+ const container=el('readingText');
+ container.replaceChildren();
+ let raw=String(group.passage||'').trim();
+ if(!raw){container.textContent='Texto pendiente de revisión.';return;}
+ const lead=raw.match(/^(?:TEXTO|Texto)\s+(\d+)\s*(?:\n+|\s+)(?=[\s\S])/);
+ if(lead){
+   const badge=document.createElement('div');
+   badge.className='passage-kicker';badge.textContent='TEXTO '+lead[1];
+   container.append(badge);raw=raw.slice(lead[0].length).trim();
+ }
+ const title=readingTitles[group.id];
+ if(title&&raw.toLocaleLowerCase('es').startsWith(title.toLocaleLowerCase('es'))){
+   raw=raw.slice(title.length).trim();
+   const h=document.createElement('h3');h.className='passage-title';h.textContent=title;container.append(h);
+ }
+ // Numeración original (1), (2)... separada en párrafos sin alterar las frases.
+ raw=raw.replace(/\s+(?=\([1-9]\)\s)/g,'\n\n');
+ const pieces=raw.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
+ for(const part of pieces){
+   const secondText=/^TEXTO 2$/i.test(part);
+   const secondTitle=part==='Uniforme: Reglamentación innecesaria';
+   const sectionTitle=/^Artículo \d+:/i.test(part);
+   const source=/^(?:Fuente[.:]|Adaptado de)/i.test(part);
+   const node=document.createElement(secondText?'div':secondTitle?'h3':sectionTitle?'h4':'p');
+   if(secondText)node.className='passage-kicker';
+   if(secondTitle)node.className='passage-title';
+   if(source)node.className='passage-source';
+   node.textContent=part;
+   container.append(node);
+ }
+}
 function questionGroup(q){return current.groups[q.group]||{passage:'Lectura no disponible',pages:'—'};}
 function selectedGroupIndex(){return current?.groups.findIndex(g=>g.id===lastReadingId)??-1;}
 function navigateToGroup(index){
@@ -42,7 +89,7 @@ function showReading(q){
  if(left)left.scrollTop=0;
  el('readingTitle').textContent='Lectura del examen '+current.year+' · preguntas '+g.first+'–'+g.last;
  el('readingInfo').textContent='Lee el texto y observa las imágenes o infografías que aparecen al final.';
- el('readingText').textContent=g.passage||'Texto pendiente de cotejo con el cuadernillo original.';
+ renderPassage(g);
  const images=Array.isArray(g.images)?g.images:[];
  const holder=el('originalPages');
  if(holder){
