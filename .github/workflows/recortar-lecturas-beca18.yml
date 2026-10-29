@@ -43,5 +43,7 @@ jobs:
           git add beca18-images/
           if ! git diff --cached --quiet; then
             git commit -m "assets(beca18): quitar encabezado institucional y pie con número de página"
+            git fetch origin fix/beca18-crop-page-headers-footers
+            git rebase origin/fix/beca18-crop-page-headers-footers
             git push origin HEAD:fix/beca18-crop-page-headers-footers
           fi
