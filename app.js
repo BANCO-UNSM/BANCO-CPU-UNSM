@@ -841,7 +841,7 @@ function mistakesPage(){
  if(learningProgressError)return notice('No se pudieron cargar los errores: '+learningProgressError,true);
  const errors=progressErrors(),visible=new Map(questions.filter(q=>q.status==='published'&&!q.exam_id&&hasService(q.modality)).map(q=>[q.id,q]));
  const retry=errors.filter(x=>visible.has(x.id));
- return `<div class="card"><h2>🧠 Mis errores</h2><p>Preguntas cuya última respuesta fue incorrecta. Para ver la solución tendrás que responder otra vez.</p><div class="learning-stats"><div><strong>${errors.length}</strong><span>Pendientes de repaso</span></div><div><strong>${retry.length}</strong><span>Disponibles para practicar</span></div></div><div class="actions"><button id="retryMistakes" ${retry.length?'':'disabled'}>Repasar mis errores</button><button id="goProgress" class="secondary">Ver progreso</button></div></div><div class="card"><h3>Mis preguntas por reforzar</h3>${errors.length?errors.slice(0,80).map(x=>`<div class="listitem"><strong>${esc(x.subject)}</strong> <span class="muted small">${esc(x.modality==='BECA18'?'Beca 18':'CPU-UNSM')}</span><p class="muted">${esc(x.topic||'Tema general')}${x.week?' · Semana '+esc(x.week):''}</p>${visible.has(x.id)?`<button class="secondary" data-retry-question="${esc(x.id)}">Volver a resolver</button>`:'<p class="muted small">Disponible en historial de examen; no en práctica inmediata.</p>'}</div>`).join(''):'<p>¡Buen trabajo! No tienes preguntas pendientes según tu último intento.</p>'}${errors.length>80?'<p>Se muestran las primeras 80 preguntas pendientes.</p>':''}</div>`;
+ return `<div class="card"><h2>🧠 Mis errores</h2><p>Preguntas cuya última respuesta fue incorrecta. Para ver la solución tendrás que responder otra vez.</p><div class="learning-stats"><div><strong>${errors.length}</strong><span>Pendientes de repaso</span></div><div><strong>${retry.length}</strong><span>Disponibles para practicar</span></div></div><div class="actions">${['CPU-UNSM','BECA18'].filter(m=>hasService(m)).map(m=>`<button data-retry-modality="${m}" ${retry.some(x=>x.modality===m)?'':'disabled'}>Repasar ${m==='BECA18'?'Beca 18':'CPU-UNSM'}</button>`).join('')}<button id="goProgress" class="secondary">Ver progreso</button></div></div><div class="card"><h3>Mis preguntas por reforzar</h3>${errors.length?errors.slice(0,80).map(x=>`<div class="listitem"><strong>${esc(x.subject)}</strong> <span class="muted small">${esc(x.modality==='BECA18'?'Beca 18':'CPU-UNSM')}</span><p class="muted">${esc(x.topic||'Tema general')}${x.week?' · Semana '+esc(x.week):''}</p>${visible.has(x.id)?`<button class="secondary" data-retry-question="${esc(x.id)}">Volver a resolver</button>`:'<p class="muted small">Disponible en historial de examen; no en práctica inmediata.</p>'}</div>`).join(''):'<p>¡Buen trabajo! No tienes preguntas pendientes según tu último intento.</p>'}${errors.length>80?'<p>Se muestran las primeras 80 preguntas pendientes.</p>':''}</div>`;
 }
 function bindProgress(){
  $('goProgress')?.addEventListener('click',()=>{page='progress';render()});
@@ -852,10 +852,11 @@ function bindProgress(){
   const items=questions.filter(q=>q.status==='published'&&!q.exam_id&&q.modality===b.dataset.progressModality&&q.subject===b.dataset.progressSubject&&hasService(q.modality));
   if(items.length)practiceItems(items);else{selectedModality=b.dataset.progressModality;page='practice';render();}
  }));
- $('retryMistakes')?.addEventListener('click',()=>{
-  const ids=new Set(progressErrors().map(x=>x.id));
-  practiceItems(questions.filter(q=>ids.has(q.id)&&q.status==='published'&&!q.exam_id&&hasService(q.modality)));
- });
+ document.querySelectorAll('[data-retry-modality]').forEach(b=>b.addEventListener('click',()=>{
+  const modality=b.dataset.retryModality;
+  const ids=new Set(progressErrors().filter(x=>x.modality===modality).map(x=>x.id));
+  practiceItems(questions.filter(q=>ids.has(q.id)&&q.modality===modality&&q.status==='published'&&!q.exam_id&&hasService(q.modality)));
+ }));
  document.querySelectorAll('[data-retry-question]').forEach(b=>b.addEventListener('click',()=>{
   const q=questions.find(x=>x.id===b.dataset.retryQuestion&&x.status==='published'&&!x.exam_id&&hasService(x.modality));
   if(q)practiceItems([q]);
