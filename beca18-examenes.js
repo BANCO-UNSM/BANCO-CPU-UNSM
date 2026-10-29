@@ -48,7 +48,14 @@ function renderPassage(group){
  raw=raw.replace(/\s+(?=\([1-9]\)\s)/g,'\n\n');
  const pieces=raw.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
  for(const part of pieces){
-   const node=document.createElement(/^(?:Uniforme: Reglamentación innecesaria|Artículo \d+:)/i.test(part)?'h4':'p');
+   const secondText=/^TEXTO 2$/i.test(part);
+   const secondTitle=part==='Uniforme: Reglamentación innecesaria';
+   const sectionTitle=/^Artículo \d+:/i.test(part);
+   const source=/^(?:Fuente[.:]|Adaptado de)/i.test(part);
+   const node=document.createElement(secondText?'div':secondTitle?'h3':sectionTitle?'h4':'p');
+   if(secondText)node.className='passage-kicker';
+   if(secondTitle)node.className='passage-title';
+   if(source)node.className='passage-source';
    node.textContent=part;
    container.append(node);
  }
