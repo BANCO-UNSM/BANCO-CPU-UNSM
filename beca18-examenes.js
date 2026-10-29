@@ -144,6 +144,8 @@ function updateMobileQuestionGroup(){
  const index=selectedGroupIndex();
  const mobile=mobileView();
  el('mobileReadingGuide').hidden=!mobile;
+ document.querySelector('.exam-questions')?.classList.toggle('mobile-last-reading',mobile&&index===current.groups.length-1);
+ el('questionsTitle').textContent=mobile?'Preguntas del texto '+(index+1)+' · '+current.year:'Preguntas 31 a 60 · '+current.year;
  el('mobileReadingLabel').textContent='Texto '+(index+1)+' de '+current.groups.length+' · preguntas '+current.groups[index].first+'–'+current.groups[index].last;
  const next=el('mobileNextReading');
  next.textContent=index>=current.groups.length-1?'Último texto':'Siguiente texto →';
@@ -187,7 +189,7 @@ function showExam(year){
  el('nextReading').onclick=()=>navigateToGroup(selectedGroupIndex()+1);
  el('mobileNextReading').onclick=()=>navigateToGroup(selectedGroupIndex()+1);
  el('questions').innerHTML=current.questions.map(q=>{
- const label=q.needs_visual?'<p class="warning small">Observa la infografía o ilustración que aparece debajo de la lectura, en el panel izquierdo.</p>':'';
+ const label=q.needs_visual?'<p class="warning small visual-desktop">Observa la infografía o ilustración que aparece debajo de la lectura, en el panel izquierdo.</p><p class="warning small visual-mobile">Consulta la infografía que aparece junto a esta lectura, antes de responder.</p>':'';
  const qimg=q.image?'<div class="question-image"><img loading="lazy" data-beca-private-src="'+escapeHtml(q.image)+'" alt="Imagen o figura asociada a la pregunta '+q.number+'"></div>':'';
  return '<fieldset class="question" data-number="'+q.number+'" id="p'+q.number+'"><legend>Pregunta '+q.number+'. '+escapeHtml(q.statement)+'</legend>'+qimg+label+
  q.options.map((opt,i)=>'<label><input type="radio" name="q'+q.number+'" value="'+i+'"> <strong>'+String.fromCharCode(65+i)+')</strong> '+escapeHtml(opt)+'</label>').join('')+'<div class="feedback"></div></fieldset>';
