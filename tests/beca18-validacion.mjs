@@ -17,7 +17,7 @@ assert.ok(js.includes('const first=current.questions.find(q=>q.group===index)'),
 assert.ok(js.includes('if(lastReadingId===g.id)return'),'El texto debe permanecer fijo mientras se responden sus preguntas');
 assert.ok(js.includes('IntersectionObserver'),'La lectura debe sincronizarse al desplazarse entre preguntas');
 assert.ok(js.includes("window.becaPrivate.document('beca18-examenes-verbal.json')"),'El banco debe descargarse desde Supabase privado');
-assert.ok(privateJs.includes("client.rpc('beca_private_read'"),'El banco necesita lectura autenticada');
+assert.ok(privateJs.includes("api().rpc('beca_private_read'"),'El banco necesita lectura autenticada');
 assert.ok(!html.includes('Mostrar transcripción de apoyo (opcional)'),'El texto debe mostrarse directamente');
 assert.ok(editor.includes('id="readingUpload"')&&editor.includes('id="questionUpload"'),'Faltan herramientas para imágenes');
 assert.ok(app.includes('Abrir editor de textos, preguntas e imágenes'),'Falta acceso desde revisión y publicación');
