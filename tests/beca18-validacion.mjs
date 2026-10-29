@@ -82,5 +82,16 @@ assert.ok(html.includes('beca18-examenes.html'),'Falta enlace de exámenes desde
 const examHtml=readFileSync('beca18-examenes.html','utf8');
 const examJs=readFileSync('beca18-examenes.js','utf8');
 assert.ok(examHtml.includes('beca18-examenes.js')&&examJs.includes('function evaluate('));
+assert.ok(examHtml.includes('id="originalPages"'),'Falta contenedor de páginas originales');
+assert.ok(examJs.includes("el('originalPages')"),'La interfaz no muestra las páginas originales');
+for (const exam of previous.exams) {
+ for (const g of exam.groups) {
+  assert.ok(Array.isArray(g.images)&&g.images.length>0,'Faltan imágenes para lectura '+g.id);
+  for (const path of g.images) {
+   assert.ok(readFileSync(path).length>5000,'Imagen original ausente o demasiado pequeña: '+path);
+  }
+ }
+}
+
 
 console.log('VALIDACIÓN BECA 18 CORRECTA:',d.lessons.length,'clases y',d.questions.length,'preguntas originales.');
