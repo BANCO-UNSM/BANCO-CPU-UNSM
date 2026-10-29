@@ -653,7 +653,7 @@ function saveTimedExam(){
   localStorage.setItem(timedExamStorageKey(),JSON.stringify({
    questionIds:quiz.items.map(q=>q.id),answers:quiz.answers,
    elapsed:quiz.elapsed,i:quiz.i,deadlineAt:quiz.deadlineAt,
-   lastTick:Date.now(),savedAt:Date.now()
+   lastTick:Date.now(),savedAt:Date.now(),challengeCycle:quiz.challengeCycle||null,challengeWeek:quiz.challengeWeek||null
   }));
  }catch(error){console.warn('No se pudo guardar el progreso del examen',error);}
 }
@@ -661,14 +661,17 @@ function restoreTimedExam(){
  if(!user||quiz||!hasService('CPU-UNSM'))return;
  let saved;
  try{saved=JSON.parse(localStorage.getItem(timedExamStorageKey())||'null')}catch{return}
- if(!saved||!Array.isArray(saved.questionIds)||saved.questionIds.length!==100||!Number.isFinite(saved.deadlineAt))return;
+ if(!saved||!Array.isArray(saved.questionIds)||!Number.isFinite(saved.deadlineAt))return;
+ const count=saved.questionIds.length,isWeekly=Number.isInteger(Number(saved.challengeWeek))&&Boolean(saved.challengeCycle);
+ if(isWeekly?(count<1||count>20):(count!==100))return;
  const byId=new Map(questions.map(q=>[q.id,q]));
  const items=saved.questionIds.map(id=>byId.get(id));
- if(items.some(q=>!q||q.status!=='published'))return;
- quiz={items,answers:Array.from({length:100},(_,i)=>Number.isInteger(saved.answers?.[i])?saved.answers[i]:null),
- elapsed:Array.from({length:100},(_,i)=>Number(saved.elapsed?.[i])||0),
- i:Math.min(99,Math.max(0,Number(saved.i)||0)),
- deadlineAt:saved.deadlineAt,lastTick:Date.now(),result:null};
+ if(items.some(q=>!q||q.status!=='published'||q.modality!=='CPU-UNSM'||(isWeekly&&(q.week!==Number(saved.challengeWeek)||q.cycle!==saved.challengeCycle))))return;
+ quiz={items,answers:Array.from({length:count},(_,i)=>Number.isInteger(saved.answers?.[i])?saved.answers[i]:null),
+ elapsed:Array.from({length:count},(_,i)=>Number(saved.elapsed?.[i])||0),
+ i:Math.min(count-1,Math.max(0,Number(saved.i)||0)),
+ deadlineAt:saved.deadlineAt,lastTick:Date.now(),result:null,
+ ...(isWeekly?{challengeWeek:Number(saved.challengeWeek),challengeCycle:saved.challengeCycle}:{})};
  page='quiz';selectedModality='CPU-UNSM';
 }
 function clearTimedExam(){try{localStorage.removeItem(timedExamStorageKey())}catch{}}
@@ -844,7 +847,7 @@ function quizReviewPage(){
     return `<div class="listitem"><p class="muted small">Pregunta ${i+1} · ${esc(q.subject||'')} · Semana ${esc(q.week??'—')}</p><strong>${esc(q.statement)}</strong>${becaReadingPanel(q)}${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}<p style="font-weight:700;color:${stateColor}">${blankAnswer?'○':isCorrect?'✓':'✕'} ${esc(state)}</p>${options}${!hasKey?'<p class="muted">No se recibió una clave válida para esta pregunta. Consulta al administrador.</p>':''}<details style="margin-top:12px" ${explanation||solutionImage?'':'open'}><summary style="cursor:pointer;font-weight:700">Ver desarrollo paso a paso</summary><div class="card" style="margin-top:10px">${explanationHtml}${espacioImagenPrivada(solutionImage,'Imagen de la solución')}</div></details></div>`;
   }).join('');
   const times=quiz.elapsed||[];const totalTime=times.reduce((a,b)=>a+b,0);const timeSummary=`<p><strong>Tiempo total medido:</strong> ${timeFmt(totalTime)} · <strong>Promedio por pregunta:</strong> ${timeFmt(total?totalTime/total:0)}</p><details><summary>Ver tiempo por pregunta</summary><div class="time-grid">${times.map((ms,i)=>`<span>Pregunta ${i+1}: <strong>${timeFmt(ms)}</strong></span>`).join('')}</div></details>`;
-  return `<div class="card"><h2>Resultado del simulacro</h2><div class="stat">${correct}/${total}</div><p>${percent}% de aciertos</p>${timeSummary}<p><strong style="color:#2563eb">✓ ${correct} correctas</strong> · <strong style="color:#b91c1c">✕ ${wrong} incorrectas</strong> · <strong style="color:#64748b">○ ${blank} en blanco</strong></p><p class="muted small">Las soluciones se muestran únicamente después de entregar el simulacro.</p><button id="restartQuiz">Otro simulacro</button></div><div class="card"><h2>Revisión de respuestas</h2>${revision}</div>`;
+  return `<div class="card"><h2>${quiz.challengeWeek?'🏆 Resultado del reto semanal · Semana '+quiz.challengeWeek:'Resultado del simulacro'}</h2><div class="stat">${correct}/${total}</div><p>${percent}% de aciertos</p>${timeSummary}<p><strong style="color:#2563eb">✓ ${correct} correctas</strong> · <strong style="color:#b91c1c">✕ ${wrong} incorrectas</strong> · <strong style="color:#64748b">○ ${blank} en blanco</strong></p><p class="muted small">Las soluciones se muestran únicamente después de entregar.</p>${quiz.challengeSaveError?`<p role="alert">La calificación se guardó, pero no se pudo registrar el reto en el historial: ${esc(quiz.challengeSaveError)} <button id="retrySaveWeekly" class="secondary">Reintentar registro</button></p>`:''}<button id="restartQuiz">${quiz.challengeWeek?'Volver a retos semanales':'Otro simulacro'}</button></div><div class="card"><h2>Revisión de respuestas</h2>${revision}</div>`;
 }
 
 // La respuesta correcta nunca se obtiene antes de comprobar la pregunta en Supabase.
@@ -1386,9 +1389,9 @@ q.modality === selectedModality &&
     await refresh();
   };
 
+  if($('retrySaveWeekly')) $('retrySaveWeekly').onclick=async()=>{await saveWeeklyResult();render();};
   if($('restartQuiz')) $('restartQuiz').onclick=()=>{
-    quiz=null;
-    render();
+    const weekly=Boolean(quiz?.challengeWeek);quiz=null;page=weekly?'weekly':'quiz';render();
   };
 }
 
