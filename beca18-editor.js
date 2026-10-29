@@ -2,7 +2,7 @@
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clone=x=>JSON.parse(JSON.stringify(x));
-let original=null,data=null,selected=null,kind='reading',userId='',storeKey='';
+let original=null,data=null,selected=null,kind='reading',userId='',storeKey='',uploadedReading=null,uploadedQuestion=null;
 const statusName={borrador:'Borrador',en_revision:'En revisión',publicada:'Publicada'};
 function msg(text,ok=true){$('feedback').textContent=text;$('feedback').className=ok?'success':'notice';}
 function activeExam(){return data.exams.find(e=>e.year===Number($('year').value));}
@@ -48,13 +48,60 @@ function renderList(){
  countChanges();
 }
 function selectedItem(){return items().find(q=>q.id===selected);}
+function isEmbeddedImage(src){return /^data:image\/(?:jpeg|webp|png);base64,/.test(src);}
+function validateSingleImage(src){
+ if(isEmbeddedImage(src)){if(src.length>380000)throw Error('La imagen es demasiado grande: elige una imagen menor o más sencilla.');return;}
+ if(!/^beca18-illustrations\/20(?:23|24|25)\/[a-zA-Z0-9_-]+\.(?:png|webp|jpg|jpeg)$/.test(src))throw Error('Solo se aceptan imágenes embebidas o rutas beca18-illustrations/año/nombre.jpg.');
+}
 function renderImages(){
- const roots=$('images').value.split('\n').map(s=>s.trim()).filter(Boolean);
- $('imagePreview').innerHTML=roots.map(s=>'<div><img src="'+esc(s)+'" alt="Vista previa de imagen asociada"></div>').join('');
+ const q=selectedItem();
+ const paths=$('images').value.split('\n').map(x=>x.trim()).filter(Boolean);
+ const embedded=uploadedReading!==null?uploadedReading:(q?.images||[]).filter(isEmbeddedImage);
+ const images=[...paths,...embedded];
+ $('imagePreview').innerHTML=images.map(src=>'<div><img alt="Vista previa de ilustración" src="'+esc(src)+'"></div>').join('');
+}
+function renderQuestionImage(){
+ const src=uploadedQuestion!==null?uploadedQuestion:(selectedItem()?.image||'');
+ $('questionImagePreview').innerHTML=src?'<img alt="Imagen del enunciado" src="'+esc(src)+'">':'<span class="muted">Sin imagen en el enunciado.</span>';
+}
+async function compressImage(file){
+ if(!file||!['image/png','image/jpeg','image/webp'].includes(file.type))throw Error('Selecciona una imagen PNG, JPG o WEBP.');
+ if(file.size>12*1024*1024)throw Error('El archivo original supera 12 MB.');
+ const url=URL.createObjectURL(file);
+ try{
+  const img=new Image();
+  await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(Error('No se pudo leer la imagen.'));img.src=url;});
+  let max=1200,quality=.83;
+  for(let attempt=0;attempt<7;attempt++){
+   const scale=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));
+   const canvas=document.createElement('canvas');
+   canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+   canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+   const ctx=canvas.getContext('2d');if(!ctx)throw Error('El navegador no permite preparar imágenes.');
+   ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);
+   ctx.drawImage(img,0,0,canvas.width,canvas.height);
+   const result=canvas.toDataURL('image/jpeg',quality);
+   if(result.length<=340000)return result;
+   max=Math.round(max*.82);quality=Math.max(.56,quality-.05);
+  }
+  throw Error('Esta imagen no se pudo optimizar. Intenta con un recorte de menor tamaño.');
+ }finally{URL.revokeObjectURL(url);}
+}
+async function uploadImage(target){
+ const input=$(target==='reading'?'readingUpload':'questionUpload');
+ if(!input.files?.[0])return;
+ try{
+  const encoded=await compressImage(input.files[0]);
+  if(target==='reading'){uploadedReading=[encoded];$('images').value='';renderImages();}
+  else{uploadedQuestion=encoded;renderQuestionImage();}
+  msg('Imagen preparada y ajustada. Presiona «Guardar borrador local» para conservarla y luego descarga el JSON para publicarla.');
+ }catch(e){msg(e.message,false);}
+ finally{input.value='';}
 }
 function renderForm(){
  const q=selectedItem();
  if(!q)return;
+ uploadedReading=null;uploadedQuestion=null;
  $('formTitle').textContent=kind==='reading'?'Editar lectura '+q.id:'Editar pregunta '+q.number+' · '+$('year').value;
  $('recordId').value=q.id;
  $('status').value=['borrador','en_revision','publicada'].includes(q.editor_status)?q.editor_status:'borrador';
@@ -62,7 +109,7 @@ function renderForm(){
  $('questionArea').classList.toggle('hidden',kind!=='question');
  if(kind==='reading'){
   $('passage').value=q.passage||'';
-  $('images').value=(q.images||[]).join('\n');
+  $('images').value=(q.images||[]).filter(x=>!isEmbeddedImage(x)).join('\n');
   $('textPreview').textContent=q.passage||'';
   renderImages();
  }else{
@@ -71,15 +118,12 @@ function renderForm(){
   $('correct').value=String(q.correct_index);
   $('explanation').value=q.editor_explanation||'';
   $('textPreview').textContent=q.statement+'\n'+q.options.map((x,i)=>'ABCD'[i]+') '+x).join('\n');
+  renderQuestionImage();
  }
  $('feedback').textContent='';
  $('feedback').className='muted';
 }
-function validateImages(images){
- for(const image of images){
-  if(!/^beca18-illustrations\/20(?:23|24|25)\/[a-zA-Z0-9_-]+\.(?:png|webp|jpg|jpeg)$/.test(image))throw Error('Solo se admiten rutas de ilustraciones dentro de beca18-illustrations/2023, 2024 o 2025; no páginas completas.');
- }
-}
+function validateImages(images){for(const src of images)validateSingleImage(src);}
 function collect(){
  const q=selectedItem();if(!q)throw Error('Selecciona un elemento.');
  const status=$('status').value;
@@ -89,7 +133,9 @@ function collect(){
  if(kind==='reading'){
   const passage=$('passage').value.trim();
   if(passage.length<30)throw Error('La lectura debe contener al menos 30 caracteres.');
-  const images=$('images').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const paths=$('images').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const embedded=uploadedReading!==null?uploadedReading:(q.images||[]).filter(isEmbeddedImage);
+  const images=[...paths,...embedded];
   validateImages(images);
   next={...next,passage,images};
  }else{
@@ -101,7 +147,9 @@ function collect(){
   const correct=Number($('correct').value);
   if(!Number.isInteger(correct)||correct<0||correct>3)throw Error('Selecciona una clave de A a D.');
   if(status==='publicada'&&$('explanation').value.trim().length<30)throw Error('Antes de marcar como publicada, escribe una explicación de al menos 30 caracteres.');
-  next={...next,statement,options,correct_index:correct,editor_explanation:$('explanation').value.trim()};
+  const image=uploadedQuestion!==null?uploadedQuestion:(q.image||'');
+  if(image)validateSingleImage(image);
+  next={...next,statement,options,correct_index:correct,image,editor_explanation:$('explanation').value.trim()};
  }
  return next;
 }
@@ -154,6 +202,10 @@ async function init(){
   $('discardItem').onclick=undoItem;
   $('download').onclick=download;
   $('images').addEventListener('change',renderImages);
+  $('readingUpload').addEventListener('change',()=>uploadImage('reading'));
+  $('questionUpload').addEventListener('change',()=>uploadImage('question'));
+  $('removeReadingImages').onclick=()=>{$('images').value='';uploadedReading=[];renderImages();};
+  $('removeQuestionImage').onclick=()=>{uploadedQuestion='';renderQuestionImage();};
   $('resetAll').onclick=()=>{if(!confirm('¿Borrar TODOS los borradores locales del editor?'))return;localStorage.removeItem(storeKey);data=clone(original);selected=items()[0]?.id;renderList();renderForm();msg('Se descartaron todos los borradores locales.');};
   selected=items()[0]?.id;renderList();renderForm();
   $('authMessage').textContent='Acceso de administrador autorizado. Las ediciones se guardan localmente y requieren publicación por GitHub.';

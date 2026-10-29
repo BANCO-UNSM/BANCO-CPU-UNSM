@@ -5,6 +5,7 @@ on:
       - 'beca18-clases.*'
       - 'beca18-verbal-pronabec.json'
       - 'beca18-examenes.*'
+      - 'beca18-editor.*'
       - 'app.js'
       - 'tests/beca18-validacion.mjs'
       - '.github/workflows/verificar-beca18.yml'
@@ -14,6 +15,7 @@ on:
       - 'beca18-clases.*'
       - 'beca18-verbal-pronabec.json'
       - 'beca18-examenes.*'
+      - 'beca18-editor.*'
       - 'app.js'
       - 'tests/beca18-validacion.mjs'
 jobs:
@@ -31,5 +33,6 @@ jobs:
           node --check app.js
           node --check beca18-clases.js
           node --check beca18-examenes.js
+          node --check beca18-editor.js
       - name: Validar clases y preguntas
         run: node tests/beca18-validacion.mjs

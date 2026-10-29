@@ -23,7 +23,8 @@ function showExam(year){
  el('questionsTitle').textContent='Preguntas 31 a 60 · '+current.year;
  el('questions').innerHTML=current.questions.map(q=>{
  const label=q.needs_visual?'<p class="warning small">Observa la infografía o ilustración que aparece debajo de la lectura, en el panel izquierdo.</p>':'';
- return '<fieldset class="question" data-number="'+q.number+'" id="p'+q.number+'"><legend>Pregunta '+q.number+'. '+escapeHtml(q.statement)+'</legend>'+label+
+ const qimg=q.image?'<div class="question-image"><img loading="lazy" src="'+escapeHtml(q.image)+'" alt="Imagen o figura asociada a la pregunta '+q.number+'"></div>':'';
+ return '<fieldset class="question" data-number="'+q.number+'" id="p'+q.number+'"><legend>Pregunta '+q.number+'. '+escapeHtml(q.statement)+'</legend>'+qimg+label+
  q.options.map((opt,i)=>'<label><input type="radio" name="q'+q.number+'" value="'+i+'"> <strong>'+String.fromCharCode(65+i)+')</strong> '+escapeHtml(opt)+'</label>').join('')+'<div class="feedback"></div></fieldset>';
  }).join('');
  el('result').innerHTML='';

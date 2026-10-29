@@ -117,4 +117,14 @@ assert.ok(editorJs.includes("localStorage.setItem(storeKey"),'Las ediciones debe
 assert.ok(editorJs.includes("JSON.stringify(updated,null,2)"),'Falta exportación de la versión revisada');
 assert.ok(editorJs.includes("beca18-illustrations/"),'Solo se permiten ilustraciones, no páginas completas');
 assert.ok(!editorJs.includes("SUPABASE_SERVICE_ROLE"),'Nunca introducir secretos del servidor en frontend');
+assert.ok(app.includes('Abrir editor de textos, preguntas e imágenes'),'No hay acceso al editor desde Revisión y publicación');
+assert.ok(editorHtml.includes('id="readingUpload"'),'Falta carga de imagen para lecturas');
+assert.ok(editorHtml.includes('id="questionUpload"'),'Falta carga de imagen en el enunciado');
+assert.ok(editorHtml.includes('id="removeReadingImages"')&&editorHtml.includes('id="removeQuestionImage"'),'Faltan controles para eliminar imágenes');
+assert.ok(editorJs.includes('async function compressImage('),'Falta compresión automática de imágenes');
+assert.ok(editorJs.includes('data:image'),'Falta soporte para imagen incrustada en el archivo exportado');
+assert.ok(editorJs.includes('uploadedQuestion'),'Falta almacenar imagen en cada pregunta');
+assert.ok(examJs.includes('q.image'),'La vista de estudiante no muestra la imagen del enunciado');
+assert.ok(examHtml.includes('.exam-illustration img,.exam-page img{display:block;width:100%'),'La imagen debe ajustarse al contenedor sin scroll horizontal');
+assert.ok(examHtml.includes('max-height:none!important;overflow:visible!important'),'No debe haber desplazamiento anidado de lectura');
 console.log('VALIDACIÓN BECA 18 CORRECTA:',d.lessons.length,'clases y',d.questions.length,'preguntas originales.');
