@@ -999,13 +999,23 @@ function bindReview(){
  document.querySelectorAll('[data-review-id]').forEach(btn=>btn.onclick=async()=>{
    const message=$('reviewMessage');message.textContent='Cargando pregunta y clave...';
    const {data,error}=await db.rpc('get_question_for_review',{p_question_id:btn.dataset.reviewId});
-   // Una pregunta de examen sin fila en answer_keys puede hacer fallar la RPC antigua.
-   // Su contenido ya está disponible en la lista autorizada, pero NO inventamos la clave.
+   // Si todavía no existe answer_keys, la RPC antigua puede rechazar la lectura.
+   // Docentes autorizados pueden abrir el enunciado ya cargado y completar la clave.
+   // Nunca se inventan respuestas: correct_index permanece null.
    const local=questions.find(q=>q.id===btn.dataset.reviewId);
-   if(error&&!local?.exam_id){message.textContent='Error: '+error.message;return}
-   if(!data&&!local){message.textContent='No se encontró la pregunta.';return}
+   if(!data&&!local){message.textContent='No se encontró la pregunta en el banco.';return}
+   if(error&&local&&!/sin clave|no encontrada|not found|answer.?key/i.test(error.message||'')){
+     message.textContent='No se pudo consultar la clave: '+error.message+'. Se muestra el enunciado para revisión; comprueba los permisos antes de guardar.';
+   }
    const detalle=data||{...local,correct_index:null,explanation:''};
-   reviewSelected={...detalle,exam_id:questions.find(q=>q.id===detalle.id)?.exam_id??detalle.exam_id,statement_image_path:questions.find(q=>q.id===detalle.id)?.statement_image_path??detalle.statement_image_path,solution_image_path:questions.find(q=>q.id===detalle.id)?.solution_image_path??detalle.solution_image_path};liberarImagenesPrivadas($('reviewDetail'));$('reviewDetail').innerHTML=reviewDetail(reviewSelected);cargarImagenesPrivadas($('reviewDetail'));message.textContent=error?'Esta pregunta todavía no tiene clave registrada. Puedes asignarla y guardar las correcciones.':'';bindReviewDetail();$('reviewDetail').scrollIntoView({behavior:'smooth',block:'start'});
+   reviewSelected={...local,...detalle,exam_id:local?.exam_id??detalle.exam_id,statement_image_path:local?.statement_image_path??detalle.statement_image_path,solution_image_path:local?.solution_image_path??detalle.solution_image_path};
+   liberarImagenesPrivadas($('reviewDetail'));
+   $('reviewDetail').innerHTML=reviewDetail(reviewSelected);
+   cargarImagenesPrivadas($('reviewDetail'));
+   if(!error)message.textContent='';
+   else if(/sin clave|no encontrada|not found|answer.?key/i.test(error.message||''))message.textContent='Pregunta sin clave registrada: selecciona la alternativa correcta y guarda tu explicación.';
+   bindReviewDetail();
+   $('reviewDetail').scrollIntoView({behavior:'smooth',block:'start'});
  });
  if(reviewSelected)bindReviewDetail();
 }
