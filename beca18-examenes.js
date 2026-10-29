@@ -14,10 +14,30 @@ async function cargarImagenesBeca(raiz){
 }
 
 function questionGroup(q){return current.groups[q.group]||{passage:'Lectura no disponible',pages:'—'};}
+function selectedGroupIndex(){return current?.groups.findIndex(g=>g.id===lastReadingId)??-1;}
+function navigateToGroup(index){
+ if(!current||index<0||index>=current.groups.length)return;
+ const group=current.groups[index];
+ const first=current.questions.find(q=>q.group===index);
+ if(!first)return;
+ showReading(first);
+ const target=el('p'+first.number);
+ const right=document.querySelector('.exam-questions');
+ if(target&&right){right.scrollTop+=target.getBoundingClientRect().top-right.getBoundingClientRect().top-15;}
+}
+function refreshReadingNavigation(){
+ if(!current)return;
+ const index=selectedGroupIndex();
+ el('readingSelect').value=String(index);
+ el('readingCounter').textContent=(index+1)+' / '+current.groups.length;
+ el('previousReading').disabled=index<=0;
+ el('nextReading').disabled=index>=current.groups.length-1;
+}
 function showReading(q){
  const g=questionGroup(q);
  if(lastReadingId===g.id)return;
  lastReadingId=g.id;
+ refreshReadingNavigation();
  const left=document.querySelector('.exam-reading');
  if(left)left.scrollTop=0;
  el('readingTitle').textContent='Lectura del examen '+current.year+' · preguntas '+g.first+'–'+g.last;
@@ -39,6 +59,10 @@ function showExam(year){
  current=exams.find(e=>e.year===year)||exams[0];answers={};graded=false;
  el('examNav').innerHTML=exams.map(e=>'<button type="button" data-year="'+e.year+'" class="'+(e.year===current.year?'selected':'')+'">Examen '+e.year+'</button>').join('')+'<a href="beca18-clases.html">📚 Volver a clases</a>';
  el('questionsTitle').textContent='Preguntas 31 a 60 · '+current.year;
+ el('readingSelect').innerHTML=current.groups.map((g,i)=>'<option value="'+i+'">Texto '+(i+1)+' · preguntas '+g.first+'–'+g.last+'</option>').join('');
+ el('readingSelect').onchange=e=>navigateToGroup(Number(e.target.value));
+ el('previousReading').onclick=()=>navigateToGroup(selectedGroupIndex()-1);
+ el('nextReading').onclick=()=>navigateToGroup(selectedGroupIndex()+1);
  el('questions').innerHTML=current.questions.map(q=>{
  const label=q.needs_visual?'<p class="warning small">Observa la infografía o ilustración que aparece debajo de la lectura, en el panel izquierdo.</p>':'';
  const qimg=q.image?'<div class="question-image"><img loading="lazy" data-beca-private-src="'+escapeHtml(q.image)+'" alt="Imagen o figura asociada a la pregunta '+q.number+'"></div>':'';
