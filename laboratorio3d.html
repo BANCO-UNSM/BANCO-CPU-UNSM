@@ -21,7 +21,7 @@
 <p class="tiny muted">Modelo esquemático para aprender ubicaciones y funciones. No sustituye un atlas anatómico validado.</p>
 </aside>
 <section class="viewer" aria-label="Visor anatómico 3D interactivo">
-<div class="region-picker"><label for="regionSelect">🧠 Elegir estructura:</label><button id="previousRegion" type="button" aria-label="Estructura anterior">◀</button><select id="regionSelect" aria-label="Seleccionar estructura cerebral"></select><button id="nextRegion" type="button" aria-label="Estructura siguiente">▶</button></div><div id="scene"></div><div class="badge"><strong>Modelo didáctico del cerebro</strong><div>Arrastra para girar · Pellizca para ampliar · Toca una estructura</div><div id="status" class="notice" role="status">Inicializando modelo…</div></div>
+<div class="region-picker"><label for="regionSelect">🧠 Elegir estructura:</label><button id="previousRegion" type="button" aria-label="Estructura anterior">◀</button><select id="regionSelect" aria-label="Seleccionar estructura cerebral"></select><button id="nextRegion" type="button" aria-label="Estructura siguiente">▶</button></div><div id="scene"></div><div class="badge"><strong>Modelo didáctico del cerebro</strong><div>Referencia anatómica translúcida y contorno exterior</div><div>Arrastra para girar · Pellizca para ampliar · Toca una estructura</div><div id="status" class="notice" role="status">Inicializando modelo…</div></div>
 <div class="viewer-tools"><button id="reset">⟲ Restablecer</button><button id="front">Vista frontal</button><button id="side">Vista lateral</button><button id="top">Vista superior</button><button id="labels">Ocultar etiquetas</button><button id="showAll">Mostrar todo</button></div>
 </section>
 <aside class="card detail">
@@ -30,7 +30,7 @@
 <h3>⚙️ Función principal</h3><p id="partFunction">Las funciones de cada región aparecerán aquí.</p>
 <div class="key"><strong>💡 Clave para el examen</strong><p id="partExam">Aprende una región y luego prueba el modo «Identificar estructuras».</p></div>
 <div class="quiz hidden" id="quizBox" aria-live="polite"><strong>🎯 Identifica en el modelo</strong><p id="quizPrompt"></p><p id="quizFeedback"></p><button class="primary" id="nextChallenge">Siguiente reto</button></div>
-<p class="tags">Colores diferenciados por región · selección turquesa y contorno naranja.</p>
+<p class="tags">Cerebro completo semitransparente y contorno tenue · estructura seleccionada en turquesa con borde naranja.</p>
 </aside>
 </main>
 <section class="bottom card"><h2>Selecciona una estructura cerebral</h2><div class="chips" id="chips"></div></section>
@@ -75,6 +75,33 @@ let selected=null,quizMode=false,challenge=null,labelsVisible=true;
 const objects=new Map(),baseMaterials=new Map();
 const root=new THREE.Group();scene.add(root);
 const geometry=new THREE.SphereGeometry(1,48,32);
+// Referencia anatómica permanente: volumen semitransparente + contorno exterior.
+// Modelo didáctico simplificado, no una reconstrucción clínica.
+const referenceBrain=new THREE.Group();
+referenceBrain.name='Referencia transparente del cerebro';
+root.add(referenceBrain);
+const referenceMaterial=new THREE.MeshPhongMaterial({
+ color:0xa7d6fa,transparent:true,opacity:.13,depthWrite:false,
+ side:THREE.DoubleSide,shininess:45
+});
+const shellMaterial=new THREE.MeshBasicMaterial({
+ color:0xb7e9ff,side:THREE.BackSide,transparent:true,
+ opacity:.29,depthWrite:false
+});
+function brainReferencePart(position,scale){
+ const form=new THREE.Mesh(geometry,referenceMaterial.clone());
+ form.position.set(...position);form.scale.set(...scale);
+ form.raycast=()=>{};form.renderOrder=0;referenceBrain.add(form);
+ const shell=new THREE.Mesh(geometry,shellMaterial.clone());
+ shell.position.set(...position);shell.scale.set(scale[0]*1.035,scale[1]*1.035,scale[2]*1.035);
+ shell.raycast=()=>{};shell.renderOrder=1;referenceBrain.add(shell);
+}
+// Dos hemisferios superpuestos proporcionan una referencia espacial continua.
+brainReferencePart([.12,.13,-.32],[1.75,.99,.67]);
+brainReferencePart([.12,.13,.36],[1.75,.99,.67]);
+// El cerebelo y el tronco también permanecen como referencias de ubicación.
+brainReferencePart([.87,-.73,-.27],[.69,.38,.56]);
+brainReferencePart([.21,-1.03,-.11],[.26,.69,.29]);
 for(const part of regions){
  const group=new THREE.Group();group.position.set(...part.pos);
  const mat=new THREE.MeshStandardMaterial({color:part.color,roughness:.79,metalness:0});
