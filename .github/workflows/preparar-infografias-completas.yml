@@ -1,0 +1,63 @@
+name: Preparar infografías completas de Beca 18
+on:
+  push:
+    branches: [fix/beca18-infografias-completas-canvas]
+    paths: ['.github/workflows/preparar-infografias-completas.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pymupdf pillow
+      - name: Descargar cuadernillos originales
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/beca18
+          curl -fLsS --retry 4 --retry-delay 3 --max-time 120 'https://www.pronabec.gob.pe/download/37251/?tmstv=1751779017' -o /tmp/beca18/2024.pdf
+          curl -fLsS --retry 4 --retry-delay 3 --max-time 120 'https://www.pronabec.gob.pe/download/37253/?tmstv=1751779054' -o /tmp/beca18/2025.pdf
+          pdfinfo /tmp/beca18/2024.pdf | grep '^Pages:'
+          pdfinfo /tmp/beca18/2025.pdf | grep '^Pages:'
+      - name: Obtener infografías sin cortar margen derecho
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          import fitz
+          specs=[
+            (2024,'radiacion-uv',18,(62,106,533,714)),
+            (2024,'sueno-grafico',24,(126,614,488,753)),
+            (2025,'desinformacion-grafico',15,(174,231,445,445)),
+            (2025,'lesion-cerebral',17,(70,238,526,779)),
+            (2025,'oceanos-plastico',24,(82,177,515,436))
+          ]
+          for year,name,page,coords in specs:
+              doc=fitz.open(f'/tmp/beca18/{year}.pdf')
+              image=doc[page-1].get_pixmap(matrix=fitz.Matrix(2,2),clip=fitz.Rect(coords),alpha=False)
+              out=Path('beca18-temporary-fixed')/str(year)/(name+'.jpg')
+              out.parent.mkdir(parents=True,exist_ok=True)
+              image.save(out.with_suffix('.png'))
+              with Image.open(out.with_suffix('.png')) as im:
+                  im.save(out,quality=89,optimize=True)
+                  assert im.width>300 and im.height>180
+              out.with_suffix('.png').unlink()
+              print(out,out.stat().st_size)
+          PY
+      - name: Guardar imágenes solo para transferencia al banco privado
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add beca18-temporary-fixed
+          if ! git diff --cached --quiet; then
+            git commit -m 'assets(beca18): staging temporal de infografías completas'
+            git fetch origin fix/beca18-infografias-completas-canvas
+            git rebase origin/fix/beca18-infografias-completas-canvas
+            git push origin HEAD:fix/beca18-infografias-completas-canvas
+          fi
