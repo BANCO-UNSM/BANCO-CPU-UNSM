@@ -156,24 +156,39 @@ function collect(){
 function save(){try{
  const next=collect();if(!next)return;
  const list=items();const idx=list.findIndex(q=>q.id===selected);if(idx<0)throw Error('Elemento no encontrado.');
- list[idx]=next;persist();renderList();renderForm();msg('Borrador guardado en este navegador. Para publicarlo en la plataforma descarga el archivo JSON y actualízalo en GitHub.');
+ list[idx]=next;persist();renderList();renderForm();msg('Borrador guardado en este navegador. Usa «Guardar cambios privados» para actualizar el banco protegido.');
  }catch(e){msg(e.message,false);}
 }
 function changeStatus(s){$('status').value=s;save();}
 function undoItem(){
- const q=selectedItem();if(!q||!confirm('¿Restaurar este elemento a la versión publicada en GitHub?'))return;
+ const q=selectedItem();if(!q||!confirm('¿Restaurar este elemento a la versión privada actual de Supabase?'))return;
  const exam=original.exams.find(e=>e.year===Number($('year').value));const base=(kind==='reading'?exam.groups:exam.questions).find(x=>x.id===selected);
  const list=items(),index=list.findIndex(x=>x.id===selected);
- list[index]=clone(base);persist();renderList();renderForm();msg('Elemento restaurado al contenido del repositorio.');
+ list[index]=clone(base);persist();renderList();renderForm();msg('Elemento restaurado al banco privado de Supabase.');
 }
 function download(){
  const filename='beca18-examenes-verbal-revisado-'+new Date().toISOString().slice(0,10)+'.json';
  const updated=clone(data);
  updated.editor_exported_at=new Date().toISOString();
- updated.editor_note='Archivo exportado desde el editor. Revisar cambios en un pull request antes de fusionar en main.';
+ updated.editor_note='Copia de respaldo privada. No publicar este documento en GitHub Pages.';
  const blob=new Blob([JSON.stringify(updated,null,2)+'\n'],{type:'application/json;charset=utf-8'});
  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
- msg('Archivo descargado. Reemplaza beca18-examenes-verbal.json en GitHub y revisa el cambio antes de fusionarlo.');
+ msg('Respaldo descargado. No subas este archivo a repositorios públicos: usa «Guardar cambios privados».');
+}
+async function guardarBancoPrivado(){
+ if(!data||!Array.isArray(data.exams))return;
+ if(!confirm('¿Guardar el banco completo en Supabase privado? Tus cambios serán visibles solo para alumnos autorizados Beca 18.'))return;
+ const b=$('savePrivate');
+ if(b)b.disabled=true;
+ try{
+  const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+  const {error}=await client.rpc('admin_save_private_beca_exams',{p_document:data});
+  if(error)throw error;
+  original=clone(data);
+  localStorage.removeItem(storeKey);
+  msg('Banco de exámenes actualizado en Supabase privado. Ningún archivo público ha sido modificado.');
+ }catch(e){msg('No se pudo guardar en Supabase: '+e.message,false);}
+ finally{if(b)b.disabled=false;}
 }
 async function auth(){
  if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw Error('No se encuentra la configuración Supabase.');
@@ -199,6 +214,7 @@ async function init(){
   $('markPublished').onclick=()=>changeStatus('publicada');
   $('discardItem').onclick=undoItem;
   $('download').onclick=download;
+  $('savePrivate').onclick=guardarBancoPrivado;
   $('images').addEventListener('change',renderImages);
   $('readingUpload').addEventListener('change',()=>uploadImage('reading'));
   $('questionUpload').addEventListener('change',()=>uploadImage('question'));
