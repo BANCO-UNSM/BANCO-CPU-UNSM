@@ -2,7 +2,7 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CachimboLab · Anatomía 3D</title>
 <style>
-:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#183452;background:#ecf5ff}*{box-sizing:border-box}body{margin:0}header{background:#0b2343;color:#fff;padding:16px max(16px,calc((100vw - 1450px)/2));display:flex;justify-content:space-between;gap:12px;align-items:center}a{color:inherit}a:hover{opacity:.8}.top{background:linear-gradient(105deg,#d8efff,#f4fbff 48%,#b9d5fd);padding:20px max(16px,calc((100vw - 1450px)/2))}h1{font-size:clamp(23px,3vw,34px);margin:0}.top p{margin:6px 0 0}.layout{max-width:1480px;margin:auto;display:grid;grid-template-columns:220px minmax(0,1fr) 300px;gap:12px;padding:14px}.card{background:white;border:1px solid #d1e4f5;border-radius:15px;padding:16px;box-shadow:0 4px 16px #132e4c10}h2{font-size:18px;margin:0 0 16px}h3{margin:0 0 8px}button{font:inherit;border:1px solid #cbdff4;border-radius:10px;background:#fff;color:#123050;padding:10px 12px;cursor:pointer}button:disabled{cursor:not-allowed;opacity:.55}button:focus-visible,a:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}.option{display:block;width:100%;text-align:left;margin:8px 0}.active{background:#d9f0ff;border-color:#288deb;font-weight:700}.primary{background:#236af5;border-color:#236af5;color:#fff}.muted{color:#586e83}.tiny{font-size:12px}.viewer{position:relative;background:radial-gradient(circle at 45% 40%,#184b6b,#071a30 70%);border-radius:15px;overflow:hidden;min-height:540px}#scene{height:540px;touch-action:none}#scene canvas{display:block;width:100%;height:100%}.region-picker{display:flex;gap:9px;align-items:center;flex-wrap:wrap;color:#fff;background:#0d2f50;padding:12px}.region-picker label{font-weight:700}.region-picker select{min-width:165px;flex:1;max-width:310px;background:#fff;border:2px solid #46b5ed;border-radius:10px;padding:11px;font:inherit;color:#142c45}.region-picker button{background:#2563eb;color:#fff;border-color:#5aa5ff}.region-picker button:disabled{opacity:.55}.viewer-tools{position:absolute;left:12px;bottom:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap;background:#0d2949df;padding:10px;border-radius:12px}.viewer-tools button{font-size:13px;background:#1b4169;color:white;border-color:#385c7a}.badge{pointer-events:none;position:absolute;left:12px;top:12px;background:#073756bd;border:1px solid #29748e;padding:9px 13px;border-radius:10px;color:#fff;font-size:13px;max-width:90%}.detail-header{background:linear-gradient(100deg,#fe6976,#fb8497);color:#fff;padding:12px;border-radius:11px}.key{background:#ebf5ff;border-radius:10px;padding:12px;margin-top:14px}.bottom{max-width:1480px;margin:0 auto 26px;padding:0 14px}.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 2px}.chips button{white-space:nowrap;flex-shrink:0}.quiz{background:#e2f3ff;border:1px solid #91ccf4;border-radius:12px;padding:12px;margin-top:14px}.hidden{display:none}.notice{color:#fcd34d}.tags{font-size:12px;color:#667b8f;margin-top:10px}@media(max-width:1050px){.layout{grid-template-columns:200px minmax(0,1fr)}.detail{grid-column:1/-1}}@media(max-width:680px){.region-picker{gap:6px}.region-picker label{width:100%}.region-picker select{min-width:0;max-width:none;flex:1}.region-picker button{padding:11px}.badge{font-size:11px;padding:7px 9px;max-width:88%;top:9px;left:9px}.layout{display:flex;flex-direction:column}.viewer{min-height:390px}#scene{height:390px}.viewer-tools{position:static;border-radius:0}.card{padding:12px}.catalog{order:2}.detail{order:3}header{font-size:13px}}
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#183452;background:#ecf5ff}*{box-sizing:border-box}body{margin:0}header{background:#0b2343;color:#fff;padding:16px max(16px,calc((100vw - 1450px)/2));display:flex;justify-content:space-between;gap:12px;align-items:center}a{color:inherit}a:hover{opacity:.8}.top{background:linear-gradient(105deg,#d8efff,#f4fbff 48%,#b9d5fd);padding:20px max(16px,calc((100vw - 1450px)/2))}h1{font-size:clamp(23px,3vw,34px);margin:0}.top p{margin:6px 0 0}.layout{max-width:1480px;margin:auto;display:grid;grid-template-columns:220px minmax(0,1fr) 300px;gap:12px;padding:14px}.card{background:white;border:1px solid #d1e4f5;border-radius:15px;padding:16px;box-shadow:0 4px 16px #132e4c10}h2{font-size:18px;margin:0 0 16px}h3{margin:0 0 8px}button{font:inherit;border:1px solid #cbdff4;border-radius:10px;background:#fff;color:#123050;padding:10px 12px;cursor:pointer}button:disabled{cursor:not-allowed;opacity:.55}button:focus-visible,a:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}.option{display:block;width:100%;text-align:left;margin:8px 0}.active{background:#d9f0ff;border-color:#288deb;font-weight:700}.primary{background:#236af5;border-color:#236af5;color:#fff}.muted{color:#586e83}.tiny{font-size:12px}.viewer{position:relative;background:radial-gradient(circle at 45% 40%,#184b6b,#071a30 70%);border-radius:15px;overflow:hidden;min-height:540px}#scene{height:540px;touch-action:none}#scene canvas{display:block;width:100%;height:100%}.region-picker{display:flex;gap:9px;align-items:center;flex-wrap:wrap;color:#fff;background:#0d2f50;padding:12px}.region-picker label{font-weight:700}.region-picker select{min-width:165px;flex:1;max-width:310px;background:#fff;border:2px solid #46b5ed;border-radius:10px;padding:11px;font:inherit;color:#142c45}.region-picker button{background:#2563eb;color:#fff;border-color:#5aa5ff}.region-picker button:disabled{opacity:.55}.viewer-tools{position:absolute;left:12px;bottom:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap;background:#0d2949df;padding:10px;border-radius:12px}.viewer-tools button{font-size:13px;background:#1b4169;color:white;border-color:#385c7a}.badge{pointer-events:none;position:absolute;left:12px;top:98px;background:#073756bd;border:1px solid #29748e;padding:9px 13px;border-radius:10px;color:#fff;font-size:13px;max-width:90%}.detail-header{background:linear-gradient(100deg,#fe6976,#fb8497);color:#fff;padding:12px;border-radius:11px}.key{background:#ebf5ff;border-radius:10px;padding:12px;margin-top:14px}.bottom{max-width:1480px;margin:0 auto 26px;padding:0 14px}.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 2px}.chips button{white-space:nowrap;flex-shrink:0}.quiz{background:#e2f3ff;border:1px solid #91ccf4;border-radius:12px;padding:12px;margin-top:14px}.hidden{display:none}.notice{color:#fcd34d}.tags{font-size:12px;color:#667b8f;margin-top:10px}@media(max-width:1050px){.layout{grid-template-columns:200px minmax(0,1fr)}.detail{grid-column:1/-1}}@media(max-width:680px){.badge{top:112px;left:10px;right:10px;max-width:none;font-size:11px;padding:7px 9px}.region-picker{gap:6px}.region-picker label{width:100%}.region-picker select{min-width:0;max-width:none;flex:1}.region-picker button{padding:11px}.badge{font-size:11px;padding:7px 9px;max-width:88%;top:9px;left:9px}.layout{display:flex;flex-direction:column}.viewer{min-height:390px}#scene{height:390px}.viewer-tools{position:static;border-radius:0}.card{padding:12px}.catalog{order:2}.detail{order:3}header{font-size:13px}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 </head><body><header><strong>🎓 CachimboLab · LABORATORIO 3D</strong><a href="./">← Volver al banco académico</a></header>
@@ -80,28 +80,43 @@ const geometry=new THREE.SphereGeometry(1,48,32);
 const referenceBrain=new THREE.Group();
 referenceBrain.name='Referencia transparente del cerebro';
 root.add(referenceBrain);
-const referenceMaterial=new THREE.MeshPhongMaterial({
- color:0xa7d6fa,transparent:true,opacity:.13,depthWrite:false,
- side:THREE.DoubleSide,shininess:45
-});
-const shellMaterial=new THREE.MeshBasicMaterial({
- color:0xb7e9ff,side:THREE.BackSide,transparent:true,
- opacity:.29,depthWrite:false
+// La silueta se dibuja SOBRE las regiones opacas. Un fresnel de borde
+// permite ver el cerebro completo sin tapar el color del lóbulo elegido.
+const silhouetteMaterial=new THREE.ShaderMaterial({
+ transparent:true,depthTest:false,depthWrite:false,side:THREE.FrontSide,
+ uniforms:{uColor:{value:new THREE.Color('#a8e5ff')}},
+ vertexShader:`
+ varying vec3 vNormalView;
+ varying vec3 vViewDirection;
+ void main(){
+  vec4 viewPos=modelViewMatrix*vec4(position,1.0);
+  vNormalView=normalize(normalMatrix*normal);
+  vViewDirection=normalize(-viewPos.xyz);
+  gl_Position=projectionMatrix*viewPos;
+ }`,
+ fragmentShader:`
+ uniform vec3 uColor;
+ varying vec3 vNormalView;
+ varying vec3 vViewDirection;
+ void main(){
+  float edge=1.0-abs(dot(normalize(vNormalView),normalize(vViewDirection)));
+  float rim=pow(clamp(edge,0.0,1.0),3.0);
+  gl_FragColor=vec4(uColor,0.055+0.67*rim);
+ }`
 });
 function brainReferencePart(position,scale){
- const form=new THREE.Mesh(geometry,referenceMaterial.clone());
- form.position.set(...position);form.scale.set(...scale);
- form.raycast=()=>{};form.renderOrder=0;referenceBrain.add(form);
- const shell=new THREE.Mesh(geometry,shellMaterial.clone());
- shell.position.set(...position);shell.scale.set(scale[0]*1.035,scale[1]*1.035,scale[2]*1.035);
- shell.raycast=()=>{};shell.renderOrder=1;referenceBrain.add(shell);
+ const surface=new THREE.Mesh(geometry,silhouetteMaterial.clone());
+ surface.position.set(...position);surface.scale.set(...scale);
+ surface.renderOrder=50;surface.raycast=()=>{};
+ referenceBrain.add(surface);
 }
-// Dos hemisferios superpuestos proporcionan una referencia espacial continua.
-brainReferencePart([.12,.13,-.32],[1.75,.99,.67]);
-brainReferencePart([.12,.13,.36],[1.75,.99,.67]);
-// El cerebelo y el tronco también permanecen como referencias de ubicación.
-brainReferencePart([.87,-.73,-.27],[.69,.38,.56]);
-brainReferencePart([.21,-1.03,-.11],[.26,.69,.29]);
+// Masa cerebral de referencia y hemisferios, a escala esquemática.
+// El mayor tamaño deja visible una fina envolvente aun en la vista lateral.
+brainReferencePart([.12,.14,0],[1.83,1.08,1.12]);
+brainReferencePart([.12,.14,-.43],[1.77,1.02,.72]);
+brainReferencePart([.12,.14,.43],[1.77,1.02,.72]);
+brainReferencePart([.83,-.74,-.28],[.74,.41,.61]);
+brainReferencePart([.21,-1.05,-.11],[.29,.73,.33]);
 for(const part of regions){
  const group=new THREE.Group();group.position.set(...part.pos);
  const mat=new THREE.MeshStandardMaterial({color:part.color,roughness:.79,metalness:0});
