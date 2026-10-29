@@ -22,7 +22,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           from PIL import Image
-          items=[["2023","page-15.jpg","sustitucion-pescado.jpg",[0.12,0.277,0.9,0.932]],["2024","page-18.jpg","radiacion-uv.jpg",[0.093,0.112,0.79,0.75]],["2024","page-24.jpg","sueno-grafico.jpg",[0.185,0.64,0.73,0.79]],["2025","page-15.jpg","desinformacion-grafico.jpg",[0.258,0.235,0.66,0.472]],["2025","page-17.jpg","lesion-cerebral.jpg",[0.12,0.13,0.91,0.77]],["2025","page-24.jpg","oceanos-plastico.jpg",[0.11,0.195,0.762,0.47]]]
+          items=[["2023","page-15.jpg","sustitucion-pescado.jpg",[0.12,0.515,0.90,0.985]],["2024","page-18.jpg","radiacion-uv.jpg",[0.093,0.055,0.79,0.79]],["2024","page-24.jpg","sueno-grafico.jpg",[0.185,0.65,0.73,0.82]],["2025","page-15.jpg","desinformacion-grafico.jpg",[0.258,0.235,0.66,0.472]],["2025","page-17.jpg","lesion-cerebral.jpg",[0.105,0.215,0.79,0.85]],["2025","page-24.jpg","oceanos-plastico.jpg",[0.11,0.195,0.762,0.47]]]
           for year,filename,dest,box in items:
               source=Path('beca18-images')/year/filename
               assert source.exists(), str(source)
