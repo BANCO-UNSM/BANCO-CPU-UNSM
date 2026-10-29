@@ -1,9 +1,70 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CachimboLab | Laboratorio del esqueleto humano 3D</title><style>
 :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#071326;color:#ecf6ff;font:15px system-ui,-apple-system,Segoe UI,sans-serif}header{padding:17px max(18px,calc((100vw - 1250px)/2));background:#0e2340;border-bottom:1px solid #2c4565;display:flex;align-items:center;justify-content:space-between;gap:12px}a{color:#8de8ec}h1{font-size:20px;margin:0}h2{font-size:17px;margin:0 0 10px}.muted{color:#a8bed5}.wrap{max-width:1250px;margin:auto;padding:20px;display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:16px}.viewer,.panel{border:1px solid #2b4868;background:#10213a;border-radius:17px;overflow:hidden}.viewer{position:relative;min-height:690px}#scene{height:690px;touch-action:none}#scene canvas{display:block;width:100%;height:100%}.overlay{position:absolute;top:15px;left:15px;background:#091a30dc;border:1px solid #365372;padding:10px 14px;border-radius:12px;max-width:85%}.panel{padding:20px}button{border:1px solid #4a6586;background:#1d3553;color:#fff;padding:10px 12px;border-radius:10px;cursor:pointer}button:hover{background:#29486d}button:disabled{opacity:.5;cursor:default}.controls{display:flex;gap:8px;flex-wrap:wrap}.controls button{flex:1}.selected{border-color:#3fe0c8;background:#13585b}.hint{color:#71f0d8;font-size:12px;margin:8px 0 0}label{display:block;margin:12px 0 5px}input[type=search]{width:100%;padding:11px;border-radius:10px;background:#0b1b31;color:#fff;border:1px solid #416182}#bones{max-height:370px;overflow:auto;margin:12px 0}#bones button{display:block;width:100%;text-align:left;margin-bottom:6px}#detail{background:#0a1d32;border-radius:10px;padding:13px;min-height:75px;line-height:1.55}footer{max-width:1250px;margin:auto;padding:0 20px 30px;color:#9db3ca;font-size:12px;line-height:1.6}.status{color:#ffe1a4} @media(max-width:780px){.wrap{grid-template-columns:1fr;padding:12px}.viewer{min-height:430px}#scene{height:430px}.panel{padding:16px}header{padding:15px}}
-</style><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script></head><body><header><h1>🦴 CachimboLab · Esqueleto 3D</h1><div><a href="laboratorio3d.html">🧠 Cerebro 3D</a> · <a href="craneo3d.html">🦴 Cráneo 3D</a> · <a href="./">← Volver a CachimboLab</a></div></header><main class="wrap"><section class="viewer"><div id="scene" aria-label="Visor anatómico 3D interactivo"></div><div class="overlay"><strong>Esqueleto humano completo</strong><div class="muted" style="font-size:12px">Gira con un dedo · Pellizca para ampliar · Toca un hueso</div><div id="status" class="status" role="status">Cargando modelo anatómico…</div></div></section><aside class="panel"><h2>Explora el esqueleto humano</h2><p class="muted">Selecciona una estructura, ocúltala para descubrir lo que hay detrás y vuelve a mostrarla cuando quieras.</p><div class="controls"><button id="resetCamera">Restablecer vista</button><button id="showAll">Mostrar todo</button></div><label for="search">Buscar un hueso</label><input id="search" type="search" placeholder="Ej.: fémur, tibia, costilla…"><div id="bones"><p class="muted">Cargando los huesos del cuerpo…</p></div><div id="detail" aria-live="polite">Selecciona un hueso para ver su nombre.</div><p class="hint">✦ El hueso seleccionado se pinta de turquesa y sus límites se resaltan en naranja.</p><div class="controls" style="margin-top:12px"><button id="hideSelected" disabled>Ocultar seleccionado</button><button id="isolateSelected" disabled>Aislar seleccionado</button><button id="focusSelected" disabled>Acercar al hueso</button></div><p class="muted" style="font-size:12px">Modelo didáctico: los nombres de origen pueden requerir revisión; no sustituye un atlas anatómico validado.</p></aside></main><footer>Modelo anatómico: <a href="https://github.com/Charleeh/ecorche" target="_blank" rel="noopener">Écorché</a>, CC BY-SA 4.0, basado en BodyParts3D (© Database Center for Life Science, CC BY 4.0) y Z-Anatomy (Gauthier Kervyn, CC BY-SA 4.0). Código del visor: demostración de CachimboLab. El modelo y bibliotecas se cargan por Internet. Para uso público definitivo se recomienda alojar una copia autorizada del modelo en el repositorio y revisar los nombres y la anatomía.</footer><script type="module">
+</style><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script></head><body><header><h1>🦴 CachimboLab · Esqueleto 3D</h1><div><a href="laboratorio3d.html">🧠 Cerebro 3D</a> · <a href="craneo3d.html">🦴 Cráneo 3D</a> · <a href="./">← Volver a CachimboLab</a></div></header><main class="wrap"><section class="viewer"><div id="scene" aria-label="Visor anatómico 3D interactivo"></div><div class="overlay"><strong>Esqueleto humano completo</strong><div class="muted" style="font-size:12px">Gira con un dedo · Pellizca para ampliar · Toca un hueso</div><div id="status" class="status" role="status">Cargando modelo anatómico…</div></div></section><aside class="panel"><h2>Explora el esqueleto humano</h2><p class="muted">Selecciona una estructura, ocúltala para descubrir lo que hay detrás y vuelve a mostrarla cuando quieras.</p><div class="controls"><button id="resetCamera">Restablecer vista</button><button id="showAll">Mostrar todo</button></div><details id="completeCatalog" style="margin:12px 0;background:#0a1d32;border:1px solid #365372;border-radius:12px;padding:12px"><summary style="cursor:pointer;font-weight:700">📚 Catálogo completo de los 206 huesos</summary><p class="muted small">Lista anatómica del adulto. La ficha distingue los huesos localizables individualmente en el modelo de los que aún no tienen representación 3D verificable.</p><label for="catalogSearch">Buscar en el catálogo</label><input id="catalogSearch" type="search" placeholder="Ej.: martillo, primera costilla, fémur…" style="width:100%;padding:10px;border-radius:9px;background:#071629;border:1px solid #416182;color:#fff"><div id="catalogStats" class="hint"></div><div id="catalog206" style="max-height:360px;overflow:auto;margin-top:8px"></div><div id="catalogDetail" aria-live="polite" class="muted small" style="padding:8px"></div></details><label for="search">Buscar un hueso</label><input id="search" type="search" placeholder="Ej.: fémur, tibia, costilla…"><div id="bones"><p class="muted">Cargando los huesos del cuerpo…</p></div><div id="detail" aria-live="polite">Selecciona un hueso para ver su nombre.</div><p class="hint">✦ El hueso seleccionado se pinta de turquesa y sus límites se resaltan en naranja.</p><div class="controls" style="margin-top:12px"><button id="hideSelected" disabled>Ocultar seleccionado</button><button id="isolateSelected" disabled>Aislar seleccionado</button><button id="focusSelected" disabled>Acercar al hueso</button></div><p class="muted" style="font-size:12px">Modelo didáctico: los nombres de origen pueden requerir revisión; no sustituye un atlas anatómico validado.</p></aside></main><footer>Modelo anatómico: <a href="https://github.com/Charleeh/ecorche" target="_blank" rel="noopener">Écorché</a>, CC BY-SA 4.0, basado en BodyParts3D (© Database Center for Life Science, CC BY 4.0) y Z-Anatomy (Gauthier Kervyn, CC BY-SA 4.0). Código del visor: demostración de CachimboLab. El modelo y bibliotecas se cargan por Internet. Para uso público definitivo se recomienda alojar una copia autorizada del modelo en el repositorio y revisar los nombres y la anatomía.</footer><script type="module">
 import * as THREE from 'three';import {OrbitControls} from 'three/addons/controls/OrbitControls.js';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 const $=id=>document.getElementById(id);const scene=new THREE.Scene();scene.background=new THREE.Color('#081729');const camera=new THREE.PerspectiveCamera(40,1,.001,100);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;$('scene').appendChild(renderer.domElement);scene.add(new THREE.HemisphereLight(0xe4f7ff,0x19334b,2.2));const lamp=new THREE.DirectionalLight(0xffffff,2.5);lamp.position.set(3,5,7);scene.add(lamp);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=.14;controls.maxDistance=8;let meshes=[],chosen=null,center=new THREE.Vector3(),radius=.2;const originalMaterials=new Map();let outline=null;
 
+
+const catalog206=[];
+function addBone(group,name,source){catalog206.push({number:catalog206.length+1,group,name,source:source||''});}
+const pair=(group,name,source)=>{addBone(group,name+' izquierdo',source);addBone(group,name+' derecho',source)};
+for(const name of ['Frontal','Occipital','Esfenoides','Etmoides'])addBone('Cráneo · neurocráneo',name,name);
+for(const name of ['Parietal','Temporal'])pair('Cráneo · neurocráneo',name,name);
+for(const name of ['Mandíbula','Vómer'])addBone('Cráneo · cara',name,name);
+for(const name of ['Maxilar','Cigomático','Nasal','Lagrimal','Palatino','Cornete nasal inferior'])pair('Cráneo · cara',name,name);
+for(const name of ['Martillo','Yunque','Estribo'])pair('Oído medio',name,name);
+addBone('Cuello','Hioides','Hioides');
+for(let n=1;n<=7;n++)addBone('Columna vertebral','Vértebra cervical '+n,n===1?'Atlas':n===2?'Axis':'Vértebra cervical');
+for(let n=1;n<=12;n++)addBone('Columna vertebral','Vértebra torácica '+n,'Vértebra torácica');
+for(let n=1;n<=5;n++)addBone('Columna vertebral','Vértebra lumbar '+n,'Vértebra lumbar');
+addBone('Columna vertebral','Sacro','Sacro');
+addBone('Columna vertebral','Cóccix','Cóccix');
+addBone('Tórax','Esternón','Esternón');
+for(let n=1;n<=12;n++){addBone('Tórax',n+'ª costilla izquierda','Costilla');addBone('Tórax',n+'ª costilla derecha','Costilla')}
+for(const n of ['Clavícula','Escápula'])pair('Cintura escapular',n,n);
+for(const n of ['Húmero','Radio','Cúbito'])pair('Extremidad superior',n,n);
+for(const n of ['Escafoides','Semilunar','Piramidal','Pisiforme','Trapecio','Trapezoide','Grande','Ganchoso'])pair('Mano · carpo',n,n);
+for(let n=1;n<=5;n++)pair('Mano · metacarpo',n+'º metacarpiano','Metacarpiano');
+for(let n=1;n<=5;n++){const digit=n===1?'pulgar':n===2?'índice':n===3?'medio':n===4?'anular':'meñique';for(const part of (n===1?['proximal','distal']:['proximal','media','distal']))pair('Mano · falanges','Falange '+part+' del '+digit,'Falange '+part)}
+pair('Cintura pélvica','Hueso coxal','Hueso coxal');
+for(const n of ['Fémur','Rótula','Tibia','Peroné'])pair('Extremidad inferior',n,n);
+for(const n of ['Astrágalo','Calcáneo','Navicular','Cuboides','Cuneiforme medial','Cuneiforme intermedio','Cuneiforme lateral'])pair('Pie · tarso',n,n);
+for(let n=1;n<=5;n++)pair('Pie · metatarso',n+'º metatarsiano','Metatarsiano');
+for(let n=1;n<=5;n++){const digit=n===1?'dedo gordo':n+'º dedo';for(const part of (n===1?['proximal','distal']:['proximal','media','distal']))pair('Pie · falanges','Falange '+part+' del '+digit+' del pie','Falange '+part)}
+if(catalog206.length!==206)throw new Error('El catálogo anatómico debe tener 206 entradas: '+catalog206.length);
+function catalogMatch(entry){
+ if(!meshes.length)return null;
+ const target=normalized(entry.source);
+ const hits=meshes.filter(m=>normalized(spanish(m)).includes(target)
+    &&(!entry.name.includes('izquierd')||normalized(spanish(m)).includes('izquierd'))
+    &&(!entry.name.includes('derech')||normalized(spanish(m)).includes('derech')));
+ return hits.length===1?hits[0]:null;
+}
+function drawCatalog(){
+ const field=$('catalogSearch');if(!field)return;
+ const query=normalized(field.value.trim());
+ const found=catalog206.filter(x=>!query||normalized(x.name+' '+x.group).includes(query));
+ $('catalogStats').textContent=found.length+' de 206 huesos del catálogo anatómico';
+ const root=$('catalog206');root.replaceChildren();
+ const grouped=new Map();
+ for(const x of found){if(!grouped.has(x.group))grouped.set(x.group,[]);grouped.get(x.group).push(x)}
+ for(const [group,entries] of grouped){
+  const section=document.createElement('details');section.open=!!query;
+  const summary=document.createElement('summary');summary.textContent=group+' ('+entries.length+')';summary.style.cssText='cursor:pointer;font-weight:650;padding:8px';section.appendChild(summary);
+  for(const item of entries){
+   const button=document.createElement('button');button.style.cssText='display:block;width:100%;text-align:left;margin:4px 0;padding:7px;font-size:12px';
+   button.textContent=item.number+'. '+item.name;
+   button.onclick=()=>{
+    const match=catalogMatch(item);
+    if(match){select(match);$('catalogDetail').textContent=item.name+': estructura correspondiente localizada en el modelo 3D.';}
+    else $('catalogDetail').textContent=item.name+': incluido en el catálogo de 206 huesos; su representación individual todavía no está verificada en este modelo 3D.';
+   };
+   section.appendChild(button);
+  }
+  root.appendChild(section);
+ }
+}
+$('catalogSearch').addEventListener('input',drawCatalog);
 const terms=[
  ['middle phalanx','Falange media'],['distal phalanx','Falange distal'],['proximal phalanx','Falange proximal'],
  ['metacarpal','Metacarpiano'],['metatarsal','Metatarsiano'],
@@ -85,7 +146,7 @@ outline.renderOrder=10;
 mesh.add(outline)}
 function select(mesh){clearHighlight();chosen=mesh;highlight(mesh);$('hideSelected').disabled=!mesh;$('isolateSelected').disabled=!mesh;$('focusSelected').disabled=!mesh;$('detail').textContent=mesh?spanish(mesh)+'. Resaltado turquesa y borde naranja de alto contraste. Usa «Ocultar» o «Aislar» para explorar la anatomía.':'Selecciona un hueso para ver su nombre.';drawList()}
 function drawList(){const q=$('search').value.trim().toLowerCase();$('bones').replaceChildren();let matches=meshes.filter(m=>normalized(spanish(m)).includes(normalized(q)));for(const m of matches.slice(0,100)){const b=document.createElement('button');b.textContent=(m.visible?'👁 ':'◌ ')+spanish(m);if(m===chosen)b.classList.add('selected');b.onclick=()=>select(m);$('bones').appendChild(b)}if(!matches.length)$('bones').textContent='No se encontraron huesos con ese nombre.'}
-function reset(){camera.position.copy(center).add(new THREE.Vector3(0,radius*.06,radius*3.5));controls.target.copy(center);controls.update()}$('resetCamera').onclick=reset;$('showAll').onclick=()=>{meshes.forEach(m=>m.visible=true);drawList()};$('hideSelected').onclick=()=>{if(chosen){chosen.visible=false;drawList()}};$('isolateSelected').onclick=()=>{if(chosen){meshes.forEach(m=>m.visible=m===chosen);drawList()}};$('focusSelected').onclick=()=>{if(!chosen)return;const box=new THREE.Box3().setFromObject(chosen);const target=box.getCenter(new THREE.Vector3());const size=box.getSize(new THREE.Vector3()).length();controls.target.copy(target);camera.position.copy(target).add(new THREE.Vector3(0,Math.max(.03,size*.2),Math.max(.23,size*2.8)));controls.update()};$('search').oninput=drawList;
+function reset(){camera.position.copy(center).add(new THREE.Vector3(0,radius*.06,radius*3.5));controls.target.copy(center);controls.update()}$('resetCamera').onclick=reset;$('showAll').onclick=()=>{meshes.forEach(m=>m.visible=true);drawList()};$('hideSelected').onclick=()=>{if(chosen){chosen.visible=false;drawList()}};$('isolateSelected').onclick=()=>{if(chosen){meshes.forEach(m=>m.visible=m===chosen);drawList()}};$('focusSelected').onclick=()=>{if(!chosen)return;const box=new THREE.Box3().setFromObject(chosen);const target=box.getCenter(new THREE.Vector3());const size=box.getSize(new THREE.Vector3()).length();controls.target.copy(target);camera.position.copy(target).add(new THREE.Vector3(0,Math.max(.03,size*.2),Math.max(.23,size*2.8)));controls.update()};$('search').oninput=drawList;drawCatalog();
 const raycaster=new THREE.Raycaster();renderer.domElement.addEventListener('click',e=>{const rect=renderer.domElement.getBoundingClientRect();const mouse=new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects(meshes.filter(m=>m.visible),false);if(hits.length)select(hits[0].object)});
 function resize(){const el=$('scene');const w=el.clientWidth,h=el.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}new ResizeObserver(resize).observe($('scene'));resize();function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera)}loop();
 // Carga ligera para móviles. Si falla la versión comprimida, se intenta el GLB estándar.
@@ -103,7 +164,7 @@ function loaded(gltf){
   o.visible=isBone;
   if(isBone)all.push(o);
  });
- meshes=all;assignSpanishNames();
+ meshes=all;assignSpanishNames();drawCatalog();
  if(!meshes.length){
   $('status').textContent='El archivo 3D cargó, pero no se encontraron huesos. Comprueba los datos del modelo.';
   return;
