@@ -59,6 +59,12 @@ function evaluate(){
 }
 async function init(){
  try{
+  if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw Error('Falta la configuración de acceso.');
+  const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+  const {data:{session},error:authError}=await client.auth.getSession();
+  if(authError||!session?.user)throw Error('Inicia sesión en CachimboLab.');
+  const {data:granted,error:permissionError}=await client.rpc('has_service_access',{p_modality:'BECA18'});
+  if(permissionError||granted!==true)throw Error('No tienes contratado Beca 18. Contacta al administrador.');
   const r=await fetch('beca18-examenes-verbal.json',{cache:'no-store'});
   if(!r.ok)throw Error('No se pudo recuperar el banco de exámenes.');
   const data=await r.json();
