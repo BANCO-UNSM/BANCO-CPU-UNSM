@@ -30,7 +30,7 @@
 <h3>⚙️ Función principal</h3><p id="partFunction">Las funciones de cada región aparecerán aquí.</p>
 <div class="key"><strong>💡 Clave para el examen</strong><p id="partExam">Aprende una región y luego prueba el modo «Identificar estructuras».</p></div>
 <div class="quiz hidden" id="quizBox" aria-live="polite"><strong>🎯 Identifica en el modelo</strong><p id="quizPrompt"></p><p id="quizFeedback"></p><button class="primary" id="nextChallenge">Siguiente reto</button></div>
-<p class="tags">Cerebro completo semitransparente y contorno tenue · estructura seleccionada en turquesa con borde naranja.</p>
+<p class="tags">Contorno exterior fino sin relleno · estructura seleccionada en turquesa con borde naranja.</p>
 </aside>
 </main>
 <section class="bottom card"><h2>Selecciona una estructura cerebral</h2><div class="chips" id="chips"></div></section>
@@ -77,45 +77,52 @@ let selected=null,quizMode=false,challenge=null,labelsVisible=true;
 const objects=new Map(),baseMaterials=new Map();
 const root=new THREE.Group();scene.add(root);
 const geometry=new THREE.SphereGeometry(1,48,32);
-// Referencia anatómica: exclusivamente contorno exterior, sin relleno.
-// Modelo didáctico simplificado, no una reconstrucción clínica.
-const referenceBrain=new THREE.Group();
-referenceBrain.name='Contorno exterior del cerebro';
-root.add(referenceBrain);
-// Solo se dibuja una banda fina en el perfil aparente de cada superficie.
-// Sin opacidad de base ni capa transparente sobre las estructuras.
-const silhouetteMaterial=new THREE.ShaderMaterial({
- transparent:true,depthTest:false,depthWrite:false,side:THREE.FrontSide,
- uniforms:{uColor:{value:new THREE.Color('#a8e5ff')}},
- vertexShader:`
- varying vec3 vNormalView;
- varying vec3 vViewDirection;
- void main(){
-  vec4 viewPos=modelViewMatrix*vec4(position,1.0);
-  vNormalView=normalize(normalMatrix*normal);
-  vViewDirection=normalize(-viewPos.xyz);
-  gl_Position=projectionMatrix*viewPos;
- }`,
- fragmentShader:`
- uniform vec3 uColor;
- varying vec3 vNormalView;
- varying vec3 vViewDirection;
- void main(){
-  float edge=1.0-abs(dot(normalize(vNormalView),normalize(vViewDirection)));
-  float rim=smoothstep(0.945,0.985,clamp(edge,0.0,1.0));
-  gl_FragColor=vec4(uColor,0.82*rim);
- }`
-});
-function brainReferencePart(position,scale){
- const surface=new THREE.Mesh(geometry,silhouetteMaterial.clone());
- surface.position.set(...position);surface.scale.set(...scale);
- surface.renderOrder=50;surface.raycast=()=>{};
- referenceBrain.add(surface);
+// El contorno exterior se calcula a partir de la silueta proyectada de las
+// regiones visibles del cerebro. Es solo una línea SVG: no hay malla ni relleno.
+const contour=document.createElementNS('http://www.w3.org/2000/svg','svg');
+contour.setAttribute('aria-hidden','true');
+contour.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2';
+const contourPath=document.createElementNS('http://www.w3.org/2000/svg','path');
+contourPath.setAttribute('fill','none');
+contourPath.setAttribute('stroke','#a8e5ff');
+contourPath.setAttribute('stroke-width','1.6');
+contourPath.setAttribute('stroke-opacity','.72');
+contourPath.setAttribute('stroke-linecap','round');
+contourPath.setAttribute('stroke-linejoin','round');
+contour.appendChild(contourPath);
+$('scene').appendChild(contour);
+function exteriorHull(points){
+ points.sort((a,b)=>a.x-b.x||a.y-b.y);
+ if(points.length<3)return points;
+ const cross=(a,b,c)=>(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
+ const low=[],high=[];
+ for(const p of points){while(low.length>=2&&cross(low[low.length-2],low[low.length-1],p)<=0)low.pop();low.push(p);}
+ for(let i=points.length-1;i>=0;i--){const p=points[i];while(high.length>=2&&cross(high[high.length-2],high[high.length-1],p)<=0)high.pop();high.push(p);}
+ low.pop();high.pop();return low.concat(high);
 }
-// Una única envolvente cerebral evita óvalos superpuestos en el interior.
-brainReferencePart([.12,.14,0],[1.83,1.08,1.12]);
-brainReferencePart([.83,-.74,-.28],[.74,.41,.61]);
-brainReferencePart([.21,-1.05,-.11],[.29,.73,.33]);
+function drawBrainContour(){
+ const width=$('scene').clientWidth,height=$('scene').clientHeight;
+ if(!width||!height)return;
+ contour.setAttribute('viewBox',`0 0 ${width} ${height}`);
+ root.updateMatrixWorld(true);camera.updateMatrixWorld(true);
+ const projected=[];
+ const sample=new THREE.Vector3();
+ for(const group of objects.values()){
+  if(!group.visible)continue;
+  const mesh=group.children[0];if(!mesh?.isMesh)continue;
+  // Puntos exteriores distribuidos uniformemente por cada superficie elipsoidal.
+  for(let i=0;i<170;i++){
+   const y=1-2*(i+.5)/170;
+   const theta=i*2.399963229728653;
+   const r=Math.sqrt(1-y*y);
+   sample.set(r*Math.cos(theta),y,r*Math.sin(theta));
+   sample.multiply(mesh.scale).applyMatrix4(group.matrixWorld).project(camera);
+   if(sample.z>=-1&&sample.z<=1)projected.push({x:(sample.x+1)*width/2,y:(1-sample.y)*height/2});
+  }
+ }
+ const hull=exteriorHull(projected);
+ contourPath.setAttribute('d',hull.length>2?'M'+hull.map(p=>p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' L')+' Z':'');
+}
 for(const part of regions){
  const group=new THREE.Group();group.position.set(...part.pos);
  const mat=new THREE.MeshStandardMaterial({color:part.color,roughness:.79,metalness:0});
@@ -171,6 +178,6 @@ $('showAll').onclick=()=>{objects.forEach(g=>g.visible=true)};
 $('labels').onclick=()=>{labelsVisible=!labelsVisible;$('chips').hidden=!labelsVisible;$('labels').textContent=labelsVisible?'Ocultar etiquetas':'Mostrar etiquetas'};
 function resize(){const el=$('scene');renderer.setSize(el.clientWidth,el.clientHeight,false);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix()}
 new ResizeObserver(resize).observe($('scene'));resize();
-renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)});
+renderer.setAnimationLoop(()=>{controls.update();drawBrainContour();renderer.render(scene,camera)});
 selectVisual('frontal');$('status').textContent='6 estructuras listas para explorar.';
 </script></body></html>
