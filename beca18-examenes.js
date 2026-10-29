@@ -2,6 +2,17 @@
 const el=id=>document.getElementById(id);
 const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 let exams=[],current=null,answers={},graded=false,lastReadingId=null,questionObserver=null;
+async function cargarImagenesBeca(raiz){
+ for(const img of raiz.querySelectorAll('img[data-beca-private-src]')){
+  const ruta=img.dataset.becaPrivateSrc;
+  try{
+   const uri=ruta.startsWith('data:image/')?ruta:await window.becaPrivate.image(ruta);
+   if(!img.isConnected)return;
+   img.src=uri;const enlace=img.closest('a');if(enlace)enlace.href=uri;
+  }catch(error){const caja=img.closest('figure')||img.closest('.question-image')||img;caja.textContent='La ilustración no se pudo cargar: '+error.message;}
+ }
+}
+
 function questionGroup(q){return current.groups[q.group]||{passage:'Lectura no disponible',pages:'—'};}
 function showReading(q){
  const g=questionGroup(q);
@@ -15,7 +26,8 @@ function showReading(q){
  const images=Array.isArray(g.images)?g.images:[];
  const holder=el('originalPages');
  if(holder){
-  holder.innerHTML=images.map((src,i)=>'<figure class="exam-illustration"><a href="'+escapeHtml(src)+'" target="_blank" rel="noopener" title="Ampliar ilustración"><img src="'+escapeHtml(src)+'" loading="lazy" alt="Gráfico o ilustración '+(i+1)+' correspondiente a la lectura '+escapeHtml(g.id)+'"></a></figure>').join('');
+  holder.innerHTML=images.map((src,i)=>'<figure class="exam-illustration"><a href="#" target="_blank" rel="noopener" title="Ampliar ilustración"><img data-beca-private-src="'+escapeHtml(src)+'" loading="lazy" alt="Gráfico o ilustración '+(i+1)+' correspondiente a la lectura '+escapeHtml(g.id)+'"></a></figure>').join('');
+   cargarImagenesBeca(holder);
   holder.hidden=images.length===0;
   holder.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{img.closest('figure').innerHTML='<p class="warning">La imagen correspondiente no está disponible. Consulta el PDF original.</p>';},{once:true}));
  }
@@ -29,7 +41,7 @@ function showExam(year){
  el('questionsTitle').textContent='Preguntas 31 a 60 · '+current.year;
  el('questions').innerHTML=current.questions.map(q=>{
  const label=q.needs_visual?'<p class="warning small">Observa la infografía o ilustración que aparece debajo de la lectura, en el panel izquierdo.</p>':'';
- const qimg=q.image?'<div class="question-image"><img loading="lazy" src="'+escapeHtml(q.image)+'" alt="Imagen o figura asociada a la pregunta '+q.number+'"></div>':'';
+ const qimg=q.image?'<div class="question-image"><img loading="lazy" data-beca-private-src="'+escapeHtml(q.image)+'" alt="Imagen o figura asociada a la pregunta '+q.number+'"></div>':'';
  return '<fieldset class="question" data-number="'+q.number+'" id="p'+q.number+'"><legend>Pregunta '+q.number+'. '+escapeHtml(q.statement)+'</legend>'+qimg+label+
  q.options.map((opt,i)=>'<label><input type="radio" name="q'+q.number+'" value="'+i+'"> <strong>'+String.fromCharCode(65+i)+')</strong> '+escapeHtml(opt)+'</label>').join('')+'<div class="feedback"></div></fieldset>';
  }).join('');
@@ -88,9 +100,7 @@ async function init(){
   if(authError||!session?.user)throw Error('Inicia sesión en CachimboLab.');
   const {data:granted,error:permissionError}=await client.rpc('has_service_access',{p_modality:'BECA18'});
   if(permissionError||granted!==true)throw Error('No tienes contratado Beca 18. Contacta al administrador.');
-  const r=await fetch('beca18-examenes-verbal.json',{cache:'no-store'});
-  if(!r.ok)throw Error('No se pudo recuperar el banco de exámenes.');
-  const data=await r.json();
+  const data=await window.becaPrivate.document('beca18-examenes-verbal.json');
   exams=data.exams||[];
   if(exams.length!==3||exams.some(x=>x.questions.length!==30))throw Error('Los bancos de preguntas no están completos.');
   el('grade').addEventListener('click',evaluate);
