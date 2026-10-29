@@ -1,0 +1,42 @@
+name: Limpiar textos de Beca 18 2023–2025
+on:
+  push:
+    branches: [fix/beca18-all-readings-2023-2025]
+    paths:
+      - '.github/workflows/normalizar-lecturas-beca18.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  transcribir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Preparar pdftotext
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+      - name: Descargar los cuadernillos usados para el banco
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/beca18
+          curl -fLsS --retry 4 --retry-delay 3 --max-time 120 'https://www.pronabec.gob.pe/download/37249/?tmstv=1751778972' -o /tmp/beca18/2023.pdf
+          curl -fLsS --retry 4 --retry-delay 3 --max-time 120 'https://www.pronabec.gob.pe/download/37251/?tmstv=1751779017' -o /tmp/beca18/2024.pdf
+          curl -fLsS --retry 4 --retry-delay 3 --max-time 120 'https://www.pronabec.gob.pe/download/37253/?tmstv=1751779054' -o /tmp/beca18/2025.pdf
+          for f in /tmp/beca18/*.pdf; do
+            head -c 4 "$f" | grep -q '%PDF' || { echo "Archivo inválido: $f"; exit 1; }
+            pdfinfo "$f" | grep '^Pages:'
+          done
+      - name: Recuperar lecturas completas y validar
+        run: python3 scripts/normalizar-lecturas-beca18.py
+      - name: Guardar correcciones en esta rama
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add beca18-examenes-verbal.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'fix(beca18): restaurar 14 lecturas de los PDF originales'
+            git fetch origin fix/beca18-all-readings-2023-2025
+            git rebase origin/fix/beca18-all-readings-2023-2025
+            git push origin HEAD:fix/beca18-all-readings-2023-2025
+          fi
