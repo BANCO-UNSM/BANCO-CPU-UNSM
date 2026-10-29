@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CachimboLab · Anatomía 3D</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#183452;background:#ecf5ff}*{box-sizing:border-box}body{margin:0}header{background:#0b2343;color:#fff;padding:16px max(16px,calc((100vw - 1450px)/2));display:flex;justify-content:space-between;gap:12px;align-items:center}a{color:inherit}a:hover{opacity:.8}.top{background:linear-gradient(105deg,#d8efff,#f4fbff 48%,#b9d5fd);padding:20px max(16px,calc((100vw - 1450px)/2))}h1{font-size:clamp(23px,3vw,34px);margin:0}.top p{margin:6px 0 0}.layout{max-width:1480px;margin:auto;display:grid;grid-template-columns:220px minmax(0,1fr) 300px;gap:12px;padding:14px}.card{background:white;border:1px solid #d1e4f5;border-radius:15px;padding:16px;box-shadow:0 4px 16px #132e4c10}h2{font-size:18px;margin:0 0 16px}h3{margin:0 0 8px}button{font:inherit;border:1px solid #cbdff4;border-radius:10px;background:#fff;color:#123050;padding:10px 12px;cursor:pointer}button:disabled{cursor:not-allowed;opacity:.55}button:focus-visible,a:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}.option{display:block;width:100%;text-align:left;margin:8px 0}.active{background:#d9f0ff;border-color:#288deb;font-weight:700}.primary{background:#236af5;border-color:#236af5;color:#fff}.muted{color:#586e83}.tiny{font-size:12px}.viewer{position:relative;background:radial-gradient(circle at 45% 40%,#184b6b,#071a30 70%);border-radius:15px;overflow:hidden;min-height:540px}#scene{height:540px;touch-action:none}#scene canvas{display:block;width:100%;height:100%}.viewer-tools{position:absolute;left:12px;bottom:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap;background:#0d2949df;padding:10px;border-radius:12px}.viewer-tools button{font-size:13px;background:#1b4169;color:white;border-color:#385c7a}.badge{position:absolute;left:12px;top:12px;background:#073756bd;border:1px solid #29748e;padding:9px 13px;border-radius:10px;color:#fff;font-size:13px;max-width:90%}.detail-header{background:linear-gradient(100deg,#fe6976,#fb8497);color:#fff;padding:12px;border-radius:11px}.key{background:#ebf5ff;border-radius:10px;padding:12px;margin-top:14px}.bottom{max-width:1480px;margin:0 auto 26px;padding:0 14px}.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 2px}.chips button{white-space:nowrap;flex-shrink:0}.quiz{background:#e2f3ff;border:1px solid #91ccf4;border-radius:12px;padding:12px;margin-top:14px}.hidden{display:none}.notice{color:#fcd34d}.tags{font-size:12px;color:#667b8f;margin-top:10px}@media(max-width:1050px){.layout{grid-template-columns:200px minmax(0,1fr)}.detail{grid-column:1/-1}}@media(max-width:680px){.layout{display:flex;flex-direction:column}.viewer{min-height:390px}#scene{height:390px}.viewer-tools{position:static;border-radius:0}.card{padding:12px}.catalog{order:2}.detail{order:3}header{font-size:13px}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head><body><header><strong>🎓 CachimboLab · LABORATORIO 3D</strong><a href="./">← Volver al banco académico</a></header>
+<div class="top"><h1>🧠 Laboratorio 3D de anatomía</h1><p>Explora, identifica y aprende con modelos interactivos.</p></div>
+<main class="layout">
+<aside class="card catalog"><h2>Modelos anatómicos</h2>
+<button class="option active" id="brainModel">🧠 Cerebro humano</button>
+<a class="option" href="craneo3d.html" style="display:block;text-decoration:none;border:1px solid #cbdff4;border-radius:10px;padding:12px">🦴 Cráneo humano ↗</a>
+<button class="option" disabled title="En preparación">🦴 Esqueleto completo · Próximamente</button>
+<button class="option" disabled title="En preparación">❤️ Aorta y arterias · Próximamente</button>
+<button class="option" disabled title="En preparación">🫀 Corazón · Próximamente</button>
+<hr style="border:0;border-top:1px solid #dfebf5;margin:20px 0">
+<h2>Modo de aprendizaje</h2>
+<button id="exploreMode" class="option active">🖱️ Explorar libremente</button>
+<button id="quizMode" class="option">🎯 Identificar estructuras</button>
+<p class="tiny muted">Modelo esquemático para aprender ubicaciones y funciones. No sustituye un atlas anatómico validado.</p>
+</aside>
+<section class="viewer" aria-label="Visor anatómico 3D interactivo">
+<div id="scene"></div><div class="badge"><strong>Modelo didáctico del cerebro</strong><div>Arrastra para girar · Pellizca para ampliar · Toca una estructura</div><div id="status" class="notice" role="status">Inicializando modelo…</div></div>
+<div class="viewer-tools"><button id="reset">⟲ Restablecer</button><button id="front">Vista frontal</button><button id="side">Vista lateral</button><button id="top">Vista superior</button><button id="labels">Ocultar etiquetas</button><button id="showAll">Mostrar todo</button></div>
+</section>
+<aside class="card detail">
+<div class="detail-header"><h2 id="partName" style="margin:0">Selecciona una estructura</h2></div>
+<p id="partPosition" class="muted">Toca el modelo o una etiqueta para explorar.</p>
+<h3>⚙️ Función principal</h3><p id="partFunction">Las funciones de cada región aparecerán aquí.</p>
+<div class="key"><strong>💡 Clave para el examen</strong><p id="partExam">Aprende una región y luego prueba el modo «Identificar estructuras».</p></div>
+<div class="quiz hidden" id="quizBox" aria-live="polite"><strong>🎯 Identifica en el modelo</strong><p id="quizPrompt"></p><p id="quizFeedback"></p><button class="primary" id="nextChallenge">Siguiente reto</button></div>
+<p class="tags">Colores diferenciados por región · selección turquesa y contorno naranja.</p>
+</aside>
+</main>
+<section class="bottom card"><h2>Selecciona una estructura cerebral</h2><div class="chips" id="chips"></div></section>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const $=id=>document.getElementById(id);
+const regions=[
+{id:'frontal',label:'Lóbulo frontal',color:0xff8e85,pos:[-0.84,0.22,0.26],scale:[0.92,0.69,0.72],where:'Se ubica en la zona anterior de cada hemisferio cerebral.',function:'Participa en la planificación, el razonamiento, el control de movimientos voluntarios y la regulación de la conducta.',exam:'Frontal = planificación, funciones ejecutivas y movimiento voluntario.'},
+{id:'parietal',label:'Lóbulo parietal',color:0x7fa9e8,pos:[0.23,0.59,0.25],scale:[0.83,0.60,0.70],where:'Ocupa gran parte de la zona superior y posterior de los hemisferios.',function:'Integra información sensorial relacionada con tacto, temperatura, dolor y orientación espacial.',exam:'Parietal = sensibilidad corporal e integración espacial.'},
+{id:'temporal',label:'Lóbulo temporal',color:0x71c58a,pos:[0.11,-0.34,0.64],scale:[0.98,0.51,0.52],where:'Está en la región lateral e inferior de los hemisferios.',function:'Interviene en procesamiento auditivo, memoria y comprensión del lenguaje.',exam:'Temporal = audición, memoria y comprensión del lenguaje.'},
+{id:'occipital',label:'Lóbulo occipital',color:0xb78ae5,pos:[1.08,0.14,0.20],scale:[0.52,0.60,0.65],where:'Se encuentra en la parte posterior del cerebro.',function:'Procesa gran parte de la información visual.',exam:'Occipital = visión.'},
+{id:'cerebellum',label:'Cerebelo',color:0xd8a46e,pos:[0.83,-0.74,-0.28],scale:[0.67,0.36,0.55],where:'Está detrás del tronco encefálico, debajo de los lóbulos occipitales.',function:'Coordina movimientos, postura y equilibrio, además de intervenir en el aprendizaje motor.',exam:'Cerebelo = coordinación, equilibrio y precisión de movimientos.'},
+{id:'brainstem',label:'Tronco encefálico',color:0xf0c65e,pos:[0.21,-1.03,-0.11],scale:[0.25,0.70,0.28],where:'Une el encéfalo con la médula espinal.',function:'Contiene centros y vías esenciales para la respiración, el ritmo cardíaco y el estado de alerta.',exam:'Tronco encefálico = funciones vitales y conexión con la médula.'}
+];
+const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(42,1,.1,100);camera.position.set(1,0.5,6.7);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
+$('scene').appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=2.6;controls.maxDistance=12;controls.target.set(.1,-.1,0);
+scene.add(new THREE.HemisphereLight(0xd7f2ff,0x18384b,2.3));const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(-2,4,6);scene.add(light);
+let selected=null,quizMode=false,challenge=null,labelsVisible=true;
+const objects=new Map(),baseMaterials=new Map();
+const root=new THREE.Group();scene.add(root);
+const geometry=new THREE.SphereGeometry(1,48,32);
+for(const part of regions){
+ const group=new THREE.Group();group.position.set(...part.pos);
+ const mat=new THREE.MeshStandardMaterial({color:part.color,roughness:.79,metalness:0});
+ const body=new THREE.Mesh(geometry,mat);body.scale.set(...part.scale);body.userData.region=part.id;group.add(body);
+ // Surcos y giros aproximados: efecto visual esquemático, NO reconstrucción médica precisa.
+ for(let i=0;i<32;i++){
+   const theta=(i*2.399963)% (Math.PI*2),phi=.2+((i*0.31)%2.65);
+   const nx=Math.sin(phi)*Math.cos(theta),ny=Math.cos(phi),nz=Math.sin(phi)*Math.sin(theta);
+   const bump=new THREE.Mesh(new THREE.SphereGeometry(1,12,9),new THREE.MeshStandardMaterial({color:part.color,roughness:.91}));
+   bump.position.set(part.scale[0]*nx*.91,part.scale[1]*ny*.91,part.scale[2]*nz*.91);
+   bump.scale.set(.17,.09,.12);bump.lookAt(bump.position.clone().multiplyScalar(2));bump.userData.region=part.id;group.add(bump);
+ }
+ objects.set(part.id,group);baseMaterials.set(part.id,mat);root.add(group);
+}
+
+function select(id){
+ if(quizMode){if(id===challenge?.id){$('quizFeedback').textContent='✅ ¡Correcto! '+challenge.exam;selectVisual(id)}else $('quizFeedback').textContent='❌ Intenta otra vez: identifica la zona correspondiente.';return;}
+ selectVisual(id);
+}
+function selectVisual(id){
+ if(!objects.has(id))return;
+ for(const [key,group] of objects){
+   const old=group.getObjectByName('selectionEdge');if(old){group.remove(old);old.material.dispose()}
+   group.traverse(obj=>{if(obj.isMesh){obj.material.color.setHex(regions.find(x=>x.id===key).color);obj.material.emissive?.setHex(0x000000)}});
+ }
+ const group=objects.get(id);group.visible=true;
+ group.traverse(obj=>{if(obj.isMesh){obj.material.color.set('#28e3d1');obj.material.emissive?.set('#056466');obj.material.emissiveIntensity=.17}});
+ const main=group.children[0];const outline=new THREE.Mesh(main.geometry,new THREE.MeshBasicMaterial({color:0xffa522,side:THREE.BackSide}));outline.scale.copy(main.scale).multiplyScalar(1.065);outline.name='selectionEdge';outline.raycast=()=>{};group.add(outline);
+ selected=id;const part=regions.find(x=>x.id===id);
+ $('partName').textContent=part.label;$('partPosition').textContent='📍 '+part.where;$('partFunction').textContent=part.function;$('partExam').textContent=part.exam;
+ document.querySelectorAll('[data-region]').forEach(b=>b.classList.toggle('active',b.dataset.region===id));
+}
+for(const p of regions){const b=document.createElement('button');b.dataset.region=p.id;b.textContent=p.label;b.onclick=()=>select(p.id);$('chips').appendChild(b);}
+const raycaster=new THREE.Raycaster();
+renderer.domElement.addEventListener('click',event=>{
+ const r=renderer.domElement.getBoundingClientRect();const p=new THREE.Vector2(((event.clientX-r.left)/r.width)*2-1,-((event.clientY-r.top)/r.height)*2+1);
+ raycaster.setFromCamera(p,camera);const hits=raycaster.intersectObjects([...objects.values()].filter(x=>x.visible),true);
+ const hit=hits.find(h=>h.object.userData.region);if(hit)select(hit.object.userData.region);
+});
+function newChallenge(){challenge=regions[Math.floor(Math.random()*regions.length)];$('quizPrompt').textContent='Toca: '+challenge.label;$('quizFeedback').textContent='';}
+$('quizMode').onclick=()=>{quizMode=true;$('quizMode').classList.add('active');$('exploreMode').classList.remove('active');$('quizBox').classList.remove('hidden');newChallenge();};
+$('exploreMode').onclick=()=>{quizMode=false;$('quizMode').classList.remove('active');$('exploreMode').classList.add('active');$('quizBox').classList.add('hidden');};
+$('nextChallenge').onclick=newChallenge;
+$('reset').onclick=()=>{camera.position.set(1,.5,6.7);controls.target.set(.1,-.1,0);controls.update()};
+$('front').onclick=()=>{camera.position.set(-.1,.2,6.6);controls.update()};
+$('side').onclick=()=>{camera.position.set(-6.6,.2,0);controls.update()};
+$('top').onclick=()=>{camera.position.set(.1,6.6,.01);controls.update()};
+$('showAll').onclick=()=>{objects.forEach(g=>g.visible=true)};
+$('labels').onclick=()=>{labelsVisible=!labelsVisible;$('chips').hidden=!labelsVisible;$('labels').textContent=labelsVisible?'Ocultar etiquetas':'Mostrar etiquetas'};
+function resize(){const el=$('scene');renderer.setSize(el.clientWidth,el.clientHeight,false);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe($('scene'));resize();
+renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)});
+selectVisual('frontal');$('status').textContent='6 estructuras listas para explorar.';
+</script></body></html>
