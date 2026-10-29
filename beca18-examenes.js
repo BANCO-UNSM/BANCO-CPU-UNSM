@@ -8,7 +8,7 @@ async function cargarImagenesBeca(raiz){
   try{
    const uri=ruta.startsWith('data:image/')?ruta:await window.becaPrivate.image(ruta);
    if(!img.isConnected)return;
-   img.src=uri;const enlace=img.closest('a');if(enlace)enlace.href=uri;
+   img.src=uri; const enlace=img.closest('a');if(enlace){enlace.removeAttribute('href');enlace.removeAttribute('target');}
   }catch(error){const caja=img.closest('figure')||img.closest('.question-image')||img;caja.textContent='La ilustración no se pudo cargar: '+error.message;}
  }
 }
@@ -60,6 +60,59 @@ function renderPassage(group){
    container.append(node);
  }
 }
+// Visor de imagen en la misma página, con zoom mediante botones, rueda y arrastre.
+let imageZoomLevel=1,imageZoomPanning=false,imageZoomLast={x:0,y:0},imageZoomOffset={x:0,y:0},imageZoomPreviousFocus=null;
+function updateImageZoom(){
+ const img=el('zoomImage');if(!img)return;
+ img.style.transform='translate('+imageZoomOffset.x+'px,'+imageZoomOffset.y+'px) scale('+imageZoomLevel+')';
+ el('zoomPercent').textContent=Math.round(imageZoomLevel*100)+' %';
+}
+function setImageZoom(level){
+ imageZoomLevel=Math.max(1,Math.min(5,level));
+ if(imageZoomLevel===1)imageZoomOffset={x:0,y:0};
+ updateImageZoom();
+}
+function openImageZoom(image){
+ if(!image?.complete||!image.naturalWidth||!image.src)return;
+ const modal=el('imageZoomModal');if(!modal)return;
+ imageZoomPreviousFocus=document.activeElement;
+ const displayed=el('zoomImage');displayed.src=image.src;displayed.alt=image.alt;
+ modal.hidden=false;document.body.classList.add('zoom-open');
+ setImageZoom(1);el('zoomClose').focus();
+}
+function closeImageZoom(){
+ const modal=el('imageZoomModal');if(!modal||modal.hidden)return;
+ modal.hidden=true;document.body.classList.remove('zoom-open');
+ el('zoomImage').removeAttribute('src');
+ if(imageZoomPreviousFocus?.isConnected)imageZoomPreviousFocus.focus();
+}
+function initImageZoom(){
+ const modal=el('imageZoomModal');if(!modal)return;
+ el('zoomClose').onclick=closeImageZoom;
+ el('zoomIn').onclick=()=>setImageZoom(imageZoomLevel+.25);
+ el('zoomOut').onclick=()=>setImageZoom(imageZoomLevel-.25);
+ el('zoomReset').onclick=()=>setImageZoom(1);
+ modal.addEventListener('click',e=>{if(e.target===modal||e.target.classList.contains('zoom-viewport'))closeImageZoom();});
+ modal.addEventListener('wheel',e=>{if(modal.hidden)return;e.preventDefault();setImageZoom(imageZoomLevel+(e.deltaY<0?.2:-.2));},{passive:false});
+ const view=el('zoomViewport');
+ view.addEventListener('pointerdown',e=>{
+  if(imageZoomLevel<=1||e.target!==el('zoomImage'))return;
+  imageZoomPanning=true;imageZoomLast={x:e.clientX,y:e.clientY};view.setPointerCapture(e.pointerId);
+ });
+ view.addEventListener('pointermove',e=>{
+  if(!imageZoomPanning)return;
+  imageZoomOffset.x+=e.clientX-imageZoomLast.x;imageZoomOffset.y+=e.clientY-imageZoomLast.y;
+  imageZoomLast={x:e.clientX,y:e.clientY};updateImageZoom();
+ });
+ view.addEventListener('pointerup',()=>{imageZoomPanning=false;});
+ view.addEventListener('pointercancel',()=>{imageZoomPanning=false;});
+ document.addEventListener('keydown',e=>{
+  if(modal.hidden)return;
+  if(e.key==='Escape')closeImageZoom();
+  else if(e.key==='+'||e.key==='='){e.preventDefault();setImageZoom(imageZoomLevel+.25);}
+  else if(e.key==='-'){e.preventDefault();setImageZoom(imageZoomLevel-.25);}
+ });
+}
 function questionGroup(q){return current.groups[q.group]||{passage:'Lectura no disponible',pages:'—'};}
 function selectedGroupIndex(){return current?.groups.findIndex(g=>g.id===lastReadingId)??-1;}
 function navigateToGroup(index){
@@ -93,10 +146,11 @@ function showReading(q){
  const images=Array.isArray(g.images)?g.images:[];
  const holder=el('originalPages');
  if(holder){
-  holder.innerHTML=images.map((src,i)=>'<figure class="exam-illustration"><a href="#" target="_blank" rel="noopener" title="Ampliar ilustración"><img data-beca-private-src="'+escapeHtml(src)+'" loading="lazy" alt="Gráfico o ilustración '+(i+1)+' correspondiente a la lectura '+escapeHtml(g.id)+'"></a></figure>').join('');
+  holder.innerHTML=images.map((src,i)=>'<figure class="exam-illustration"><button type="button" class="image-zoom-trigger" title="Ampliar la imagen sin salir del examen" aria-label="Ampliar ilustración '+(i+1)+'"><img data-beca-private-src="'+escapeHtml(src)+'" loading="lazy" alt="Gráfico o ilustración '+(i+1)+' correspondiente a la lectura '+escapeHtml(g.id)+'"></button><figcaption>🔍 Haz clic para ampliar la imagen</figcaption></figure>').join('');
    cargarImagenesBeca(holder);
   holder.hidden=images.length===0;
   holder.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{img.closest('figure').innerHTML='<p class="warning">La imagen correspondiente no está disponible. Consulta el PDF original.</p>';},{once:true}));
+  holder.querySelectorAll('.image-zoom-trigger').forEach(btn=>btn.addEventListener('click',()=>openImageZoom(btn.querySelector('img'))));
  }
 }
 
@@ -164,6 +218,7 @@ function evaluate(){
  else el('result').scrollIntoView({behavior:'smooth',block:'center'});
 }
 async function init(){
+ initImageZoom();
  try{
   if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw Error('Falta la configuración de acceso.');
   const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);

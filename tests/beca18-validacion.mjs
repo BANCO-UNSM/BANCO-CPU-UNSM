@@ -24,4 +24,10 @@ assert.ok(app.includes('Abrir editor de textos, preguntas e imágenes'),'Falta a
 assert.ok(js.includes('function renderPassage('),'Falta separación del título de las lecturas');
 assert.ok(js.includes('passage-title'),'Falta el encabezado visible del título');
 assert.ok(html.includes('.reading-text .passage-title'),'Falta estilo del título centrado');
+assert.ok(html.includes('id="imageZoomModal"')&&html.includes('id="zoomViewport"'),'Falta visor interno');
+assert.ok(html.includes('id="zoomIn"')&&html.includes('id="zoomOut"')&&html.includes('id="zoomClose"'),'Faltan controles zoom');
+assert.ok(js.includes('function openImageZoom(')&&js.includes('function setImageZoom('),'Falta lógica zoom');
+assert.ok(js.includes('image-zoom-trigger'),'La imagen debe abrir el modal');
+assert.ok(js.includes("enlace.removeAttribute('target')"),'Ninguna imagen debe abrir pestaña externa');
+assert.ok(!js.includes('<a href="#" target="_blank"'),'Enlace antiguo de imágenes debe retirarse');
 console.log('VALIDACIÓN DE INTERFAZ BECA 18 CORRECTA: selector de textos y lectura privada.');
