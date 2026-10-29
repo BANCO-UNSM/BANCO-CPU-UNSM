@@ -215,7 +215,7 @@ async function refresh(){
 }
 function render(){
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],['exams','Exámenes de admisión'],['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],...(hasService('CPU-UNSM')?[['exams','Exámenes de admisión']]:[]),['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes']]:[])]:[['access','Mi acceso']]):[];
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
  document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{if(quiz?.deadlineAt&&!quiz.result){alert('Hay un examen cronometrado en curso. Entrégalo antes de salir.');return;}page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
@@ -478,8 +478,9 @@ async function cargarPreguntaVistaPrevia(examId,questionId){
 }
 // Módulo de exámenes: independiente de las separatas, sin mostrar claves antes de calificar.
 function examsPage(){
+ if(!hasService('CPU-UNSM'))return notice('Solo alumnos con CPU-UNSM pueden abrir estos exámenes.',true);
  if(examsError&&!teacher())return notice('No se pudo consultar el catálogo de exámenes. Contacta al administrador.',true);
- const available=exams.filter(e=>teacher()||e.status==='published');
+ const available=exams.filter(e=>hasService('CPU-UNSM')&&(teacher()||e.status==='published'));
  // Categorías fijas: visibles aunque aún no existan exámenes cargados.
  // Se admiten códigos históricos para ordinarios y quinto de secundaria.
  const examCategory=t=>{
@@ -611,7 +612,7 @@ function saveTimedExam(){
  }catch(error){console.warn('No se pudo guardar el progreso del examen',error);}
 }
 function restoreTimedExam(){
- if(!user||quiz)return;
+ if(!user||quiz||!hasService('CPU-UNSM'))return;
  let saved;
  try{saved=JSON.parse(localStorage.getItem(timedExamStorageKey())||'null')}catch{return}
  if(!saved||!Array.isArray(saved.questionIds)||saved.questionIds.length!==100||!Number.isFinite(saved.deadlineAt))return;
@@ -650,6 +651,7 @@ function normalizedThirdSubject(value){
  return aliases[valueNormalized]||String(value||'').trim();
 }
 function thirdExamPool(){
+ if(!hasService('CPU-UNSM'))return [];
  return questions.filter(q=>q.modality==='CPU-UNSM'&&!q.exam_id&&q.cycle==='2026-II'&&Number(q.week)>=11&&Number(q.week)<=16&&q.status==='published');
 }
 function thirdExamAvailability(){
