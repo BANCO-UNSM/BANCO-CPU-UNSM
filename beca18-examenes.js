@@ -2,6 +2,7 @@
 const el=id=>document.getElementById(id);
 const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 let exams=[],current=null,answers={},graded=false,lastReadingId=null,questionObserver=null;
+const mobileView=()=>window.matchMedia('(max-width:850px)').matches;
 async function cargarImagenesBeca(raiz){
  for(const img of raiz.querySelectorAll('img[data-beca-private-src]')){
   const ruta=img.dataset.becaPrivateSrc;
@@ -121,6 +122,11 @@ function navigateToGroup(index){
  const first=current.questions.find(q=>q.group===index);
  if(!first)return;
  showReading(first);
+ if(mobileView()){
+  updateMobileQuestionGroup();
+  document.querySelector('.exam-reading')?.scrollIntoView({behavior:'smooth',block:'start'});
+  return;
+ }
  const target=el('p'+first.number);
  const right=document.querySelector('.exam-questions');
  if(target&&right){right.scrollTop+=target.getBoundingClientRect().top-right.getBoundingClientRect().top-15;}
@@ -132,6 +138,20 @@ function refreshReadingNavigation(){
  el('readingCounter').textContent=(index+1)+' / '+current.groups.length;
  el('previousReading').disabled=index<=0;
  el('nextReading').disabled=index>=current.groups.length-1;
+}
+function updateMobileQuestionGroup(){
+ if(!current)return;
+ const index=selectedGroupIndex();
+ const mobile=mobileView();
+ el('mobileReadingGuide').hidden=!mobile;
+ el('mobileReadingLabel').textContent='Texto '+(index+1)+' de '+current.groups.length+' · preguntas '+current.groups[index].first+'–'+current.groups[index].last;
+ const next=el('mobileNextReading');
+ next.textContent=index>=current.groups.length-1?'Último texto':'Siguiente texto →';
+ next.disabled=index>=current.groups.length-1;
+ el('questions').querySelectorAll('fieldset.question').forEach(fs=>{
+  const q=current.questions.find(x=>x.number===Number(fs.dataset.number));
+  fs.hidden=mobile&&q?.group!==index;
+ });
 }
 function showReading(q){
  const g=questionGroup(q);
@@ -152,6 +172,7 @@ function showReading(q){
   holder.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{img.closest('figure').innerHTML='<p class="warning">La imagen correspondiente no está disponible. Consulta el PDF original.</p>';},{once:true}));
   holder.querySelectorAll('.image-zoom-trigger').forEach(btn=>btn.addEventListener('click',()=>openImageZoom(btn.querySelector('img'))));
  }
+ updateMobileQuestionGroup();
 }
 
 function showExam(year){
@@ -164,6 +185,7 @@ function showExam(year){
  el('readingSelect').onchange=e=>navigateToGroup(Number(e.target.value));
  el('previousReading').onclick=()=>navigateToGroup(selectedGroupIndex()-1);
  el('nextReading').onclick=()=>navigateToGroup(selectedGroupIndex()+1);
+ el('mobileNextReading').onclick=()=>navigateToGroup(selectedGroupIndex()+1);
  el('questions').innerHTML=current.questions.map(q=>{
  const label=q.needs_visual?'<p class="warning small">Observa la infografía o ilustración que aparece debajo de la lectura, en el panel izquierdo.</p>':'';
  const qimg=q.image?'<div class="question-image"><img loading="lazy" data-beca-private-src="'+escapeHtml(q.image)+'" alt="Imagen o figura asociada a la pregunta '+q.number+'"></div>':'';
@@ -177,13 +199,13 @@ function showExam(year){
  el('examNav').querySelectorAll('[data-year]').forEach(b=>b.addEventListener('click',()=>showExam(Number(b.dataset.year))));
  el('questions').querySelectorAll('fieldset').forEach(fs=>{
   const q=current.questions.find(x=>x.number===Number(fs.dataset.number));
-  fs.addEventListener('focusin',()=>showReading(q));
-  fs.addEventListener('click',()=>showReading(q));
+  fs.addEventListener('focusin',()=>{if(!mobileView())showReading(q)});
+  fs.addEventListener('click',()=>{if(!mobileView())showReading(q)});
  });
  // Al desplazarse por la lista de preguntas, cambiar de lectura solo cuando comienza otro bloque.
  // Durante las preguntas de un mismo texto, el panel izquierdo permanece inmóvil.
  const right=document.querySelector('.exam-questions');
- if(right&&'IntersectionObserver' in window){
+ if(right&&!mobileView()&&'IntersectionObserver' in window){
   questionObserver=new IntersectionObserver(entries=>{
    const visible=entries.filter(x=>x.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
    if(visible.length){
@@ -195,6 +217,7 @@ function showExam(year){
   right.querySelectorAll('fieldset.question').forEach(fs=>questionObserver.observe(fs));
  }
  if(right)right.scrollTop=0;
+ updateMobileQuestionGroup();
 }
 function evaluate(){
  if(!current)return;
@@ -232,6 +255,11 @@ async function init(){
   el('grade').addEventListener('click',evaluate);
   el('restart').addEventListener('click',()=>showExam(current.year));
   showExam(2023);
+  window.matchMedia('(max-width:850px)').addEventListener('change',()=>{
+   if(!current)return;
+   if(questionObserver){questionObserver.disconnect();questionObserver=null;}
+   updateMobileQuestionGroup();
+  });
  }catch(e){el('examStatus').textContent='Error de carga: '+e.message;}
 }
 init();
