@@ -177,6 +177,63 @@ function showReading(q){
  updateMobileQuestionGroup();
 }
 
+
+// En celulares se muestra cada lectura inmediatamente antes de SUS preguntas.
+// No depende de que el alumno pulse "Siguiente" ni de paneles independientes.
+function renderMobileSequentialExam(){
+ const host=el('questions');
+ if(!mobileView()||!current||!host)return;
+ document.body.classList.add('mobile-sequential-exam');
+ const nodes=[...host.querySelectorAll('fieldset.question')];
+ const groups=current.groups;
+ host.replaceChildren();
+ groups.forEach((g,i)=>{
+  const section=document.createElement('section');
+  section.className='mobile-exam-group';
+  section.id='mobile-text-'+i;
+  const title=document.createElement('h2');
+  title.textContent='Texto '+(i+1)+' de '+groups.length+' · preguntas '+g.first+'–'+g.last;
+  section.append(title);
+  const passage=document.createElement('div');
+  passage.className='reading-text mobile-passage';
+  const titleText=readingTitles[g.id];
+  let raw=String(g.passage||'').trim();
+  raw=raw.replace(/^(?:TEXTO|Texto)\\s+\\d+\\s*/,'').trim();
+  if(titleText&&raw.toLocaleLowerCase('es').startsWith(titleText.toLocaleLowerCase('es'))){
+   const heading=document.createElement('h3');heading.className='passage-title';heading.textContent=titleText;passage.append(heading);
+   raw=raw.slice(titleText.length).trim();
+  }
+  raw.split(/\\n\\s*\\n/).filter(Boolean).forEach(part=>{
+   const p=document.createElement('p');p.textContent=part.trim();passage.append(p);
+  });
+  section.append(passage);
+  const imgs=document.createElement('div');imgs.className='original-pages';
+  (g.images||[]).forEach((src,k)=>{
+   const figure=document.createElement('figure');figure.className='exam-illustration';
+   const btn=document.createElement('button');btn.type='button';btn.className='image-zoom-trigger';btn.setAttribute('aria-label','Ampliar infografía '+(k+1));
+   const img=document.createElement('img');img.dataset.becaPrivateSrc=src;img.alt='Infografía del texto '+(i+1);img.loading='lazy';
+   btn.append(img);btn.addEventListener('click',()=>openImageZoom(img));
+   const cap=document.createElement('figcaption');cap.textContent='🔍 Toca la imagen para ampliarla';
+   figure.append(btn,cap);imgs.append(figure);
+  });
+  section.append(imgs);
+  const qt=document.createElement('h3');qt.textContent='Preguntas '+g.first+'–'+g.last;section.append(qt);
+  nodes.filter(fs=>current.questions.find(q=>q.number===Number(fs.dataset.number))?.group===i).forEach(fs=>{
+   fs.hidden=false;
+   fs.querySelectorAll('.visual-desktop').forEach(x=>x.remove());
+   fs.querySelectorAll('.visual-mobile').forEach(x=>x.remove());
+   section.append(fs);
+  });
+  if(i<groups.length-1){
+   const next=document.createElement('button');next.type='button';next.className='mobile-next-inline';next.textContent='Continuar al texto '+(i+2)+' →';
+   next.addEventListener('click',()=>document.getElementById('mobile-text-'+(i+1))?.scrollIntoView({behavior:'smooth',block:'start'}));
+   section.append(next);
+  }
+  host.append(section);
+  cargarImagenesBeca(imgs);
+ });
+ el('questionsTitle').textContent='Lecturas y preguntas · '+current.year;
+}
 function showExam(year){
  if(questionObserver){questionObserver.disconnect();questionObserver=null;}
  lastReadingId=null;
@@ -220,6 +277,7 @@ function showExam(year){
  }
  if(right)right.scrollTop=0;
  updateMobileQuestionGroup();
+ renderMobileSequentialExam();
 }
 function evaluate(){
  if(!current)return;
