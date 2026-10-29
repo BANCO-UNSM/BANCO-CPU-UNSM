@@ -105,4 +105,16 @@ for(const path of illustrated){
  assert.ok(path.startsWith('beca18-illustrations/'),'No mostrar páginas completas: '+path);
  assert.ok(readFileSync(path).length>5000,'Infografía ausente o vacía: '+path);
 }
+const editorHtml=readFileSync('beca18-editor.html','utf8');
+const editorJs=readFileSync('beca18-editor.js','utf8');
+assert.ok(examHtml.includes('href="beca18-editor.html"'),'Falta acceso al editor desde exámenes');
+assert.ok(editorHtml.includes('id="passage"')&&editorHtml.includes('id="images"'),'Faltan campos de lectura e imágenes');
+assert.ok(editorHtml.includes('id="statement"')&&editorHtml.includes('id="correct"'),'Faltan campos de pregunta y clave');
+assert.ok(editorHtml.includes('id="markReview"')&&editorHtml.includes('id="markPublished"'),'Faltan acciones de revisión y publicación editorial');
+assert.ok(editorHtml.includes('id="download"'),'Falta descargar el JSON revisado');
+assert.ok(editorJs.includes("profile?.role!=='admin'"),'El editor debe restringirse a administradores');
+assert.ok(editorJs.includes("localStorage.setItem(storeKey"),'Las ediciones deben guardarse como borrador local');
+assert.ok(editorJs.includes("JSON.stringify(updated,null,2)"),'Falta exportación de la versión revisada');
+assert.ok(editorJs.includes("beca18-illustrations/"),'Solo se permiten ilustraciones, no páginas completas');
+assert.ok(!editorJs.includes("SUPABASE_SERVICE_ROLE"),'Nunca introducir secretos del servidor en frontend');
 console.log('VALIDACIÓN BECA 18 CORRECTA:',d.lessons.length,'clases y',d.questions.length,'preguntas originales.');
