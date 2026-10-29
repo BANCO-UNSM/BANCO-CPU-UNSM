@@ -187,9 +187,7 @@ async function auth(){
 async function init(){
  try{
   await auth();
-  const response=await fetch('beca18-examenes-verbal.json',{cache:'no-store'});
-  if(!response.ok)throw Error('No se pudo obtener el archivo de exámenes.');
-  original=await response.json();
+  original=await window.becaPrivate.document('beca18-examenes-verbal.json');
   if(!Array.isArray(original.exams)||original.exams.length!==3)throw Error('El banco de exámenes está incompleto.');
   data=clone(original);storeKey='beca18_editor_draft_v1_'+userId;
   restoreDrafts();
