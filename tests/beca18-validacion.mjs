@@ -127,4 +127,8 @@ assert.ok(editorJs.includes('uploadedQuestion'),'Falta almacenar imagen en cada 
 assert.ok(examJs.includes('q.image'),'La vista de estudiante no muestra la imagen del enunciado');
 assert.ok(examHtml.includes('.exam-illustration img,.exam-page img{display:block;width:100%'),'La imagen debe ajustarse al contenedor sin scroll horizontal');
 assert.ok(examHtml.includes('max-height:none!important;overflow:visible!important'),'No debe haber desplazamiento anidado de lectura');
+assert.ok(examHtml.includes('overflow-y:auto!important'),'El texto debe permanecer fijo con desplazamiento independiente');
+assert.ok(examHtml.includes('.exam-questions{')&&examHtml.includes('overscroll-behavior:contain'),'Las preguntas deben desplazarse sin mover el texto');
+assert.ok(examJs.includes('lastReadingId===g.id'),'No debe reiniciarse la lectura con cada pregunta del mismo bloque');
+assert.ok(examJs.includes('IntersectionObserver'),'Al cambiar de bloque debe actualizarse la lectura');
 console.log('VALIDACIÓN BECA 18 CORRECTA:',d.lessons.length,'clases y',d.questions.length,'preguntas originales.');
