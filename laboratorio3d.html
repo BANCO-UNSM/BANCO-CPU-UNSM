@@ -77,13 +77,13 @@ let selected=null,quizMode=false,challenge=null,labelsVisible=true;
 const objects=new Map(),baseMaterials=new Map();
 const root=new THREE.Group();scene.add(root);
 const geometry=new THREE.SphereGeometry(1,48,32);
-// Referencia anatómica permanente: volumen semitransparente + contorno exterior.
+// Referencia anatómica: exclusivamente contorno exterior, sin relleno.
 // Modelo didáctico simplificado, no una reconstrucción clínica.
 const referenceBrain=new THREE.Group();
-referenceBrain.name='Referencia transparente del cerebro';
+referenceBrain.name='Contorno exterior del cerebro';
 root.add(referenceBrain);
-// La silueta se dibuja SOBRE las regiones opacas. Un fresnel de borde
-// permite ver el cerebro completo sin tapar el color del lóbulo elegido.
+// Solo se dibuja una banda fina en el perfil aparente de cada superficie.
+// Sin opacidad de base ni capa transparente sobre las estructuras.
 const silhouetteMaterial=new THREE.ShaderMaterial({
  transparent:true,depthTest:false,depthWrite:false,side:THREE.FrontSide,
  uniforms:{uColor:{value:new THREE.Color('#a8e5ff')}},
@@ -102,8 +102,8 @@ const silhouetteMaterial=new THREE.ShaderMaterial({
  varying vec3 vViewDirection;
  void main(){
   float edge=1.0-abs(dot(normalize(vNormalView),normalize(vViewDirection)));
-  float rim=pow(clamp(edge,0.0,1.0),3.0);
-  gl_FragColor=vec4(uColor,0.055+0.67*rim);
+  float rim=smoothstep(0.945,0.985,clamp(edge,0.0,1.0));
+  gl_FragColor=vec4(uColor,0.82*rim);
  }`
 });
 function brainReferencePart(position,scale){
@@ -112,11 +112,8 @@ function brainReferencePart(position,scale){
  surface.renderOrder=50;surface.raycast=()=>{};
  referenceBrain.add(surface);
 }
-// Masa cerebral de referencia y hemisferios, a escala esquemática.
-// El mayor tamaño deja visible una fina envolvente aun en la vista lateral.
+// Una única envolvente cerebral evita óvalos superpuestos en el interior.
 brainReferencePart([.12,.14,0],[1.83,1.08,1.12]);
-brainReferencePart([.12,.14,-.43],[1.77,1.02,.72]);
-brainReferencePart([.12,.14,.43],[1.77,1.02,.72]);
 brainReferencePart([.83,-.74,-.28],[.74,.41,.61]);
 brainReferencePart([.21,-1.05,-.11],[.29,.73,.33]);
 for(const part of regions){
