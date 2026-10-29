@@ -34,6 +34,26 @@
 </aside>
 </main>
 <section class="bottom card"><h2>Selecciona una estructura cerebral</h2><div class="chips" id="chips"></div></section>
+<script>
+window.addEventListener('error', event => {
+ const status=document.getElementById('status');
+ if(status&&status.textContent.includes('Inicializando')){
+   status.textContent='No se pudo iniciar la vista 3D. Abre esta página en Chrome actualizado y verifica tu conexión.';
+ }
+});
+window.addEventListener('unhandledrejection',()=>{
+ const status=document.getElementById('status');
+ if(status&&status.textContent.includes('Inicializando')){
+   status.textContent='No se pudieron cargar los componentes 3D. Comprueba la conexión y vuelve a intentar.';
+ }
+});
+setTimeout(()=>{
+ const status=document.getElementById('status');
+ if(status&&status.textContent.includes('Inicializando')){
+   status.textContent='El visor tarda demasiado. Comprueba WebGL y las bibliotecas 3D; puedes seguir al laboratorio del cráneo desde el menú.';
+ }
+},12000);
+</script>
 <script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
