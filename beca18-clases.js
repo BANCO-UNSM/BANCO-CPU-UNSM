@@ -62,9 +62,7 @@ function draw(){
 document.querySelectorAll('[data-area]').forEach(b=>b.onclick=()=>{area=b.dataset.area;active=lessons.find(l=>l.area===area)?.id;retryOnly=false;draw()});
 const clear=$('clearProgress');if(clear)clear.onclick=resetProgress;async function validarAcceso(){if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw Error('No se encuentra la configuración de acceso.');const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session},error}=await client.auth.getSession();if(error||!session?.user)throw Error('Inicia sesión desde CachimboLab para acceder a las clases.');progressKey='beca18_progress_v1_'+session.user.id;try{progress=JSON.parse(localStorage.getItem(progressKey)||'{}')||{};}catch(e){progress={};}const {data:profile,error:profileError}=await client.from('profiles').select('role').eq('id',session.user.id).maybeSingle();if(profileError)throw Error('No se pudo validar tu perfil.');if(!['teacher','admin'].includes(profile?.role)){const {data:active,error:accessError}=await client.rpc('has_service_access',{p_modality:'BECA18'});if(accessError||!active)throw Error('No tienes Beca 18 autorizado. Solicita este servicio al administrador desde CachimboLab.');}}
 validarAcceso().then(async()=>{
- const [a,b]=await Promise.all([fetch('beca18-clases.json',{cache:'no-store'}),fetch('beca18-verbal-pronabec.json',{cache:'no-store'})]);
- if(!a.ok||!b.ok)throw Error('No se pudieron cargar las clases de Beca 18');
- const original=await a.json(),verbal=await b.json();
+ const [original,verbal]=await Promise.all([window.becaPrivate.document('beca18-clases.json'),window.becaPrivate.document('beca18-verbal-pronabec.json')]);
  if(!Array.isArray(original.lessons)||!Array.isArray(verbal.lessons)||!Array.isArray(verbal.questions))throw Error('El archivo de clases no tiene el formato esperado');
  // Los primeros 12 temas verbales no se eliminan: pasan a refuerzo y se renumeran para evitar colisiones.
  const refuerzo=new Map(original.lessons.filter(l=>l.area==='Letras').map(l=>[l.id,'R'+l.id.slice(1)]));
