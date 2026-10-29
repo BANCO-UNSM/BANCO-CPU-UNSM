@@ -1,0 +1,55 @@
+name: Incorporar páginas originales de Beca 18
+on:
+  push:
+    branches:
+      - fix/beca18-original-pages-with-illustrations
+    paths:
+      - '.github/workflows/render-beca18-examenes.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener repositorio
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Instalar utilidades PDF
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+      - name: Descargar los tres cuadernillos publicados por PRONABEC
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/beca18
+          curl -fLsS --retry 4 --retry-delay 3 --max-time 120 'https://www.pronabec.gob.pe/download/37249/?tmstv=1751778972' -o /tmp/beca18/2023.pdf
+          curl -fLsS --retry 4 --retry-delay 3 --max-time 120 'https://www.pronabec.gob.pe/download/37251/?tmstv=1751779017' -o /tmp/beca18/2024.pdf
+          curl -fLsS --retry 4 --retry-delay 3 --max-time 120 'https://www.pronabec.gob.pe/download/37253/?tmstv=1751779054' -o /tmp/beca18/2025.pdf
+          for f in /tmp/beca18/*.pdf; do
+            if ! head -c 4 "$f" | grep -q '%PDF'; then echo "Archivo no es PDF: $f"; exit 1; fi
+            pdfinfo "$f" | grep '^Pages:'
+          done
+      - name: Renderizar páginas originales con texto y gráficos
+        shell: bash
+        run: |
+          set -euo pipefail
+          for year in 2023 2024 2025; do mkdir -p "beca18-images/$year"; done
+          pdftoppm -f 15 -l 26 -r 145 -jpeg -jpegopt quality=83,optimize=y /tmp/beca18/2023.pdf beca18-images/2023/page
+          pdftoppm -f 16 -l 27 -r 145 -jpeg -jpegopt quality=83,optimize=y /tmp/beca18/2024.pdf beca18-images/2024/page
+          pdftoppm -f 15 -l 27 -r 145 -jpeg -jpegopt quality=83,optimize=y /tmp/beca18/2025.pdf beca18-images/2025/page
+          test -s beca18-images/2023/page-15.jpg
+          test -s beca18-images/2024/page-18.jpg
+          test -s beca18-images/2025/page-17.jpg
+          echo "Páginas originales renderizadas:"
+          find beca18-images -type f -name '*.jpg' | sort
+      - name: Guardar imágenes reales dentro de la rama
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add beca18-images/
+          if git diff --cached --quiet; then echo 'Sin cambios en imágenes'; exit 0; fi
+          git commit -m "assets(beca18): páginas originales del examen con gráficos e infografías"
+          git push origin HEAD:fix/beca18-original-pages-with-illustrations
