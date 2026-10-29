@@ -198,12 +198,12 @@ function renderMobileSequentialExam(){
   passage.className='reading-text mobile-passage';
   const titleText=readingTitles[g.id];
   let raw=String(g.passage||'').trim();
-  raw=raw.replace(/^(?:TEXTO|Texto)\\s+\\d+\\s*/,'').trim();
+  raw=raw.replace(/^(?:TEXTO|Texto)\s+\d+\s*/,'').trim();
   if(titleText&&raw.toLocaleLowerCase('es').startsWith(titleText.toLocaleLowerCase('es'))){
    const heading=document.createElement('h3');heading.className='passage-title';heading.textContent=titleText;passage.append(heading);
    raw=raw.slice(titleText.length).trim();
   }
-  raw.split(/\\n\\s*\\n/).filter(Boolean).forEach(part=>{
+  raw.split(/\n\s*\n/).filter(Boolean).forEach(part=>{
    const p=document.createElement('p');p.textContent=part.trim();passage.append(p);
   });
   section.append(passage);
@@ -233,12 +233,14 @@ function renderMobileSequentialExam(){
   cargarImagenesBeca(imgs);
  });
  el('questionsTitle').textContent='Lecturas y preguntas · '+current.year;
+ el('mobileReadingGuide').hidden=true;
 }
 function showExam(year){
  if(questionObserver){questionObserver.disconnect();questionObserver=null;}
  lastReadingId=null;
  current=exams.find(e=>e.year===year)||exams[0];answers={};graded=false;
  el('examNav').innerHTML=exams.map(e=>'<button type="button" data-year="'+e.year+'" class="'+(e.year===current.year?'selected':'')+'">Examen '+e.year+'</button>').join('')+'<a href="beca18-clases.html">📚 Volver a clases</a>';
+ document.body.classList.toggle('mobile-sequential-exam',mobileView());
  el('questionsTitle').textContent='Preguntas 31 a 60 · '+current.year;
  el('readingSelect').innerHTML=current.groups.map((g,i)=>'<option value="'+i+'">Texto '+(i+1)+' · preguntas '+g.first+'–'+g.last+'</option>').join('');
  el('readingSelect').onchange=e=>navigateToGroup(Number(e.target.value));
@@ -318,7 +320,7 @@ async function init(){
   window.matchMedia('(max-width:850px)').addEventListener('change',()=>{
    if(!current)return;
    if(questionObserver){questionObserver.disconnect();questionObserver=null;}
-   updateMobileQuestionGroup();
+   showExam(current.year);
   });
  }catch(e){el('examStatus').textContent='Error de carga: '+e.message;}
 }
