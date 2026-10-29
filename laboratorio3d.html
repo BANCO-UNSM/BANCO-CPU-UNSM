@@ -69,7 +69,7 @@ for(const part of regions){
  }
  objects.set(part.id,group);baseMaterials.set(part.id,mat);root.add(group);
 }
-const borderMaterial=new THREE.MeshBasicMaterial({color:0xffa529,side:THREE.BackSide});
+
 function select(id){
  if(quizMode){if(id===challenge?.id){$('quizFeedback').textContent='✅ ¡Correcto! '+challenge.exam;selectVisual(id)}else $('quizFeedback').textContent='❌ Intenta otra vez: identifica la zona correspondiente.';return;}
  selectVisual(id);
@@ -77,8 +77,8 @@ function select(id){
 function selectVisual(id){
  if(!objects.has(id))return;
  for(const [key,group] of objects){
+   const old=group.getObjectByName('selectionEdge');if(old){group.remove(old);old.material.dispose()}
    group.traverse(obj=>{if(obj.isMesh){obj.material.color.setHex(regions.find(x=>x.id===key).color);obj.material.emissive?.setHex(0x000000)}});
-   const old=group.getObjectByName('selectionEdge');if(old){group.remove(old);old.geometry.dispose();old.material.dispose()}
  }
  const group=objects.get(id);group.visible=true;
  group.traverse(obj=>{if(obj.isMesh){obj.material.color.set('#28e3d1');obj.material.emissive?.set('#056466');obj.material.emissiveIntensity=.17}});
