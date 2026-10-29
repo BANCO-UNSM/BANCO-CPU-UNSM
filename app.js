@@ -136,7 +136,9 @@ let examPreviewRequest=0;
 let relationItems=[],relationBusy=false,relationLoaded=false,relationError='',relationSelected=null,relationAnswers=[],relationGrade=null,relationReview=null;
 let authMode='login';
 let selectedModality='CPU-UNSM';
-const modalityQuestions=()=>questions.filter(q=>q.modality===selectedModality);
+let authorizedServices=[];
+const hasService=m=>teacher()||authorizedServices.includes(m);
+const modalityQuestions=()=>questions.filter(q=>q.modality===selectedModality&&hasService(q.modality));
 
 const teacher=()=>['teacher','admin'].includes(profile?.role);
 // Coincidencias exactas normalizadas en todas las modalidades, sin exponer claves.
@@ -156,7 +158,7 @@ const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':
 async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
 async function refresh(){
  relationLoaded=false;relationItems=[];relationReview=null;
- profile=null;access=null;questions=[];attempts=[];exams=[];examsError='';questionsError='';
+ profile=null;access=null;authorizedServices=[];questions=[];attempts=[];exams=[];examsError='';questionsError='';
  if(user){
   const p=await db.from('profiles').select('role,name').eq('id',user.id).maybeSingle();profile=p.data;
   if(teacher()) access={status:'staff',allowed:true};
@@ -178,6 +180,9 @@ async function refresh(){
    }
   }
   if(teacher()||access?.allowed){
+   const servicesResponse=await db.rpc('my_authorized_services');
+   authorizedServices=teacher()?['CPU-UNSM','BECA18']:(Array.isArray(servicesResponse.data)?servicesResponse.data:[]);
+   if(servicesResponse.error){console.error('Servicios autorizados:',servicesResponse.error.message);authorizedServices=[];}
    const q=await db.from('questions')
 .select('id,exam_id,modality,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
    if(q.error){
@@ -242,12 +247,14 @@ async function loadActivity(){
 }
 function studentsPage(){
  if(!admin())return notice('Solo el administrador puede gestionar alumnos',true);
- return `<div class="card"><h2>Control de alumnos</h2><p class="muted">Los pagos se reciben fuera de la web. Solo tú autorizas, renuevas, suspendes y liberas navegadores.</p><button id="loadStudents">Actualizar lista</button><p id="studentsStatus" class="muted"></p><div id="studentsList">${students.map(x=>`<div class="listitem"><strong>${esc(x.student_name||'Estudiante sin nombre')}</strong><p class="small">Correo: ${esc(x.student_email||'No disponible')}</p><p class="small">ID: ${esc(x.student_id)} · ${esc(x.access_status)} · ${x.expires_at?esc(new Date(x.expires_at).toLocaleString('es-PE')):'Sin vencimiento'} · Navegador: ${x.device_registered?'vinculado':'sin vincular'}</p><p class="small muted">Pago: ${esc(x.payment_method||'sin registrar')} · S/ ${esc(x.payment_amount??'—')}</p><div class="actions"><button data-student-action="approve" data-student-id="${esc(x.student_id)}">Autorizar / renovar</button><button class="secondary" data-student-action="payment" data-student-id="${esc(x.student_id)}">Registrar pago</button><button class="secondary" data-student-action="release_device" data-student-id="${esc(x.student_id)}">Liberar navegador</button><button class="secondary" data-student-action="suspend" data-student-id="${esc(x.student_id)}">Suspender</button></div></div>`).join('')||'<p>Presiona «Actualizar lista» para cargar los alumnos.</p>'}</div></div>`;
+ return `<div class="card"><h2>Control de alumnos</h2><p class="muted">Los pagos se reciben fuera de la web. Solo tú autorizas, renuevas, suspendes y liberas navegadores.</p><button id="loadStudents">Actualizar lista</button><p id="studentsStatus" class="muted"></p><div id="studentsList">${students.map(x=>`<div class="listitem"><strong>${esc(x.student_name||'Estudiante sin nombre')}</strong><p class="small">Correo: ${esc(x.student_email||'No disponible')}</p><p class="small">ID: ${esc(x.student_id)} · ${esc(x.access_status)} · ${x.expires_at?esc(new Date(x.expires_at).toLocaleString('es-PE')):'Sin vencimiento'} · Navegador: ${x.device_registered?'vinculado':'sin vincular'}</p><p class="small muted">Pago: ${esc(x.payment_method||'sin registrar')} · S/ ${esc(x.payment_amount??'—')}</p><p class="small"><strong>Servicios:</strong> ${(x.services||[]).join(' + ')||'Ninguno'}</p><div class="actions"><button class="secondary" data-student-action="services" data-student-id="${esc(x.student_id)}">Configurar servicios</button><button data-student-action="approve" data-student-id="${esc(x.student_id)}">Autorizar / renovar</button><button class="secondary" data-student-action="payment" data-student-id="${esc(x.student_id)}">Registrar pago</button><button class="secondary" data-student-action="release_device" data-student-id="${esc(x.student_id)}">Liberar navegador</button><button class="secondary" data-student-action="suspend" data-student-id="${esc(x.student_id)}">Suspender</button></div></div>`).join('')||'<p>Presiona «Actualizar lista» para cargar los alumnos.</p>'}</div></div>`;
 }
 async function loadStudents(){
- const {data,error}=await db.rpc('admin_list_students');
- if(error){const status=$('studentsStatus');if(status)status.textContent=error.message;return}
- students=data||[];render();
+ const [base,permissions]=await Promise.all([db.rpc('admin_list_students'),db.rpc('admin_get_student_services')]);
+ if(base.error){const status=$('studentsStatus');if(status)status.textContent=base.error.message;return}
+ if(permissions.error){const status=$('studentsStatus');if(status)status.textContent='Error al consultar permisos: '+permissions.error.message;return}
+ const byId=new Map((permissions.data||[]).map(x=>[x.student_id,x.services||[]]));
+ students=(base.data||[]).map(x=>({...x,services:byId.get(x.student_id)||[]}));render();
 }
 function bindStudents(){
  $('loadStudents').onclick=loadStudents;
@@ -255,6 +262,17 @@ function bindStudents(){
   const id=b.dataset.studentId,action=b.dataset.studentAction,student=students.find(x=>x.student_id===id);
   if(!student)return;
   let rpc,args;
+  if(action==='services'){
+   const current=student.services||[];
+   const cpu=confirm('¿Autorizar CPU-UNSM para '+(student.student_name||'el alumno')+'?\\nAceptar: SÍ · Cancelar: NO');
+   const beca=confirm('¿Autorizar Beca 18 para '+(student.student_name||'el alumno')+'?\\nAceptar: SÍ · Cancelar: NO');
+   const services=[...(cpu?['CPU-UNSM']:[]),...(beca?['BECA18']:[])];
+   if(!confirm('Servicios anteriores: '+(current.join(' + ')||'ninguno')+'\\nServicios nuevos: '+(services.join(' + ')||'ninguno')+'\\n¿Confirmas el cambio?'))return;
+   b.disabled=true;
+   const {error}=await db.rpc('admin_set_student_services',{p_student_id:id,p_services:services});
+   if(error){alert('No se pudieron actualizar los servicios: '+error.message);b.disabled=false;return}
+   await loadStudents();return;
+  }
   if(action==='approve'){
    const suggested=student.expires_at&&new Date(student.expires_at)>new Date()?new Date(student.expires_at):new Date(Date.now()+30*86400000);
    const date=prompt('Fecha de vencimiento (AAAA-MM-DD):',suggested.toISOString().slice(0,10));
@@ -299,19 +317,14 @@ function home(){
           <h2>🎓 CPU-UNSM</h2>
           <p>Banco de preguntas, prácticas y simulacros.</p>
           <p class="muted">${cpu.length} preguntas registradas</p>
-          <button type="button" id="selectCPU">
-            Prepararme para CPU-UNSM
-          </button>
+          ${hasService('CPU-UNSM')?'<button type="button" id="selectCPU">Prepararme para CPU-UNSM</button>':'<p class="muted">🔒 Servicio no contratado. Solicita acceso al administrador.</p>'}
         </div>
 
         <div class="card">
           <h2>🏆 Beca 18</h2>
           <p>Preparación académica con preguntas independientes.</p>
           <p class="muted">${beca.length} preguntas registradas</p>
-          <button type="button" id="selectBeca">
-            Prepararme para Beca 18
-          </button>
-          <p><a href="beca18-clases.html" class="button" style="display:inline-block;text-decoration:none;background:#0d759b">📚 Estudiar Números y Letras</a></p>
+          ${hasService('BECA18')?'<button type="button" id="selectBeca">Prepararme para Beca 18</button><p><a href="beca18-clases.html" class="button" style="display:inline-block;text-decoration:none;background:#0d759b">📚 Estudiar Números y Letras</a></p>':'<p class="muted">🔒 Servicio no contratado. Solicita acceso al administrador.</p>'}
         </div>
       </div>
     </div>
@@ -356,7 +369,7 @@ function relationRows(q,withAnswers=false){
  return `<div class="relation-head"><strong>COLUMNA A</strong><strong>COLUMNA B</strong></div><div class="relation-rows">${right.map((r,i)=>`<div class="relation-row"><span>${i+1}. ${esc(left[i]||'')}</span><label class="relation-answer">(<input data-rel-answer="${i}" type="number" min="1" max="${left.length}" step="1" inputmode="numeric" aria-label="Número correspondiente a ${esc(r)}" value="${esc(relationAnswers[i]??'')}" ${withAnswers?'':'disabled'} ${relationGrade?'disabled':''}>) <span>${esc(r)}</span></label>${relationGrade?`<span class="relation-result ${relationGrade.detalle?.[i]?.correcto?'ok':'bad'}">${relationGrade.detalle?.[i]?.correcto?'✓':`✕ ${Number(relationGrade.detalle?.[i]?.respuesta_correcta)||'—'}`}</span>`:''}</div>`).join('')}</div>`;
 }
 function relationBankPanel(){
- if(selectedModality!=='CPU-UNSM')return '';
+ if(selectedModality!=='CPU-UNSM'||!hasService('CPU-UNSM'))return '';
  if(!relationLoaded&&!relationBusy)queueMicrotask(loadRelations);
  const filtered=relationItems.filter(q=>q.estado==='publicado'&&(!$('subjectFilter')?.value||$('subjectFilter').value==='Razonamiento Verbal')&&(!$('weekFilter')?.value||String(q.semana)===$('weekFilter').value));
  const q=filtered.find(q=>q.id===relationSelected);
@@ -525,7 +538,7 @@ function bindExams(){
  $('examPrev')?.addEventListener('click',()=>{const choice=document.querySelector('input[name="examChoice"]:checked');examSession.answers[examSession.i]=choice?Number(choice.value):null;examSession.i--;render()});
  $('examNext')?.addEventListener('click',async()=>{const choice=document.querySelector('input[name="examChoice"]:checked');examSession.answers[examSession.i]=choice?Number(choice.value):null;if(examSession.i<examSession.items.length-1){examSession.i++;render();return}if(!confirm('¿Entregar el examen y recibir la calificación?'))return;const btn=$('examNext');btn.disabled=true;$('examStatus').textContent='Calificando...';const {data,error}=await db.rpc('grade_attempt',{p_answers:examSession.items.map((q,i)=>({id:q.id,selected:examSession.answers[i]}))});if(error){$('examStatus').textContent='No se pudo calificar: '+error.message;btn.disabled=false;return}examSession.result=data;render()});
 }
-function bank(){return `<div class="card"><h2>Banco académico · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(modalityQuestions().map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id&&q.week!=null).map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
+function bank(){if(!hasService(selectedModality))return notice('No tienes contratado este servicio. Contacta al administrador.',true);return `<div class="card"><h2>Banco académico · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(modalityQuestions().map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id&&q.week!=null).map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
 function bankList(){
  const contenedor=$('bankList');
  liberarImagenesPrivadas(contenedor);
@@ -1109,8 +1122,8 @@ function bindReviewDetail(){
 
 function bind(){
 
- if($('selectCPU')) $('selectCPU').onclick=()=>{selectedModality='CPU-UNSM';page='bank';quiz=null;practice=null;render();};
-if($('selectBeca')) $('selectBeca').onclick=()=>{selectedModality='BECA18';page='bank';quiz=null;practice=null;render();};
+ if($('selectCPU')) $('selectCPU').onclick=()=>{if(!hasService('CPU-UNSM'))return;selectedModality='CPU-UNSM';page='bank';quiz=null;practice=null;render();};
+if($('selectBeca')) $('selectBeca').onclick=()=>{if(!hasService('BECA18'))return;selectedModality='BECA18';page='bank';quiz=null;practice=null;render();};
   if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(user&&page==='activity'&&$('loadActivity'))$('loadActivity').onclick=loadActivity;if(!user){
  $('authSwitch').onclick=()=>{authMode=authMode==='login'?'signup':'login';render()};
  $('authForm').onsubmit=async e=>{
