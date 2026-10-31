@@ -17,7 +17,7 @@ respiratorio:{title:'Sistema respiratorio',info:'Conduce aire y permite intercam
 ['Tráquea','Presenta epitelio pseudoestratificado cilíndrico ciliado y anillos cartilaginosos.'],
 ['Bronquio derecho','Es más ancho, corto y vertical; por ello puede recibir cuerpos extraños.'],
 ['Bronquio izquierdo','Es más largo, estrecho y horizontal que el derecho.'],
-['Pulmón derecho','Tiene tres lóbulos: superior, medio e inferior.'],
+['Pulmones (modelo anatómico)','Modelo pulmonar conjunto: la identificación por lados y lóbulos requiere segmentación validada.'],['Pulmón derecho','Tiene tres lóbulos: superior, medio e inferior.'],
 ['Pulmón izquierdo','Tiene dos lóbulos y escotadura cardíaca.'],
 ['Diafragma','Músculo principal de inspiración: se contrae y desciende.'],
 ['Alvéolos','Los neumocitos I realizan intercambio gaseoso; los II producen surfactante.']],
@@ -41,7 +41,7 @@ function tube(name,pts,r,color){const path=new THREE.CatmullRomCurve3(pts.map(p=
 const BASE='https://raw.githubusercontent.com/hubmapconsortium/ccf-releases/main/v1.2/models/';
 const realModels={
  digestivo:[['Esófago','VH_M_Esophagus.glb',0,1.2,0,.85],['Estómago','VH_M_Stomach.glb',.55,.45,.25,.95],['Hígado','VH_M_Liver.glb',-.7,.9,0,1.65],['Páncreas','VH_M_Pancreas.glb',.45,-.2,.2,1.25],['Intestino delgado','VH_M_Small_Intestine.glb',0,-1.05,.15,1.75],['Intestino grueso','SBU_M_Intestine_Large.glb',0,-1.05,0,1.9]],
- respiratorio:[['Tráquea','VH_M_Trachea.glb',0,1.5,0,.75],['Bronquio derecho','VH_M_Bronchus.glb',0,.55,.2,1],['Bronquio izquierdo','VH_M_Bronchus.glb',0,.55,.2,1],],
+ respiratorio:[['Pulmones (modelo anatómico)','VH_M_Lung.glb',0,0,0,3.8],['Tráquea','VH_M_Trachea.glb',0,1.5,0,.75],['Bronquio derecho','VH_M_Bronchus.glb',0,.55,.2,1],['Bronquio izquierdo','VH_M_Bronchus.glb',0,.55,.2,1],],
  cardiovascular:[['Aurícula derecha','VH_M_Heart.glb',0,0,0,2.8],['Aurícula izquierda','VH_M_Heart.glb',0,0,0,2.8],['Ventrículo derecho','VH_M_Heart.glb',0,0,0,2.8],['Ventrículo izquierdo','VH_M_Heart.glb',0,0,0,2.8],['Aorta','VH_M_Aorta.glb',0,.35,0,2.5],['Arteria pulmonar','VH_M_Heart.glb',0,0,0,2.8],['Válvula mitral','VH_M_Heart.glb',0,0,0,2.8]]
 };
 function clearScene(){scene.remove(group);group.traverse(o=>{if(o.isMesh){o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose()}});group=new THREE.Group();scene.add(group);objects=[]}
@@ -60,7 +60,7 @@ async function makeReal(which,token){
   const box=new THREE.Box3().setFromObject(obj);const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
   const factor=scale/Math.max(size.x,size.y,size.z,0.00001);
   obj.position.sub(center);const pivot=new THREE.Group();pivot.add(obj);pivot.scale.setScalar(factor);pivot.position.set(x,y,z);
-  pivot.userData.name=name;pivot.traverse(mesh=>{if(mesh.isMesh)mesh.userData.independentMaterials=false});for(const old of objects.filter(o=>o.userData.name===name)){group.remove(old)}objects=objects.filter(o=>o.userData.name!==name);group.add(pivot);objects.push(pivot);added++;
+  pivot.userData.name=name;if(which==='respiratorio'&&name==='Pulmones (modelo anatómico)'){objects=objects.filter(o=>{if(o.userData.name==='Pulmón derecho'||o.userData.name==='Pulmón izquierdo'){group.remove(o);return false}return true})}pivot.traverse(mesh=>{if(mesh.isMesh)mesh.userData.independentMaterials=false});for(const old of objects.filter(o=>o.userData.name===name)){group.remove(old)}objects=objects.filter(o=>o.userData.name!==name);group.add(pivot);objects.push(pivot);added++;
  }
  $('modelNotice').textContent=added+' modelos anatómicos detallados cargados. Las estructuras restantes se muestran de forma esquemática. Haz clic sobre un órgano o pulsa «Acercar a estructura».';
  fitAll();if(selected>=0)select(selected,{zoom:false});
@@ -156,7 +156,7 @@ function select(i,{zoom=false}={}){
   if(isTarget)found=true;
   try{highlightPart(root,isTarget)}catch(error){console.error('Error de sombreado en',root.userData.name,error)}
  }
- $('modelNotice').textContent=found?'Resaltado: '+name+'. Haz clic en otro órgano para identificarlo.':'No se encontró la estructura: '+name;
+ $('modelNotice').textContent=found?'Resaltado: '+name+'. Haz clic en otro órgano para identificarlo.':'La estructura '+name+' no dispone todavía de una malla individual validada; evita identificarla en el modelo conjunto.';
  if(found&&zoom)focusSelected();
 }
 function fitAll(){
