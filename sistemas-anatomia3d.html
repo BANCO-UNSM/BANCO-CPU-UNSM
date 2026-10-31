@@ -23,7 +23,7 @@ respiratorio:{title:'Sistema respiratorio',info:'Conduce aire y permite intercam
 ['Alvéolos','Los neumocitos I realizan intercambio gaseoso; los II producen surfactante.']],
 quiz:[['¿Qué célula produce surfactante?',['Neumocito I','Neumocito II','Macrófago'],1,'El neumocito II secreta surfactante.'],['¿Cuántos lóbulos tiene el pulmón derecho?',['Dos','Tres','Cuatro'],1,'El derecho tiene tres lóbulos.'],['¿Qué bronquio recibe con más frecuencia objetos aspirados?',['Izquierdo','Derecho','Ambos igual'],1,'El derecho es más corto, ancho y vertical.']]},
 cardiovascular:{title:'Sistema cardiovascular',info:'El corazón impulsa sangre por la circulación pulmonar y sistémica. Sus válvulas evitan el retroceso.',parts:[
-['Aurícula derecha','Recibe sangre de venas cavas y seno coronario.'],
+['Corazón (modelo anatómico)','Modelo completo del corazón; sus cavidades internas no están segmentadas para selección independiente.'],['Aurícula derecha','Recibe sangre de venas cavas y seno coronario.'],
 ['Aurícula izquierda','Recibe sangre oxigenada de las venas pulmonares.'],
 ['Ventrículo derecho','Envía sangre hacia los pulmones mediante la arteria pulmonar.'],
 ['Ventrículo izquierdo','Impulsa sangre a la aorta y al organismo.'],
@@ -38,21 +38,21 @@ const mat=c=>new THREE.MeshStandardMaterial({color:c,roughness:.53,metalness:.05
 function ell(name,x,y,z,sx,sy,sz,color){const m=new THREE.Mesh(new THREE.SphereGeometry(1,32,20),mat(color));m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.userData.name=name;group.add(m);objects.push(m);return m}
 function tube(name,pts,r,color){const path=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(...p)));const m=new THREE.Mesh(new THREE.TubeGeometry(path,50,r,12,false),mat(color));m.userData.name=name;group.add(m);objects.push(m);return m}
 
-const BASE='https://raw.githubusercontent.com/hubmapconsortium/ccf-releases/main/v1.2/models/';
+const MODEL_BASES=['https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-releases@main/v1.2/models/','https://raw.githubusercontent.com/hubmapconsortium/ccf-releases/main/v1.2/models/'];
 const realModels={
- digestivo:[['Esófago','VH_M_Esophagus.glb',0,1.2,0,.85],['Estómago','VH_M_Stomach.glb',.55,.45,.25,.95],['Hígado','VH_M_Liver.glb',-.7,.9,0,1.65],['Páncreas','VH_M_Pancreas.glb',.45,-.2,.2,1.25],['Intestino delgado','VH_M_Small_Intestine.glb',0,-1.05,.15,1.75],['Intestino grueso','SBU_M_Intestine_Large.glb',0,-1.05,0,1.9]],
- respiratorio:[['Pulmones (modelo anatómico)','VH_M_Lung.glb',0,0,0,3.8],['Tráquea','VH_M_Trachea.glb',0,1.5,0,.75],['Bronquio derecho','VH_M_Bronchus.glb',0,.55,.2,1],['Bronquio izquierdo','VH_M_Bronchus.glb',0,.55,.2,1],],
- cardiovascular:[['Aurícula derecha','VH_M_Heart.glb',0,0,0,2.8],['Aurícula izquierda','VH_M_Heart.glb',0,0,0,2.8],['Ventrículo derecho','VH_M_Heart.glb',0,0,0,2.8],['Ventrículo izquierdo','VH_M_Heart.glb',0,0,0,2.8],['Aorta','VH_M_Aorta.glb',0,.35,0,2.5],['Arteria pulmonar','VH_M_Heart.glb',0,0,0,2.8],['Válvula mitral','VH_M_Heart.glb',0,0,0,2.8]]
+ digestivo:[['Hígado','VH_M_Liver.glb',-.65,.7,0,1.7],['Páncreas','VH_M_Pancreas.glb',.3,-.15,0,1.1],['Intestino delgado','VH_M_Small_Intestine.glb',0,-.95,0,1.8],['Intestino grueso','SBU_M_Intestine_Large.glb',0,-.95,0,1.95]],
+ respiratorio:[['Pulmones (modelo anatómico)','VH_M_Lung.glb',0,0,0,3.9]],
+ cardiovascular:[['Corazón (modelo anatómico)','VH_M_Heart.glb',0,0,0,3.4],['Aorta','VH_M_Blood_Vasculature.glb',0,0,0,3]]
 };
 function clearScene(){scene.remove(group);group.traverse(o=>{if(o.isMesh){o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose()}});group=new THREE.Group();scene.add(group);objects=[]}
 async function makeReal(which,token){
  const names=[...new Set(realModels[which].map(x=>x[1]))];
  const completed=await Promise.allSettled(names.map(async filename=>{
-  const gltf=await loader.loadAsync(BASE+filename);return {filename,model:gltf.scene};
+  let error;for(const base of MODEL_BASES){try{const gltf=await loader.loadAsync(base+filename);return {filename,model:gltf.scene}}catch(e){error=e}}throw error;
  }));
  if(token!==loadToken)return;
  const available=new Map(completed.filter(x=>x.status==='fulfilled').map(x=>[x.value.filename,x.value.model]));const usedFiles=new Set();
- if(!available.size){$('modelNotice').textContent='No se pudieron obtener los modelos anatómicos externos. Se muestra el modelo esquemático de respaldo.';return}
+ if(!available.size){$('modelNotice').textContent='No se pudieron cargar los modelos anatómicos 3D. Comprueba la conexión o abre el atlas HuBMAP de referencia. No se mostrarán figuras geométricas como sustitutos médicos.';return}
  let added=0;
  for(const [name,filename,x,y,z,scale] of realModels[which]){
   const source=available.get(filename);if(!source||usedFiles.has(filename))continue;usedFiles.add(filename);
@@ -62,7 +62,7 @@ async function makeReal(which,token){
   obj.position.sub(center);const pivot=new THREE.Group();pivot.add(obj);pivot.scale.setScalar(factor);pivot.position.set(x,y,z);
   pivot.userData.name=name;if(which==='respiratorio'&&name==='Pulmones (modelo anatómico)'){objects=objects.filter(o=>{if(o.userData.name==='Pulmón derecho'||o.userData.name==='Pulmón izquierdo'){group.remove(o);return false}return true})}pivot.traverse(mesh=>{if(mesh.isMesh)mesh.userData.independentMaterials=false});for(const old of objects.filter(o=>o.userData.name===name)){group.remove(old)}objects=objects.filter(o=>o.userData.name!==name);group.add(pivot);objects.push(pivot);added++;
  }
- $('modelNotice').textContent=added+' modelos anatómicos detallados cargados. Las estructuras restantes se muestran de forma esquemática. Haz clic sobre un órgano o pulsa «Acercar a estructura».';
+ $('modelNotice').textContent=added+' modelos anatómicos de referencia cargados. Las estructuras sin segmentación individual se explican en el panel, sin marcarlas falsamente sobre el modelo.';
  fitAll();if(selected>=0)select(selected,{zoom:false});
 }
 function make(which){clearScene();if(which==='digestivo'){
@@ -178,7 +178,7 @@ function focusSelected(){
  camera.updateProjectionMatrix();controls.update();
 }
 function renderQuiz(){const [question,opts,correct,why]=data[active].quiz[qindex];$('question').textContent=question;$('status').textContent='';$('answers').replaceChildren();opts.forEach((o,i)=>{const b=document.createElement('button');b.textContent=String.fromCharCode(65+i)+') '+o;b.onclick=()=>{[...$('answers').children].forEach((x,j)=>{x.disabled=true;x.classList.add(j===correct?'correct':j===i?'wrong':'')});$('status').textContent=(i===correct?'¡Correcto! ':'Respuesta correcta: '+opts[correct]+'. ')+why};$('answers').appendChild(b)})}
-function load(which){active=which;document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.key===which)));$('systemTitle').textContent=data[which].title;$('systemInfo').textContent=data[which].info;make(which);$('modelNotice').textContent='Cargando modelos anatómicos de referencia…';makeReal(which,++loadToken).catch(()=>{$('modelNotice').textContent='Modelo de referencia no disponible. Se mantiene la versión esquemática.'});$('structures').replaceChildren();data[which].parts.forEach((p,i)=>{const b=document.createElement('button');b.textContent=p[0];b.addEventListener('click',()=>{try{select(i,{zoom:false})}catch(err){$('modelNotice').textContent='Error al enfocar '+p[0]+': '+err.message;console.error(err)}});$('structures').appendChild(b)});qindex=0;renderQuiz();select(0);fitAll()}
+function load(which){active=which;document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.key===which)));$('systemTitle').textContent=data[which].title;$('systemInfo').textContent=data[which].info;make(which);if(which==='respiratorio'||which==='cardiovascular'){for(const o of [...objects]){group.remove(o)}objects=[]} $('modelNotice').textContent='Cargando modelos anatómicos de referencia…';makeReal(which,++loadToken).catch(()=>{$('modelNotice').textContent='Modelo de referencia no disponible. Se mantiene la versión esquemática.'});$('structures').replaceChildren();data[which].parts.forEach((p,i)=>{const b=document.createElement('button');b.textContent=p[0];b.addEventListener('click',()=>{try{select(i,{zoom:false})}catch(err){$('modelNotice').textContent='Error al enfocar '+p[0]+': '+err.message;console.error(err)}});$('structures').appendChild(b)});qindex=0;renderQuiz();select(0);fitAll()}
 Object.keys(data).forEach(k=>{const b=document.createElement('button');b.dataset.key=k;b.textContent=data[k].title;b.onclick=()=>load(k);$('tabs').appendChild(b)});
 $('reset').onclick=()=>{$('show').click()};$('focus').onclick=()=>focusSelected();$('show').onclick=()=>{objects.forEach(m=>{m.visible=true;highlightPart(m,false)});$('modelNotice').textContent='Vista completa. Selecciona un órgano para resaltarlo.';fitAll()};$('hide').onclick=()=>select(selected,{zoom:false});$('next').onclick=()=>{qindex=(qindex+1)%data[active].quiz.length;renderQuiz()};
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();renderer.domElement.addEventListener('click',e=>{const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(objects,true).filter(h=>h.object.visible);if(hits.length){let node=hits[0].object;while(node&&!objects.includes(node))node=node.parent;const i=data[active].parts.findIndex(p=>p[0]===node?.userData.name);if(i>=0)select(i,{zoom:false})}});
