@@ -17,7 +17,7 @@ respiratorio:{title:'Sistema respiratorio',info:'Conduce aire y permite intercam
 ['Tráquea','Presenta epitelio pseudoestratificado cilíndrico ciliado y anillos cartilaginosos.'],
 ['Bronquio derecho','Es más ancho, corto y vertical; por ello puede recibir cuerpos extraños.'],
 ['Bronquio izquierdo','Es más largo, estrecho y horizontal que el derecho.'],
-['Pulmones (modelo anatómico)','Modelo pulmonar conjunto: la identificación por lados y lóbulos requiere segmentación validada.'],['Pulmón derecho','Tiene tres lóbulos: superior, medio e inferior.'],
+['Pulmones (modelo anatómico)','Vista de ambos pulmones. La separación izquierda/derecha es visual por plano medio y no constituye una segmentación clínica validada.'],['Pulmón derecho','Tiene tres lóbulos: superior, medio e inferior.'],
 ['Pulmón izquierdo','Tiene dos lóbulos y escotadura cardíaca.'],
 ['Diafragma','Músculo principal de inspiración: se contrae y desciende.'],
 ['Alvéolos','Los neumocitos I realizan intercambio gaseoso; los II producen surfactante.']],
@@ -32,7 +32,7 @@ cardiovascular:{title:'Sistema cardiovascular',info:'El corazón impulsa sangre 
 ['Válvula mitral','Comunica aurícula izquierda con ventrículo izquierdo.']],
 quiz:[['¿Qué válvula comunica aurícula y ventrículo izquierdos?',['Mitral','Tricúspide','Pulmonar'],0,'La válvula mitral conecta las cavidades izquierdas.'],['¿Dónde termina la circulación mayor?',['Aurícula derecha','Aurícula izquierda','Ventrículo derecho'],0,'La circulación sistémica retorna a aurícula derecha.'],['¿Qué estructura inicia normalmente el latido?',['Nodo AV','Nodo sinusal','Haz de His'],1,'El nodo sinusal es el marcapasos natural.']]}
 };
-const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(42,1,.1,100);camera.position.set(0,1,9);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));$('stage').appendChild(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x24465b,2.3));const light=new THREE.DirectionalLight(0xffffff,2.5);light.position.set(4,8,6);scene.add(light);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=3;controls.maxDistance=15;
+const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(42,1,.1,100);camera.position.set(0,1,9);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.localClippingEnabled=true;$('stage').appendChild(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x24465b,2.3));const light=new THREE.DirectionalLight(0xffffff,2.5);light.position.set(4,8,6);scene.add(light);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=3;controls.maxDistance=15;
 let group=new THREE.Group();scene.add(group);let objects=[],active='digestivo',selected=-1,qindex=0,loadToken=0;const loader=new GLTFLoader();
 const mat=c=>new THREE.MeshStandardMaterial({color:c,roughness:.53,metalness:.05,transparent:true,opacity:.94});
 function ell(name,x,y,z,sx,sy,sz,color){const m=new THREE.Mesh(new THREE.SphereGeometry(1,32,20),mat(color));m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.userData.name=name;group.add(m);objects.push(m);return m}
@@ -60,7 +60,34 @@ async function makeReal(which,token){
   const box=new THREE.Box3().setFromObject(obj);const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
   const factor=scale/Math.max(size.x,size.y,size.z,0.00001);
   obj.position.sub(center);const pivot=new THREE.Group();pivot.add(obj);pivot.scale.setScalar(factor);pivot.position.set(x,y,z);
-  pivot.userData.name=name;if(which==='respiratorio'&&name==='Pulmones (modelo anatómico)'){objects=objects.filter(o=>{if(o.userData.name==='Pulmón derecho'||o.userData.name==='Pulmón izquierdo'){group.remove(o);return false}return true})}pivot.traverse(mesh=>{if(mesh.isMesh)mesh.userData.independentMaterials=false});for(const old of objects.filter(o=>o.userData.name===name)){group.remove(old)}objects=objects.filter(o=>o.userData.name!==name);group.add(pivot);objects.push(pivot);added++;
+  pivot.userData.name=name;
+  if(which==='respiratorio'&&name==='Pulmones (modelo anatómico)'){
+   // Split the anatomical lung mesh visually at the midsagittal plane.
+   // Clipping preserves the actual GLB geometry, unlike ellipsoid stand-ins.
+   const halves=[
+    {name:'Pulmón derecho',plane:new THREE.Plane(new THREE.Vector3(-1,0,0),0)},
+    {name:'Pulmón izquierdo',plane:new THREE.Plane(new THREE.Vector3(1,0,0),0)}
+   ];
+   for(const half of halves){
+    const side=pivot.clone(true);side.userData.name=half.name;
+    side.traverse(node=>{
+     if(!node.isMesh)return;
+     const materialList=Array.isArray(node.material)?node.material:[node.material];
+     const clipped=materialList.map(material=>{
+      const copy=material.clone();copy.clippingPlanes=[half.plane];
+      copy.clipShadows=true;copy.side=THREE.DoubleSide;return copy;
+     });
+     node.material=Array.isArray(node.material)?clipped:clipped[0];
+    });
+    group.add(side);objects.push(side);
+   }
+   added+=2;
+   continue;
+  }
+  pivot.traverse(mesh=>{if(mesh.isMesh)mesh.userData.independentMaterials=false});
+  for(const old of objects.filter(o=>o.userData.name===name))group.remove(old);
+  objects=objects.filter(o=>o.userData.name!==name);
+  group.add(pivot);objects.push(pivot);added++;
  }
  $('modelNotice').textContent=added+' modelos anatómicos de referencia cargados. Las estructuras sin segmentación individual se explican en el panel, sin marcarlas falsamente sobre el modelo.';
  fitAll();if(selected>=0)select(selected,{zoom:false});
@@ -152,7 +179,7 @@ function select(i,{zoom=false}={}){
  let found=false;
  for(const root of objects){
   root.visible=true;
-  const isTarget=root.userData.name===name;
+  const isTarget=root.userData.name===name||(name==='Pulmones (modelo anatómico)'&&(root.userData.name==='Pulmón derecho'||root.userData.name==='Pulmón izquierdo'));
   if(isTarget)found=true;
   try{highlightPart(root,isTarget)}catch(error){console.error('Error de sombreado en',root.userData.name,error)}
  }
