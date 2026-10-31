@@ -60,7 +60,7 @@ async function makeReal(which,token){
   const box=new THREE.Box3().setFromObject(obj);const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
   const factor=scale/Math.max(size.x,size.y,size.z,0.00001);
   obj.position.sub(center);const pivot=new THREE.Group();pivot.add(obj);pivot.scale.setScalar(factor);pivot.position.set(x,y,z);
-  pivot.userData.name=name;for(const old of objects.filter(o=>o.userData.name===name)){group.remove(old)}objects=objects.filter(o=>o.userData.name!==name);group.add(pivot);objects.push(pivot);added++;
+  pivot.userData.name=name;pivot.traverse(mesh=>{if(mesh.isMesh)mesh.userData.independentMaterials=false});for(const old of objects.filter(o=>o.userData.name===name)){group.remove(old)}objects=objects.filter(o=>o.userData.name!==name);group.add(pivot);objects.push(pivot);added++;
  }
  $('modelNotice').textContent=added+' modelos anatómicos detallados cargados. Las estructuras restantes se muestran de forma esquemática. Haz clic sobre un órgano o pulsa «Acercar a estructura».';
  fitAll();if(selected>=0)select(selected,{zoom:false});
@@ -76,20 +76,28 @@ const originalAppearance=new WeakMap();
 function highlightPart(root,highlight){
  root.traverse(node=>{
   if(!node.isMesh)return;
+  // A material must belong to this mesh alone: shared GLB materials previously
+  // caused a selection to recolor unrelated organs.
+  if(!node.userData.independentMaterials){
+   node.material=Array.isArray(node.material)?node.material.map(m=>m.clone()):node.material.clone();
+   node.userData.independentMaterials=true;
+  }
   const mats=Array.isArray(node.material)?node.material:[node.material];
   for(const material of mats){
-   if(!material)continue;
    if(!originalAppearance.has(material))originalAppearance.set(material,{
-    emissive:material.emissive?.clone(),intensity:material.emissiveIntensity,
-    opacity:material.opacity,transparent:material.transparent,depthWrite:material.depthWrite
+    color:material.color?.clone(),emissive:material.emissive?.clone(),
+    intensity:material.emissiveIntensity,opacity:material.opacity,
+    transparent:material.transparent,depthWrite:material.depthWrite
    });
    const base=originalAppearance.get(material);
-   material.opacity=base.opacity;material.transparent=base.transparent;material.depthWrite=base.depthWrite;
+   if(material.color&&base.color)material.color.copy(highlight?new THREE.Color('#ffdc48'):base.color);
    if(material.emissive){
-    material.emissive.copy(base.emissive||new THREE.Color(0));
-    if(highlight)material.emissive.add(new THREE.Color(0x18b6ff));
-    material.emissiveIntensity=highlight?1.25:(base.intensity??1);
+    material.emissive.copy(highlight?new THREE.Color('#c06c00'):(base.emissive||new THREE.Color(0)));
+    material.emissiveIntensity=highlight?.85:(base.intensity??1);
    }
+   material.opacity=highlight?1:base.opacity;
+   material.transparent=highlight?false:base.transparent;
+   material.depthWrite=highlight?true:base.depthWrite;
    material.needsUpdate=true;
   }
  });
@@ -117,7 +125,7 @@ function fitAll(){
  const box=new THREE.Box3().setFromObject(group);if(box.isEmpty())return;
  const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
  const max=Math.max(size.x,size.y,size.z),fov=THREE.MathUtils.degToRad(camera.fov);
- const distance=Math.max(4,max/(2*Math.tan(fov/2))*1.8);
+ const distance=Math.max(3.2,Math.max(size.y/(2*Math.tan(fov/2)),size.x/(2*Math.tan(fov/2)*Math.max(camera.aspect,.45)))*1.22);
  controls.target.copy(center);camera.position.copy(center).add(new THREE.Vector3(0,Math.max(.3,max*.1),distance));
  camera.near=.01;camera.far=200;camera.updateProjectionMatrix();controls.maxDistance=Math.max(15,distance*4);controls.update();
 }
