@@ -82,7 +82,7 @@ const geometry=new THREE.SphereGeometry(1,48,32);
 // regiones visibles del cerebro. Es solo una línea SVG: no hay malla ni relleno.
 const contour=document.createElementNS('http://www.w3.org/2000/svg','svg');
 contour.setAttribute('aria-hidden','true');
-contour.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2';
+contour.style.cssText='display:none';
 const contourPath=document.createElementNS('http://www.w3.org/2000/svg','path');
 contourPath.setAttribute('fill','none');
 contourPath.setAttribute('stroke','#a8e5ff');
@@ -179,6 +179,6 @@ $('showAll').onclick=()=>{objects.forEach(g=>g.visible=true)};
 $('labels').onclick=()=>{labelsVisible=!labelsVisible;$('chips').hidden=!labelsVisible;$('labels').textContent=labelsVisible?'Ocultar etiquetas':'Mostrar etiquetas'};
 function resize(){const el=$('scene');renderer.setSize(el.clientWidth,el.clientHeight,false);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix()}
 new ResizeObserver(resize).observe($('scene'));resize();
-renderer.setAnimationLoop(()=>{controls.update();drawBrainContour();renderer.render(scene,camera)});
+renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)});
 selectVisual('frontal');$('status').textContent='6 estructuras listas para explorar.';
 </script></body></html>
