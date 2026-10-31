@@ -63,7 +63,7 @@ async function makeReal(which,token){
   pivot.userData.name=name;for(const old of objects.filter(o=>o.userData.name===name)){group.remove(old)}objects=objects.filter(o=>o.userData.name!==name);group.add(pivot);objects.push(pivot);added++;
  }
  $('modelNotice').textContent=added+' modelos anatómicos detallados cargados. Las estructuras restantes se muestran de forma esquemática. Haz clic sobre un órgano o pulsa «Acercar a estructura».';
- fitAll();if(selected>=0)select(selected);
+ fitAll();if(selected>=0)select(selected,{zoom:false});
 }
 function make(which){clearScene();if(which==='digestivo'){
 tube('Esófago',[[0,2.5,0],[0,1.5,0],[.1,.85,0]],.15,'#dca38e');ell('Estómago',.45,.45,.15,.72,.65,.37,'#e9999a');ell('Hígado',-.75,1.1,.3,1.15,.45,.58,'#9e463f');ell('Páncreas',.4,-.1,.55,.85,.18,.25,'#f6c66e');tube('Intestino delgado',[[-.55,-.55,.2],[.55,-.7,.2],[-.55,-.95,.2],[.55,-1.2,.2],[-.5,-1.5,.2],[.45,-1.75,.2]],.15,'#f2af8d');tube('Intestino grueso',[[-1.1,-1.85,0],[-1.2,-.5,0],[-.9,-.3,0],[.95,-.3,0],[1.2,-.6,0],[1.15,-1.9,0]],.2,'#cb7b70');
@@ -73,35 +73,37 @@ tube('Tráquea',[[0,2.45,0],[0,1.05,0]],.17,'#b1e5ef');tube('Bronquio derecho',[
 ell('Aurícula derecha',-.65,.85,.15,.55,.55,.47,'#6b9ed8');ell('Aurícula izquierda',.65,.85,.15,.55,.55,.47,'#e88d93');ell('Ventrículo derecho',-.65,-.45,.15,.65,.9,.52,'#5884bc');ell('Ventrículo izquierdo',.65,-.45,.15,.65,.9,.52,'#c9566b');tube('Aorta',[[.55,.1,-.2],[.65,1.65,-.2],[.15,2.2,-.2],[-.35,1.8,-.2]],.16,'#f07075');tube('Arteria pulmonar',[[-.6,.1,.65],[-.7,1.65,.65],[-1.35,1.8,.65]],.14,'#80c1ed');ell('Válvula mitral',.4,.24,.65,.32,.1,.22,'#f5d66e')
 }group.rotation.y=-.2}
 function select(i,{zoom=false}={}){
- selected=i;const parts=data[active].parts;const name=parts[i][0];
+ selected=i;const name=data[active].parts[i][0];
  document.querySelectorAll('#structures button').forEach((b,j)=>{b.classList.toggle('selected',j===i);b.setAttribute('aria-pressed',String(j===i))});
- $('structureTitle').textContent=name;$('structureInfo').textContent=parts[i][1];
+ $('structureTitle').textContent=name;$('structureInfo').textContent=data[active].parts[i][1];
  const target=objects.find(o=>o.userData.name===name);
- objects.forEach(root=>{
-  root.visible=true;const chosen=root.userData.name===name;
+ for(const root of objects){
+  const chosen=root===target;
+  root.visible=zoom?chosen:true;
   root.traverse(o=>{
    if(!o.isMesh)return;
    if(!o.userData.ownMaterial){
     o.material=Array.isArray(o.material)?o.material.map(m=>m.clone()):o.material.clone();
     o.userData.ownMaterial=true;
    }
-   for(const material of (Array.isArray(o.material)?o.material:[o.material])){
-    material.transparent=true;material.depthWrite=chosen;
-    material.opacity=chosen?1:.12;
-    if(material.emissive)material.emissive.set(chosen?'#172b37':'#000000');
-    material.needsUpdate=true;
+   for(const m of (Array.isArray(o.material)?o.material:[o.material])){
+    m.transparent=!chosen;m.opacity=chosen?1:.3;m.depthWrite=chosen;
+    if(m.emissive)m.emissive.set(chosen?'#254d57':'#000000');
+    m.needsUpdate=true;
    }
   });
- });
- if(target&&zoom)focusSelected();
- if(!target)$('modelNotice').textContent='Modelo individual de '+name+' no disponible. Revisa la representación esquemática.';
+ }
+ if(target){
+  $('modelNotice').textContent='Estructura seleccionada: '+name+'. '+(zoom?'Vista aislada para identificarla claramente. Pulsa «Mostrar todo» para regresar.':'Pulsa «Acercar a estructura» para verla aislada.');
+  if(zoom)focusSelected();
+ }else $('modelNotice').textContent='No hay representación disponible para '+name+'.';
 }
 function fitAll(){const box=new THREE.Box3().setFromObject(group);if(box.isEmpty())return;const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());const max=Math.max(size.x,size.y,size.z);controls.target.copy(center);const fov=THREE.MathUtils.degToRad(camera.fov);const distance=Math.max(4,max/(2*Math.tan(fov/2))*1.8);camera.position.copy(center).add(new THREE.Vector3(0,Math.max(.3,max*.1),distance));camera.near=.01;camera.far=200;camera.updateProjectionMatrix();controls.maxDistance=Math.max(15,distance*4);controls.update()}
-function focusSelected(){const name=data[active].parts[selected]?.[0];const target=objects.find(o=>o.userData.name===name);if(!target){$('modelNotice').textContent='Esta estructura todavía no tiene un modelo individual.';return}objects.forEach(o=>o.visible=true);const box=new THREE.Box3().setFromObject(target);if(box.isEmpty())return;const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());const extent=Math.max(size.x,size.y,size.z,.3);controls.target.copy(center);camera.position.copy(center).add(new THREE.Vector3(0,extent*.12,Math.max(2.4,extent*2.6)));camera.updateProjectionMatrix();controls.update()}
+function focusSelected(){const name=data[active].parts[selected]?.[0];const target=objects.find(o=>o.userData.name===name);if(!target){$('modelNotice').textContent='Esta estructura todavía no tiene un modelo individual.';return}objects.forEach(o=>o.visible=o===target);const box=new THREE.Box3().setFromObject(target);if(box.isEmpty())return;const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());const extent=Math.max(size.x,size.y,size.z,.3);controls.target.copy(center);camera.position.copy(center).add(new THREE.Vector3(0,extent*.12,Math.max(2.4,extent*2.6)));camera.updateProjectionMatrix();controls.update()}
 function renderQuiz(){const [question,opts,correct,why]=data[active].quiz[qindex];$('question').textContent=question;$('status').textContent='';$('answers').replaceChildren();opts.forEach((o,i)=>{const b=document.createElement('button');b.textContent=String.fromCharCode(65+i)+') '+o;b.onclick=()=>{[...$('answers').children].forEach((x,j)=>{x.disabled=true;x.classList.add(j===correct?'correct':j===i?'wrong':'')});$('status').textContent=(i===correct?'¡Correcto! ':'Respuesta correcta: '+opts[correct]+'. ')+why};$('answers').appendChild(b)})}
 function load(which){active=which;document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.key===which)));$('systemTitle').textContent=data[which].title;$('systemInfo').textContent=data[which].info;make(which);$('modelNotice').textContent='Cargando modelos anatómicos de referencia…';makeReal(which,++loadToken).catch(()=>{$('modelNotice').textContent='Modelo de referencia no disponible. Se mantiene la versión esquemática.'});$('structures').replaceChildren();data[which].parts.forEach((p,i)=>{const b=document.createElement('button');b.textContent=p[0];b.onclick=()=>select(i,{zoom:true});$('structures').appendChild(b)});qindex=0;renderQuiz();select(0);fitAll()}
 Object.keys(data).forEach(k=>{const b=document.createElement('button');b.dataset.key=k;b.textContent=data[k].title;b.onclick=()=>load(k);$('tabs').appendChild(b)});
-$('reset').onclick=()=>fitAll();$('focus').onclick=()=>focusSelected();$('show').onclick=()=>{objects.forEach(m=>{m.visible=true;m.traverse(o=>{if(o.isMesh){for(const mat of (Array.isArray(o.material)?o.material:[o.material])){mat.transparent=true;mat.opacity=1;mat.depthWrite=true;mat.needsUpdate=true}}})});fitAll()};$('hide').onclick=()=>objects.forEach(m=>m.visible=m.userData.name===data[active].parts[selected][0]);$('next').onclick=()=>{qindex=(qindex+1)%data[active].quiz.length;renderQuiz()};
+$('reset').onclick=()=>{$('show').click()};$('focus').onclick=()=>focusSelected();$('show').onclick=()=>{objects.forEach(m=>{m.visible=true;m.traverse(o=>{if(o.isMesh){for(const mat of (Array.isArray(o.material)?o.material:[o.material])){mat.transparent=false;mat.opacity=1;mat.depthWrite=true;mat.needsUpdate=true}}})});$('modelNotice').textContent='Vista completa: selecciona un órgano para aislarlo y acercarlo.';fitAll()};$('hide').onclick=()=>select(selected,{zoom:true});$('next').onclick=()=>{qindex=(qindex+1)%data[active].quiz.length;renderQuiz()};
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();renderer.domElement.addEventListener('click',e=>{const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(objects,true).filter(h=>h.object.visible);if(hits.length){let node=hits[0].object;while(node&&!node.userData.name)node=node.parent;const i=data[active].parts.findIndex(p=>p[0]===node?.userData.name);if(i>=0)select(i,{zoom:true})}});
 new ResizeObserver(()=>{const el=$('stage');renderer.setSize(el.clientWidth,el.clientHeight,false);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix()}).observe($('stage'));renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)});load('digestivo');
 </script></body></html>
