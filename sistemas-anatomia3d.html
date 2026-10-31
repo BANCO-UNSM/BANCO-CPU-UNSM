@@ -105,17 +105,18 @@ function highlightPart(root,highlight){
 function select(i,{zoom=false}={}){
  const part=data[active].parts[i];if(!part)return;
  selected=i;const name=part[0];
+ // Update the lesson first, independently of any model/material error.
+ $('structureTitle').textContent=name;$('structureInfo').textContent=part[1];
  document.querySelectorAll('#structures button').forEach((button,j)=>{
   button.classList.toggle('selected',j===i);
   button.setAttribute('aria-pressed',String(j===i));
  });
- $('structureTitle').textContent=name;$('structureInfo').textContent=part[1];
  let found=false;
  for(const root of objects){
   root.visible=true;
   const isTarget=root.userData.name===name;
   if(isTarget)found=true;
-  highlightPart(root,isTarget);
+  try{highlightPart(root,isTarget)}catch(error){console.error('Error de sombreado en',root.userData.name,error)}
  }
  $('modelNotice').textContent=found?'Resaltado: '+name+'. Haz clic en otro órgano para identificarlo.':'No se encontró la estructura: '+name;
  if(found&&zoom)focusSelected();
@@ -142,6 +143,6 @@ function renderQuiz(){const [question,opts,correct,why]=data[active].quiz[qindex
 function load(which){active=which;document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.key===which)));$('systemTitle').textContent=data[which].title;$('systemInfo').textContent=data[which].info;make(which);$('modelNotice').textContent='Cargando modelos anatómicos de referencia…';makeReal(which,++loadToken).catch(()=>{$('modelNotice').textContent='Modelo de referencia no disponible. Se mantiene la versión esquemática.'});$('structures').replaceChildren();data[which].parts.forEach((p,i)=>{const b=document.createElement('button');b.textContent=p[0];b.addEventListener('click',()=>{try{select(i,{zoom:false})}catch(err){$('modelNotice').textContent='Error al enfocar '+p[0]+': '+err.message;console.error(err)}});$('structures').appendChild(b)});qindex=0;renderQuiz();select(0);fitAll()}
 Object.keys(data).forEach(k=>{const b=document.createElement('button');b.dataset.key=k;b.textContent=data[k].title;b.onclick=()=>load(k);$('tabs').appendChild(b)});
 $('reset').onclick=()=>{$('show').click()};$('focus').onclick=()=>focusSelected();$('show').onclick=()=>{objects.forEach(m=>{m.visible=true;highlightPart(m,false)});$('modelNotice').textContent='Vista completa. Selecciona un órgano para resaltarlo.';fitAll()};$('hide').onclick=()=>select(selected,{zoom:false});$('next').onclick=()=>{qindex=(qindex+1)%data[active].quiz.length;renderQuiz()};
-const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();renderer.domElement.addEventListener('click',e=>{const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(objects,true).filter(h=>h.object.visible);if(hits.length){let node=hits[0].object;while(node&&!node.userData.name)node=node.parent;const i=data[active].parts.findIndex(p=>p[0]===node?.userData.name);if(i>=0)select(i,{zoom:false})}});
+const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();renderer.domElement.addEventListener('click',e=>{const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(objects,true).filter(h=>h.object.visible);if(hits.length){let node=hits[0].object;while(node&&!objects.includes(node))node=node.parent;const i=data[active].parts.findIndex(p=>p[0]===node?.userData.name);if(i>=0)select(i,{zoom:false})}});
 new ResizeObserver(()=>{const el=$('stage');renderer.setSize(el.clientWidth,el.clientHeight,false);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix()}).observe($('stage'));renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)});load('digestivo');
 </script></body></html>
