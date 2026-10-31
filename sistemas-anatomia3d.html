@@ -41,7 +41,7 @@ function tube(name,pts,r,color){const path=new THREE.CatmullRomCurve3(pts.map(p=
 const BASE='https://raw.githubusercontent.com/hubmapconsortium/ccf-releases/main/v1.2/models/';
 const realModels={
  digestivo:[['Esófago','VH_M_Esophagus.glb',0,1.2,0,.85],['Estómago','VH_M_Stomach.glb',.55,.45,.25,.95],['Hígado','VH_M_Liver.glb',-.7,.9,0,1.65],['Páncreas','VH_M_Pancreas.glb',.45,-.2,.2,1.25],['Intestino delgado','VH_M_Small_Intestine.glb',0,-1.05,.15,1.75],['Intestino grueso','SBU_M_Intestine_Large.glb',0,-1.05,0,1.9]],
- respiratorio:[['Tráquea','VH_M_Trachea.glb',0,1.5,0,.75],['Bronquio derecho','VH_M_Bronchus.glb',0,.55,.2,1],['Bronquio izquierdo','VH_M_Bronchus.glb',0,.55,.2,1],['Pulmón derecho','VH_M_Lung.glb',0,0,0,2.8],['Pulmón izquierdo','VH_M_Lung.glb',0,0,0,2.8],['Diafragma','VH_M_Diaphragm.glb',0,-1.3,0,2],['Alvéolos','VH_M_Lung.glb',0,0,0,2.8]],
+ respiratorio:[['Tráquea','VH_M_Trachea.glb',0,1.5,0,.75],['Bronquio derecho','VH_M_Bronchus.glb',0,.55,.2,1],['Bronquio izquierdo','VH_M_Bronchus.glb',0,.55,.2,1],['Diafragma','VH_M_Diaphragm.glb',0,-1.3,0,2],],
  cardiovascular:[['Aurícula derecha','VH_M_Heart.glb',0,0,0,2.8],['Aurícula izquierda','VH_M_Heart.glb',0,0,0,2.8],['Ventrículo derecho','VH_M_Heart.glb',0,0,0,2.8],['Ventrículo izquierdo','VH_M_Heart.glb',0,0,0,2.8],['Aorta','VH_M_Aorta.glb',0,.35,0,2.5],['Arteria pulmonar','VH_M_Heart.glb',0,0,0,2.8],['Válvula mitral','VH_M_Heart.glb',0,0,0,2.8]]
 };
 function clearScene(){scene.remove(group);group.traverse(o=>{if(o.isMesh){o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose()}});group=new THREE.Group();scene.add(group);objects=[]}
@@ -68,7 +68,23 @@ async function makeReal(which,token){
 function make(which){clearScene();if(which==='digestivo'){
 tube('Esófago',[[0,2.5,0],[0,1.5,0],[.1,.85,0]],.15,'#dca38e');ell('Estómago',.45,.45,.15,.72,.65,.37,'#e9999a');ell('Hígado',-.75,1.1,.3,1.15,.45,.58,'#9e463f');ell('Páncreas',.4,-.1,.55,.85,.18,.25,'#f6c66e');tube('Intestino delgado',[[-.55,-.55,.2],[.55,-.7,.2],[-.55,-.95,.2],[.55,-1.2,.2],[-.5,-1.5,.2],[.45,-1.75,.2]],.15,'#f2af8d');tube('Intestino grueso',[[-1.1,-1.85,0],[-1.2,-.5,0],[-.9,-.3,0],[.95,-.3,0],[1.2,-.6,0],[1.15,-1.9,0]],.2,'#cb7b70');
 }else if(which==='respiratorio'){
-tube('Tráquea',[[0,2.45,0],[0,1.05,0]],.17,'#b1e5ef');tube('Bronquio derecho',[[0,1.05,0],[-.65,.55,0],[-1,.1,0]],.13,'#f0ca8e');tube('Bronquio izquierdo',[[0,1.05,0],[.6,.55,0],[1,.15,0]],.13,'#f0ca8e');ell('Pulmón derecho',-.95,.1,-.25,.85,1.4,.58,'#e18c9d');ell('Pulmón izquierdo',.95,.1,-.25,.73,1.35,.55,'#c77fa4');ell('Diafragma',0,-1.55,0,2,.23,.95,'#d77d6a');for(let i=0;i<8;i++){ell('Alvéolos',-1.4+(i%4)*.16,-.2+Math.floor(i/4)*.17,.6,.105,.105,.1,'#f7c3ce')}
+tube('Tráquea',[[0,2.45,0],[0,1.05,0]],.17,'#b1e5ef');tube('Bronquio derecho',[[0,1.05,0],[-.65,.55,0],[-1,.1,0]],.13,'#f0ca8e');tube('Bronquio izquierdo',[[0,1.05,0],[.6,.55,0],[1,.15,0]],.13,'#f0ca8e');// Cada pulmón es UN órgano con sus lóbulos agrupados bajo el mismo nombre.
+// Vista anterior: pulmón derecho anatómico aparece a la izquierda del observador.
+function createLung(name,side,color){
+ const root=new THREE.Group();root.userData.name=name;group.add(root);objects.push(root);
+ const mesh=new THREE.Mesh(new THREE.SphereGeometry(1,48,32),mat(color));
+ mesh.position.set(side*.93,.05,-.18);mesh.scale.set(.75,1.3,.56);
+ // Estrechamiento superior y contorno medial para distinguir pulmones.
+ const position=mesh.geometry.attributes.position;
+ for(let i=0;i<position.count;i++){
+  const x=position.getX(i),y=position.getY(i),z=position.getZ(i);
+  const taper=.68+.32*(1-y)/2;
+  position.setXYZ(i,x*taper,y,z*(.88+.12*(1-y)/2));
+ }
+ mesh.geometry.computeVertexNormals();root.add(mesh);
+}
+createLung('Pulmón derecho',-1,'#e18c9d');
+createLung('Pulmón izquierdo',1,'#c77fa4');ell('Diafragma',0,-1.55,0,2,.23,.95,'#d77d6a');for(let i=0;i<8;i++){ell('Alvéolos',-1.4+(i%4)*.16,-.2+Math.floor(i/4)*.17,.6,.105,.105,.1,'#f7c3ce')}
 }else{
 ell('Aurícula derecha',-.65,.85,.15,.55,.55,.47,'#6b9ed8');ell('Aurícula izquierda',.65,.85,.15,.55,.55,.47,'#e88d93');ell('Ventrículo derecho',-.65,-.45,.15,.65,.9,.52,'#5884bc');ell('Ventrículo izquierdo',.65,-.45,.15,.65,.9,.52,'#c9566b');tube('Aorta',[[.55,.1,-.2],[.65,1.65,-.2],[.15,2.2,-.2],[-.35,1.8,-.2]],.16,'#f07075');tube('Arteria pulmonar',[[-.6,.1,.65],[-.7,1.65,.65],[-1.35,1.8,.65]],.14,'#80c1ed');ell('Válvula mitral',.4,.24,.65,.32,.1,.22,'#f5d66e')
 }group.rotation.y=-.2}
