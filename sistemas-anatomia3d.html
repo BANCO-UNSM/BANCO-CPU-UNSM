@@ -51,11 +51,11 @@ async function makeReal(which,token){
   const gltf=await loader.loadAsync(BASE+filename);return {filename,model:gltf.scene};
  }));
  if(token!==loadToken)return;
- const available=new Map(completed.filter(x=>x.status==='fulfilled').map(x=>[x.value.filename,x.value.model]));
+ const available=new Map(completed.filter(x=>x.status==='fulfilled').map(x=>[x.value.filename,x.value.model]));const usedFiles=new Set();
  if(!available.size){$('modelNotice').textContent='No se pudieron obtener los modelos anatómicos externos. Se muestra el modelo esquemático de respaldo.';return}
  clearScene();let added=0;
  for(const [name,filename,x,y,z,scale] of realModels[which]){
-  const source=available.get(filename);if(!source)continue;
+  const source=available.get(filename);if(!source||usedFiles.has(filename))continue;usedFiles.add(filename);
   const obj=source.clone(true);
   const box=new THREE.Box3().setFromObject(obj);const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
   const factor=scale/Math.max(size.x,size.y,size.z,0.00001);
@@ -63,7 +63,7 @@ async function makeReal(which,token){
   pivot.userData.name=name;group.add(pivot);objects.push(pivot);added++;
  }
  $('modelNotice').textContent=added+' estructuras representadas mediante modelos anatómicos de HuBMAP/HRA. Algunas partes microscópicas o internas no se distinguen individualmente.';
- if(selected>=0)select(selected);
+ if(selected>=0&&objects.some(o=>o.userData.name===data[which].parts[selected][0]))select(selected);
 }
 function make(which){clearScene();if(which==='digestivo'){
 tube('Esófago',[[0,2.5,0],[0,1.5,0],[.1,.85,0]],.15,'#dca38e');ell('Estómago',.45,.45,.15,.72,.65,.37,'#e9999a');ell('Hígado',-.75,1.1,.3,1.15,.45,.58,'#9e463f');ell('Páncreas',.4,-.1,.55,.85,.18,.25,'#f6c66e');tube('Intestino delgado',[[-.55,-.55,.2],[.55,-.7,.2],[-.55,-.95,.2],[.55,-1.2,.2],[-.5,-1.5,.2],[.45,-1.75,.2]],.15,'#f2af8d');tube('Intestino grueso',[[-1.1,-1.85,0],[-1.2,-.5,0],[-.9,-.3,0],[.95,-.3,0],[1.2,-.6,0],[1.15,-1.9,0]],.2,'#cb7b70');
