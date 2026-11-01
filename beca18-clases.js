@@ -59,7 +59,12 @@ function draw(){
  };
  }
 }
-document.querySelectorAll('[data-area]').forEach(b=>b.onclick=()=>{area=b.dataset.area;active=lessons.find(l=>l.area===area)?.id;retryOnly=false;draw()});
+function showLearning(which){area=which;active=lessons.find(l=>l.area===which)?.id;retryOnly=false;$('learningLayout').hidden=false;$('bookBack').hidden=false;$('progressSummary').hidden=false;$('diagnostic').hidden=false;document.querySelector('.progress-actions').hidden=false;draw();$('learningLayout').scrollIntoView({behavior:'smooth',block:'start'});}
+function showBookMenu(){$('bookSubjects').hidden=false;$('openBooks').setAttribute('aria-expanded','true');$('learningLayout').hidden=true;$('bookBack').hidden=true;}
+$('openBooks').onclick=()=>{let opened=$('bookSubjects').hidden;$('bookSubjects').hidden=!opened;$('openBooks').setAttribute('aria-expanded',String(opened));};
+$('openVerbal').onclick=()=>{showLearning('Letras');$('bookSubjects').hidden=true;$('openBooks').setAttribute('aria-expanded','false');};
+$('backBooks').onclick=()=>{showBookMenu();$('openBooks').scrollIntoView({behavior:'smooth',block:'start'});};
+document.querySelectorAll('[data-area]').forEach(b=>b.onclick=()=>showLearning(b.dataset.area));
 const clear=$('clearProgress');if(clear)clear.onclick=resetProgress;async function validarAcceso(){if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw Error('No se encuentra la configuración de acceso.');const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session},error}=await client.auth.getSession();if(error||!session?.user)throw Error('Inicia sesión desde CachimboLab para acceder a las clases.');progressKey='beca18_progress_v1_'+session.user.id;try{progress=JSON.parse(localStorage.getItem(progressKey)||'{}')||{};}catch(e){progress={};}const {data:profile,error:profileError}=await client.from('profiles').select('role').eq('id',session.user.id).maybeSingle();if(profileError)throw Error('No se pudo validar tu perfil.');if(!['teacher','admin'].includes(profile?.role)){const {data:active,error:accessError}=await client.rpc('has_service_access',{p_modality:'BECA18'});if(accessError||!active)throw Error('No tienes Beca 18 autorizado. Solicita este servicio al administrador desde CachimboLab.');}}
 validarAcceso().then(async()=>{
  const [original,verbal]=await Promise.all([window.becaPrivate.document('beca18-clases.json'),window.becaPrivate.document('beca18-verbal-pronabec.json')]);
@@ -72,5 +77,5 @@ validarAcceso().then(async()=>{
  questions=[...original.questions,...verbal.questions];
  // Se abre directamente la primera sesión de Letras al visitar el curso.
  area='Letras';active=verbal.lessons[0]?.id||'L01';
- draw();
-}).catch(e=>{$('lesson').textContent=e.message;});
+ if(new URLSearchParams(location.search).get('curso')==='verbal'){showLearning('Letras');}else{draw();$('learningLayout').hidden=true;}
+}).catch(e=>{$('lesson').textContent=e.message;$('learningLayout').hidden=false;});
