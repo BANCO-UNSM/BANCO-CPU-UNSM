@@ -42,7 +42,7 @@ function render(){
   '<div class="actions next-step"><button type="button" class="secondary" data-next="theory">← Volver a la teoría</button><button type="button" data-next="challenges">Continuar a los retos →</button></div>';
  }
  if(stage==='challenges'){
-  $('items').innerHTML=list.length?list.map(q=>'<article class="question"><h3 class="formula">Reto '+q.original_number+'. '+esc(q.statement)+'</h3>'+(q.options||[]).map((v,i)=>'<div class="option formula">'+('ABCDE'[i]||'?')+') '+esc(v)+'</div>').join('')+'<span class="tag">'+(q.status==='published'?'Publicada':'Borrador · pendiente de revisión')+'</span>'+(staff?'<details data-id="'+esc(q.id)+'"><summary>Mostrar clave y desarrollo</summary><div class="solution">Cargando…</div></details>':'')+'</article>').join(''):'<p>No hay preguntas publicadas de esta sesión. Las preguntas en borrador solamente aparecen al equipo docente.</p>';
+  $('items').innerHTML=list.length?list.map(q=>'<article class="question"><h3 class="formula">Reto '+q.original_number+'. '+esc(q.statement)+'</h3>'+(q.options||[]).map((v,i)=>'<div class="option formula">'+('ABCDE'[i]||'?')+') '+esc(v)+'</div>').join('')+'<span class="tag">'+(q.status==='published'?'Publicada':'Borrador · pendiente de revisión')+'</span>'+(staff?'<details data-id="'+esc(q.id)+'"><summary>'+([1,2,4,5].includes(Number(q.week))?'Ver solución paso a paso':'Mostrar clave y desarrollo')+'</summary><div class="solution">Cargando…</div></details>':'')+'</article>').join(''):'<p>No hay preguntas publicadas de esta sesión. Las preguntas en borrador solamente aparecen al equipo docente.</p>';
   $('items').querySelectorAll('details').forEach(d=>d.addEventListener('toggle',async()=>{
    if(!d.open||d.dataset.loaded)return;
    d.dataset.loaded='true';
