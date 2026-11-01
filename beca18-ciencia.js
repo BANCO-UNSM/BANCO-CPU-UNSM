@@ -37,7 +37,7 @@ function render(){
   $('items').querySelectorAll('details').forEach(d=>d.addEventListener('toggle',async()=>{
    if(!d.open||d.dataset.loaded)return;
    d.dataset.loaded='true';
-   const {data,error}=await db.from('answer_keys').select('correct_index,explanation').eq('question_id',d.dataset.id).maybeSingle();
+   const {data,error}=await db.rpc('get_question_for_review',{p_question_id:d.dataset.id});
    const box=d.querySelector('.solution');
    box.textContent=error?'Error al consultar explicación: '+error.message:!data?'La clave no está disponible.':'CLAVE: '+('ABCDE'[data.correct_index]||'?')+'\n\n'+(data.explanation||'Sin explicación registrada');
    formulas(d);
