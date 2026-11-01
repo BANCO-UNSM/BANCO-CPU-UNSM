@@ -4,6 +4,12 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const years=[['2023-E01','2023 · Examen 1'],['2024-E02','2024 · Examen 2'],['2025-E03','2025 · Examen 3']];
 let data=[],cycle='2023-E01',staff=false,db=null;
 function math(root){if(typeof renderMathInElement==='function')renderMathInElement(root,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}
+function solucionNumerica(explicacion,resultado){
+ const primerBloque=String(explicacion||'').split(/\n\s*ANÁLISIS DE LAS OTRAS ALTERNATIVAS\s*:/i)[0].replace(/\n\s*CLAVE PARA RECORDAR\s*:[\s\S]*/i,'');
+ const lineas=primerBloque.split('\n');
+ if(/^RESPUESTA CORRECTA\s*:/i.test(lineas[0]||''))lineas.shift();
+ return 'SOLUCIÓN PASO A PASO:\n'+(lineas.join('\n').trim()||'Resolución pendiente de revisión docente.')+'\n\nRESULTADO: '+resultado;
+}
 function render(){
  $('years').innerHTML=years.map(([key,label])=>'<button type="button" data-year="'+key+'" class="'+(cycle===key?'active':'')+'">'+label+'</button>').join('');
  $('years').querySelectorAll('button').forEach(b=>b.onclick=()=>{cycle=b.dataset.year;render();});
@@ -17,8 +23,9 @@ function render(){
  $('items').querySelectorAll('details').forEach(d=>d.addEventListener('toggle',async()=>{
   if(!d.open||d.dataset.loaded)return;
   d.dataset.loaded='1';
-  const {data:a,error}=await db.from('answer_keys').select('correct_index,explanation').eq('question_id',d.dataset.id).maybeSingle();
-  const text=error?'No fue posible consultar la clave: '+error.message:!a?'Clave no disponible':('CLAVE: '+('ABCDE'[a.correct_index]||'?')+'\n\n'+(a.explanation||'Sin explicación'));
+  const {data:a,error}=await db.rpc('get_question_for_review',{p_question_id:d.dataset.id});
+  const selected=data.find(q=>q.id===d.dataset.id);const option=selected?.options?.[a?.correct_index]||'No disponible';
+  const text=error?'No fue posible consultar la solución: '+error.message:!a?'Solución no disponible':solucionNumerica(a.explanation,option);
   d.querySelector('.solution').textContent=text;
   math(d);
  }));
