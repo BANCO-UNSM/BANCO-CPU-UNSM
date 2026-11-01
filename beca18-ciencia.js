@@ -11,6 +11,15 @@ const topics={
 };
 let questions=[],session=1,staff=false,db=null,stage='theory';
 function formulas(root){if(typeof renderMathInElement==='function')renderMathInElement(root,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}
+// En problemas cuantitativos se muestra únicamente el procedimiento y el resultado.
+function solucionNumerica(explicacion,resultado){
+ const t=String(explicacion||'');
+ const primero=t.split(/\n\s*ANÁLISIS DE LAS OTRAS ALTERNATIVAS\s*:/i)[0].replace(/\n\s*CLAVE PARA RECORDAR\s*:[\s\S]*/i,'');
+ const lineas=primero.split('\n');
+ if(/^RESPUESTA CORRECTA\s*:/i.test(lineas[0]||''))lineas.shift();
+ const procedimiento=lineas.join('\n').trim();
+ return 'SOLUCIÓN PASO A PASO:\n'+(procedimiento||'Procedimiento pendiente de revisión docente.')+'\n\nRESULTADO: '+resultado;
+}
 function render(){
  $('topics').innerHTML=Object.entries(topics).map(([num,t])=>'<button type="button" data-session="'+num+'" class="'+(Number(num)===session?'active':'')+'">Sesión '+num+'<br>'+esc(t.title)+'</button>').join('');
  $('topics').querySelectorAll('button').forEach(b=>b.onclick=()=>{session=Number(b.dataset.session);stage='theory';render();});
@@ -39,7 +48,8 @@ function render(){
    d.dataset.loaded='true';
    const {data,error}=await db.rpc('get_question_for_review',{p_question_id:d.dataset.id});
    const box=d.querySelector('.solution');
-   box.textContent=error?'Error al consultar explicación: '+error.message:!data?'La clave no está disponible.':'CLAVE: '+('ABCDE'[data.correct_index]||'?')+'\n\n'+(data.explanation||'Sin explicación registrada');
+   const actual=questions.find(q=>q.id===d.dataset.id); const numerico=[1,2,4,5].includes(Number(actual?.week)); const value=actual?.options?.[data?.correct_index]||'No disponible';
+   box.textContent=error?'Error al consultar explicación: '+error.message:!data?'La clave no está disponible.':numerico?solucionNumerica(data.explanation,value):'CLAVE: '+('ABCDE'[data.correct_index]||'?')+'\n\n'+(data.explanation||'Sin explicación registrada');
    formulas(d);
   }));
  }
