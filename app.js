@@ -1147,7 +1147,7 @@ function reviewPage(){
 function reviewDetail(q){
  const editable=q.status!=='published'||admin();
  const letters='ABCDE'.slice(0,Array.isArray(q.options)&&q.options.length===4?4:5);
- return `<div class="card"><h2>Pregunta N.º ${q.original_number??'—'} · ${esc(q.status)}</h2><p class="muted small">Materia: ${esc(q.subject)} · ${esc(etiquetaOrigen(q))}</p>${becaReadingPanel(q)}<form id="reviewForm"><div class="form-grid"><div class="field"><label>Ciclo</label><input name="cycle" value="${esc(q.cycle)}" required ${editable?'':'disabled'}></div><div class="field"><label>Semana</label><input type="number" name="week" min="1" max="60" value="${q.week??''}" ${q.exam_id?'disabled':'required'} ${editable?'':'disabled'}></div><div class="field"><label>Materia</label><input name="subject" value="${esc(q.subject)}" required ${editable?'':'disabled'}></div><div class="field"><label>Tema</label><input name="topic" value="${esc(q.topic)}" required ${editable?'':'disabled'}></div><div class="field"><label>Página</label><input type="number" name="page" min="1" value="${q.page??''}" ${editable?'':'disabled'}></div><div class="field"><label>Número original</label><input type="number" name="number" min="1" value="${q.original_number??''}" ${editable?'':'disabled'}></div></div><div class="field"><label>Enunciado</label><textarea name="statement" required ${editable?'':'disabled'}>${esc(q.statement)}</textarea></div>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${letters.split('').map((letter,i)=>`<div class="field"><label>Alternativa ${letter}</label><input name="option${letter}" value="${esc(q.options[i]||'')}" required ${editable?'':'disabled'}></div>`).join('')}<div class="field"><label>Clave propuesta</label><select name="correct" ${editable?'':'disabled'}><option value="" ${q.correct_index==null?'selected':''}>— Clave pendiente —</option>${letters.split('').map((letter,i)=>`<option value="${i}" ${q.correct_index===i?'selected':''}>${letter}</option>`).join('')}</select></div><div class="field"><label>Explicación</label><textarea name="explanation" ${editable?'':'disabled'}>${esc(q.explanation||'')}</textarea></div>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}${admin()?`<div class="field"><label>Agregar o reemplazar imagen de la solución</label><input id="reviewSolutionImage" type="file" accept="image/png,image/jpeg,image/webp"><p class="muted small">PNG, JPG o WEBP, hasta 5 MB. Puedes guardar esta imagen sin modificar el texto, las alternativas ni la clave.</p><button type="button" id="reviewUploadSolution">Guardar imagen de solución</button><p id="reviewImageStatus" class="muted" role="status"></p></div>`:''}<div class="field"><label>Referencia</label><input name="source" value="${esc(q.source||'')}" ${editable?'':'disabled'}></div>${editable&&(!q.exam_id||admin())?'<button type="submit" id="reviewSave">'+(q.status==='published'?'Guardar cambios de pregunta publicada':'Guardar correcciones y clave')+'</button>':q.exam_id?'<p class="muted small">La edición de exámenes está reservada al administrador.</p>':''}</form><div class="actions" style="margin-top:12px">${q.status==='draft'?'<button id="reviewSubmit" class="secondary">Enviar a revisión</button>':''}${admin()&&q.status==='review'?'<button id="reviewPublish">Publicar pregunta</button>':''}<button id="reviewClose" class="secondary">Cerrar detalle</button></div><p id="reviewDetailStatus" class="muted" role="status"></p>${q.status==='published'?'<p class="muted small">'+(admin()?'Solo el administrador puede editar esta pregunta. Las calificaciones anteriores no se recalcularán. Cada cambio quedará registrado.':'Esta pregunta publicada solo puede ser editada por el administrador.')+'</p>':''}</div>`;
+ return `<div class="card"><h2>Pregunta N.º ${q.original_number??'—'} · ${esc(q.status)}</h2><p class="muted small">Materia: ${esc(q.subject)} · ${esc(etiquetaOrigen(q))}</p>${becaReadingPanel(q)}<form id="reviewForm"><div class="form-grid"><div class="field"><label>Ciclo</label><input name="cycle" value="${esc(q.cycle)}" required ${editable?'':'disabled'}></div><div class="field"><label>Semana</label><input type="number" name="week" min="1" max="60" value="${q.week??''}" ${q.exam_id?'disabled':'required'} ${editable?'':'disabled'}></div><div class="field"><label>Materia</label><input name="subject" value="${esc(q.subject)}" required ${editable?'':'disabled'}></div><div class="field"><label>Tema</label><input name="topic" value="${esc(q.topic)}" required ${editable?'':'disabled'}></div><div class="field"><label>Página</label><input type="number" name="page" min="1" value="${q.page??''}" ${editable?'':'disabled'}></div><div class="field"><label>Número original</label><input type="number" name="number" min="1" value="${q.original_number??''}" ${editable?'':'disabled'}></div></div><div class="field"><label>Enunciado</label><textarea name="statement" required ${editable?'':'disabled'}>${esc(q.statement)}</textarea></div>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${admin()?`<div class="field"><label>Imagen del enunciado (opcional)</label><input type="file" id="reviewStatementImage" accept="image/png,image/jpeg,image/webp"><p class="muted small">PNG, JPG o WEBP, hasta 5 MB. La imagen se mostrará debajo del enunciado a los estudiantes.</p><div id="reviewStatementPreview"></div><button type="button" id="reviewUploadStatement">Guardar imagen del enunciado</button> <button type="button" class="secondary" id="reviewRemoveStatement" ${q.statement_image_path?'':'disabled'}>Quitar imagen</button><p id="reviewStatementStatus" class="muted small" role="status"></p></div>`:''}${letters.split('').map((letter,i)=>`<div class="field"><label>Alternativa ${letter}</label><input name="option${letter}" value="${esc(q.options[i]||'')}" required ${editable?'':'disabled'}></div>`).join('')}<div class="field"><label>Clave propuesta</label><select name="correct" ${editable?'':'disabled'}><option value="" ${q.correct_index==null?'selected':''}>— Clave pendiente —</option>${letters.split('').map((letter,i)=>`<option value="${i}" ${q.correct_index===i?'selected':''}>${letter}</option>`).join('')}</select></div><div class="field"><label>Explicación</label><textarea name="explanation" ${editable?'':'disabled'}>${esc(q.explanation||'')}</textarea></div>${espacioImagenPrivada(q.solution_image_path,'Imagen de la solución')}${admin()?`<div class="field"><label>Agregar o reemplazar imagen de la solución</label><input id="reviewSolutionImage" type="file" accept="image/png,image/jpeg,image/webp"><p class="muted small">PNG, JPG o WEBP, hasta 5 MB. Puedes guardar esta imagen sin modificar el texto, las alternativas ni la clave.</p><button type="button" id="reviewUploadSolution">Guardar imagen de solución</button><p id="reviewImageStatus" class="muted" role="status"></p></div>`:''}<div class="field"><label>Referencia</label><input name="source" value="${esc(q.source||'')}" ${editable?'':'disabled'}></div>${editable&&(!q.exam_id||admin())?'<button type="submit" id="reviewSave">'+(q.status==='published'?'Guardar cambios de pregunta publicada':'Guardar correcciones y clave')+'</button>':q.exam_id?'<p class="muted small">La edición de exámenes está reservada al administrador.</p>':''}</form><div class="actions" style="margin-top:12px">${q.status==='draft'?'<button id="reviewSubmit" class="secondary">Enviar a revisión</button>':''}${admin()&&q.status==='review'?'<button id="reviewPublish">Publicar pregunta</button>':''}<button id="reviewClose" class="secondary">Cerrar detalle</button></div><p id="reviewDetailStatus" class="muted" role="status"></p>${q.status==='published'?'<p class="muted small">'+(admin()?'Solo el administrador puede editar esta pregunta. Las calificaciones anteriores no se recalcularán. Cada cambio quedará registrado.':'Esta pregunta publicada solo puede ser editada por el administrador.')+'</p>':''}</div>`;
 }
 function bindReview(){
  document.querySelectorAll('[data-relation-review]').forEach(b=>b.onclick=async()=>{const msg=$('reviewMessage');msg.textContent='Cargando relaciones...';const {data,error}=await db.rpc('cachimbolab_revisar_relacion',{p_id:b.dataset.relationReview});if(error){msg.textContent=error.message;return}relationReview=data;reviewSelected=null;$('reviewDetail').innerHTML=relationReviewDetail(data);msg.textContent='';bindRelationReview();$('reviewDetail').scrollIntoView({behavior:'smooth',block:'start'});});
@@ -1198,6 +1198,66 @@ function bindReviewDetail(){
  const q=reviewSelected;if(!q)return;
  $('reviewClose').onclick=()=>{reviewSelected=null;$('reviewDetail').innerHTML=''};
  const form=$('reviewForm');
+ const statementInput=$('reviewStatementImage');
+ const statementPreview=$('reviewStatementPreview');
+ let statementPreviewURL=null;
+ if(statementInput){
+   statementInput.addEventListener('change',()=>{
+     if(statementPreviewURL){URL.revokeObjectURL(statementPreviewURL);statementPreviewURL=null;}
+     statementPreview.innerHTML='';
+     const file=statementInput.files?.[0];
+     if(!file)return;
+     if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>5*1024*1024){
+       $('reviewStatementStatus').textContent='Selecciona una imagen PNG, JPG o WEBP de hasta 5 MB.';
+       statementInput.value='';return;
+     }
+     statementPreviewURL=URL.createObjectURL(file);
+     const preview=document.createElement('img');
+     preview.alt='Vista previa de la imagen del enunciado';
+     preview.style.cssText='max-width:100%;max-height:340px;object-fit:contain;border:1px solid #d1d5db;border-radius:8px;margin:8px 0';
+     preview.src=statementPreviewURL;statementPreview.appendChild(preview);
+     $('reviewStatementStatus').textContent='Vista previa. Pulsa Guardar imagen para asociarla a la pregunta.';
+   });
+ }
+ const statementButton=$('reviewUploadStatement');
+ if(statementButton&&admin())statementButton.onclick=async()=>{
+   const file=statementInput?.files?.[0],status=$('reviewStatementStatus');
+   if(!file){status.textContent='Primero selecciona una imagen.';return;}
+   statementButton.disabled=true;let path=null;
+   try{
+     status.textContent='Subiendo imagen del enunciado...';
+     path=await subirImagenPregunta(file,'enunciados');
+     const {error}=await db.rpc('admin_set_question_statement_image',{p_question_id:q.id,p_statement_image_path:path});
+     if(error)throw error;
+     q.statement_image_path=path;
+     const saved=questions.find(item=>item.id===q.id);
+     if(saved)saved.statement_image_path=path;
+     const previous=form.querySelector('[data-private-image^="enunciados/"]');
+     if(previous){liberarImagenesPrivadas(previous);previous.remove();}
+     statementInput.parentElement.insertAdjacentHTML('afterbegin',espacioImagenPrivada(path,'Imagen del enunciado'));
+     cargarImagenesPrivadas(form);
+     if(statementPreviewURL){URL.revokeObjectURL(statementPreviewURL);statementPreviewURL=null;}
+     statementPreview.innerHTML='';statementInput.value='';
+     $('reviewRemoveStatement').disabled=false;
+     status.textContent='Imagen del enunciado guardada. No se modificaron el texto, las alternativas ni la clave.';
+   }catch(err){
+     status.textContent='Error al guardar imagen: '+(err?.message||'Error desconocido');
+     if(path)console.warn('Imagen sin asociar:',path);
+   }finally{statementButton.disabled=false;}
+ };
+ const removeStatement=$('reviewRemoveStatement');
+ if(removeStatement&&admin())removeStatement.onclick=async()=>{
+   if(!q.statement_image_path)return;
+   if(!confirm('¿Quitar la imagen del enunciado de esta pregunta? El archivo existente no se borrará del almacenamiento.'))return;
+   removeStatement.disabled=true;const status=$('reviewStatementStatus');
+   const {error}=await db.rpc('admin_set_question_statement_image',{p_question_id:q.id,p_statement_image_path:null});
+   if(error){status.textContent='Error: '+error.message;removeStatement.disabled=false;return;}
+   q.statement_image_path=null;
+   const saved=questions.find(item=>item.id===q.id);
+   if(saved)saved.statement_image_path=null;
+   form.querySelectorAll('[data-private-image^="enunciados/"]').forEach(node=>{liberarImagenesPrivadas(node);node.remove();});
+   status.textContent='Imagen desvinculada. La pregunta y sus respuestas permanecen intactas.';
+ };
  const imageButton=$('reviewUploadSolution');
  if(imageButton&&admin())imageButton.onclick=async()=>{
    const input=$('reviewSolutionImage');
