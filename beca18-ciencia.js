@@ -9,24 +9,42 @@ const topics={
 5:{title:'Diferenciamos a los átomos por su número cuántico',theory:['Los cuatro números cuánticos son principal n, secundario l, magnético m_l y espín m_s.','n señala la capa; l indica el subnivel (s=0, p=1, d=2, f=3).','m_l puede tomar valores enteros de −l hasta +l; m_s vale +1/2 o −1/2.','Reglas: n entero ≥1, 0≤l<n, −l≤m_l≤l.','La energía relativa se compara con la suma n+l; aplicar Hund y Pauli al llenar orbitales.']},
 6:{title:'Estructura celular',theory:['La célula es la unidad básica estructural y funcional de los seres vivos.','Las procariotas no poseen núcleo delimitado por membrana; las eucariotas sí.','Ribosomas: síntesis proteica; mitocondrias: producción de ATP; aparato de Golgi: clasificación y transporte.','Las células vegetales poseen pared de celulosa y cloroplastos; la pared de los hongos incluye quitina.','La membrana plasmática es una bicapa de fosfolípidos con proteínas, glicolípidos y otras moléculas.']}
 };
-let questions=[],session=1,staff=false,db=null;
+let questions=[],session=1,staff=false,db=null,stage='theory';
 function formulas(root){if(typeof renderMathInElement==='function')renderMathInElement(root,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}
 function render(){
  $('topics').innerHTML=Object.entries(topics).map(([num,t])=>'<button type="button" data-session="'+num+'" class="'+(Number(num)===session?'active':'')+'">Sesión '+num+'<br>'+esc(t.title)+'</button>').join('');
- $('topics').querySelectorAll('button').forEach(b=>b.onclick=()=>{session=Number(b.dataset.session);render();});
- const topic=topics[session],list=questions.filter(q=>q.week===session).sort((a,b)=>a.original_number-b.original_number);
- $('count').textContent='Sesión '+session+' · '+list.length+' de 5 retos registrados'+(staff?' · Vista docente':'');
- $('lesson').innerHTML='<h2>'+esc(topic.title)+'</h2><p>Repaso de los conceptos antes de resolver los problemas:</p><div class="lesson"><ul>'+topic.theory.map(t=>'<li class="formula">'+esc(t)+'</li>').join('')+'</ul></div>';
- $('items').innerHTML=list.length?list.map(q=>'<article class="question"><h3 class="formula">Reto '+q.original_number+'. '+esc(q.statement)+'</h3>'+(q.options||[]).map((v,i)=>'<div class="option formula">'+('ABCDE'[i]||'?')+') '+esc(v)+'</div>').join('')+'<span class="tag">'+(q.status==='published'?'Publicada':'Borrador · pendiente de revisión')+'</span>'+(staff?'<details data-id="'+esc(q.id)+'"><summary>Mostrar clave y desarrollo</summary><div class="solution">Cargando…</div></details>':'')+'</article>').join(''):'<p>No hay preguntas publicadas de esta sesión. Las preguntas en borrador solamente aparecen al equipo docente.</p>';
- formulas($('lesson'));formulas($('items'));
- $('items').querySelectorAll('details').forEach(d=>d.addEventListener('toggle',async()=>{
-  if(!d.open||d.dataset.loaded)return;
-  d.dataset.loaded='true';
-  const {data,error}=await db.from('answer_keys').select('correct_index,explanation').eq('question_id',d.dataset.id).maybeSingle();
-  const box=d.querySelector('.solution');
-  box.textContent=error?'Error al consultar explicación: '+error.message:!data?'La clave no está disponible.':'CLAVE: '+('ABCDE'[data.correct_index]||'?')+'\n\n'+(data.explanation||'Sin explicación registrada');
-  formulas(d);
- }));
+ $('topics').querySelectorAll('button').forEach(b=>b.onclick=()=>{session=Number(b.dataset.session);stage='theory';render();});
+ const topic=topics[session],extra=window.CIENCIA_PRONABEC_CONTENIDO?.[session-1],list=questions.filter(q=>q.week===session).sort((a,b)=>a.original_number-b.original_number);
+ $('count').textContent='Sesión '+session+' · '+(extra?.problems?.length||0)+' situaciones resueltas · '+list.length+' de 5 retos'+(staff?' · Vista docente':'');
+ const stageNames={theory:'1. Estudia la teoría',practice:'2. Ejercicios resueltos',challenges:'3. Pon a prueba lo aprendido'};
+ const stages=['theory','practice','challenges'];
+ $('stageNav').innerHTML=stages.map((name,i)=>'<button type="button" class="'+(stage===name?'active':'')+'" data-stage="'+name+'">'+stageNames[name]+'</button>').join('');
+ $('stageNav').querySelectorAll('button').forEach(b=>b.onclick=()=>{stage=b.dataset.stage;render();});
+ $('lesson').hidden=stage!=='theory';$('practice').hidden=stage!=='practice';$('challenge').hidden=stage!=='challenges';
+ if(stage==='theory'){
+  $('lesson').innerHTML='<h2>📖 Teoría · '+esc(topic.title)+'</h2><p>Estudia los conceptos antes de resolver los ejercicios desarrollados.</p>'+
+  (extra?.sections?.map(sec=>'<section class="lesson"><h3>'+esc(sec.title)+'</h3><ul>'+sec.body.map(p=>'<li class="formula">'+esc(p)+'</li>').join('')+'</ul></section>').join('')||'<p>Sin contenidos teóricos.</p>')+
+  '<div class="actions next-step"><button type="button" data-next="practice">Continuar a ejercicios resueltos →</button></div>';
+ }
+ if(stage==='practice'){
+  $('practice').innerHTML='<h2>✍️ Situaciones problemáticas resueltas</h2><p>Son los dos ejemplos desarrollados de la sesión, explicados paso a paso antes de los retos.</p>'+
+  (extra?.problems?.map((p,i)=>'<article class="question"><h3>'+esc(p.title)+'</h3><p class="formula">'+esc(p.statement)+'</p>'+p.options.map((o,k)=>'<div class="option formula">'+('ABCDE'[k])+') '+esc(o)+'</div>').join('')+
+  '<div class="solved"><h4>✅ RESPUESTA CORRECTA: '+('ABCDE'[p.key])+') '+esc(p.options[p.key])+'</h4><ol>'+p.steps.map(a=>'<li class="formula">'+esc(a)+'</li>').join('')+'</ol><p><strong>CLAVE PARA RECORDAR:</strong> '+esc(p.tip)+'</p></div></article>').join('')||'<p>Sin ejercicios resueltos.</p>')+
+  '<div class="actions next-step"><button type="button" class="secondary" data-next="theory">← Volver a la teoría</button><button type="button" data-next="challenges">Continuar a los retos →</button></div>';
+ }
+ if(stage==='challenges'){
+  $('items').innerHTML=list.length?list.map(q=>'<article class="question"><h3 class="formula">Reto '+q.original_number+'. '+esc(q.statement)+'</h3>'+(q.options||[]).map((v,i)=>'<div class="option formula">'+('ABCDE'[i]||'?')+') '+esc(v)+'</div>').join('')+'<span class="tag">'+(q.status==='published'?'Publicada':'Borrador · pendiente de revisión')+'</span>'+(staff?'<details data-id="'+esc(q.id)+'"><summary>Mostrar clave y desarrollo</summary><div class="solution">Cargando…</div></details>':'')+'</article>').join(''):'<p>No hay preguntas publicadas de esta sesión. Las preguntas en borrador solamente aparecen al equipo docente.</p>';
+  $('items').querySelectorAll('details').forEach(d=>d.addEventListener('toggle',async()=>{
+   if(!d.open||d.dataset.loaded)return;
+   d.dataset.loaded='true';
+   const {data,error}=await db.from('answer_keys').select('correct_index,explanation').eq('question_id',d.dataset.id).maybeSingle();
+   const box=d.querySelector('.solution');
+   box.textContent=error?'Error al consultar explicación: '+error.message:!data?'La clave no está disponible.':'CLAVE: '+('ABCDE'[data.correct_index]||'?')+'\n\n'+(data.explanation||'Sin explicación registrada');
+   formulas(d);
+  }));
+ }
+ document.querySelectorAll('[data-next]').forEach(button=>button.onclick=()=>{stage=button.dataset.next;render();document.getElementById('stageNav').scrollIntoView({behavior:'smooth',block:'start'});});
+ ['lesson','practice','items'].forEach(id=>formulas($(id)));
 }
 async function init(){
  try{
