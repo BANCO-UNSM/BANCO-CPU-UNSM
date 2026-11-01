@@ -18,6 +18,19 @@ function progressSummary(){
  const weakest=done.filter(l=>latestFullAttempt(l).score/latestFullAttempt(l).total<0.7).sort((a,b)=>latestFullAttempt(a).score/latestFullAttempt(a).total-latestFullAttempt(b).score/latestFullAttempt(b).total).slice(0,3);
  diag.innerHTML='<h3>Mi diagnóstico</h3>'+byArea+(weakest.length?'<p><strong>Refuerza:</strong> '+weakest.map(l=>esc(l.id)+' — '+esc(l.title)).join('; ')+'</p>':'<p class="muted">Completa prácticas para identificar temas que requieran refuerzo.</p>');
 }
+function esquemaVerbal(leccion){
+ if(leccion.area!=='Letras')return '';
+ const title=String(leccion.title||'').toLowerCase();
+ let cells=[];
+ if(/tipos de textos/.test(title))cells=[['Texto','¿Qué pretende comunicar?'],['Expositivo','Explica e informa'],['Argumentativo','Defiende una postura'],['Narrativo','Cuenta una secuencia de hechos']];
+ else if(/sinoni/.test(title))cells=[['Palabra de contexto','Reconoce su significado'],['Sinonimia contextual','Busca equivalencia en el enunciado'],['Sustitución','Comprueba que no cambie la idea']];
+ else if(/antonimi/.test(title))cells=[['Palabra original','Analiza el sentido'],['Antónimo','Significado opuesto'],['Comprobación','Elige la oposición adecuada al contexto']];
+ else if(/conector/.test(title))cells=[['Dos ideas','Determina su relación'],['Causa','porque, debido a'],['Contraste','pero, sin embargo'],['Consecuencia','por lo tanto']];
+ else if(/analog/.test(title))cells=[['Par base','Identifica la relación'],['Relación lógica','Función, parte-todo, causa-efecto…'],['Par respuesta','Debe mantener la misma relación']];
+ else if(/texto|lectura|coherencia|referent/.test(title))cells=[['Tema','¿De qué trata?'],['Idea principal','¿Qué afirma del tema?'],['Evidencia','Ubica detalles que la respaldan']];
+ if(!cells.length)return '';
+ return '<section class="verbal-schema" aria-label="Esquema visual del tema"><h3>🧩 Mapa visual para comprender</h3><div class="schema-flow">'+cells.map((v,i)=>'<div class="schema-node"><strong>'+esc(v[0])+'</strong><span>'+esc(v[1])+'</span></div>'+(i<cells.length-1?'<span class="schema-arrow" aria-hidden="true">→</span>':'')).join('')+'</div><p class="muted">Usa el esquema como guía: identifica la relación antes de elegir una alternativa.</p></section>';
+}
 function draw(){
  startedAt=Date.now();
  document.querySelectorAll('[data-area]').forEach(b=>b.classList.toggle('active',b.dataset.area===area));
@@ -29,12 +42,13 @@ function draw(){
  const qs=retryOnly&&previouslyWrong.length?allQs.filter(q=>previouslyWrong.includes(q.id)):allQs;
  const objectives=Array.isArray(x.objectives)?'<h3>Objetivos</h3><ul>'+x.objectives.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>':'';
  const theory=Array.isArray(x.theory)?'<h3>📘 Teoría paso a paso</h3>'+x.theory.map(t=>'<section class="theory"><h4>'+esc(t.heading)+'</h4><p>'+esc(t.content)+'</p><div class="box"><strong>Recuerda:</strong> '+esc(t.key)+'</div></section>').join(''):'<div class="box"><strong>Idea clave</strong><p>'+esc(x.principle)+'</p></div>';
+ const visual=esquemaVerbal(x);
  const examples=Array.isArray(x.examples)?'<h3>🧠 Ejercicios resueltos</h3>'+x.examples.map(e=>'<section class="example"><h4>'+esc(e.title)+'</h4><p>'+esc(e.statement)+'</p><ol>'+e.steps.map(st=>'<li>'+esc(st)+'</li>').join('')+'</ol><strong>Resultado: '+esc(e.answer)+'</strong></section>').join(''):'<h3>Ejemplo introductorio</h3><p>'+esc(x.worked_example)+'</p>';
  const mistakes=Array.isArray(x.mistakes)?'<h3>⚠️ Errores frecuentes</h3><ul>'+x.mistakes.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>':'';
  const references=Array.isArray(x.references)?'<details><summary>Fuentes de referencia</summary><ul>'+x.references.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul></details>':'';
  const examRefs=Array.isArray(x.exam_references)&&x.exam_references.length?'<details><summary>📎 Referencias temáticas a exámenes 2023, 2024 y 2025</summary><p class="muted">Se indican año y número de pregunta para ubicarla en los exámenes adjuntos; los ejercicios aquí son originales.</p><ul>'+x.exam_references.map(r=>'<li>Convocatoria '+esc(r.year)+' · Pregunta '+esc(r.question)+'</li>').join('')+'</ul></details>':'';
  const practice=qs.length?'<h3>📝 Práctica: '+qs.length+' preguntas originales</h3><p class="muted">El resultado se muestra en pantalla. No se guarda en Supabase. Las preguntas y explicaciones están en revisión.</p><div id="practiceQuestions">'+qs.map((q,i)=>'<fieldset class="question"><legend>'+(i+1)+'. '+esc(q.statement)+'</legend>'+q.options.map((v,j)=>'<label><input type="radio" name="q'+i+'" value="'+j+'"> '+String.fromCharCode(65+j)+') '+esc(v)+'</label>').join('')+'</fieldset>').join('')+'</div><button class="check" id="check">Calificar práctica</button><div id="feedback" aria-live="polite"></div>':'<div class="box">Esta clase tiene una introducción; el banco de práctica está pendiente de elaboración.</div>';
- $('lesson').innerHTML='<span class="badge">'+esc(x.competence)+'</span><h2>'+esc(x.id)+' · '+esc(x.title)+'</h2><p><strong>Duración sugerida:</strong> '+esc(x.duration_minutes)+' minutos</p><p class="muted">Tema: '+esc(x.topics)+'</p>'+objectives+theory+examples+mistakes+references+examRefs+practice;
+ $('lesson').innerHTML='<span class="badge">'+esc(x.competence)+'</span><h2>'+esc(x.id)+' · '+esc(x.title)+'</h2><p><strong>Duración sugerida:</strong> '+esc(x.duration_minutes)+' minutos</p><p class="muted">Tema: '+esc(x.topics)+'</p>'+objectives+theory+visual+examples+mistakes+references+examRefs+practice;
  if(qs.length){
  const retry=$('retryWrong');if(retry)retry.onclick=()=>{retryOnly=!retryOnly;draw();};
  $('check').onclick=()=>{
