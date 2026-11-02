@@ -76,12 +76,51 @@ function liberarImagenesPrivadas(raiz=document){
   });
 }
 // Diagramas esquemáticos de Geometría, semana 11 (no sustituyen el gráfico original).
+let esquemasEliminados=new Set(),esquemasCargados=false;
+const esquemasEliminando=new Set();
+async function cargarEsquemasEliminados(){
+  esquemasCargados=false;
+  try{
+    const {data,error}=await db.from('question_support_diagram_removals').select('question_id');
+    if(error)throw error;
+    esquemasEliminados=new Set((data||[]).map(x=>String(x.question_id)));
+    esquemasCargados=true;
+  }catch(error){
+    // No mostrar esquemas cuyo estado permanente no se pudo comprobar.
+    console.error('No se pudo consultar el estado de los esquemas:',error.message);
+  }
+}
 function figuraGeometriaSemana11(q){
-  if(!q||q.subject!=='Geometría'||Number(q.week)!==11||q.cycle!=='2026-II')return '';
+  if(!q||!q.id||!esquemasCargados||esquemasEliminados.has(String(q.id))||q.exam_id||(q.modality&&q.modality!=='CPU-UNSM')||q.subject!=='Geometría'||Number(q.week)!==11||q.cycle!=='2026-II')return '';
   const n=Number(q.original_number);
   if(!Number.isInteger(n)||n<1||n>20||n===1)return '';
   const path='geometria/semana11/ejercicio-'+String(n).padStart(2,'0')+'.svg';
-  return '<figure style="margin:12px 0"><img loading="lazy" src="'+path+'" alt="Esquema de la figura geométrica del ejercicio '+n+'" style="width:100%;max-width:600px;height:auto;border:1px solid #d5e1e8;border-radius:8px"><figcaption class="muted small">Esquema de apoyo. Comprueba los datos con el enunciado original.</figcaption></figure>';
+  return '<figure data-support-diagram="'+esc(q.id)+'" style="margin:12px 0"><img loading="lazy" src="'+path+'" alt="Esquema de la figura geométrica del ejercicio '+n+'" style="width:100%;max-width:600px;height:auto;border:1px solid #d5e1e8;border-radius:8px"><figcaption class="muted small">Esquema de apoyo. Comprueba los datos con el enunciado original.</figcaption>'+ (admin()?'<button type="button" class="secondary" data-remove-support-diagram="'+esc(q.id)+'" style="margin-top:8px">Eliminar esquema de apoyo</button><p class="muted small" data-support-diagram-status role="status" aria-live="polite"></p>':'')+'</figure>';
+}
+
+async function eliminarEsquemaApoyo(event){
+  const boton=event.target.closest?.('[data-remove-support-diagram]');
+  if(!boton||!admin()||!db)return;
+  const id=boton.dataset.removeSupportDiagram;
+  if(esquemasEliminando.has(id))return;
+  if(!confirm('¿Eliminar permanentemente este esquema de apoyo para todos? Se conservarán la imagen original, la pregunta y la solución.'))return;
+  const copias=()=>[...document.querySelectorAll('[data-support-diagram]')].filter(x=>x.dataset.supportDiagram===id);
+  const estado=texto=>copias().forEach(figura=>{figura.querySelector('[data-support-diagram-status]').textContent=texto;});
+  const bloquear=valor=>copias().forEach(figura=>{figura.querySelector('[data-remove-support-diagram]').disabled=valor;});
+  esquemasEliminando.add(id);
+  bloquear(true);estado('Eliminando esquema de apoyo...');
+  try{
+    const {data,error}=await db.from('question_support_diagram_removals').insert({question_id:id}).select('question_id').single();
+    // Otro administrador pudo eliminarlo mientras esta pantalla estaba abierta.
+    if(error&&error.code!=='23505')throw error;
+    if(!error&&String(data?.question_id)!==id)throw new Error('No se pudo confirmar la eliminación.');
+    esquemasEliminados.add(id);
+    copias().forEach(figura=>figura.remove());
+  }catch(error){
+    estado('No se eliminó el esquema: '+error.message);
+  }finally{
+    esquemasEliminando.delete(id);bloquear(false);
+  }
 }
 
 function espacioImagenPrivada(ruta,descripcion){
@@ -169,6 +208,7 @@ function mensajeDuplicado(q){
 const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':''}>${esc(s)}</p></div>`;
 async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
 async function refresh(){
+ esquemasCargados=false;esquemasEliminados=new Set();
  relationLoaded=false;relationItems=[];relationReview=null;
  profile=null;access=null;authorizedServices=[];learningProgress=null;learningProgressError='';weeklyHistory=[];weeklyHistoryError='';questions=[];attempts=[];exams=[];examsError='';questionsError='';
  if(user){
@@ -192,6 +232,7 @@ async function refresh(){
    }
   }
   if(teacher()||access?.allowed){
+   await cargarEsquemasEliminados();
    const servicesResponse=await db.rpc('my_authorized_services');
    authorizedServices=teacher()?['CPU-UNSM','BECA18']:(Array.isArray(servicesResponse.data)?servicesResponse.data:[]);
    if(servicesResponse.error){console.error('Servicios autorizados:',servicesResponse.error.message);authorizedServices=[];}
@@ -1566,4 +1607,6 @@ const {error}=await db.rpc('save_question_by_modality',{
   };
 }
 }
+// Delegación para las vistas y detalles insertados dinámicamente.
+document.addEventListener('click',eliminarEsquemaApoyo);
 init();
