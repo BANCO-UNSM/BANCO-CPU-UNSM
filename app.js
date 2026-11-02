@@ -79,7 +79,7 @@ function liberarImagenesPrivadas(raiz=document){
 function figuraGeometriaSemana11(q){
   if(!q||q.subject!=='Geometría'||Number(q.week)!==11||q.cycle!=='2026-II')return '';
   const n=Number(q.original_number);
-  if(!Number.isInteger(n)||n<1||n>20)return '';
+  if(!Number.isInteger(n)||n<1||n>20||n===1)return '';
   const path='geometria/semana11/ejercicio-'+String(n).padStart(2,'0')+'.svg';
   return '<figure style="margin:12px 0"><img loading="lazy" src="'+path+'" alt="Esquema de la figura geométrica del ejercicio '+n+'" style="width:100%;max-width:600px;height:auto;border:1px solid #d5e1e8;border-radius:8px"><figcaption class="muted small">Esquema de apoyo. Comprueba los datos con el enunciado original.</figcaption></figure>';
 }
