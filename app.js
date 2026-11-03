@@ -335,7 +335,17 @@ function render(){
  if(page==='exams'&&!admin())page='home';
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}" ${id==='exams'&&!admin()?'disabled title="Se habilitará cuando se publiquen los exámenes de admisión" aria-label="Exámenes de admisión, próximamente" style="opacity:.58;cursor:not-allowed"':''}>${name}</button>`).join('');
- document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{if(x.disabled)return;if(quiz?.deadlineAt&&!quiz.result){alert('Hay un examen cronometrado en curso. Entrégalo antes de salir.');return;}page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
+ document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{
+  if(x.disabled)return;
+  // Solo impedir abandonar un examen activo mientras el ESTUDIANTE lo está rindiendo.
+  // Un simulacro guardado no debe bloquear al administrador desde Inicio.
+  const examStudentActive=!teacher()&&page==='quiz'&&quiz?.deadlineAt&&!quiz.result&&quizRemaining()>0;
+  if(examStudentActive){alert('Hay un examen cronometrado en curso. Entrégalo antes de salir.');return;}
+  // Para docentes y administradores, descartar cualquier simulacro de prueba abandonado
+  // y evitar que se restaure automáticamente desde el navegador.
+  if(teacher()&&quiz?.deadlineAt&&!quiz.result)clearTimedExam();
+  page=x.dataset.page;quiz=null;practice=null;examSession=null;render();
+ });
  $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
