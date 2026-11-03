@@ -330,11 +330,12 @@ function render(){
    $('app').innerHTML=recoveryPasswordPage();bindPasswordRecovery();return;
  }
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['practice','📚 Estudia y practica'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['exams','Exámenes de admisión'],['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['practice','📚 Estudia y practica'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[]),...(hasService('CPU-UNSM')?[['exams',admin()?'Exámenes de admisión · Administración':'📝 Exámenes de admisión · Próximamente']]:[])]:[['access','Mi acceso']]):[];
  if(page==='bank'&&!admin())page='practice';
+ if(page==='exams'&&!admin())page='home';
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
- $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
- document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{if(quiz?.deadlineAt&&!quiz.result){alert('Hay un examen cronometrado en curso. Entrégalo antes de salir.');return;}page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
+ $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}" ${id==='exams'&&!admin()?'disabled title="Se habilitará cuando se publiquen los exámenes de admisión" aria-label="Exámenes de admisión, próximamente" style="opacity:.58;cursor:not-allowed"':''}>${name}</button>`).join('');
+ document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{if(x.disabled)return;if(quiz?.deadlineAt&&!quiz.result){alert('Hay un examen cronometrado en curso. Entrégalo antes de salir.');return;}page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
  $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
@@ -474,6 +475,7 @@ function login(){
 function home(){
   const cpu = questions.filter(q => q.modality === 'CPU-UNSM');
   const beca = questions.filter(q => q.modality === 'BECA18');
+  const preguntasEstudio = questions.filter(q => teacher() || q.status === 'published');
 
   return `
     <div class="card">
@@ -506,13 +508,13 @@ function home(){
     ${!teacher()?progressSnapshot():''}
     <div class="grid">
       <div class="card">
-        <div class="muted">Preguntas visibles</div>
-        <div class="stat">${questions.length}</div>
+        <div class="muted">${teacher()?'Preguntas registradas':'Preguntas para practicar'}</div>
+        <div class="stat">${preguntasEstudio.length}</div>
       </div>
 
       <div class="card">
-        <div class="muted">Materias</div>
-        <div class="stat">${new Set(questions.map(q=>q.subject)).size}</div>
+        <div class="muted">Materias disponibles</div>
+        <div class="stat">${new Set(preguntasEstudio.map(q=>q.subject)).size}</div>
       </div>
 
       <div class="card">
@@ -521,18 +523,7 @@ function home(){
       </div>
     </div>
 
-    <div class="card">
-      <h2>${teacher()?'Gestión académica':'Preparación preuniversitaria'}</h2>
-      <p>
-        Consulta preguntas organizadas por semana y materia.
-        ${teacher()
-          ? 'Registra nuevas preguntas y decide cuándo publicarlas.'
-          : 'Practica y revisa tu rendimiento con calificación segura.'}
-      </p>
-      <p class="muted">
-        La carga de separatas y verificación de claves se realizará progresivamente.
-      </p>
-    </div>
+
   `;
 }
 
