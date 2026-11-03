@@ -217,14 +217,14 @@ function mostrarCarga(mensaje='Preparando tu panel académico...'){
 async function init(){
  mostrarCarga('Recuperando tu sesión de forma segura...');
  if(!ready){$('app').innerHTML=notice('Falta configurar Supabase.');$('nav').innerHTML='';return;}
- db.auth.onAuthStateChange((event)=>setTimeout(async()=>{
+ db.auth.onAuthStateChange((event)=>{if(event==='INITIAL_SESSION'||event==='TOKEN_REFRESHED')return;setTimeout(async()=>{
    if(event==='PASSWORD_RECOVERY')passwordRecoveryMode=true;
    const {data:{session}}=await db.auth.getSession();
    user=session?.user||null;
    if(passwordRecoveryMode){render();return;}
    mostrarCarga('Actualizando tu sesión...');
    await refresh();
- },0));
+ },0);});
  const {data:{session}}=await db.auth.getSession();
  user=session?.user||null;
  if(passwordRecoveryMode){render();return;}
