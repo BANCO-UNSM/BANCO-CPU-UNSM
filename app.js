@@ -404,14 +404,16 @@ async function loadActivity(){
 }
 function studentsPage(){
  if(!admin())return notice('Solo el administrador puede gestionar alumnos',true);
- return `<div class="card"><h2>Control de alumnos</h2><p class="muted">Los pagos se reciben fuera de la web. Solo tú autorizas, renuevas, suspendes y liberas navegadores.</p><button id="loadStudents">Actualizar lista</button><p id="studentsStatus" class="muted"></p><div id="studentsList">${students.map(x=>`<div class="listitem"><strong>${esc(x.student_name||'Estudiante sin nombre')}</strong><p class="small">Correo: ${esc(x.student_email||'No disponible')}</p><p class="small">ID: ${esc(x.student_id)} · ${esc(x.access_status)} · ${x.expires_at?esc(new Date(x.expires_at).toLocaleString('es-PE')):'Sin vencimiento'} · Navegador: ${x.device_registered?'vinculado':'sin vincular'}</p><p class="small muted">Pago: ${esc(x.payment_method||'sin registrar')} · S/ ${esc(x.payment_amount??'—')}</p><div class="field" style="margin-top:12px"><strong>Servicios contratados</strong><div class="actions" style="margin:8px 0;gap:16px;flex-wrap:wrap"><label><input type="checkbox" data-service-cpu="${esc(x.student_id)}" ${(x.services||[]).includes('CPU-UNSM')?'checked':''}> CPU-UNSM</label><label><input type="checkbox" data-service-beca="${esc(x.student_id)}" ${(x.services||[]).includes('BECA18')?'checked':''}> Beca 18</label></div><p class="small muted">Marca uno, ambos o ninguno; después guarda. Debes autorizar también el período de acceso.</p></div><div class="actions"><button class="secondary" data-student-action="services" data-student-id="${esc(x.student_id)}">Guardar servicios</button><button data-student-action="approve" data-student-id="${esc(x.student_id)}">Autorizar / renovar</button><button class="secondary" data-student-action="payment" data-student-id="${esc(x.student_id)}">Registrar pago</button><button class="secondary" data-student-action="release_device" data-student-id="${esc(x.student_id)}">Liberar navegador</button><button class="secondary" data-student-action="suspend" data-student-id="${esc(x.student_id)}">Suspender</button></div></div>`).join('')||'<p>Presiona «Actualizar lista» para cargar los alumnos.</p>'}</div></div>`;
+ return `<div class="card"><h2>Control de alumnos</h2><p class="muted">Los pagos se reciben fuera de la web. Solo tú autorizas, renuevas, suspendes y liberas navegadores.</p><button id="loadStudents">Actualizar lista</button><p id="studentsStatus" class="muted"></p><div id="studentsList">${students.map(x=>`<div class="listitem"><strong>${esc(x.student_name||'Estudiante sin nombre')}</strong><p class="small">Correo: ${esc(x.student_email||'No disponible')}</p><p class="small">ID: ${esc(x.student_id)} · ${esc(x.access_status)} · ${x.expires_at?esc(new Date(x.expires_at).toLocaleString('es-PE')):'Sin vencimiento'} · Dispositivos: ${Number(x.devices_registered)||0}/${Number(x.max_devices)||1}</p><p class="small muted">Pago: ${esc(x.payment_method||'sin registrar')} · S/ ${esc(x.payment_amount??'—')}</p><div class="field" style="margin-top:12px"><strong>Dispositivos permitidos</strong><div class="actions" style="margin:8px 0;gap:8px"><select data-device-limit="${esc(x.student_id)}" aria-label="Límite de dispositivos de ${esc(x.student_name||'estudiante')}"><option value="1" ${Number(x.max_devices)!==2?'selected':''}>1 dispositivo (predeterminado)</option><option value="2" ${Number(x.max_devices)===2?'selected':''}>2 dispositivos</option></select><button type="button" class="secondary" data-student-action="device_limit" data-student-id="${esc(x.student_id)}">Guardar límite</button></div><p class="muted small">Permite celular y laptop al alumno seleccionado. Cambiar de 2 a 1 desautoriza el segundo dispositivo.</p></div><div class="field" style="margin-top:12px"><strong>Servicios contratados</strong><div class="actions" style="margin:8px 0;gap:16px;flex-wrap:wrap"><label><input type="checkbox" data-service-cpu="${esc(x.student_id)}" ${(x.services||[]).includes('CPU-UNSM')?'checked':''}> CPU-UNSM</label><label><input type="checkbox" data-service-beca="${esc(x.student_id)}" ${(x.services||[]).includes('BECA18')?'checked':''}> Beca 18</label></div><p class="small muted">Marca uno, ambos o ninguno; después guarda. Debes autorizar también el período de acceso.</p></div><div class="actions"><button class="secondary" data-student-action="services" data-student-id="${esc(x.student_id)}">Guardar servicios</button><button data-student-action="approve" data-student-id="${esc(x.student_id)}">Autorizar / renovar</button><button class="secondary" data-student-action="payment" data-student-id="${esc(x.student_id)}">Registrar pago</button><button class="secondary" data-student-action="release_device" data-student-id="${esc(x.student_id)}">Liberar navegador</button><button class="secondary" data-student-action="suspend" data-student-id="${esc(x.student_id)}">Suspender</button></div></div>`).join('')||'<p>Presiona «Actualizar lista» para cargar los alumnos.</p>'}</div></div>`;
 }
 async function loadStudents(){
- const [base,permissions]=await Promise.all([db.rpc('admin_list_students'),db.rpc('admin_get_student_services')]);
+ const [base,permissions,limits]=await Promise.all([db.rpc('admin_list_students'),db.rpc('admin_get_student_services'),db.rpc('admin_get_student_device_limits')]);
  if(base.error){const status=$('studentsStatus');if(status)status.textContent=base.error.message;return}
  if(permissions.error){const status=$('studentsStatus');if(status)status.textContent='Error al consultar permisos: '+permissions.error.message;return}
+ if(limits.error){const status=$('studentsStatus');if(status)status.textContent='Error al consultar dispositivos: '+limits.error.message;return}
  const byId=new Map((permissions.data||[]).map(x=>[x.student_id,x.services||[]]));
- students=(base.data||[]).map(x=>({...x,services:byId.get(x.student_id)||[]}));render();
+ const byDevice=new Map((limits.data||[]).map(x=>[x.student_id,x]));
+ students=(base.data||[]).map(x=>({...x,services:byId.get(x.student_id)||[],max_devices:byDevice.get(x.student_id)?.max_devices||1,devices_registered:byDevice.get(x.student_id)?.devices_registered||0}));render();
 }
 function bindStudents(){
  $('loadStudents').onclick=loadStudents;
@@ -419,6 +421,16 @@ function bindStudents(){
   const id=b.dataset.studentId,action=b.dataset.studentAction,student=students.find(x=>x.student_id===id);
   if(!student)return;
   let rpc,args;
+  if(action==='device_limit'){
+   const limit=Number(document.querySelector('[data-device-limit="'+id+'"]')?.value);
+   if(![1,2].includes(limit))return;
+   if(limit===Number(student.max_devices))return;
+   if(!confirm('¿Permitir '+limit+' dispositivo(s) a '+(student.student_name||'este estudiante')+'?'+(limit===1?' Se desautorizará el segundo dispositivo.':'')))return;
+   b.disabled=true;
+   const {error}=await db.rpc('admin_set_student_device_limit',{p_student_id:id,p_max_devices:limit});
+   if(error){alert('No se pudo actualizar el límite: '+error.message);b.disabled=false;return}
+   await loadStudents();return;
+  }
   if(action==='services'){
    const current=student.services||[];
    const cpu=document.querySelector('[data-service-cpu="'+id+'"]')?.checked===true;
