@@ -217,14 +217,23 @@ function mostrarCarga(mensaje='Preparando tu panel académico...'){
 async function init(){
  mostrarCarga('Recuperando tu sesión de forma segura...');
  if(!ready){$('app').innerHTML=notice('Falta configurar Supabase.');$('nav').innerHTML='';return;}
- db.auth.onAuthStateChange((event)=>{if(event==='INITIAL_SESSION'||event==='TOKEN_REFRESHED')return;setTimeout(async()=>{
-   if(event==='PASSWORD_RECOVERY')passwordRecoveryMode=true;
-   const {data:{session}}=await db.auth.getSession();
-   user=session?.user||null;
-   if(passwordRecoveryMode){render();return;}
-   mostrarCarga('Actualizando tu sesión...');
-   await refresh();
- },0);});
+ // Supabase puede emitir SIGNED_IN cada vez que se vuelve a enfocar la pestaña.
+ // Si la cuenta no cambió, conservar la vista y las preguntas ya descargadas.
+ db.auth.onAuthStateChange((event,session)=>{
+   if(event==='INITIAL_SESSION'||event==='TOKEN_REFRESHED')return;
+   if(event==='SIGNED_IN' && user?.id===session?.user?.id && !passwordRecoveryMode)return;
+   if(event==='USER_UPDATED' && user?.id===session?.user?.id && !passwordRecoveryMode)return;
+   setTimeout(async()=>{
+     if(event==='PASSWORD_RECOVERY')passwordRecoveryMode=true;
+     const nextUser=session?.user||null;
+     if(event==='SIGNED_IN' && user?.id===nextUser?.id && !passwordRecoveryMode)return;
+     if(event==='SIGNED_OUT' && !user)return;
+     user=nextUser;
+     if(passwordRecoveryMode){render();return;}
+     mostrarCarga('Actualizando tu sesión...');
+     await refresh();
+   },0);
+ });
  const {data:{session}}=await db.auth.getSession();
  user=session?.user||null;
  if(passwordRecoveryMode){render();return;}
