@@ -330,11 +330,12 @@ function render(){
    $('app').innerHTML=recoveryPasswordPage();bindPasswordRecovery();return;
  }
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],...(hasService('CPU-UNSM')?[['exams','Exámenes de admisión'],['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['practice','📚 Estudia y practica'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['exams','Exámenes de admisión'],['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[])]:[['access','Mi acceso']]):[];
+ if(page==='bank'&&!admin())page='practice';
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}">${name}</button>`).join('');
  document.querySelectorAll('[data-page]').forEach(x=>x.onclick=()=>{if(quiz?.deadlineAt&&!quiz.result){alert('Hay un examen cronometrado en curso. Entrégalo antes de salir.');return;}page=x.dataset.page;quiz=null;practice=null;examSession=null;render()});
- $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Práctica inmediata',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica'})[page];
+ $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
@@ -482,7 +483,7 @@ function home(){
       <div class="grid">
         <div class="card">
           <h2>🎓 CPU-UNSM</h2>
-          <p>Banco de preguntas, prácticas y simulacros.</p>
+          <p>Estudio interactivo, prácticas y simulacros.</p>
           <p class="muted">${cpu.length} preguntas registradas</p>
           ${hasService('CPU-UNSM')?'<button type="button" id="selectCPU">Prepararme para CPU-UNSM</button>':'<p class="muted">🔒 Servicio no contratado. Solicita acceso al administrador.</p>'}
         </div>
@@ -713,7 +714,7 @@ function bindExams(){
  $('examPrev')?.addEventListener('click',()=>{const choice=document.querySelector('input[name="examChoice"]:checked');examSession.answers[examSession.i]=choice?Number(choice.value):null;examSession.i--;render()});
  $('examNext')?.addEventListener('click',async()=>{const choice=document.querySelector('input[name="examChoice"]:checked');examSession.answers[examSession.i]=choice?Number(choice.value):null;if(examSession.i<examSession.items.length-1){examSession.i++;render();return}if(!confirm('¿Entregar el examen y recibir la calificación?'))return;const btn=$('examNext');btn.disabled=true;$('examStatus').textContent='Calificando...';const {data,error}=await db.rpc('grade_attempt',{p_answers:examSession.items.map((q,i)=>({id:q.id,selected:examSession.answers[i]}))});if(error){$('examStatus').textContent='No se pudo calificar: '+error.message;btn.disabled=false;return}examSession.result=data;render()});
 }
-function bank(){if(!hasService(selectedModality))return notice('No tienes contratado este servicio. Contacta al administrador.',true);return `<div class="card"><h2>Banco académico · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id).map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id&&q.week!=null).map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
+function bank(){if(!admin())return notice('El banco de preguntas es exclusivo de la administración.',true);if(!hasService(selectedModality))return notice('No tienes contratado este servicio. Contacta al administrador.',true);return `<div class="card"><h2>Banco académico · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><div class="filters"><select id="subjectFilter"><option value="">Todas las materias</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id).map(q=>q.subject))].sort().map(s=>`<option>${esc(s)}</option>`).join('')}</select><select id="weekFilter"><option value="">Todas las semanas</option>${[...new Set(modalityQuestions().filter(q=>!q.exam_id&&q.week!=null).map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select><input id="searchFilter" placeholder="Buscar enunciado o tema"></div><div id="bankList"></div></div>`}
 function bankList(){
  const contenedor=$('bankList');
  liberarImagenesPrivadas(contenedor);
@@ -992,7 +993,7 @@ function quizReviewPage(){
 // La respuesta correcta nunca se obtiene antes de comprobar la pregunta en Supabase.
 function practicePage(){
   const published=modalityQuestions().filter(q=>!q.exam_id&&q.status==='published');
-  if(!practice)return `<div class="card"><h2>Práctica inmediata</h2><p class="muted">Resuelve una pregunta y recibe la corrección al instante. Tus respuestas se guardan en Supabase.</p><div class="field"><label>Materia</label><select id="practiceSubject"><option value="">Todas las materias</option>${[...new Set(published.map(q=>q.subject))].sort().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select></div><div class="actions"><button id="startPractice" ${published.length?'':'disabled'}>Comenzar práctica</button><button id="reviewPractice" class="secondary">Repasar mis errores</button></div><p id="practiceStatus" class="muted">${published.length?`${published.length} pregunta(s) publicada(s) disponible(s).`:'Todavía no hay preguntas publicadas.'}</p></div>`;
+  if(!practice)return `<div class="card"><h2>📚 Estudia y practica · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><p class="muted">Elige una materia y una semana. Marca tu alternativa, comprueba si es correcta y aprende con la explicación. Tus respuestas se guardan en Supabase.</p><div class="field"><label>Materia</label><select id="practiceSubject"><option value="">Todas las materias</option>${[...new Set(published.map(q=>q.subject))].sort().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select></div><div class="field"><label>Semana</label><select id="practiceWeek"><option value="">Todas las semanas</option>${[...new Set(published.filter(q=>q.week!=null).map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select></div><div class="actions"><button id="startPractice" ${published.length?'':'disabled'}>Comenzar práctica</button><button id="reviewPractice" class="secondary">Repasar mis errores</button></div><p id="practiceStatus" class="muted">${published.length?`${published.length} pregunta(s) publicada(s) disponible(s).`:'Todavía no hay preguntas publicadas.'}</p></div>`;
   const q=practice.items[practice.i];
   if(!q)return `<div class="card"><h2>Práctica finalizada</h2><p>Has completado ${practice.items.length} pregunta(s).</p><p>Aciertos en esta sesión: <strong>${practice.hits}/${practice.items.length}</strong></p><button id="finishPractice">Volver al inicio de práctica</button></div>`;
   const d=practice.feedback;
@@ -1003,9 +1004,9 @@ async function startPractice(items){
   practice={items:[...items].sort(()=>Math.random()-.5),i:0,selected:null,feedback:null,hits:0};render();
 }
 function bindPractice(){
-  if($('startPractice'))$('startPractice').onclick=()=>{const subject=$('practiceSubject').value;startPractice(
+  if($('startPractice'))$('startPractice').onclick=()=>{const subject=$('practiceSubject').value,week=$('practiceWeek').value;startPractice(
 questions.filter(q=>!q.exam_id&&q.modality===selectedModality&&q.status==='published'
-&&(!subject||q.subject===subject)))};
+&&(!subject||q.subject===subject)&&(!week||String(q.week)===week)))};
   if($('reviewPractice'))$('reviewPractice').onclick=async()=>{
     const button=$('reviewPractice');button.disabled=true;$('practiceStatus').textContent='Buscando tus preguntas pendientes...';
     const {data,error}=await db.rpc('questions_to_review',{p_limit:100});
@@ -1460,8 +1461,8 @@ function bindReviewDetail(){
 
 function bind(){
 
- if($('selectCPU')) $('selectCPU').onclick=()=>{if(!hasService('CPU-UNSM'))return;selectedModality='CPU-UNSM';page='bank';quiz=null;practice=null;render();};
-if($('selectBeca')) $('selectBeca').onclick=()=>{if(!hasService('BECA18'))return;selectedModality='BECA18';page='bank';quiz=null;practice=null;render();};
+ if($('selectCPU')) $('selectCPU').onclick=()=>{if(!hasService('CPU-UNSM'))return;selectedModality='CPU-UNSM';page='practice';quiz=null;practice=null;render();};
+if($('selectBeca')) $('selectBeca').onclick=()=>{if(!hasService('BECA18'))return;selectedModality='BECA18';page='practice';quiz=null;practice=null;render();};
   if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(user&&page==='activity'&&$('loadActivity'))$('loadActivity').onclick=loadActivity;if(!user){
  $('authSwitch').onclick=()=>{authMode=authMode==='login'?'signup':'login';render()};
  if($('forgotPassword'))$('forgotPassword').onclick=()=>{
@@ -1518,7 +1519,7 @@ if($('selectBeca')) $('selectBeca').onclick=()=>{if(!hasService('BECA18'))return
  };
  return;
 }
-if(page==='bank'){
+if(page==='bank'&&admin()){
   for(const id of ['subjectFilter','weekFilter','searchFilter'])
     $(id).addEventListener(
       id==='searchFilter'?'input':'change',
