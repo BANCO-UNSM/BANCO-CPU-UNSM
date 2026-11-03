@@ -268,21 +268,17 @@ async function refresh(){
    const servicesResponse=await db.rpc('my_authorized_services');
    authorizedServices=teacher()?['CPU-UNSM','BECA18']:(Array.isArray(servicesResponse.data)?servicesResponse.data:[]);
    if(servicesResponse.error){console.error('Servicios autorizados:',servicesResponse.error.message);authorizedServices=[];}
-   const [catalogo,ex]=await Promise.all([
+   const [catalogo,ex,r]=await Promise.all([
      cargarPreguntasPaginadas(),
      db.from('exams').select('id,code,title,exam_type,exam_year,cycle,exam_number,exam_date,status')
        .order('exam_year',{ascending:false}).order('exam_number',{ascending:true}),
-     // Estos datos no bloquean la descarga del banco, pero siguen cargados antes de mostrar el panel.
-     cargarEsquemasEliminados()
-   ]).then(async results=>{
-     // La promesa de esquemas ya terminó; las lecturas y el historial pueden descargarse en paralelo.
-     await Promise.all([
-       hasService('BECA18')?obtenerLecturasBeca():Promise.resolve(),
-       loadLearningProgress(),
-       hasService('CPU-UNSM')?loadWeeklyHistory():Promise.resolve()
-     ]);
-     return results;
-   });
+     db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30),
+     cargarEsquemasEliminados(),
+     loadLearningProgress(),
+     hasService('CPU-UNSM')?loadWeeklyHistory():Promise.resolve(),
+     hasService('BECA18')?obtenerLecturasBeca():Promise.resolve()
+   ]);
+   attempts=r.data||[];
    questions=catalogo.data;
    if(catalogo.error)questionsError=catalogo.error;
    if(ex.error){examsError=ex.error.message;console.error('Exámenes:',examsError)}else exams=ex.data||[];
@@ -297,7 +293,7 @@ async function refresh(){
         exams.push({id,code:meta.code||'',title:meta.title||('Examen · '+id.slice(0,8)),exam_type:meta.exam_type||'CPU',exam_year:meta.exam_year||Number(String(first?.cycle||'').slice(0,4))||null,cycle:meta.cycle||first?.cycle||'',exam_number:meta.exam_number||null,exam_date:meta.exam_date||null,status:'unknown',_localFallback:true});
       }
     }
-   const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
+
   }
  }
  if(user&&(teacher()||access?.allowed))restoreTimedExam();
