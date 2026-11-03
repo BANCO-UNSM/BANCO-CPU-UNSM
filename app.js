@@ -220,17 +220,20 @@ async function init(){
  // Supabase puede emitir SIGNED_IN cada vez que se vuelve a enfocar la pestaña.
  // Si la cuenta no cambió, conservar la vista y las preguntas ya descargadas.
  db.auth.onAuthStateChange((event,session)=>{
-   if(event==='INITIAL_SESSION'||event==='TOKEN_REFRESHED')return;
-   if(event==='SIGNED_IN' && user?.id===session?.user?.id && !passwordRecoveryMode)return;
-   if(event==='USER_UPDATED' && user?.id===session?.user?.id && !passwordRecoveryMode)return;
+   // Restaurar el foco o renovar el token NO equivale a volver a entrar.
+   // No alterar la navegación ni reiniciar un simulacro ante eventos redundantes.
+   if(event==='INITIAL_SESSION'||event==='TOKEN_REFRESHED'||event==='USER_UPDATED')return;
+   if(event==='SIGNED_IN' && user?.id===session?.user?.id)return;
+   if(event!=='SIGNED_IN' && event!=='SIGNED_OUT' && event!=='PASSWORD_RECOVERY')return;
    setTimeout(async()=>{
-     if(event==='PASSWORD_RECOVERY')passwordRecoveryMode=true;
      const nextUser=session?.user||null;
-     if(event==='SIGNED_IN' && user?.id===nextUser?.id && !passwordRecoveryMode)return;
+     if(event==='PASSWORD_RECOVERY'){
+       passwordRecoveryMode=true;user=nextUser;render();return;
+     }
+     if(event==='SIGNED_IN' && user?.id===nextUser?.id)return;
      if(event==='SIGNED_OUT' && !user)return;
      user=nextUser;
      if(passwordRecoveryMode){render();return;}
-     mostrarCarga('Actualizando tu sesión...');
      await refresh();
    },0);
  });
