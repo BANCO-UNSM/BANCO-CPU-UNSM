@@ -184,6 +184,8 @@ let exams=[],examsError='',questionsError='',examTypeFilter='',examCycleFilter='
 let examPreviewRequest=0;
 let relationItems=[],relationBusy=false,relationLoaded=false,relationError='',relationSelected=null,relationAnswers=[],relationGrade=null,relationReview=null;
 let authMode='login';
+let passwordRecoveryMode=/type=recovery(?:&|$)/.test(location.hash)||new URLSearchParams(location.search).has('recovery');
+const passwordRecoveryRedirect='https://banco-unsm.github.io/BANCO-CPU-UNSM/?recovery=1';
 let selectedModality='CPU-UNSM';
 let authorizedServices=[];
 let learningProgress=null,learningProgressError='';
@@ -206,7 +208,20 @@ function mensajeDuplicado(q){
   return `Esta pregunta ya existe en CachimboLab. Modalidad: ${q.modality}; materia: ${q.subject}; estado: ${q.status}. Enunciado existente: ${q.statement}`;
 }
 const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':''}>${esc(s)}</p></div>`;
-async function init(){if(!ready){$('app').innerHTML=notice('Falta configurar config.js con la URL y la clave pública de Supabase.');$('nav').innerHTML='';return} const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh();db.auth.onAuthStateChange(()=>setTimeout(async()=>{const {data:{session}}=await db.auth.getSession();user=session?.user||null;await refresh()},0));}
+async function init(){
+ if(!ready){$('app').innerHTML=notice('Falta configurar Supabase.');$('nav').innerHTML='';return;}
+ db.auth.onAuthStateChange((event)=>setTimeout(async()=>{
+   if(event==='PASSWORD_RECOVERY')passwordRecoveryMode=true;
+   const {data:{session}}=await db.auth.getSession();
+   user=session?.user||null;
+   if(passwordRecoveryMode){render();return;}
+   await refresh();
+ },0));
+ const {data:{session}}=await db.auth.getSession();
+ user=session?.user||null;
+ if(passwordRecoveryMode){render();return;}
+ await refresh();
+}
 async function refresh(){
  esquemasCargados=false;esquemasEliminados=new Set();
  relationLoaded=false;relationItems=[];relationReview=null;
@@ -268,6 +283,11 @@ async function refresh(){
  if(quiz?.deadlineAt&&!quiz.result&&quizRemaining()===0)submitQuizTimed();
 }
 function render(){
+ if(passwordRecoveryMode){
+   $('nav').innerHTML='';$('heading').textContent='Recuperar contraseña';$('account').innerHTML='';
+   liberarImagenesPrivadas($('app'));
+   $('app').innerHTML=recoveryPasswordPage();bindPasswordRecovery();return;
+ }
  const allowed=teacher()||access?.allowed;
  const pages=user?(allowed?[['home','Inicio'],['bank','Banco académico'],...(hasService('CPU-UNSM')?[['exams','Exámenes de admisión'],['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['practice','Práctica inmediata'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[])]:[['access','Mi acceso']]):[];
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
@@ -383,9 +403,31 @@ function bindStudents(){
   await loadStudents();
  });
 }
+function recoveryPasswordPage(){
+ return `<div class="card" style="max-width:650px"><h2>Crear contraseña nueva</h2><p class="muted">Utiliza el enlace de recuperación enviado a tu correo.</p>${user?'<form id="setNewPasswordForm"><div class="field"><label for="newRecoveryPassword">Contraseña nueva (mínimo 6 caracteres)</label><input type="password" id="newRecoveryPassword" minlength="6" autocomplete="new-password" required></div><div class="field"><label for="confirmRecoveryPassword">Confirmar contraseña nueva</label><input type="password" id="confirmRecoveryPassword" minlength="6" autocomplete="new-password" required></div><button id="saveRecoveryPassword" type="submit">Guardar contraseña nueva</button></form>':'<p>No hay una sesión de recuperación válida. Solicita un enlace nuevo desde el inicio de sesión.</p>'}<p id="recoveryPasswordStatus" role="status" aria-live="polite"></p><button type="button" class="secondary" id="leaveRecovery">Volver al inicio</button></div>`;
+}
+function bindPasswordRecovery(){
+ $('leaveRecovery').onclick=async()=>{
+   passwordRecoveryMode=false;authMode='login';history.replaceState(null,'',location.pathname);
+   if(user){await db.auth.signOut();user=null;}await refresh();
+ };
+ const form=$('setNewPasswordForm');if(!form)return;
+ form.onsubmit=async e=>{
+   e.preventDefault();const one=$('newRecoveryPassword').value,two=$('confirmRecoveryPassword').value;
+   const status=$('recoveryPasswordStatus'),button=$('saveRecoveryPassword');
+   if(one.length<6){status.textContent='La contraseña debe tener al menos 6 caracteres.';return;}
+   if(one!==two){status.textContent='Las contraseñas no coinciden.';return;}
+   button.disabled=true;status.textContent='Actualizando contraseña...';
+   try{
+     const {error}=await db.auth.updateUser({password:one});if(error)throw error;
+     form.reset();status.textContent='Contraseña actualizada. Vuelve al inicio e ingresa con la nueva contraseña.';
+     button.style.display='none';
+   }catch(err){status.textContent='Error: '+(err?.message||'No se pudo actualizar.');button.disabled=false;}
+ };
+}
 function login(){
  const signup=authMode==='signup';
- return `<div class="card"><h2>${signup?'Crear cuenta de estudiante':'Ingresar a CachimboLab'}</h2><p class="muted">${signup?'Completa tus datos para solicitar una cuenta. El administrador debe autorizar tu acceso antes de utilizar el banco académico.':'Ingresa con tu correo y contraseña. Si eres nuevo, selecciona «Crear cuenta».'}</p><form id="authForm">${signup?'<div class="field"><label for="authName">Nombre completo y apellidos</label><input id="authName" name="fullName" type="text" autocomplete="name" minlength="3" maxlength="120" required placeholder="Ej.: María Pérez López"></div>':''}<div class="field"><label for="authEmail">Correo electrónico</label><input id="authEmail" type="email" name="email" autocomplete="email" required></div><div class="field"><label for="authPassword">Contraseña (mínimo 6 caracteres)</label><input id="authPassword" type="password" name="password" autocomplete="${signup?'new-password':'current-password'}" minlength="6" required></div>${signup?'<div class="field"><label for="authConfirm">Confirmar contraseña</label><input id="authConfirm" type="password" name="confirmPassword" autocomplete="new-password" minlength="6" required></div>':''}<div class="actions"><button id="authSubmit" type="submit">${signup?'Registrar mi cuenta':'Ingresar'}</button><button type="button" id="authSwitch" class="secondary">${signup?'Ya tengo cuenta':'Crear cuenta'}</button></div></form><p id="authStatus" class="muted" role="status" aria-live="polite"></p></div>`;
+ return `<div class="card"><h2>${signup?'Crear cuenta de estudiante':'Ingresar a CachimboLab'}</h2><p class="muted">${signup?'Completa tus datos para solicitar una cuenta. El administrador debe autorizar tu acceso antes de utilizar el banco académico.':'Ingresa con tu correo y contraseña. Si eres nuevo, selecciona «Crear cuenta».'}</p><form id="authForm">${signup?'<div class="field"><label for="authName">Nombre completo y apellidos</label><input id="authName" name="fullName" type="text" autocomplete="name" minlength="3" maxlength="120" required placeholder="Ej.: María Pérez López"></div>':''}<div class="field"><label for="authEmail">Correo electrónico</label><input id="authEmail" type="email" name="email" autocomplete="email" required></div><div class="field"><label for="authPassword">Contraseña (mínimo 6 caracteres)</label><input id="authPassword" type="password" name="password" autocomplete="${signup?'new-password':'current-password'}" minlength="6" required></div>${signup?'<div class="field"><label for="authConfirm">Confirmar contraseña</label><input id="authConfirm" type="password" name="confirmPassword" autocomplete="new-password" minlength="6" required></div>':''}<div class="actions"><button id="authSubmit" type="submit">${signup?'Registrar mi cuenta':'Ingresar'}</button><button type="button" id="authSwitch" class="secondary">${signup?'Ya tengo cuenta':'Crear cuenta'}</button></div></form>${!signup?'<button type="button" id="forgotPassword" class="secondary" style="margin-top:12px">¿Olvidaste tu contraseña?</button>':''}<p id="authStatus" class="muted" role="status" aria-live="polite"></p></div>`;
 }
 function home(){
   const cpu = questions.filter(q => q.modality === 'CPU-UNSM');
@@ -1381,6 +1423,26 @@ function bind(){
 if($('selectBeca')) $('selectBeca').onclick=()=>{if(!hasService('BECA18'))return;selectedModality='BECA18';page='bank';quiz=null;practice=null;render();};
   if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(user&&page==='activity'&&$('loadActivity'))$('loadActivity').onclick=loadActivity;if(!user){
  $('authSwitch').onclick=()=>{authMode=authMode==='login'?'signup':'login';render()};
+ if($('forgotPassword'))$('forgotPassword').onclick=()=>{
+   const oldEmail=$('authEmail')?.value?.trim()||'';
+   const form=$('authForm');
+   form.innerHTML='<p class="muted">Recibirás un enlace en tu correo para crear una nueva contraseña.</p><div class="field"><label for="recoverEmail">Correo electrónico</label><input id="recoverEmail" type="email" autocomplete="email" required></div><div class="actions"><button type="submit" id="recoverSubmit">Enviar enlace de recuperación</button><button type="button" class="secondary" id="recoverBack">Volver</button></div>';
+   $('recoverEmail').value=oldEmail;$('recoverBack').onclick=()=>{authMode='login';render();};
+   form.onsubmit=async e=>{
+     e.preventDefault();if(!form.reportValidity())return;
+     const email=$('recoverEmail').value.trim(),status=$('authStatus'),button=$('recoverSubmit');
+     button.disabled=true;status.textContent='Solicitando enlace...';
+     try{
+       const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:passwordRecoveryRedirect});
+       if(error)throw error;
+       status.textContent='Si la cuenta está registrada y el correo está disponible, recibirás el enlace. Revisa también Spam.';
+     }catch(err){
+       const message=String(err?.message||'');
+       status.textContent=/rate limit|too many|429|exceeded/i.test(message)?'Supabase alcanzó su límite temporal de correos. Inténtalo más tarde; evita solicitarlo repetidamente.':'No se pudo enviar el enlace: '+message;
+       button.disabled=false;
+     }
+   };
+ };
  $('authForm').onsubmit=async e=>{
   e.preventDefault();
   const form=e.currentTarget, fields=form.elements, status=$('authStatus'), submit=$('authSubmit');
