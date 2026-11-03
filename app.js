@@ -222,6 +222,23 @@ async function init(){
  if(passwordRecoveryMode){render();return;}
  await refresh();
 }
+// Supabase devuelve como máximo 1 000 filas por consulta por defecto.
+// Recuperamos todas las páginas para no ocultar preguntas ni romper simulacros.
+async function cargarPreguntasPaginadas(){
+ const columnas='id,exam_id,modality,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path';
+ const porPagina=500,limitePaginas=80;
+ const rows=[];
+ for(let pagina=0;pagina<limitePaginas;pagina++){
+   const desde=pagina*porPagina;
+   const {data,error}=await db.from('questions').select(columnas)
+     .order('created_at',{ascending:false}).order('id',{ascending:false})
+     .range(desde,desde+porPagina-1);
+   if(error){console.error('No se pudo cargar el banco:',error.message);return {data:rows,error:error.message};}
+   rows.push(...(data||[]));
+   if(!data||data.length<porPagina)return {data:rows,error:''};
+ }
+ return {data:rows,error:'Se alcanzó el límite de paginación. Comunica este error al administrador.'};
+}
 async function refresh(){
  esquemasCargados=false;esquemasEliminados=new Set();
  relationLoaded=false;relationItems=[];relationReview=null;
@@ -247,22 +264,27 @@ async function refresh(){
    }
   }
   if(teacher()||access?.allowed){
-   await cargarEsquemasEliminados();
+   // Ejecutar en paralelo las consultas independientes, sin cambiar la validación de permisos.
    const servicesResponse=await db.rpc('my_authorized_services');
    authorizedServices=teacher()?['CPU-UNSM','BECA18']:(Array.isArray(servicesResponse.data)?servicesResponse.data:[]);
    if(servicesResponse.error){console.error('Servicios autorizados:',servicesResponse.error.message);authorizedServices=[];}
-   if(hasService('BECA18'))await obtenerLecturasBeca();
-   const q=await db.from('questions')
-.select('id,exam_id,modality,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
-   if(q.error){
-     console.error('Consulta de preguntas:',q.error.message);questionsError=q.error.message;
-     // Compatibilidad con bases anteriores a la incorporación de modalidad.
-     if(/modality|column|schema cache/i.test(q.error.message)){
-       const old=await db.from('questions').select('id,cycle,week,subject,topic,page,original_number,statement,options,source,status,statement_image_path,solution_image_path').order('created_at',{ascending:false});
-       if(old.error)console.error(old.error.message);else {questions=(old.data||[]).map(x=>({...x,modality:'CPU-UNSM'}));questionsError='La consulta alternativa no incluye exam_id; actualiza el esquema o los permisos.';}
-     }
-   }else questions=(q.data||[]).map(x=>({...x,modality:x.modality||'CPU-UNSM'}));
-   const ex=await db.from('exams').select('id,code,title,exam_type,exam_year,cycle,exam_number,exam_date,status').order('exam_year',{ascending:false}).order('exam_number',{ascending:true});
+   const [catalogo,ex]=await Promise.all([
+     cargarPreguntasPaginadas(),
+     db.from('exams').select('id,code,title,exam_type,exam_year,cycle,exam_number,exam_date,status')
+       .order('exam_year',{ascending:false}).order('exam_number',{ascending:true}),
+     // Estos datos no bloquean la descarga del banco, pero siguen cargados antes de mostrar el panel.
+     cargarEsquemasEliminados()
+   ]).then(async results=>{
+     // La promesa de esquemas ya terminó; las lecturas y el historial pueden descargarse en paralelo.
+     await Promise.all([
+       hasService('BECA18')?obtenerLecturasBeca():Promise.resolve(),
+       loadLearningProgress(),
+       hasService('CPU-UNSM')?loadWeeklyHistory():Promise.resolve()
+     ]);
+     return results;
+   });
+   questions=catalogo.data;
+   if(catalogo.error)questionsError=catalogo.error;
    if(ex.error){examsError=ex.error.message;console.error('Exámenes:',examsError)}else exams=ex.data||[];
     // Solo en el panel docente: recuperar grupos visibles de preguntas si el catálogo está oculto por RLS.
     // No se inventa un estado de publicación ni se habilita su resolución.
@@ -275,7 +297,7 @@ async function refresh(){
         exams.push({id,code:meta.code||'',title:meta.title||('Examen · '+id.slice(0,8)),exam_type:meta.exam_type||'CPU',exam_year:meta.exam_year||Number(String(first?.cycle||'').slice(0,4))||null,cycle:meta.cycle||first?.cycle||'',exam_number:meta.exam_number||null,exam_date:meta.exam_date||null,status:'unknown',_localFallback:true});
       }
     }
-   const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];await loadLearningProgress();if(hasService('CPU-UNSM'))await loadWeeklyHistory();
+   const r=await db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30);attempts=r.data||[];
   }
  }
  if(user&&(teacher()||access?.allowed))restoreTimedExam();
