@@ -208,18 +208,27 @@ function mensajeDuplicado(q){
   return `Esta pregunta ya existe en CachimboLab. Modalidad: ${q.modality}; materia: ${q.subject}; estado: ${q.status}. Enunciado existente: ${q.statement}`;
 }
 const notice=(s,bad=false)=>`<div class="card"><p ${bad?'style="color:#b45309"':''}>${esc(s)}</p></div>`;
+function mostrarCarga(mensaje='Preparando tu panel académico...'){
+ const app=$('app');if(!app)return;
+ $('heading').textContent='Cargando CachimboLab';
+ $('nav').innerHTML='';
+ app.innerHTML='<div class="card" style="max-width:650px;margin-top:8px;min-height:160px;display:flex;align-items:center;gap:20px" role="status" aria-live="polite"><span class="cachimbo-spinner" aria-hidden="true"></span><div><h2 style="margin:0 0 8px">Preparando CachimboLab</h2><p class="muted" style="margin:0">'+esc(mensaje)+'</p><p class="muted small" style="margin:6px 0 0">Estamos verificando tu acceso y cargando el contenido.</p></div></div>';
+}
 async function init(){
+ mostrarCarga('Recuperando tu sesión de forma segura...');
  if(!ready){$('app').innerHTML=notice('Falta configurar Supabase.');$('nav').innerHTML='';return;}
  db.auth.onAuthStateChange((event)=>setTimeout(async()=>{
    if(event==='PASSWORD_RECOVERY')passwordRecoveryMode=true;
    const {data:{session}}=await db.auth.getSession();
    user=session?.user||null;
    if(passwordRecoveryMode){render();return;}
+   mostrarCarga('Actualizando tu sesión...');
    await refresh();
  },0));
  const {data:{session}}=await db.auth.getSession();
  user=session?.user||null;
  if(passwordRecoveryMode){render();return;}
+ mostrarCarga(user?'Verificando permisos y preparando el banco académico...':'Preparando la pantalla de ingreso...');
  await refresh();
 }
 // Supabase devuelve como máximo 1 000 filas por consulta por defecto.
@@ -240,6 +249,7 @@ async function cargarPreguntasPaginadas(){
  return {data:rows,error:'Se alcanzó el límite de paginación. Comunica este error al administrador.'};
 }
 async function refresh(){
+ if(user&&!passwordRecoveryMode)mostrarCarga('Verificando acceso y cargando preguntas...');
  esquemasCargados=false;esquemasEliminados=new Set();
  relationLoaded=false;relationItems=[];relationReview=null;
  profile=null;access=null;authorizedServices=[];learningProgress=null;learningProgressError='';weeklyHistory=[];weeklyHistoryError='';questions=[];attempts=[];exams=[];examsError='';questionsError='';
@@ -256,8 +266,9 @@ async function refresh(){
     const {data:registered,error:deviceError}=await db.rpc('register_student_session',{p_device_token:deviceId});
     if(deviceError||!registered)access={status:'device_blocked',message:deviceError?.message||'Ya existe otra sesión autorizada. Solicita al administrador liberar el navegador anterior.',allowed:false};
     else {
-     const {data:verified,error:verifyError}=await db.rpc('verify_student_device',{p_device_token:deviceId});
-     const {data:active,error:activeError}=await db.rpc('has_active_access');
+     const [{data:verified,error:verifyError},{data:active,error:activeError}]=await Promise.all([
+       db.rpc('verify_student_device',{p_device_token:deviceId}),db.rpc('has_active_access')
+     ]);
      const allowed=verified===true&&active===true&&!verifyError&&!activeError;
      access={status:allowed?'active':'device_blocked',allowed,message:verifyError?.message||activeError?.message||'No se pudo validar esta sesión.'};
     }
