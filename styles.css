@@ -55,3 +55,8 @@
 .learning-track{width:100%;height:12px;background:#e5edf7;overflow:hidden;border-radius:999px;margin-bottom:13px}
 .learning-fill{height:100%;background:linear-gradient(90deg,#0b81b7,#37bfa1);border-radius:999px}
 @media(max-width:600px){.learning-stats{gap:7px}.learning-stats>div{padding:10px 5px;border-radius:10px}.learning-stats span{font-size:.74rem}.learning-row-head{align-items:flex-start;flex-direction:column}}
+
+/* Indicador de carga accesible: evita el espacio en blanco durante la autenticación. */
+.cachimbo-spinner{display:inline-block;width:32px;height:32px;flex:none;border:4px solid #d9e7ee;border-top-color:#05867f;border-radius:50%;animation:cachimbo-spin .8s linear infinite}
+@keyframes cachimbo-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.cachimbo-spinner{animation:none;border-top-color:#05867f}}
