@@ -490,6 +490,19 @@ function bindPasswordRecovery(){
    }catch(err){status.textContent='Error: '+(err?.message||'No se pudo actualizar.');button.disabled=false;}
  };
 }
+function mensajeErrorIngreso(error){
+ const code=String(error?.code||'').toLowerCase();
+ const message=String(error?.message||'').toLowerCase();
+ if(code==='email_not_confirmed'||/email not confirmed/.test(message))
+  return 'Tu correo aún no está confirmado. Abre el enlace de verificación recibido en tu correo (revisa Spam). Si no llegó, solicita ayuda al administrador; no crees otra cuenta.';
+ if(code==='invalid_credentials'||/invalid login credentials/.test(message))
+  return 'Correo o contraseña incorrectos. Revisa los datos o utiliza «Olvidé mi contraseña». Si es tu primer ingreso, verifica también el correo de confirmación.';
+ if(code==='over_email_send_rate_limit'||code==='over_request_rate_limit'||/rate limit|too many requests|429/.test(message))
+  return 'Se alcanzó temporalmente el límite de intentos o correos. Espera antes de reintentar y evita pulsar varias veces.';
+ if(/failed to fetch|network|fetch failed/.test(message))
+  return 'No se pudo conectar con el servicio de acceso. Comprueba tu conexión e inténtalo nuevamente.';
+ return 'No se pudo iniciar sesión. Inténtalo nuevamente o contacta al administrador si continúa el problema.';
+}
 function login(){
  const signup=authMode==='signup';
  return `<div class="card"><h2>${signup?'Crear cuenta de estudiante':'Ingresar a CachimboLab'}</h2><p class="muted">${signup?'Completa tus datos para solicitar una cuenta. El administrador debe autorizar tu acceso antes de utilizar el banco académico.':'Ingresa con tu correo y contraseña. Si eres nuevo, selecciona «Crear cuenta».'}</p><form id="authForm">${signup?'<div class="field"><label for="authName">Nombre completo y apellidos</label><input id="authName" name="fullName" type="text" autocomplete="name" minlength="3" maxlength="120" required placeholder="Ej.: María Pérez López"></div>':''}<div class="field"><label for="authEmail">Correo electrónico</label><input id="authEmail" type="email" name="email" autocomplete="email" required></div><div class="field"><label for="authPassword">Contraseña (mínimo 6 caracteres)</label><input id="authPassword" type="password" name="password" autocomplete="${signup?'new-password':'current-password'}" minlength="6" required></div>${signup?'<div class="field"><label for="authConfirm">Confirmar contraseña</label><input id="authConfirm" type="password" name="confirmPassword" autocomplete="new-password" minlength="6" required></div>':''}<div class="actions"><button id="authSubmit" type="submit">${signup?'Registrar mi cuenta':'Ingresar'}</button><button type="button" id="authSwitch" class="secondary">${signup?'Ya tengo cuenta':'Crear cuenta'}</button></div></form>${!signup?'<button type="button" id="forgotPassword" class="secondary" style="margin-top:12px">¿Olvidaste tu contraseña?</button>':''}<p id="authStatus" class="muted" role="status" aria-live="polite"></p></div>`;
@@ -1526,7 +1539,7 @@ if($('selectBeca')) $('selectBeca').onclick=()=>{if(!hasService('BECA18'))return
     status.textContent=error?'No se pudo registrar: '+error.message:'Solicitud de registro enviada. Revisa tu correo si necesitas confirmarlo. El administrador deberá autorizar tu acceso.';
    }else{
     const {error}=await db.auth.signInWithPassword({email,password});
-    status.textContent=error?'No se pudo ingresar: '+error.message:'Sesión iniciada.';
+    status.textContent=error?mensajeErrorIngreso(error):'Sesión iniciada.';
    }
   }catch(err){status.textContent='Error de conexión: '+(err?.message||'Inténtalo nuevamente.')}finally{submit.disabled=false}
  };
