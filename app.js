@@ -851,18 +851,26 @@ const THIRD_EXAM_DISTRIBUTION=Object.freeze([
   ['Economía',4],['Filosofía',4],['Psicología',3],['Educación Cívica',4]
 ]);
 const THIRD_EXAM_HISTORY_KEY='cachimbolab_third_exam_2026_ii_history_v1';
-function normalizedThirdSubject(value){
+function normalizedThirdSubject(value, topic=''){
  const valueNormalized=String(value||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ');
  const aliases={
   'razonamiento matematico':'Razonamiento Matemático','razonamiento verbal':'Razonamiento Verbal',
   'cultura general':'Cultura General','algebra':'Álgebra','geometria':'Geometría',
   'aritmetica':'Aritmética','trigonometria':'Trigonometría','fisica':'Física',
   'biologia':'Biología','quimica':'Química','lengua':'Lengua','lenguaje':'Lengua',
-  'lengua y literatura':'Lengua','literatura':'Literatura','historia':'Historia',
+  'literatura':'Literatura','historia':'Historia',
   'historia del peru':'Historia','historia universal':'Historia',
   'geografia':'Geografía','economia':'Economía','filosofia':'Filosofía',
   'psicologia':'Psicología','civica':'Educación Cívica','educacion civica':'Educación Cívica'
  };
+ // La separata es un curso único; el examen distribuye Lengua (4) y Literatura (3).
+ // Clasificar por tema, no asignar todo el curso combinado a una sola área.
+ if(valueNormalized==='lenguaje y literatura'||valueNormalized==='lengua y literatura'){
+  const t=String(topic||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  if(/literatura|literari|romanticismo|modernismo|realismo|vanguardismo|costumbrismo|genero lirico|genero narrativo|genero dramatico|escritor|poesia|poetica|novela|cuento|autor|obra literaria/.test(t))return 'Literatura';
+  if(/lengua|lenguaje|linguistic|gramatica|ortografia|semantica|fonetica|fonologia|morfologia|sintaxis|comunicacion|signo linguistico|acentuacion|tildacion|oracion|sustantivo|verbo|adjetivo|pronombre/.test(t))return 'Lengua';
+  return null; // Sin tema identificable: no inventar su clasificación.
+ }
  return aliases[valueNormalized]||String(value||'').trim();
 }
 function thirdExamPool(){
@@ -872,7 +880,7 @@ function thirdExamPool(){
 function thirdExamAvailability(){
  const pool=thirdExamPool();
  const counts=new Map();
- for(const q of pool){const subject=normalizedThirdSubject(q.subject);counts.set(subject,(counts.get(subject)||0)+1);}
+ for(const q of pool){const subject=normalizedThirdSubject(q.subject,q.topic);if(subject)counts.set(subject,(counts.get(subject)||0)+1);}
  const missing=THIRD_EXAM_DISTRIBUTION.map(([name,required])=>({name,required,available:counts.get(name)||0})).filter(x=>x.available<x.required);
  return {pool,missing,ready:missing.length===0};
 }
@@ -890,7 +898,7 @@ function makeThirdExamItems(){
  for(const ids of previous)for(const id of ids)frequency.set(id,(frequency.get(id)||0)+1);
  const selection=[];
  for(const [subject,amount] of THIRD_EXAM_DISTRIBUTION){
-  const candidates=pool.filter(q=>normalizedThirdSubject(q.subject)===subject).map(q=>({q,tie:Math.random()}));
+  const candidates=pool.filter(q=>normalizedThirdSubject(q.subject,q.topic)===subject).map(q=>({q,tie:Math.random()}));
   const weeks=new Map();
   for(let i=0;i<amount;i++){
    // Prefiere preguntas no usadas en el intento anterior, menos repetidas y distribuidas entre semanas.
