@@ -538,7 +538,7 @@ function home(){
       <h2>🧠 Laboratorio 3D de anatomía</h2>
       <p>Explora el cerebro y el cráneo en tres dimensiones. Selecciona estructuras, descubre sus funciones y practica su identificación.</p>
       <p><a href="laboratorio3d.html" class="button" style="display:inline-block;text-decoration:none;background:#2563eb;color:#fff;padding:12px 16px;border-radius:9px">Abrir laboratorio anatómico 3D ↗</a></p>
-      <p><a href="biologia-semana12-3d.html" class="button" style="display:inline-block;text-decoration:none;background:#1464ad;color:#fff;padding:12px 16px;border-radius:9px">🧬 Biología Semana 12 · Laboratorio 3D ↗</a></p><p><a href="sistemas-anatomia3d.html" class="button" style="display:inline-block;text-decoration:none;background:#087c76;color:#fff;padding:12px 16px;border-radius:9px">Explorar sistemas digestivo, respiratorio y cardiovascular 3D ↗</a></p><p class="muted small">Nuevos modelos didácticos y preguntas de identificación basadas en la semana 11.</p>
+      <p><a href="biologia-semana12-3d.html" class="button" style="display:inline-block;text-decoration:none;background:#1464ad;color:#fff;padding:12px 16px;border-radius:9px">🧬 Sistemas urinario y reproductor 3D ↗</a></p><p><a href="sistemas-anatomia3d.html" class="button" style="display:inline-block;text-decoration:none;background:#087c76;color:#fff;padding:12px 16px;border-radius:9px">Explorar sistemas digestivo, respiratorio y cardiovascular 3D ↗</a></p><p class="muted small">Nuevos modelos didácticos y preguntas de identificación basadas en la semana 11.</p>
     </div>
     ${!teacher()?progressSnapshot():''}
     <div class="grid">
