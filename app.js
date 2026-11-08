@@ -850,7 +850,7 @@ const THIRD_EXAM_DISTRIBUTION=Object.freeze([
   ['Razonamiento Matemático',13],['Razonamiento Verbal',14],
   ['Cultura General',3],['Álgebra',4],['Geometría',4],['Aritmética',3],
   ['Trigonometría',3],['Física',6],['Biología',11],['Química',9],
-  ['Lengua',4],['Literatura',3],['Historia',4],['Geografía',4],
+  ['Lenguaje y Literatura',7],['Historia',4],['Geografía',4],
   ['Economía',4],['Filosofía',4],['Psicología',3],['Educación Cívica',4]
 ]);
 const THIRD_EXAM_HISTORY_KEY='cachimbolab_third_exam_2026_ii_history_v1';
@@ -866,14 +866,8 @@ function normalizedThirdSubject(value, topic=''){
   'geografia':'Geografía','economia':'Economía','filosofia':'Filosofía',
   'psicologia':'Psicología','civica':'Educación Cívica','educacion civica':'Educación Cívica'
  };
- // La separata es un curso único; el examen distribuye Lengua (4) y Literatura (3).
- // Clasificar por tema, no asignar todo el curso combinado a una sola área.
- if(valueNormalized==='lenguaje y literatura'||valueNormalized==='lengua y literatura'){
-  const t=String(topic||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  if(/literatura|literari|romanticismo|modernismo|realismo|vanguardismo|costumbrismo|genero lirico|genero narrativo|genero dramatico|escritor|poesia|poetica|novela|cuento|autor|obra literaria/.test(t))return 'Literatura';
-  if(/lengua|lenguaje|linguistic|gramatica|ortografia|semantica|fonetica|fonologia|morfologia|sintaxis|comunicacion|signo linguistico|acentuacion|tildacion|oracion|sustantivo|verbo|adjetivo|pronombre/.test(t))return 'Lengua';
-  return null; // Sin tema identificable: no inventar su clasificación.
- }
+ // Lenguaje y Literatura es una sola materia en la separata y en el simulacro.
+ if(valueNormalized==='lenguaje y literatura'||valueNormalized==='lengua y literatura'||valueNormalized==='lengua'||valueNormalized==='lenguaje'||valueNormalized==='literatura')return 'Lenguaje y Literatura';
  return aliases[valueNormalized]||String(value||'').trim();
 }
 function thirdExamPool(){
