@@ -91,6 +91,9 @@ async function cargarEsquemasEliminados(){
   }
 }
 function figuraGeometriaSemana11(q){
+  if(q&&q.subject==='Álgebra'&&Number(q.week)===12&&Number(q.original_number)===7&&q.cycle==='2026-II'&&!q.exam_id){
+    return '<figure style="margin:12px 0;max-width:540px"><svg viewBox="0 0 520 310" role="img" aria-label="Gráfica del ejercicio 7: curva desde x igual a menos cinco, punto abierto en y igual a dos, hasta x igual a tres, punto cerrado en y igual a cuatro; mínimo y igual a menos uno" style="display:block;width:100%;height:auto;background:#fff;border:1px solid #d5e1e8;border-radius:8px" xmlns="http://www.w3.org/2000/svg"><defs><marker id="alg7arrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#333"/></marker></defs><path d="M35 220H480 M250 275V20" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#alg7arrow)"/><path d="M70 220V105H250 M410 220V45H250" fill="none" stroke="#888" stroke-dasharray="5 5"/><path d="M70 105 C115 195 145 260 195 240 C265 235 342 125 410 45" fill="none" stroke="#222" stroke-width="2.5"/><circle cx="70" cy="105" r="5.5" fill="white" stroke="#222" stroke-width="2"/><circle cx="410" cy="45" r="5.5" fill="#222"/><text x="475" y="241" font-size="17">X</text><text x="262" y="24" font-size="17">Y</text><text x="57" y="242" font-size="15">−5</text><text x="242" y="242" font-size="15">0</text><text x="401" y="242" font-size="15">3</text><text x="227" y="110" font-size="15">2</text><text x="227" y="50" font-size="15">4</text><text x="224" y="258" font-size="15">−1</text></svg></figure>';
+  }
   if(!q||!q.id||!esquemasCargados||esquemasEliminados.has(String(q.id))||q.exam_id||(q.modality&&q.modality!=='CPU-UNSM')||q.subject!=='Geometría'||Number(q.week)!==11||q.cycle!=='2026-II')return '';
   const n=Number(q.original_number);
   if(!Number.isInteger(n)||n<1||n>20||n===1)return '';
