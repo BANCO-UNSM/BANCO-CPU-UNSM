@@ -60,3 +60,10 @@
 .cachimbo-spinner{display:inline-block;width:32px;height:32px;flex:none;border:4px solid #d9e7ee;border-top-color:#05867f;border-radius:50%;animation:cachimbo-spin .8s linear infinite}
 @keyframes cachimbo-spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.cachimbo-spinner{animation:none;border-top-color:#05867f}}
+
+/* Desarrollo matemático compacto: evita márgenes grandes de KaTeX. */
+#bankList [data-bank-solution] + div .katex-display,
+#bankList .katex-display,
+#app .bank-solution-math .katex-display { margin: .18em 0 !important; text-align: left; }
+#app .bank-solution-math { white-space: pre-line !important; line-height: 1.35 !important; margin: 6px 0 !important; }
+#app .bank-solution-math .katex-display > .katex { text-align: left; }
