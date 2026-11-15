@@ -32,55 +32,7 @@ async function bibLoad(){
 }
 function bibBind(){
  if(page!=='biblioteca')return;
- if(typeof renderMathInElement==='function')renderMathInElement($('app'),{delimiters:[{left:'$',right:'$',display:true},{left:'
- const change=(id,fn)=>$(id)?.addEventListener('change',e=>{fn(e.target.value);bibFicha='';bibEditing='';render();});
- change('bibModalidad',v=>{bibModalidad=v;bibMateria='';bibSemana='';});
- change('bibArea',v=>{bibArea=v;bibMateria='';bibSemana='';});
- change('bibMateria',v=>{bibMateria=v;bibSemana='';});
- change('bibSemana',v=>bibSemana=v);
- $('bibBack')?.addEventListener('click',()=>{bibFicha='';render();});
- document.querySelectorAll('[data-bib-id]').forEach(b=>b.addEventListener('click',()=>{bibFicha=b.dataset.bibId;render();}));
- $('bibEditSelect')?.addEventListener('change',e=>{bibEditing=e.target.value;render();});
- const editRow=bibRows.find(x=>x.id===bibEditing);
- if(editRow){const form=$('bibForm');if(form){for(const name of ['materia','semana','tema','resumen','teoria','formulas','ejemplo','errores','claves','estado']){const el=form.elements.namedItem(name);if(el)el.value=editRow[name]??'';}}}
- $('bibForm')?.addEventListener('submit',async e=>{
-  e.preventDefault();const form=e.currentTarget;const button=form.querySelector('button[type=submit]');button.disabled=true;
-  const f=new FormData(form),obj=Object.fromEntries(f.entries());
-  obj.semana=Number(obj.semana);obj.modalidad=bibModalidad;obj.area=bibArea;obj.ciclo='GENERAL';if(!bibEditing)obj.autor_id=user.id;
-  try{
-   if(!BIB_AREAS[bibArea].includes(obj.materia))throw Error('Materia no pertenece al área.');
-   const {error}=bibEditing?await db.from('biblioteca_fichas').update(obj).eq('id',bibEditing):await db.from('biblioteca_fichas').insert(obj);
-   if(error)throw error;
-   await bibLoad();
-  }catch(err){const status=$('bibSaveStatus');if(status)status.textContent='No se guardó: '+err.message;}
-  finally{if(button.isConnected)button.disabled=false;}
- });
-}
-,right:'
- const change=(id,fn)=>$(id)?.addEventListener('change',e=>{fn(e.target.value);bibFicha='';bibEditing='';render();});
- change('bibModalidad',v=>{bibModalidad=v;bibMateria='';bibSemana='';});
- change('bibArea',v=>{bibArea=v;bibMateria='';bibSemana='';});
- change('bibMateria',v=>{bibMateria=v;bibSemana='';});
- change('bibSemana',v=>bibSemana=v);
- $('bibBack')?.addEventListener('click',()=>{bibFicha='';render();});
- document.querySelectorAll('[data-bib-id]').forEach(b=>b.addEventListener('click',()=>{bibFicha=b.dataset.bibId;render();}));
- $('bibEditSelect')?.addEventListener('change',e=>{bibEditing=e.target.value;render();});
- const editRow=bibRows.find(x=>x.id===bibEditing);
- if(editRow){const form=$('bibForm');if(form){for(const name of ['materia','semana','tema','resumen','teoria','formulas','ejemplo','errores','claves','estado']){const el=form.elements.namedItem(name);if(el)el.value=editRow[name]??'';}}}
- $('bibForm')?.addEventListener('submit',async e=>{
-  e.preventDefault();const form=e.currentTarget;const button=form.querySelector('button[type=submit]');button.disabled=true;
-  const f=new FormData(form),obj=Object.fromEntries(f.entries());
-  obj.semana=Number(obj.semana);obj.modalidad=bibModalidad;obj.area=bibArea;obj.ciclo='GENERAL';if(!bibEditing)obj.autor_id=user.id;
-  try{
-   if(!BIB_AREAS[bibArea].includes(obj.materia))throw Error('Materia no pertenece al área.');
-   const {error}=bibEditing?await db.from('biblioteca_fichas').update(obj).eq('id',bibEditing):await db.from('biblioteca_fichas').insert(obj);
-   if(error)throw error;
-   await bibLoad();
-  }catch(err){const status=$('bibSaveStatus');if(status)status.textContent='No se guardó: '+err.message;}
-  finally{if(button.isConnected)button.disabled=false;}
- });
-}
-,display:false}],throwOnError:false});
+ if(typeof renderMathInElement==='function')renderMathInElement($('app'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
  const change=(id,fn)=>$(id)?.addEventListener('change',e=>{fn(e.target.value);bibFicha='';bibEditing='';render();});
  change('bibModalidad',v=>{bibModalidad=v;bibMateria='';bibSemana='';});
  change('bibArea',v=>{bibArea=v;bibMateria='';bibSemana='';});
