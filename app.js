@@ -333,7 +333,7 @@ function render(){
    $('app').innerHTML=recoveryPasswordPage();bindPasswordRecovery();return;
  }
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['practice','📚 Estudia y practica'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[]),...(hasService('CPU-UNSM')?[['exams',admin()?'Exámenes de admisión · Administración':'📝 Exámenes de admisión · Próximamente']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['practice','📚 Estudia y practica'],['biblioteca','📖 Biblioteca de estudio'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[]),...(hasService('CPU-UNSM')?[['exams',admin()?'Exámenes de admisión · Administración':'📝 Exámenes de admisión · Próximamente']]:[])]:[['access','Mi acceso']]):[];
  if(page==='bank'&&!admin())page='practice';
  if(page==='exams'&&!admin())page='home';
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
@@ -347,16 +347,17 @@ function render(){
   // Para docentes y administradores, descartar cualquier simulacro de prueba abandonado
   // y evitar que se restaure automáticamente desde el navegador.
   if(teacher()&&quiz?.deadlineAt&&!quiz.result)clearTimedExam();
-  page=x.dataset.page;quiz=null;practice=null;examSession=null;render();
+  page=x.dataset.page;quiz=null;practice=null;examSession=null;render();if(page==='biblioteca')bibLoad();
  });
- $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica'})[page];
+ $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica',biblioteca:'Biblioteca de estudio'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage,biblioteca:bibPage})[page]();
  bind();
  bindProgress();
  bindAcademicQuality();
+ bibBind();
  bindWeeklyChallenge();
  mostrarFormulas();
  // Carga imágenes privadas visibles después de dibujar cada pantalla.
