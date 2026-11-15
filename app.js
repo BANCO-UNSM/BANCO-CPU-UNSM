@@ -330,6 +330,7 @@ async function refresh(){
  render();
  if(quiz?.deadlineAt&&!quiz.result&&quizRemaining()===0)submitQuizTimed();
 }
+function psicologiaPilotoPage(){return `<div class="card"><h2>Vista previa · Psicología · Semana 1</h2><p class="muted">Lección interactiva de prueba, visible solo para administradores. No registra datos de alumnos ni modifica preguntas o simulacros.</p><iframe title="Lección piloto de Psicología" src="pilotos/psicologia-semana-1.html?v=2" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><a href="pilotos/psicologia-semana-1.html?v=2" target="_blank" rel="noopener">Abrir la lección en una pestaña completa</a></p></div>`;}
 function render(){
  if(passwordRecoveryMode){
    $('nav').innerHTML='';$('heading').textContent='Recuperar contraseña';$('account').innerHTML='';
@@ -337,9 +338,10 @@ function render(){
    $('app').innerHTML=recoveryPasswordPage();bindPasswordRecovery();return;
  }
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['practice','📚 Estudia y practica'],...(admin()?[['biblioteca','📖 Biblioteca de estudio']]:[]),...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[]),...(hasService('CPU-UNSM')?[['exams',admin()?'Exámenes de admisión · Administración':'📝 Exámenes de admisión · Próximamente']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['practice','📚 Estudia y practica'],...(admin()?[['biblioteca','📖 Biblioteca de estudio'],['psicologia_piloto','🧠 Vista previa Psicología']]:[]),...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[]),...(hasService('CPU-UNSM')?[['exams',admin()?'Exámenes de admisión · Administración':'📝 Exámenes de admisión · Próximamente']]:[])]:[['access','Mi acceso']]):[];
  if(page==='bank'&&!admin())page='practice';
  if(page==='biblioteca'&&!admin())page='home';
+ if(page==='psicologia_piloto'&&!admin())page='home';
  if(page==='exams'&&!admin())page='home';
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}" ${id==='exams'&&!admin()?'disabled title="Se habilitará cuando se publiquen los exámenes de admisión" aria-label="Exámenes de admisión, próximamente" style="opacity:.58;cursor:not-allowed"':''}>${name}</button>`).join('');
@@ -354,11 +356,11 @@ function render(){
   if(teacher()&&quiz?.deadlineAt&&!quiz.result)clearTimedExam();
   page=x.dataset.page;quiz=null;practice=null;examSession=null;render();if(page==='biblioteca'&&typeof bibLoad==='function')bibLoad();
  });
- $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica',biblioteca:'Biblioteca de estudio'})[page];
+ $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica',biblioteca:'Biblioteca de estudio',psicologia_piloto:'Vista previa · Psicología'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage,biblioteca:(typeof bibPage==='function'?bibPage:()=>notice('Biblioteca temporalmente no disponible. Actualiza la página para cargar el módulo.'))})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage,psicologia_piloto:psicologiaPilotoPage,biblioteca:(typeof bibPage==='function'?bibPage:()=>notice('Biblioteca temporalmente no disponible. Actualiza la página para cargar el módulo.'))})[page]();
  bind();
  bindProgress();
  bindAcademicQuality();
