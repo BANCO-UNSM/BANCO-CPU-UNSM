@@ -217,6 +217,9 @@ function mostrarCarga(mensaje='Preparando tu panel académico...'){
  $('nav').innerHTML='';
  app.innerHTML='<div class="card" style="max-width:650px;margin-top:8px;min-height:160px;display:flex;align-items:center;gap:20px" role="status" aria-live="polite"><span class="cachimbo-spinner" aria-hidden="true"></span><div><h2 style="margin:0 0 8px">Preparando CachimboLab</h2><p class="muted" style="margin:0">'+esc(mensaje)+'</p><p class="muted small" style="margin:6px 0 0">Estamos verificando tu acceso y cargando el contenido.</p></div></div>';
 }
+function withStartupTimeout(promise,ms,label){
+ return Promise.race([Promise.resolve(promise),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Tiempo de espera agotado: '+label)),ms))]);
+}
 async function init(){
  mostrarCarga('Recuperando tu sesión de forma segura...');
  if(!ready){$('app').innerHTML=notice('Falta configurar Supabase.');$('nav').innerHTML='';return;}
@@ -240,11 +243,12 @@ async function init(){
      await refresh();
    },0);
  });
- const {data:{session}}=await db.auth.getSession();
+ const {data:{session}}=await withStartupTimeout(db.auth.getSession(),12000,'sesión');
  user=session?.user||null;
  if(passwordRecoveryMode){render();return;}
  mostrarCarga(user?'Verificando permisos y preparando el banco académico...':'Preparando la pantalla de ingreso...');
- await refresh();
+ try{await withStartupTimeout(refresh(),18000,'carga inicial');}
+ catch(err){console.error('Inicio demorado:',err);$('app').innerHTML='<div class="card"><h2>No se pudo completar la carga</h2><p>La conexión con el banco académico está demorando demasiado.</p><p class="muted">'+esc(err.message)+'</p><button id="retryStartup">Reintentar</button></div>';$('retryStartup').onclick=()=>init();}
 }
 // Supabase devuelve como máximo 1 000 filas por consulta por defecto.
 // Recuperamos todas las páginas para no ocultar preguntas ni romper simulacros.
@@ -294,7 +298,7 @@ async function refresh(){
    const servicesResponse=await db.rpc('my_authorized_services');
    authorizedServices=teacher()?['CPU-UNSM','BECA18']:(Array.isArray(servicesResponse.data)?servicesResponse.data:[]);
    if(servicesResponse.error){console.error('Servicios autorizados:',servicesResponse.error.message);authorizedServices=[];}
-   const [catalogo,ex,r]=await Promise.all([
+   const [catalogo,ex,r]=await withStartupTimeout(Promise.all([
      cargarPreguntasPaginadas(),
      db.from('exams').select('id,code,title,exam_type,exam_year,cycle,exam_number,exam_date,status')
        .order('exam_year',{ascending:false}).order('exam_number',{ascending:true}),
@@ -303,7 +307,7 @@ async function refresh(){
      loadLearningProgress(),
      hasService('CPU-UNSM')?loadWeeklyHistory():Promise.resolve(),
      hasService('BECA18')?obtenerLecturasBeca():Promise.resolve()
-   ]);
+   ]),14000,'consultas del banco académico');
    attempts=r.data||[];
    questions=catalogo.data;
    if(catalogo.error)questionsError=catalogo.error;
