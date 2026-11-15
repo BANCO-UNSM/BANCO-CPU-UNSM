@@ -352,17 +352,17 @@ function render(){
   // Para docentes y administradores, descartar cualquier simulacro de prueba abandonado
   // y evitar que se restaure automáticamente desde el navegador.
   if(teacher()&&quiz?.deadlineAt&&!quiz.result)clearTimedExam();
-  page=x.dataset.page;quiz=null;practice=null;examSession=null;render();if(page==='biblioteca')bibLoad();
+  page=x.dataset.page;quiz=null;practice=null;examSession=null;render();if(page==='biblioteca'&&typeof bibLoad==='function')bibLoad();
  });
  $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica',biblioteca:'Biblioteca de estudio'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage,biblioteca:bibPage})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage,biblioteca:(typeof bibPage==='function'?bibPage:()=>notice('Biblioteca temporalmente no disponible. Actualiza la página para cargar el módulo.'))})[page]();
  bind();
  bindProgress();
  bindAcademicQuality();
- bibBind();
+ if(typeof bibBind==='function')bibBind();
  bindWeeklyChallenge();
  mostrarFormulas();
  // Carga imágenes privadas visibles después de dibujar cada pantalla.
