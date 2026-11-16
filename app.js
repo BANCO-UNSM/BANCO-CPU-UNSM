@@ -333,19 +333,19 @@ async function refresh(){
 let psicologiaSemanaSeleccionada=null;
 function psicologiaPilotoPage(){
  const semana=psicologiaSemanaSeleccionada;
- const temas={1:'Definición, ramas y métodos de la Psicología',2:'Historia de la Psicología y proceso de socialización',3:'Bases biológicas del comportamiento',4:'Etapas del desarrollo humano y desarrollo psicosexual',5:'Sensación y percepción',6:'Atención, concentración y memoria',7:'Proceso cognoscitivo',8:'Repaso / según programación',9:'Inteligencia',10:'Emociones y sentimientos',11:'Motivación',12:'Aprendizaje',13:'Personalidad',14:'Temperamento y carácter',15:'Alteraciones de la personalidad'};
+ const temas={1:'Definición, ramas y métodos de la Psicología',2:'Historia de la Psicología y proceso de socialización',3:'Bases biológicas del comportamiento',4:'Etapas del desarrollo humano y desarrollo psicosexual',5:'Sensación y percepción',6:'Atención, concentración y memoria',7:'El proceso cognoscitivo',8:'Repaso de Psicología: semanas 1 a 7',9:'Inteligencia',10:'Emociones y sentimientos',11:'Motivación',12:'Aprendizaje',13:'Personalidad',14:'Temperamento y carácter',15:'Alteraciones de la personalidad'};
  const botones=Array.from({length:15},(_,i)=>{
-  const n=i+1,disponible=n<=5,activo=n===semana;
+  const n=i+1,disponible=n<=15,activo=n===semana;
   return `<button type="button" data-psico-semana="${n}" ${disponible?'':'disabled title="Lección en preparación"'} aria-pressed="${activo}" style="min-height:68px;border-radius:13px;padding:12px 8px;border:2px solid ${activo?'#087f79':'#d4e3ef'};background:${activo?'#e2f6f0':disponible?'#f2f8ff':'#f5f6f8'};color:${disponible?'#173c58':'#8493a1'};font-weight:750;cursor:${disponible?'pointer':'not-allowed'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">Semana ${n}<small style="font-size:11px;font-weight:500">${disponible?'Ver lección':'En preparación'}</small></button>`;
  }).join('');
- return `<div class="card"><h2>Vista previa · Psicología</h2><p class="muted">Selecciona una semana para estudiar su lección completa, desde la teoría hasta el punto 7. Por ahora solo están habilitadas las semanas con contenido elaborado. Esta vista es exclusiva para administradores.</p><div role="group" aria-label="Seleccionar semana de Psicología" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0 24px">${botones}</div>${semana?`<h3 style="margin-bottom:5px">Semana ${semana}: ${temas[semana]}</h3><p class="muted">Recorre la lección y sus actividades. El punto 7 se conectará con la separata cuando haya preguntas disponibles.</p><iframe title="Psicología, lección semana ${semana}" src="pilotos/psicologia-semana-${semana}.html?v=19" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><a href="pilotos/psicologia-semana-${semana}.html?v=19" target="_blank" rel="noopener">Abrir semana ${semana} en pantalla completa</a></p>`:`<p class="muted" style="padding:18px 0">Elige una semana disponible para abrir su lección.</p>`}</div>`;
+ return `<div class="card"><h2>Vista previa · Psicología</h2><p class="muted">Selecciona una semana para estudiar su lección completa, desde la teoría hasta el punto 7. Por ahora solo están habilitadas las semanas con contenido elaborado. Esta vista es exclusiva para administradores.</p><div role="group" aria-label="Seleccionar semana de Psicología" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0 24px">${botones}</div>${semana?`<h3 style="margin-bottom:5px">Semana ${semana}: ${temas[semana]}</h3><p class="muted">Recorre la lección y sus actividades. El punto 7 se conectará con la separata cuando haya preguntas disponibles.</p><iframe title="Psicología, lección semana ${semana}" src="pilotos/psicologia-semana-${semana}.html?v=20" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><a href="pilotos/psicologia-semana-${semana}.html?v=20" target="_blank" rel="noopener">Abrir semana ${semana} en pantalla completa</a></p>`:`<p class="muted" style="padding:18px 0">Elige una semana disponible para abrir su lección.</p>`}</div>`;
 }
 function bindPsicologiaPiloto(){
  if(page!=='psicologia_piloto'||!admin())return;
  document.querySelectorAll('[data-psico-semana]').forEach(b=>b.addEventListener('click',()=>{
   if(b.disabled)return;
   const n=Number(b.dataset.psicoSemana);
-  if(!Number.isInteger(n)||n<1||n>5)return;
+  if(!Number.isInteger(n)||n<1||n>15)return;
   psicologiaSemanaSeleccionada=n;
   render();
  }));
