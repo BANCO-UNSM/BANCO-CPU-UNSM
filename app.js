@@ -331,6 +331,7 @@ async function refresh(){
  if(quiz?.deadlineAt&&!quiz.result&&quizRemaining()===0)submitQuizTimed();
 }
 let psicologiaSemanaSeleccionada=null;
+let bibliotecaLeccionesVista=false;
 function psicologiaPilotoPage(){
  const semana=psicologiaSemanaSeleccionada;
  const temas={1:'Definición, ramas y métodos de la Psicología',2:'Historia de la Psicología y proceso de socialización',3:'Bases biológicas del comportamiento',4:'Etapas del desarrollo humano y desarrollo psicosexual',5:'Sensación y percepción',6:'Atención, concentración y memoria',7:'El proceso cognoscitivo',8:'Inteligencia',9:'Emociones y sentimientos',10:'Repaso: inteligencia y afectividad',11:'Motivación',12:'Aprendizaje',13:'Personalidad',14:'Temperamento y carácter',15:'Alteraciones de la personalidad'};
@@ -364,7 +365,7 @@ async function enviarPracticaPsicologia(iframe,semana){
  }catch(e){send({error:'No se pudo cargar la práctica oficial: '+(e?.message||'Error de conexión')})}
 }
 function bindPsicologiaPiloto(){
- if(page!=='psicologia_piloto'||!admin())return;
+ if(!(page==='psicologia_piloto'||(page==='biblioteca'&&bibliotecaLeccionesVista))||!admin())return;
  const iframe=document.querySelector('iframe[title^="Psicología, lección semana"]');
  const semana=psicologiaSemanaSeleccionada;
  if(iframe&&psicologiaSemanasConPreguntas.has(semana)){
@@ -376,7 +377,7 @@ function bindPsicologiaPiloto(){
  document.querySelectorAll('[data-psico-semana]').forEach(b=>b.addEventListener('click',()=>{
   if(b.disabled)return;
   const n=Number(b.dataset.psicoSemana);
-  if(!Number.isInteger(n)||n<1||n>15)return;
+  if(!Number.isInteger(n)||n<1||n>16)return;
   psicologiaSemanaSeleccionada=n;
   render();
  }));
@@ -388,10 +389,10 @@ function render(){
    $('app').innerHTML=recoveryPasswordPage();bindPasswordRecovery();return;
  }
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['practice','📚 Estudia y practica'],...(admin()?[['biblioteca','📖 Biblioteca de estudio'],['psicologia_piloto','🧠 Vista previa Psicología']]:[]),...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[]),...(hasService('CPU-UNSM')?[['exams',admin()?'Exámenes de admisión · Administración':'📝 Exámenes de admisión · Próximamente']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],['practice','📚 Estudia y practica'],...(admin()?[['biblioteca','📖 Biblioteca de estudio']]:[]),...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[]),...(hasService('CPU-UNSM')?[['exams',admin()?'Exámenes de admisión · Administración':'📝 Exámenes de admisión · Próximamente']]:[])]:[['access','Mi acceso']]):[];
  if(page==='bank'&&!admin())page='practice';
  if(page==='biblioteca'&&!admin())page='home';
- if(page==='psicologia_piloto'&&!admin())page='home';
+ if(page==='psicologia_piloto')page=admin()?'biblioteca':'home';
  if(page==='exams'&&!admin())page='home';
  if(!pages.some(([id])=>id===page))page=allowed?'home':'access';
  $('nav').innerHTML=pages.map(([id,name])=>`<button data-page="${id}" class="${page===id?'active':''}" ${id==='exams'&&!admin()?'disabled title="Se habilitará cuando se publiquen los exámenes de admisión" aria-label="Exámenes de admisión, próximamente" style="opacity:.58;cursor:not-allowed"':''}>${name}</button>`).join('');
@@ -410,12 +411,14 @@ function render(){
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage,psicologia_piloto:psicologiaPilotoPage,biblioteca:(typeof bibPage==='function'?bibPage:()=>notice('Biblioteca temporalmente no disponible. Actualiza la página para cargar el módulo.'))})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage,psicologia_piloto:psicologiaPilotoPage,biblioteca:(bibliotecaLeccionesVista?()=>'<div class="card"><button type="button" class="secondary" id="bibVolverLecciones">← Volver a Biblioteca de estudio</button></div>'+psicologiaPilotoPage():(typeof bibPage==='function'?bibPage:()=>notice('Biblioteca temporalmente no disponible. Actualiza la página para cargar el módulo.')))})[page]();
  bind();
  bindProgress();
  bindAcademicQuality();
  bindPsicologiaPiloto();
- if(typeof bibBind==='function')bibBind();
+ if(typeof bibBind==='function'&&!bibliotecaLeccionesVista)bibBind();
+ $('bibAbrirPsicologia')?.addEventListener('click',()=>{bibliotecaLeccionesVista=true;psicologiaSemanaSeleccionada=null;render()});
+ $('bibVolverLecciones')?.addEventListener('click',()=>{bibliotecaLeccionesVista=false;psicologiaSemanaSeleccionada=null;render()});
  bindWeeklyChallenge();
  mostrarFormulas();
  // Carga imágenes privadas visibles después de dibujar cada pantalla.
