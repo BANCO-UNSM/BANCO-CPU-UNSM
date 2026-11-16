@@ -944,12 +944,14 @@ function openCPULessonFromPractice(){
  const week=Number($('practiceWeek')?.value||cpuPreferredPracticeWeek);
  if(!selected||!Number.isInteger(week)||week<1||week>16){alert('Selecciona una materia y una semana para abrir su lección.');return}
  rememberCPUStudy(selected,week);
+ if(['Razonamiento Matemático','Álgebra','Aritmética','Trigonometría','Geometría','Física','Química','Biología'].includes(selected)){
+  alert('La lección de Ciencias está en preparación. Puedes seguir practicando las preguntas publicadas.');
+  return;
+ }
  selectedModality='CPU-UNSM';page='biblioteca';
  if(selected==='Psicología'){
   bibliotecaLeccionesVista=true;psicologiaSemanaSeleccionada=week;
  }else{
-  const science=['Razonamiento Matemático','Álgebra','Aritmética','Trigonometría','Geometría','Física','Química','Biología'].includes(selected);
-  if(science){alert('Esta lección de Ciencias aún está en preparación. Puedes practicar las preguntas publicadas.');return}
   bibliotecaLeccionesVista=false;bibVistaArea='Letras y humanidades';
   bibCursoPreparacion=selected;bibSemanaPreparacion=week;
  }
