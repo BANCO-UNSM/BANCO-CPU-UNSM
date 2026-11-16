@@ -40,6 +40,6 @@ function bibBind(){
  $('bibAbrirCivica')?.addEventListener('click',()=>{bibCursoPreparacion='Educación Cívica';bibSemanaPreparacion=null;render()});
  $('bibAbrirCultura')?.addEventListener('click',()=>{bibCursoPreparacion='Cultura General';bibSemanaPreparacion=null;render()});
  $('bibVolverCursos')?.addEventListener('click',()=>{bibCursoPreparacion='';bibSemanaPreparacion=null;render()});
- document.querySelectorAll('[data-bib-semana]').forEach(b=>b.addEventListener('click',()=>{bibSemanaPreparacion=Number(b.dataset.bibSemana);render()}));
+ document.querySelectorAll('[data-bib-semana]').forEach(b=>b.addEventListener('click',()=>{bibSemanaPreparacion=Number(b.dataset.bibSemana);window.cachimbolabRememberCPU?.(bibCursoPreparacion,bibSemanaPreparacion);render()}));
  document.querySelectorAll('[data-bib-curso]:not(#bibAbrirPsicologia):not(#bibAbrirCultura):not(#bibAbrirVerbal):not(#bibAbrirCivica)').forEach(b=>b.addEventListener('click',()=>{if(bibNuevosCursos.includes(b.dataset.bibCurso)){bibCursoPreparacion=b.dataset.bibCurso;bibSemanaPreparacion=null;render();return;}alert('Las lecciones de '+b.dataset.bibCurso+' se incorporarán próximamente.')}));
 }
