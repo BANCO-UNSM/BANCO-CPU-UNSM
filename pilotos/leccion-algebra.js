@@ -17,6 +17,6 @@ const picked=[qi,...other.slice(0,3)];const rotation=qi%picked.length;picked.pus
 const opts=el('div');let answered=false;const feedback=el('p','feedback');feedback.hidden=true;const next=el('button','btn','Siguiente pregunta');next.hidden=true;next.onclick=()=>{qi++;drawQuiz()};
 picked.forEach((ix,k)=>{const b=el('button','btn','');b.style.display='flex';b.style.alignItems='center';b.style.width='100%';b.style.margin='8px 0';b.style.background='white';b.append(el('span','',String.fromCharCode(65+k)+') '),math(entry.formulas[ix][1]));b.onclick=()=>{if(answered)return;answered=true;opts.querySelectorAll('button').forEach(x=>x.disabled=true);if(ix===qi)score++;feedback.hidden=false;feedback.textContent=ix===qi?'¡Correcto! Identificaste la propiedad.':'Revisa la propiedad. Esta es la fórmula correcta:';feedback.append(math(correctTex));next.hidden=false};opts.append(b)});quizBody.append(opts,feedback,next)}drawQuiz();
 const official=el('section','card');official.id='p8';official.append(el('span','tag','05 · PRÁCTICA CPU · SEPARATA'),el('h2','','Aplicamos lo aprendido'),el('p','hint','Aquí aparecen únicamente las preguntas oficiales publicadas para esta semana. Si aún no existen, se indicará sin inventar preguntas.'));root.append(official);
-const officialScript=document.createElement('script');officialScript.src='practica-nuevos-cursos.js?v=7';document.body.appendChild(officialScript);
+const officialScript=document.createElement('script');officialScript.src='practica-nuevos-cursos.js?v=8';document.body.appendChild(officialScript);
 
 })();
