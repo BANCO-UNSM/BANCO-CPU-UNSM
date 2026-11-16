@@ -17,6 +17,9 @@ function explanationFor(q){
  if(stored)return stored;
  const statement=String(q.statement||'').toLocaleUpperCase('es');
  const options=(q.options||[]).map(o=>cleanOption(o).toLocaleUpperCase('es'));
+ if(statement.includes('CRONÓMETRO')&&statement.includes('TIEMPO')&&statement.includes('TERMÓMETRO')&&options.some(o=>o.includes('TEMPERATURA'))){
+  return 'Es una analogía entre instrumento y magnitud medida. El cronómetro mide el tiempo, así como el termómetro mide la temperatura. Por eso, la respuesta es «Temperatura».';
+ }
  if(statement.includes('ARGUEDAS')&&statement.includes('CHOCANO')&&statement.includes('ALBÚJAR')&&options.some(o=>o.includes('AZHARES'))){
   return 'La relación es autor y obra literaria: José María Arguedas escribió «Agua», José Santos Chocano escribió «Azahares» y Enrique López Albújar escribió «Matalaché». Por tanto, la palabra que completa la serie es «Azahares».';
  }
