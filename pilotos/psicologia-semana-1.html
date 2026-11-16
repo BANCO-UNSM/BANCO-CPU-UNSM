@@ -41,4 +41,4 @@ const quiz=[{q:'Una investigadora registra conductas durante el recreo sin inter
  speed.addEventListener('change',()=>{if(!active)return;const remaining=queue.slice(Math.max(0,index-1));token++;synth.cancel();queue=remaining;index=0;paused=false;controls();sayStatus('Velocidad: '+speed.value+'×.');next(token)});
  window.addEventListener('pagehide',()=>{token++;synth.cancel()});
 })();
-</script><script src="estructura-ocho-puntos.js?v=2"></script></body></html>
+</script><script src="estructura-ocho-puntos.js?v=3"></script></body></html>
