@@ -6,9 +6,16 @@ const BIB_AREAS={
 let bibRows=[],bibLoading=false,bibError='',bibArea='Ciencias y números',bibMateria='',bibSemana='',bibFicha='',bibModalidad='CPU-UNSM',bibEditing='',bibCreating=false;
 function bibSubjects(){return BIB_AREAS[bibArea]||[];}
 let bibVistaArea='';
+let bibCursoPreparacion='';
+let bibSemanaPreparacion=null;
 function bibPage(){
+ if(bibCursoPreparacion){
+  const nombre=esc(bibCursoPreparacion);
+  const semanas=Array.from({length:16},(_,i)=>{const n=i+1,repaso=n===10||n===16;return '<button type="button" class="secondary" data-bib-semana="'+n+'" aria-pressed="'+(bibSemanaPreparacion===n)+'" style="min-height:74px;border-radius:12px;padding:12px;background:'+(bibSemanaPreparacion===n?'#dceef8':'#f4f8fc')+';color:#163b58"><strong>Semana '+n+'</strong><small style="display:block;margin-top:5px">'+(repaso?'Repaso · En preparación':'En preparación')+'</small></button>'}).join('');
+  return '<div class="card"><button type="button" class="secondary" id="bibVolverCursos">← Volver a los cursos de Letras</button><h2 style="margin-top:20px">📚 '+nombre+' · Lecciones interactivas</h2><p class="muted">Ciclo CPU-UNSM · 16 semanas. Las semanas de repaso se organizarán según la programación oficial del curso.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:22px 0">'+semanas+'</div>'+(bibSemanaPreparacion?'<div class="listitem"><h3>Semana '+bibSemanaPreparacion+' · Material pendiente</h3><p>Para desarrollar esta lección necesitamos la separata o el libro de Cultura General de la CPU-UNSM y las preguntas de la semana correspondiente. No se han añadido temas ni preguntas oficiales sin fuente.</p></div>':'<p class="muted">Selecciona una semana para consultar su estado.</p>')+'</div>';
+ }
  const area=bibVistaArea;
- const boton=(nombre,activo)=>'<button type="button" class="secondary" data-bib-curso="'+esc(nombre)+'" '+(activo?'id="bibAbrirPsicologia"':'')+' style="min-height:72px;text-align:left;padding:16px;border-radius:12px;width:100%"><strong>'+esc(nombre)+'</strong><small style="display:block;margin-top:6px">'+(activo?'Abrir lecciones interactivas':'Próximamente')+'</small></button>';
+ const boton=(nombre,activo)=>'<button type="button" class="secondary" data-bib-curso="'+esc(nombre)+'" '+(activo?'id="bibAbrirPsicologia"':nombre==='Cultura General'&&admin()?'id="bibAbrirCultura"':'')+' style="min-height:72px;text-align:left;padding:16px;border-radius:12px;width:100%"><strong>'+esc(nombre)+'</strong><small style="display:block;margin-top:6px">'+(activo?'Abrir lecciones interactivas':nombre==='Cultura General'&&admin()?'Ver semanas · En preparación':'Próximamente')+'</small></button>';
  if(!area)return '<div class="card"><h2>📚 Lecciones interactivas</h2><p class="muted">Selecciona un área para explorar los cursos y sus lecciones organizadas por semanas.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:22px"><button type="button" data-bib-area="Ciencias y números" style="padding:28px 18px;min-height:170px;border-radius:16px;text-align:center"><span style="font-size:36px;display:block;margin-bottom:14px">🔬</span><strong style="font-size:22px">Ciencias</strong><span style="display:block;margin-top:9px;font-size:13px">Matemática, Física, Química y más</span></button><button type="button" data-bib-area="Letras y humanidades" style="padding:28px 18px;min-height:170px;border-radius:16px;text-align:center"><span style="font-size:36px;display:block;margin-bottom:14px">📖</span><strong style="font-size:22px">Letras</strong><span style="display:block;margin-top:9px;font-size:13px">Psicología, Filosofía, Historia y más</span></button></div></div>';
  const materias=BIB_AREAS[area]||[];
  return '<div class="card"><button type="button" class="secondary" id="bibVolverAreas">← Volver a Ciencias y Letras</button><h2 style="margin-top:18px">Lecciones interactivas · '+(area==='Ciencias y números'?'Ciencias':'Letras')+'</h2><p class="muted">Selecciona un curso para acceder a sus lecciones por semana.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:18px">'+materias.map(m=>boton(m,m==='Psicología'&&admin())).join('')+'</div></div>';
@@ -26,5 +33,8 @@ function bibBind(){
  if(page!=='biblioteca'||bibliotecaLeccionesVista)return;
  document.querySelectorAll('[data-bib-area]').forEach(b=>b.addEventListener('click',()=>{bibVistaArea=b.dataset.bibArea;render()}));
  $('bibVolverAreas')?.addEventListener('click',()=>{bibVistaArea='';render()});
- document.querySelectorAll('[data-bib-curso]:not(#bibAbrirPsicologia)').forEach(b=>b.addEventListener('click',()=>{alert('Las lecciones de '+b.dataset.bibCurso+' se incorporarán próximamente.')}));
+ $('bibAbrirCultura')?.addEventListener('click',()=>{bibCursoPreparacion='Cultura General';bibSemanaPreparacion=null;render()});
+ $('bibVolverCursos')?.addEventListener('click',()=>{bibCursoPreparacion='';bibSemanaPreparacion=null;render()});
+ document.querySelectorAll('[data-bib-semana]').forEach(b=>b.addEventListener('click',()=>{bibSemanaPreparacion=Number(b.dataset.bibSemana);render()}));
+ document.querySelectorAll('[data-bib-curso]:not(#bibAbrirPsicologia):not(#bibAbrirCultura)').forEach(b=>b.addEventListener('click',()=>{alert('Las lecciones de '+b.dataset.bibCurso+' se incorporarán próximamente.')}));
 }
