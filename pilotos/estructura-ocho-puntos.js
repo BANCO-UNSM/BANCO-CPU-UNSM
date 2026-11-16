@@ -76,7 +76,7 @@ function normalize(){
  const review=/(?:REPASO|NIVELACIÓN)/i.test(main.querySelector('.hero .tag')?.textContent||'')||/(?:repaso|nivelación)/i.test(main.querySelector('.hero h1')?.textContent||'');
  topics.forEach((t,i)=>{
   const tag=label(t);
-  if(tag)tag.textContent=String(i+1).padStart(2,'0')+(review?' · REPASO':i===4?' · APLICA E INTEGRA':' · APRENDEMOS');
+  if(tag)tag.textContent=String(i+1).padStart(2,'0')+(review?' · REPASO':' · '+['DESCUBRE','EXPLORA','RELACIONA','APLICA','PROFUNDIZAMOS'][i]);
  });
  [[memory,'06 · RECUERDA'],[check,'07 · COMPRUEBA'],[official,'08 · PRÁCTICA CPU · SEPARATA']].forEach(([section,title])=>{
   const tag=label(section);if(tag)tag.textContent=title;
