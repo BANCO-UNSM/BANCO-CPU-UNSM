@@ -95,3 +95,17 @@
  #atenea-root #atenea-saludo{width:150px!important;max-width:calc(100vw - 16px);font-size:11px}
  #atenea-root.atenea-figure-hidden #atenea-minimize{right:112px!important;bottom:19px!important}
 }
+
+/* V3.4: botón flotante compacto y móvil, sin tapar las preguntas. */
+#atenea-toggle{touch-action:none;user-select:none;cursor:grab}
+#atenea-toggle:active{cursor:grabbing}
+#atenea-root.atenea-toggle-compact #atenea-toggle{width:48px;height:48px;min-width:48px;min-height:48px;padding:5px;border-radius:50%;display:grid;place-items:center}
+#atenea-root.atenea-toggle-compact #atenea-toggle .atenea-toggle-avatar{width:37px;height:37px;border-radius:50%;margin:0}
+#atenea-root.atenea-toggle-compact #atenea-toggle span{display:none}
+#atenea-toggle-size{position:absolute;right:calc(100% - 11px);bottom:0;z-index:5;width:25px;height:25px;padding:0;border:1px solid #d7dce6;border-radius:50%;background:#fff;color:#173250;font-size:17px;line-height:1;box-shadow:0 2px 8px #122c4930;cursor:pointer}
+#atenea-toggle-size.atenea-size-follow{position:fixed!important;right:auto!important;bottom:auto!important}
+@media(max-width:700px){
+ #atenea-root{right:10px;bottom:12px}
+ #atenea-panel{position:fixed;right:8px;left:8px;bottom:72px;width:auto;max-width:none;height:min(570px,calc(100dvh - 90px))}
+ #atenea-root.atenea-figure-hidden #atenea-minimize{display:none!important}
+}
