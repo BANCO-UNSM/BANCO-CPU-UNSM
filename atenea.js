@@ -213,9 +213,9 @@ function mount(){if($('atenea-root'))return;
   requestAnimationFrame(posicionarSaludo);
  }
  $('atenea-minimize').onclick=()=>setFigureVisible(false);
- $('atenea-figure-toggle').onclick=()=>setFigureVisible(root.classList.contains('atenea-figure-hidden'));
- let initiallyHidden=false;try{initiallyHidden=sessionStorage.getItem('ateneaFigureHidden')==='true'}catch(_){}
- setFigureVisible(!initiallyHidden);
+ $('atenea-figure-toggle').onclick=()=>{const showFigure=root.classList.contains('atenea-figure-hidden');setFigureVisible(showFigure);if(showFigure&&state.open)show(false)};
+ // Mostrar la figura al cargar esta versión; el alumno puede ocultarla después.
+ setFigureVisible(true);
  initCharacterDrag();
  requestAnimationFrame(posicionarSaludo);
  window.addEventListener('resize',posicionarSaludo);
