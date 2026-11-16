@@ -414,9 +414,10 @@ async function enviarPracticaVerbal(iframe,semana){
    }));
    full.push(...group.filter(Boolean));
    if(request!==verbalPracticaRequest)return;
+   if(i===0)send({questions:full,total:data.length,append:false,complete:false});
+   else send({questions:group.filter(Boolean),total:data.length,append:true,complete:i+5>=data.length});
   }
   if(full.length!==data.length)throw new Error('Algunas claves no se pudieron recuperar.');
-  send({questions:full});
  }catch(e){send({error:'No se pudo cargar la práctica CPU: '+(e?.message||'Error de conexión')})}
 }
 function bindVerbalPractica(){
