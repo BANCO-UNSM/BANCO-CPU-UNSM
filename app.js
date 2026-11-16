@@ -338,10 +338,41 @@ function psicologiaPilotoPage(){
   const n=i+1,disponible=n<=15,activo=n===semana;
   return `<button type="button" data-psico-semana="${n}" ${disponible?'':'disabled title="Lección en preparación"'} aria-pressed="${activo}" style="min-height:68px;border-radius:13px;padding:12px 8px;border:2px solid ${activo?'#087f79':'#d4e3ef'};background:${activo?'#e2f6f0':disponible?'#f2f8ff':'#f5f6f8'};color:${disponible?'#173c58':'#8493a1'};font-weight:750;cursor:${disponible?'pointer':'not-allowed'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">Semana ${n}<small style="font-size:11px;font-weight:500">${disponible?'Ver lección':'En preparación'}</small></button>`;
  }).join('');
- return `<div class="card"><h2>Vista previa · Psicología</h2><p class="muted">Selecciona una semana para estudiar su lección completa, desde la teoría hasta el punto 7. Por ahora solo están habilitadas las semanas con contenido elaborado. Esta vista es exclusiva para administradores.</p><div role="group" aria-label="Seleccionar semana de Psicología" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0 24px">${botones}</div>${semana?`<h3 style="margin-bottom:5px">Semana ${semana}: ${temas[semana]}</h3><p class="muted">Recorre la lección y sus actividades. El punto 7 se conectará con la separata cuando haya preguntas disponibles.</p><iframe title="Psicología, lección semana ${semana}" src="pilotos/psicologia-semana-${semana}.html?v=20" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><a href="pilotos/psicologia-semana-${semana}.html?v=20" target="_blank" rel="noopener">Abrir semana ${semana} en pantalla completa</a></p>`:`<p class="muted" style="padding:18px 0">Elige una semana disponible para abrir su lección.</p>`}</div>`;
+ return `<div class="card"><h2>Vista previa · Psicología</h2><p class="muted">Selecciona una semana para estudiar su lección completa, desde la teoría hasta el punto 7. Por ahora solo están habilitadas las semanas con contenido elaborado. Esta vista es exclusiva para administradores.</p><div role="group" aria-label="Seleccionar semana de Psicología" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0 24px">${botones}</div>${semana?`<h3 style="margin-bottom:5px">Semana ${semana}: ${temas[semana]}</h3><p class="muted">Recorre la lección y sus actividades. El punto 7 se conectará con la separata cuando haya preguntas disponibles.</p><iframe title="Psicología, lección semana ${semana}" src="pilotos/psicologia-semana-${semana}.html?v=21" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><a href="pilotos/psicologia-semana-${semana}.html?v=21" target="_blank" rel="noopener">Abrir semana ${semana} en pantalla completa</a></p>`:`<p class="muted" style="padding:18px 0">Elige una semana disponible para abrir su lección.</p>`}</div>`;
+}
+const psicologiaSemanasConPreguntas=new Set([6,7,8,9,11,12,13]);
+let psicologiaPruebaRequest=0;
+async function enviarPracticaPsicologia(iframe,semana){
+ if(!admin()||!db||!psicologiaSemanasConPreguntas.has(semana)||!iframe?.contentWindow)return;
+ const request=++psicologiaPruebaRequest;
+ const send=payload=>{if(request===psicologiaPruebaRequest&&iframe.isConnected&&iframe.contentWindow)iframe.contentWindow.postMessage({type:'cachimbolab-psico-questions',week:semana,...payload},'*')};
+ try{
+  const {data,error}=await db.from('questions').select('id,week,subject,original_number,statement,options').eq('modality','CPU-UNSM').eq('subject','Psicología').eq('week',semana).eq('status','published').order('original_number',{ascending:true}).limit(50);
+  if(error)throw error;
+  if(!data?.length){send({questions:[]});return}
+  const full=[];for(let i=0;i<data.length;i+=5){
+   const group=await Promise.all(data.slice(i,i+5).map(async q=>{
+    const {data:detail,error:e}=await db.rpc('get_question_for_review',{p_question_id:q.id});
+    if(e||!detail)return null;
+    return {id:q.id,original_number:q.original_number,statement:q.statement,options:q.options,correct_index:detail.correct_index,explanation:detail.explanation};
+   }));
+   full.push(...group.filter(Boolean));
+   if(request!==psicologiaPruebaRequest)return;
+  }
+  if(!full.length)throw new Error('No se pudieron consultar las claves de las preguntas oficiales.');
+  send({questions:full});
+ }catch(e){send({error:'No se pudo cargar la práctica oficial: '+(e?.message||'Error de conexión')})}
 }
 function bindPsicologiaPiloto(){
  if(page!=='psicologia_piloto'||!admin())return;
+ const iframe=document.querySelector('iframe[title^="Psicología, lección semana"]');
+ const semana=psicologiaSemanaSeleccionada;
+ if(iframe&&psicologiaSemanasConPreguntas.has(semana)){
+  const onReady=e=>{if(e.source!==iframe.contentWindow||e.data?.type!=='cachimbolab-psico-ready'||Number(e.data.week)!==semana)return;window.removeEventListener('message',onReady);enviarPracticaPsicologia(iframe,semana)};
+  window.addEventListener('message',onReady);
+  iframe.addEventListener('load',()=>{if(iframe.isConnected){setTimeout(()=>{if(iframe.isConnected&&iframe.contentWindow)enviarPracticaPsicologia(iframe,semana)},300)}},{once:true});
+ }
+
  document.querySelectorAll('[data-psico-semana]').forEach(b=>b.addEventListener('click',()=>{
   if(b.disabled)return;
   const n=Number(b.dataset.psicoSemana);
