@@ -109,3 +109,12 @@
  #atenea-panel{position:fixed;right:8px;left:8px;bottom:72px;width:auto;max-width:none;height:min(570px,calc(100dvh - 90px))}
  #atenea-root.atenea-figure-hidden #atenea-minimize{display:none!important}
 }
+
+/* V3.5: corrección de visibilidad del control y arrastre táctil. */
+#atenea-root #atenea-toggle-size{right:auto;left:-11px;bottom:34px;z-index:10004;width:29px;height:29px;display:grid;place-items:center;touch-action:manipulation}
+#atenea-root #atenea-toggle-size.atenea-size-follow{left:0;bottom:auto;right:auto}
+#atenea-root #atenea-toggle{touch-action:none!important;-webkit-user-select:none;user-select:none}
+#atenea-root.atenea-toggle-compact #atenea-toggle{width:48px!important;height:48px!important;min-width:48px!important;padding:4px!important;border-radius:50%!important;gap:0!important}
+#atenea-root.atenea-toggle-compact #atenea-toggle span{display:none!important}
+#atenea-root.atenea-toggle-compact #atenea-toggle .atenea-toggle-avatar{width:38px!important;height:38px!important;margin:0!important}
+@media(max-width:700px){#atenea-root #atenea-toggle-size{left:-9px;bottom:30px}}
