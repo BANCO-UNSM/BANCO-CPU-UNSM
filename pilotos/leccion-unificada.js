@@ -75,6 +75,6 @@ const steps=el('div','steps');
 add(official,el('span','tag','08 · PRÁCTICA CPU · SEPARATA'),el('h2','','Aplicamos lo aprendido'),steps);
 main.append(official);
 main.append(el('p','foot','CachimboLab · Contenido organizado según el temario CPU proporcionado. Los repasos conservan la progresión de las semanas anteriores.'));
-const officialScript=document.createElement('script');officialScript.src='practica-nuevos-cursos.js?v=2';document.body.appendChild(officialScript);
+const officialScript=document.createElement('script');officialScript.src='practica-nuevos-cursos.js?v=12';document.body.appendChild(officialScript);
 window.addEventListener('pagehide',()=>{if(window.speechSynthesis)speechSynthesis.cancel()});
 })();
