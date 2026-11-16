@@ -1572,10 +1572,15 @@ function progressPage(){
 }
 function mistakesPage(){
  if(learningProgressError)return notice('No se pudieron cargar los errores: '+learningProgressError,true);
- const errors=progressErrors(),visible=new Map(questions.filter(q=>q.status==='published'&&!q.exam_id&&hasService(q.modality)).map(q=>[q.id,q]));
+ // Mantener separados los errores de CPU-UNSM y Beca 18 según el apartado activo.
+ const modality=selectedModality==='BECA18'?'BECA18':'CPU-UNSM';
+ const errors=progressErrors().filter(x=>x.modality===modality);
+ const visible=new Map(questions.filter(q=>q.status==='published'&&!q.exam_id&&q.modality===modality&&hasService(q.modality)).map(q=>[q.id,q]));
  const retry=errors.filter(x=>visible.has(x.id));
- return `<div class="card"><h2>🧠 Mis errores</h2><p>Preguntas cuya última respuesta fue incorrecta. Para ver la solución tendrás que responder otra vez.</p><div class="learning-stats"><div><strong>${errors.length}</strong><span>Pendientes de repaso</span></div><div><strong>${retry.length}</strong><span>Disponibles para practicar</span></div></div><div class="actions">${['CPU-UNSM','BECA18'].filter(m=>hasService(m)).map(m=>`<button data-retry-modality="${m}" ${retry.some(x=>x.modality===m)?'':'disabled'}>Repasar ${m==='BECA18'?'Beca 18':'CPU-UNSM'}</button>`).join('')}<button id="goProgress" class="secondary">Ver progreso</button></div></div><div class="card"><h3>Mis preguntas por reforzar</h3>${errors.length?errors.slice(0,80).map(x=>`<div class="listitem"><strong>${esc(x.subject)}</strong> <span class="muted small">${esc(x.modality==='BECA18'?'Beca 18':'CPU-UNSM')}</span><p class="muted">${esc(x.topic||'Tema general')}${x.week?' · Semana '+esc(x.week):''}</p>${visible.has(x.id)?`<button class="secondary" data-retry-question="${esc(x.id)}">Volver a resolver</button>`:'<p class="muted small">Disponible en historial de examen; no en práctica inmediata.</p>'}</div>`).join(''):'<p>¡Buen trabajo! No tienes preguntas pendientes según tu último intento.</p>'}${errors.length>80?'<p>Se muestran las primeras 80 preguntas pendientes.</p>':''}</div>`;
+ const label=modality==='BECA18'?'Beca 18':'CPU-UNSM';
+ return `<div class="card"><h2>🧠 Mis errores · ${label}</h2><p>Preguntas cuya última respuesta fue incorrecta. Para ver la solución tendrás que responder otra vez.</p><div class="learning-stats"><div><strong>${errors.length}</strong><span>Pendientes de repaso</span></div><div><strong>${retry.length}</strong><span>Disponibles para practicar</span></div></div><div class="actions"><button data-retry-modality="${modality}" ${retry.length?'':'disabled'}>Repasar ${label}</button><button id="goProgress" class="secondary">Ver progreso</button></div></div><div class="card"><h3>Mis preguntas por reforzar · ${label}</h3>${errors.length?errors.slice(0,80).map(x=>`<div class="listitem"><strong>${esc(x.subject)}</strong><p class="muted">${esc(x.topic||'Tema general')}${x.week?' · Semana '+esc(x.week):''}</p>${visible.has(x.id)?`<button class="secondary" data-retry-question="${esc(x.id)}">Volver a resolver</button>`:'<p class="muted small">Disponible en historial de examen; no en práctica inmediata.</p>'}</div>`).join(''):'<p>¡Buen trabajo! No tienes preguntas pendientes según tu último intento.</p>'}${errors.length>80?'<p>Se muestran las primeras 80 preguntas pendientes.</p>':''}</div>`;
 }
+
 function bindProgress(){
  $('goProgress')?.addEventListener('click',()=>{page='progress';render()});
  $('goMistakes')?.addEventListener('click',()=>{page='mistakes';render()});
