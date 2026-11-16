@@ -17,20 +17,46 @@ let questions=[],index=0,correct=0,answered=false,totalQuestions=0,complete=fals
 function explanationFor(q){return String(q.explanation||'').replace(/^\s*RESPUESTA\s+CORRECTA\s*:\s*[^\r\n]*(?:\r?\n)*/i,'').trim();}
 
 function textEl(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(text??'');return el}
+function formatMath(container){
+ if(course!=='algebra'||!window.katex)return;
+ const raw=container.textContent||'';
+ if(!/\\\(|\\\[|\\(?:frac|dfrac|sqrt|left|right|cdot|times|leq|geq|neq|pm|div|log|sum|begin)|\^|_/.test(raw))return;
+ const parts=raw.split(/(\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\])/g);
+ container.replaceChildren();
+ const render=(tex,display=false)=>{
+  const span=document.createElement(display?'div':'span');
+  span.className='cpu-math';
+  try{window.katex.render(tex,span,{throwOnError:true,displayMode:display,strict:'ignore'});return span}
+  catch{return document.createTextNode(tex)}
+ };
+ parts.forEach(part=>{
+  if(!part)return;
+  if(part.startsWith('\\(')&&part.endsWith('\\)')){container.append(render(part.slice(2,-2)));return}
+  if(part.startsWith('\\[')&&part.endsWith('\\]')){container.append(render(part.slice(2,-2),true));return}
+  // Algunos enunciados del banco guardan LaTeX sin delimitadores.
+  // Renderizar únicamente expresiones completas, nunca interpretar HTML.
+  const trimmed=part.trim();
+  if(/^\\(?:frac|dfrac|sqrt|begin|left)[\s\S]*$/.test(trimmed)){
+   container.append(render(trimmed));return;
+  }
+  container.append(document.createTextNode(part));
+ });
+}
+function mathText(tag,cls,value){const node=textEl(tag,cls,value);formatMath(node);return node}
 function draw(){body.replaceChildren();if(index>=questions.length){if(!complete){status.textContent='Preparando las siguientes preguntas…';body.append(textEl('p','', 'Las siguientes preguntas aparecerán automáticamente.'));return}status.textContent='Práctica oficial completada.';body.append(textEl('h3','', 'Resultado: '+correct+' de '+questions.length+' respuestas correctas.'));const restart=textEl('button','cpu-next','Volver a practicar');restart.onclick=()=>{index=0;correct=0;draw()};body.append(restart);return}
  const q=questions[index];answered=false;status.textContent='Pregunta '+(index+1)+' de '+(totalQuestions||questions.length)+' · Semana '+week;
 
- body.append(textEl('div','cpu-question',q.statement));
+ body.append(mathText('div','cpu-question',q.statement));
  const choices=document.createElement('div');const verdict=textEl('div','cpu-verdict','');verdict.hidden=true;verdict.setAttribute('role','status');const answer=textEl('p','cpu-answer','');answer.hidden=true;const feedback=textEl('div','cpu-explanation','');feedback.hidden=true;
  const next=textEl('button','cpu-next',index===questions.length-1&&complete?'Ver resultado':'Siguiente pregunta →');next.hidden=true;next.onclick=()=>{index++;draw()};
- (q.options||[]).forEach((opt,j)=>{const btn=textEl('button','cpu-option',label(j)+') '+cleanOption(opt));btn.type='button';btn.onclick=()=>{if(answered)return;
+ (q.options||[]).forEach((opt,j)=>{const btn=mathText('button','cpu-option',label(j)+') '+cleanOption(opt));btn.type='button';btn.onclick=()=>{if(answered)return;
 if(q.secure===true&&!Number.isInteger(q.correct_index)){
  if(pendingAnswer)return;
  pendingAnswer={id:q.id,index:j,button:btn};
  window.parent.postMessage({type:'cachimbolab-library-check',question_id:q.id,selected_index:j},'*');
  return;
 }
-answered=true;const hit=j===q.correct_index;if(hit)correct++;choices.querySelectorAll('button').forEach((b,k)=>{b.disabled=true;if(k===q.correct_index)b.classList.add('cpu-correct');else if(k===j)b.classList.add('cpu-incorrect')});verdict.className='cpu-verdict '+(hit?'correct':'incorrect');verdict.replaceChildren(textEl('span','cpu-symbol',hit?'✓':'✗'),textEl('span','',hit?'¡Respuesta correcta!':'Respuesta incorrecta'));verdict.hidden=false;if(!hit){answer.textContent='La respuesta correcta es: '+label(q.correct_index)+') '+q.options[q.correct_index];answer.hidden=false}const explanation=explanationFor(q);if(explanation){feedback.textContent='Explicación: '+explanation;feedback.hidden=false}else{feedback.textContent='';feedback.hidden=true}next.hidden=false};choices.append(btn)});
+answered=true;const hit=j===q.correct_index;if(hit)correct++;choices.querySelectorAll('button').forEach((b,k)=>{b.disabled=true;if(k===q.correct_index)b.classList.add('cpu-correct');else if(k===j)b.classList.add('cpu-incorrect')});verdict.className='cpu-verdict '+(hit?'correct':'incorrect');verdict.replaceChildren(textEl('span','cpu-symbol',hit?'✓':'✗'),textEl('span','',hit?'¡Respuesta correcta!':'Respuesta incorrecta'));verdict.hidden=false;if(!hit){answer.textContent='La respuesta correcta es: '+label(q.correct_index)+') '+q.options[q.correct_index];formatMath(answer);answer.hidden=false}const explanation=explanationFor(q);if(explanation){feedback.textContent='Explicación: '+explanation;formatMath(feedback);feedback.hidden=false}else{feedback.textContent='';feedback.hidden=true}next.hidden=false};choices.append(btn)});
  body.append(choices,verdict,answer,feedback,next);
 }
 window.addEventListener('message',e=>{
