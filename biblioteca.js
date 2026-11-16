@@ -34,7 +34,7 @@ function bibRMContenido(){
  const bloque=(titulo,valor)=>'<section class="card" style="margin-top:14px"><h3>'+titulo+'</h3><div class="bib-rm-math" style="white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere">'+esc(valor||'Pendiente de ampliación')+'</div></section>';
  const extra=bibRMExtra[Number(bibSemanaPreparacion)];
  const memoria='<section class="card" style="margin-top:14px"><h3>07 · Repaso de fórmulas y ejercicio nuevo</h3><p class="muted">Repasa las propiedades de esta semana y practica con un ejercicio adicional creado para la lección, distinto del ejemplo teórico.</p><details><summary style="cursor:pointer;font-weight:700">Recordar las fórmulas</summary><div class="bib-rm-math" style="white-space:pre-wrap;overflow-x:auto;margin-top:12px">'+esc(ficha.formulas||'Pendiente de ampliación')+'</div></details>'+(extra?'<p style="margin-top:16px"><strong>Reto adicional:</strong> '+esc(extra[0])+'</p><details><summary style="cursor:pointer;color:#0b7362;font-weight:700">Ver solución explicada</summary><p>'+esc(extra[1])+'</p></details>':'')+'</section>';
- const separata='<section class="card" style="margin-top:14px"><h3>08 · Separata de la semana '+bibSemanaPreparacion+'</h3><p class="muted">Consulta las preguntas correspondientes a esta semana. No se sustituyen las preguntas oficiales por ejercicios inventados.</p><button type="button" class="secondary" id="bibRMSeparata">Ver separata y preguntas de la semana</button></section>';
+ const separata='<section class="card" style="margin-top:14px"><h3>08 · Separata de la semana '+bibSemanaPreparacion+'</h3><p class="muted">Preguntas originales publicadas de la semana, con alternativas y explicación. Se muestran aquí mismo, sin abrir otra pantalla.</p><iframe title="Razonamiento Matemático semana '+bibSemanaPreparacion+'" src="pilotos/razonamiento-matematico-practica.html?week='+bibSemanaPreparacion+'&v=2" style="width:100%;height:78vh;min-height:660px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="eager"></iframe></section>';
  return '<div class="card"><h3>'+esc(ficha.tema||('Semana '+bibSemanaPreparacion))+'</h3><p>'+esc(ficha.resumen||'')+'</p>'+bloque('01 · Marco teórico',ficha.teoria)+bloque('02 · Fórmulas y propiedades',ficha.formulas)+bloque('03 · Ejemplos resueltos',ficha.ejemplo)+bloque('04 · Errores frecuentes',ficha.errores)+bloque('05 · Claves para recordar',ficha.claves)+bloque('06 · Comprueba lo aprendido','Explica con tus palabras cuándo se utiliza cada propiedad y verifica los pasos del ejemplo resuelto.')+memoria+separata+'</div>';
 }
 function bibPage(){
@@ -59,7 +59,7 @@ async function bibLoad(){
  finally{bibLoading=false;if(page==='biblioteca')render();}
 }
 function bibBind(){
- $('bibRMSeparata')?.addEventListener('click',()=>{if(typeof window.cachimbolabPracticeLesson==='function')window.cachimbolabPracticeLesson('Razonamiento Matemático',bibSemanaPreparacion);else alert('La separata de esta semana todavía no está disponible en el banco de preguntas.');});
+
  if(page!=='biblioteca'||bibliotecaLeccionesVista)return;
  document.querySelectorAll('[data-bib-area]').forEach(b=>b.addEventListener('click',()=>{bibVistaArea=b.dataset.bibArea;render()}));
  $('bibVolverAreas')?.addEventListener('click',()=>{bibVistaArea='';render()});
