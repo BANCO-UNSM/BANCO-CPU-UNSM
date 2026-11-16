@@ -657,6 +657,9 @@ function render(){
   if(cpuPreferredPracticeSubject) $('practiceSubject').value=cpuPreferredPracticeSubject;
   if(cpuPreferredPracticeWeek!=null&&$('practiceWeek')) $('practiceWeek').value=String(cpuPreferredPracticeWeek);
   cpuPreferredPracticeSubject='';cpuPreferredPracticeWeek=null;
+  const saveSelection=()=>{const subject=$('practiceSubject')?.value;const week=Number($('practiceWeek')?.value);if(selectedModality==='CPU-UNSM'&&subject&&Number.isInteger(week)&&week>=1&&week<=16)rememberCPUStudy(subject,week)};
+  $('practiceSubject')?.addEventListener('change',saveSelection);
+  $('practiceWeek')?.addEventListener('change',saveSelection);
  }
  bindAcademicQuality();
  bindPsicologiaPiloto();
@@ -942,7 +945,8 @@ window.cachimbolabPracticeLesson=openCPUPracticeForLesson;
 function openCPULessonFromPractice(){
  if(!hasService('CPU-UNSM'))return;
  const selected=$('practiceSubject')?.value||cpuPreferredPracticeSubject;
- const week=Number($('practiceWeek')?.value||cpuPreferredPracticeWeek);
+ const weekValue=$('practiceWeek')?.value||cpuPreferredPracticeWeek;
+ const week=weekValue?Number(weekValue):NaN;
  if(!selected||!Number.isInteger(week)||week<1||week>16){alert('Selecciona una materia y una semana para abrir su lección.');return}
  const availableLessons=['Psicología','Razonamiento Verbal','Cultura General','Educación Cívica','Historia','Geografía','Lenguaje y Literatura','Filosofía','Economía'];
  if(!availableLessons.includes(selected)||(selected==='Cultura General'&&![9,11,12,13].includes(week))){
@@ -950,10 +954,6 @@ function openCPULessonFromPractice(){
   return;
  }
  rememberCPUStudy(selected,week);
- if(['Razonamiento Matemático','Álgebra','Aritmética','Trigonometría','Geometría','Física','Química','Biología'].includes(selected)){
-  alert('La lección de Ciencias está en preparación. Puedes seguir practicando las preguntas publicadas.');
-  return;
- }
  selectedModality='CPU-UNSM';page='biblioteca';
  if(selected==='Psicología'){
   bibliotecaLeccionesVista=true;psicologiaSemanaSeleccionada=week;
@@ -986,7 +986,11 @@ function bindCPUDashboard(){
    if(action==='weak'){
     const weak=(learningProgress?.by_subject||[]).filter(x=>x.modality==='CPU-UNSM'&&Number(x.total)>=3).sort((a,b)=>percent(a.correct,a.total)-percent(b.correct,b.total))[0];
     cpuPreferredPracticeSubject=weak?.subject||'';
-   }else cpuPreferredPracticeSubject='';
+   }else{
+    const recent=recentCPUStudy();
+    cpuPreferredPracticeSubject=recent?.subject||'';
+    cpuPreferredPracticeWeek=recent?.week||null;
+   }
    practice=null;page='practice';
   }else if(['quiz','mistakes','progress','weekly'].includes(action))page=action;
   else return;
