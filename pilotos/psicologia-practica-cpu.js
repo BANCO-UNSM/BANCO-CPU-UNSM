@@ -53,6 +53,6 @@ if(window.parent===window){
  body.append(go);
  return;
 }
-status.textContent='Para responder las preguntas de esta semana, utiliza el botón «Practicar preguntas de esta semana» situado debajo de la lección en CachimboLab.';
+status.textContent='Cargando las preguntas oficiales de esta semana…';
 window.parent.postMessage({type:'cachimbolab-psico-ready',week},'*');
 })();
