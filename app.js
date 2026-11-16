@@ -330,7 +330,26 @@ async function refresh(){
  render();
  if(quiz?.deadlineAt&&!quiz.result&&quizRemaining()===0)submitQuizTimed();
 }
-function psicologiaPilotoPage(){return `<div class="card"><h2>Vista previa · Psicología · Semana 1</h2><p class="muted">Lección interactiva de prueba, visible solo para administradores. No registra datos de alumnos ni modifica preguntas o simulacros.</p><iframe title="Lección piloto de Psicología" src="pilotos/psicologia-semana-1.html?v=2" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><strong>Lecciones disponibles:</strong> <a href="pilotos/psicologia-semana-1.html?v=2" target="_blank" rel="noopener">Semana 1</a> · <a href="pilotos/psicologia-semana-2.html?v=1" target="_blank" rel="noopener">Semana 2 · Historia de la Psicología y socialización</a></p><p class="muted">Semana 2 se abre como lección independiente de prueba. Las preguntas oficiales se conectarán cuando existan para esa semana.</p></div>`;}
+let psicologiaSemanaSeleccionada=1;
+function psicologiaPilotoPage(){
+ const semana=psicologiaSemanaSeleccionada;
+ const temas={1:'Definición, ramas y métodos de la Psicología',2:'Historia de la Psicología y proceso de socialización',3:'Bases biológicas del comportamiento',4:'Etapas del desarrollo humano',5:'Sensación y percepción',6:'Atención, concentración y memoria',7:'Proceso cognoscitivo',8:'Repaso / según programación',9:'Inteligencia',10:'Emociones y sentimientos',11:'Motivación',12:'Aprendizaje',13:'Personalidad',14:'Temperamento y carácter',15:'Alteraciones de la personalidad'};
+ const botones=Array.from({length:15},(_,i)=>{
+  const n=i+1,disponible=n<=2,activo=n===semana;
+  return `<button type="button" data-psico-semana="${n}" ${disponible?'':'disabled title="Lección en preparación"'} aria-pressed="${activo}" style="min-height:68px;border-radius:13px;padding:12px 8px;border:2px solid ${activo?'#087f79':'#d4e3ef'};background:${activo?'#e2f6f0':disponible?'#f2f8ff':'#f5f6f8'};color:${disponible?'#173c58':'#8493a1'};font-weight:750;cursor:${disponible?'pointer':'not-allowed'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">Semana ${n}<small style="font-size:11px;font-weight:500">${disponible?'Ver lección':'En preparación'}</small></button>`;
+ }).join('');
+ return `<div class="card"><h2>Vista previa · Psicología</h2><p class="muted">Selecciona una semana para estudiar su lección completa, desde la teoría hasta el punto 7. Por ahora solo están habilitadas las semanas con contenido elaborado. Esta vista es exclusiva para administradores.</p><div role="group" aria-label="Seleccionar semana de Psicología" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0 24px">${botones}</div><h3 style="margin-bottom:5px">Semana ${semana}: ${temas[semana]}</h3><p class="muted">Recorre la lección y sus actividades. El punto 7 se conectará con la separata cuando haya preguntas disponibles.</p><iframe title="Psicología, lección semana ${semana}" src="pilotos/psicologia-semana-${semana}.html?v=3" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><a href="pilotos/psicologia-semana-${semana}.html?v=3" target="_blank" rel="noopener">Abrir semana ${semana} en pantalla completa</a></p></div>`;
+}
+function bindPsicologiaPiloto(){
+ if(page!=='psicologia_piloto'||!admin())return;
+ document.querySelectorAll('[data-psico-semana]').forEach(b=>b.addEventListener('click',()=>{
+  if(b.disabled)return;
+  const n=Number(b.dataset.psicoSemana);
+  if(!Number.isInteger(n)||n<1||n>2)return;
+  psicologiaSemanaSeleccionada=n;
+  render();
+ }));
+}
 function render(){
  if(passwordRecoveryMode){
    $('nav').innerHTML='';$('heading').textContent='Recuperar contraseña';$('account').innerHTML='';
@@ -364,6 +383,7 @@ function render(){
  bind();
  bindProgress();
  bindAcademicQuality();
+ bindPsicologiaPiloto();
  if(typeof bibBind==='function')bibBind();
  bindWeeklyChallenge();
  mostrarFormulas();
