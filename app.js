@@ -339,7 +339,7 @@ function psicologiaPilotoPage(){
   const n=i+1,disponible=true,activo=n===semana,repaso=n===10||n===16;
   return `<button type="button" data-psico-semana="${n}" ${disponible?'':'disabled title="Lección en preparación"'} aria-pressed="${activo}" style="min-height:68px;border-radius:13px;padding:12px 8px;border:2px solid ${activo?'#087f79':repaso?'#8ccfc7':'#d4e3ef'};background:${activo?'#e2f6f0':repaso?'#eaf8f5':disponible?'#f2f8ff':'#f5f6f8'};color:${disponible?'#173c58':'#8493a1'};font-weight:750;cursor:${disponible?'pointer':'not-allowed'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">Semana ${n}<small style="font-size:11px;font-weight:500">${repaso?'Ver repaso':'Ver lección'}</small></button>`;
  }).join('');
- return `<div class="card"><h2>Vista previa · Psicología</h2><p class="muted">Selecciona una semana para estudiar su lección completa, desde la teoría hasta el punto 7. Por ahora solo están habilitadas las semanas con contenido elaborado. Esta vista es exclusiva para administradores.</p><div role="group" aria-label="Seleccionar semana de Psicología" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0 24px">${botones}</div>${semana?`<h3 style="margin-bottom:5px">Semana ${semana}: ${temas[semana]}</h3><p class="muted">Explora la teoría, comprueba lo aprendido y desarrolla la práctica de la semana.</p><iframe title="Psicología, lección semana ${semana}" src="pilotos/psicologia-semana-${semana}.html?v=32" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><a href="pilotos/psicologia-semana-${semana}.html?v=29" target="_blank" rel="noopener">Abrir semana ${semana} en pantalla completa</a></p>`:`<p class="muted" style="padding:18px 0">Elige una semana disponible para abrir su lección.</p>`}</div>`;
+ return `<div class="card"><h2>Vista previa · Psicología</h2><p class="muted">Selecciona una semana para estudiar su lección completa, desde la teoría hasta el punto 7. Por ahora solo están habilitadas las semanas con contenido elaborado. Las lecciones están disponibles para los estudiantes autorizados.</p><div role="group" aria-label="Seleccionar semana de Psicología" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0 24px">${botones}</div>${semana?`<h3 style="margin-bottom:5px">Semana ${semana}: ${temas[semana]}</h3><p class="muted">Explora la teoría, comprueba lo aprendido y desarrolla la práctica de la semana.</p><iframe title="Psicología, lección semana ${semana}" src="pilotos/psicologia-semana-${semana}.html?v=32" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><a href="pilotos/psicologia-semana-${semana}.html?v=29" target="_blank" rel="noopener">Abrir semana ${semana} en pantalla completa</a></p>`:`<p class="muted" style="padding:18px 0">Elige una semana disponible para abrir su lección.</p>`}</div>`;
 }
 const psicologiaSemanasConPreguntas=new Set([6,7,8,9,11,12,13]);
 let psicologiaPruebaRequest=0;
@@ -536,8 +536,65 @@ function bindCivicaPractica(){
  window.addEventListener('message',onReady);
  iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(start,300)},{once:true});
 }
+let studentLibraryCleanup=null;
+function bindStudentLibraryPractice(){
+ if(studentLibraryCleanup){studentLibraryCleanup();studentLibraryCleanup=null}
+ if(page!=='biblioteca'||!user||admin()||!db||!(teacher()||access?.allowed))return;
+ const subjects={'Razonamiento Verbal':'Razonamiento Verbal','Cultura General':'Cultura General',
+  'Educación Cívica':'Educación Cívica','Historia':'Historia','Geografía':'Geografía',
+  'Lenguaje y Literatura':'Lenguaje y Literatura','Filosofía':'Filosofía','Economía':'Economía',
+  'Psicología':'Psicología'};
+ const subject=bibliotecaLeccionesVista?'Psicología':bibCursoPreparacion;
+ const week=bibliotecaLeccionesVista?psicologiaSemanaSeleccionada:bibSemanaPreparacion;
+ if(!subjects[subject]||!Number.isInteger(week)||week<1||week>16)return;
+ const iframe=bibliotecaLeccionesVista?
+  document.querySelector('iframe[title^="Psicología, lección semana"]'):
+  document.querySelector('iframe[title="'+subject+' semana '+week+'"]');
+ if(!iframe)return;
+ const type={'Razonamiento Verbal':'cachimbolab-verbal','Cultura General':'cachimbolab-cultura',
+  'Educación Cívica':'cachimbolab-civica','Psicología':'cachimbolab-psico'}[subject]||'cachimbolab-nuevos';
+ const slug={'Historia':'historia','Geografía':'geografia','Lenguaje y Literatura':'lenguaje',
+  'Filosofía':'filosofia','Economía':'economia'}[subject];
+ let started=false,active=true;
+ const permitted=new Set();
+ const send=(kind,extra)=>{if(!active||!iframe.isConnected||!iframe.contentWindow)return;
+  iframe.contentWindow.postMessage({type:kind,week,...(slug?{course:slug}:{}),...extra},'*');
+ };
+ const start=async()=>{
+  if(started||!active||!iframe.isConnected)return;
+  started=true;
+  try{
+   const {data,error}=await db.from('questions')
+    .select('id,week,subject,original_number,statement,options')
+    .eq('modality','CPU-UNSM').eq('status','published')
+    .eq('subject',subject).eq('week',week)
+    .order('original_number',{ascending:true}).limit(250);
+   if(!active)return;
+   if(error)throw error;
+   const questions=(data||[]).filter(q=>Array.isArray(q.options)&&q.options.length>=2)
+    .map(q=>({id:q.id,original_number:q.original_number,statement:q.statement,
+     options:q.options,secure:true}));
+   questions.forEach(q=>permitted.add(q.id));
+   send(type+'-questions',{questions,total:questions.length,complete:true});
+  }catch(e){send(type+'-questions',{error:'No se pudo cargar la práctica: '+(e?.message||'Error de acceso')});}
+ };
+ const onMessage=async e=>{
+  if(!active||e.source!==iframe.contentWindow||!e.data||typeof e.data!=='object')return;
+  if(e.data.type===type+'-ready'&&Number(e.data.week)===week){start();return;}
+  if(e.data.type!=='cachimbolab-library-check')return;
+  const id=e.data.question_id,selected=Number(e.data.selected_index);
+  if(!permitted.has(id)||!Number.isInteger(selected)||selected<0||selected>4)return;
+  const {data,error}=await db.rpc('check_practice_answer',{p_question_id:id,p_selected_index:selected});
+  if(!active)return;
+  send('cachimbolab-library-result',error?{question_id:id,error:error.message}:{
+   question_id:id,correct_index:data?.correct_index,explanation:data?.explanation||''});
+ };
+ window.addEventListener('message',onMessage);
+ iframe.addEventListener('load',()=>{if(active)setTimeout(start,200)},{once:true});
+ studentLibraryCleanup=()=>{active=false;window.removeEventListener('message',onMessage)};
+}
 function bindPsicologiaPiloto(){
- if(!(page==='psicologia_piloto'||(page==='biblioteca'&&bibliotecaLeccionesVista))||!admin())return;
+ if(!(page==='psicologia_piloto'||(page==='biblioteca'&&bibliotecaLeccionesVista)))return;
  const iframe=document.querySelector('iframe[title^="Psicología, lección semana"]');
  const semana=psicologiaSemanaSeleccionada;
  if(iframe&&psicologiaSemanasConPreguntas.has(semana)){
@@ -592,6 +649,7 @@ function render(){
  bindVerbalPractica();
  bindCivicaPractica();
  bindPracticaNuevosCursos();
+ bindStudentLibraryPractice();
  if(typeof bibBind==='function'&&!bibliotecaLeccionesVista)bibBind();
  $('bibAbrirPsicologia')?.addEventListener('click',()=>{bibliotecaLeccionesVista=true;psicologiaSemanaSeleccionada=null;render()});
  $('bibVolverLecciones')?.addEventListener('click',()=>{bibliotecaLeccionesVista=false;psicologiaSemanaSeleccionada=null;render()});
