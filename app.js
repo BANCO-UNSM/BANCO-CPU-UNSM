@@ -682,12 +682,18 @@ function accessPage(){
  return `<div class="card"><h2>${esc(status)}</h2><p>El administrador debe confirmar tu pago y habilitar tu acceso. No se realizan cobros en esta página.</p><p class="muted">${esc(access?.message||'Si ya pagaste, contacta al administrador. Si cambiaste de equipo, solicita liberar el dispositivo anterior.')}</p>${access?.expires_at?`<p>Vencimiento: ${esc(new Date(access.expires_at).toLocaleString('es-PE'))}</p>`:''}<button id="reloadAccess">Actualizar mi estado</button></div>`;
 }
 
+let cpuAuditSubjectFilter='';
 function academicQualityPage(){
  if(!admin())return notice('Auditoría reservada a la administradora.',true);
  const pending=academicKeyAlerts.filter(x=>x.status==='pending');
  const reviewed=academicKeyAlerts.filter(x=>x.status==='reviewed');
  const cpuFindings=academicFindings.filter(x=>x.modality==='CPU-UNSM');
- const cpuPending=pending.filter(x=>x.modality==='CPU-UNSM'||!x.modality);
+ const cpuPending=pending.filter(x=>x.modality==='CPU-UNSM');
+ const cpuReviewed=reviewed.filter(x=>x.modality==='CPU-UNSM');
+ const auditSubjects=[...new Set([...cpuFindings,...cpuPending,...cpuReviewed].map(x=>x.subject).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+ const filteredFindings=cpuFindings.filter(x=>!cpuAuditSubjectFilter||x.subject===cpuAuditSubjectFilter);
+ const filteredPending=cpuPending.filter(x=>!cpuAuditSubjectFilter||x.subject===cpuAuditSubjectFilter);
+ const filteredReviewed=cpuReviewed.filter(x=>!cpuAuditSubjectFilter||x.subject===cpuAuditSubjectFilter);
  const subjectCounts=new Map();
  for(const row of cpuFindings){const subject=row.subject||'Sin materia';const item=subjectCounts.get(subject)||{format:0,keys:0};item.format++;subjectCounts.set(subject,item)}
  for(const row of cpuPending){const subject=row.subject||'Sin materia';const item=subjectCounts.get(subject)||{format:0,keys:0};item.keys++;subjectCounts.set(subject,item)}
@@ -716,13 +722,14 @@ function academicQualityPage(){
    <h3>Resumen de observaciones · CPU-UNSM</h3>
    <p class="muted small">Los conteos representan observaciones detectadas, no preguntas académicamente verificadas. Las claves deben contrastarse con la separata o el solucionario original. Beca 18 no se incluye en este resumen.</p>
    ${cpuAuditSummary?'<div style="overflow-x:auto"><table><thead><tr><th>Curso</th><th>Formato o explicación</th><th>Claves pendientes</th></tr></thead><tbody>'+cpuAuditSummary+'</tbody></table></div>':'<p>No hay observaciones registradas de CPU-UNSM en la auditoría cargada.</p>'}
+   <div class="field"><label for="cpuAuditSubject">Filtrar observaciones por curso CPU-UNSM</label><select id="cpuAuditSubject"><option value="">Todos los cursos</option>${auditSubjects.map(s=>`<option value="${esc(s)}" ${cpuAuditSubjectFilter===s?'selected':''}>${esc(s)}</option>`).join('')}</select></div>
    <h3>Discrepancias de clave para seguimiento</h3>
-   <div class="learning-stats"><div><strong>${pending.length}</strong><span>Pendientes</span></div><div><strong>${reviewed.length}</strong><span>Revisadas (con historial)</span></div></div>
-   ${pending.length?pending.map(alertCard).join(''):'<p>No hay discrepancias pendientes registradas.</p>'}
-   ${reviewed.length?'<details><summary>Mostrar '+reviewed.length+' observación(es) revisada(s)</summary>'+reviewed.map(alertCard).join('')+'</details>':''}
+   <div class="learning-stats"><div><strong>${filteredPending.length}</strong><span>Pendientes</span></div><div><strong>${filteredReviewed.length}</strong><span>Revisadas (con historial)</span></div></div>
+   ${pending.length?filteredPending.map(alertCard).join(''):'<p>No hay discrepancias pendientes registradas.</p>'}
+   ${reviewed.length?'<details><summary>Mostrar '+reviewed.length+' observación(es) revisada(s)</summary>'+filteredReviewed.map(alertCard).join('')+'</details>':''}
    <h3>Otras observaciones automáticas</h3>
-   <div class="learning-stats"><div><strong>${academicFindings.length}</strong><span>Preguntas con observaciones de formato o explicación</span></div></div>
-   ${academicFindings.length?academicFindings.slice(0,250).map(row=>`<div class="listitem"><strong>${esc(row.subject||'Materia')} · ${esc(row.modality||'')} · ${row.week==null?'Sin semana':'Semana '+esc(row.week)} · N.º ${row.original_number??'—'}</strong><p class="muted small">Observaciones:</p><ul>${(row.issues||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul><button class="secondary" data-quality-question="${esc(row.id)}">Abrir en revisión</button></div>`).join(''):'<p>Sin observaciones según las reglas automáticas. Las claves requieren comprobación académica.</p>'}
+   <div class="learning-stats"><div><strong>${filteredFindings.length}</strong><span>Preguntas con observaciones de formato o explicación</span></div></div>
+   ${academicFindings.length?filteredFindings.slice(0,250).map(row=>`<div class="listitem"><strong>${esc(row.subject||'Materia')} · ${esc(row.modality||'')} · ${row.week==null?'Sin semana':'Semana '+esc(row.week)} · N.º ${row.original_number??'—'}</strong><p class="muted small">Observaciones:</p><ul>${(row.issues||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul><button class="secondary" data-quality-question="${esc(row.id)}">Abrir en revisión</button></div>`).join(''):'<p>Sin observaciones según las reglas automáticas. Las claves requieren comprobación académica.</p>'}
    ${academicFindings.length>250?'<p class="muted">Se muestran las primeras 250 preguntas.</p>':''}
   `:''}
  </div>`;
@@ -743,6 +750,7 @@ async function loadAcademicQuality(){
  render();
 }
 function bindAcademicQuality(){
+ $('cpuAuditSubject')?.addEventListener('change',e=>{cpuAuditSubjectFilter=e.target.value;render()});
  $('runQualityAudit')?.addEventListener('click',loadAcademicQuality);
  document.querySelectorAll('[data-quality-question]').forEach(b=>b.addEventListener('click',()=>{
   const q=questions.find(x=>x.id===b.dataset.qualityQuestion);
