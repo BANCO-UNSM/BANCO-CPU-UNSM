@@ -621,7 +621,7 @@ function render(){
  }
  const allowed=teacher()||access?.allowed;
  const pages=user?(allowed?(teacher()?
- [['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU']]:[]),['practice','📚 Estudia y practica'],['biblioteca','📖 Biblioteca de estudio'],['bank','Banco de preguntas (administración)'],...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación'],...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica'],['exams','Exámenes de admisión · Administración']]:[])]:[
+ [['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU']]:[]),['practice','📚 Estudia y practica'],['biblioteca','📖 Biblioteca de estudio'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación'],...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica'],['exams','Exámenes de admisión · Administración']]:[])]:[
  ['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU']]:[]),
  ['biblioteca','📖 Aprender'],['practice','✏️ Practicar'],['quiz','📝 Simulacros'],
  ['progress','📊 Mi progreso'],['mistakes','Mis errores'],['results','Mis resultados'],
@@ -943,6 +943,11 @@ function openCPULessonFromPractice(){
  const selected=$('practiceSubject')?.value||cpuPreferredPracticeSubject;
  const week=Number($('practiceWeek')?.value||cpuPreferredPracticeWeek);
  if(!selected||!Number.isInteger(week)||week<1||week>16){alert('Selecciona una materia y una semana para abrir su lección.');return}
+ const availableLessons=['Psicología','Razonamiento Verbal','Cultura General','Educación Cívica','Historia','Geografía','Lenguaje y Literatura','Filosofía','Economía'];
+ if(!availableLessons.includes(selected)||(selected==='Cultura General'&&![9,11,12,13].includes(week))){
+  alert('Esta lección todavía no está disponible en la biblioteca. Puedes continuar con la práctica publicada.');
+  return;
+ }
  rememberCPUStudy(selected,week);
  if(['Razonamiento Matemático','Álgebra','Aritmética','Trigonometría','Geometría','Física','Química','Biología'].includes(selected)){
   alert('La lección de Ciencias está en preparación. Puedes seguir practicando las preguntas publicadas.');
