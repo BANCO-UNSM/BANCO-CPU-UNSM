@@ -15,9 +15,8 @@ function normalize(){
  if(!memory||!check||!official)return;
  if(!official.id)official.id='practica';
  const stop=new Set([memory,check,official]);
- let topics=cards.filter(s=>!stop.has(s)&&s.compareDocumentPosition(memory)&Node.DOCUMENT_POSITION_FOLLOWING);
- // Correct precedence: keep sections that occur before the memory card.
- topics=cards.filter(s=>!stop.has(s)&&Boolean(s.compareDocumentPosition(memory)&Node.DOCUMENT_POSITION_FOLLOWING));
+ // Los apartados de teoría preceden a las tarjetas de memoria.
+ let topics=cards.filter(s=>!stop.has(s)&&Boolean(s.compareDocumentPosition(memory)&Node.DOCUMENT_POSITION_FOLLOWING));
  if(!topics.length)return;
  const heading=s=>s.querySelector(':scope > h2')?.textContent?.trim()||'Concepto de estudio';
  const overview=s=>{const p=s.querySelector(':scope > p');return p?.textContent?.trim()||'Relaciona los ejemplos y las ideas del tema.';};
@@ -33,12 +32,23 @@ function normalize(){
   h.textContent=['','', 'Relacionamos los conceptos', 'Aplicación en situaciones', 'Síntesis y comparación'][number]||'Practicamos la teoría';
   const intro=document.createElement('p');intro.textContent='Analiza estas situaciones y vincúlalas con los conceptos estudiados.';
   section.append(tag,h,intro);
-  source.slice(0,4).forEach((item,i)=>{
+  const examples=source.flatMap(item=>{
+   const elements=Array.from(item.querySelectorAll('.stage, .tile, .scenario, .info'));
+   return elements.map(el=>{
+    const key=el.querySelector('strong, b')?.textContent?.trim()||heading(item);
+    const clue=el.querySelector('p, span')?.textContent?.trim()||el.textContent?.replace(key,'').trim()||overview(item);
+    return {key,clue,context:heading(item)};
+   }).filter(x=>x.clue&&x.clue.length>8);
+  });
+  const selected=examples.length?Array.from({length:Math.min(3,examples.length)},(_,i)=>examples[((number-2)*3+i)%examples.length]):
+   source.slice(0,3).map(item=>({key:heading(item),clue:overview(item),context:heading(item)}));
+  selected.forEach((item,i)=>{
    const details=document.createElement('details');
    details.style.cssText='border:1px solid #c8dcea;border-radius:10px;padding:12px;margin:9px 0;background:#f3f9ff';
    const summary=document.createElement('summary');
-   summary.textContent='Caso '+(i+1)+': ¿qué debes recordar acerca de «'+heading(item)+'»?';
-   const p=document.createElement('p');p.textContent=overview(item);
+   summary.textContent='Caso '+(i+1)+': '+item.clue.slice(0,170)+' ¿Con qué concepto lo relacionas?';
+   const p=document.createElement('p');
+   p.textContent='Se relaciona con «'+item.key+'», dentro de '+item.context+'. Comprueba esta relación con la teoría anterior.';
    details.append(summary,p);section.append(details);
   });
   const btn=document.createElement('button');btn.type='button';btn.className='audio-btn';
