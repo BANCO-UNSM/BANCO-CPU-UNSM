@@ -431,6 +431,58 @@ function bindVerbalPractica(){
  window.addEventListener('message',onReady);
  iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(start,300)},{once:true});
 }
+let civicaPracticaRequest=0;
+async function enviarPracticaCivica(iframe,semana){
+ if(!admin()||!db||!iframe?.contentWindow||![11,12,13].includes(semana))return;
+ const request=++civicaPracticaRequest;
+ const send=payload=>{
+  if(request===civicaPracticaRequest&&iframe.isConnected&&iframe.contentWindow){
+   iframe.contentWindow.postMessage({type:'cachimbolab-civica-questions',week:semana,...payload},window.location.origin);
+  }
+ };
+ try{
+  const {data,error}=await db.from('questions')
+   .select('id,week,subject,original_number,statement,options')
+   .eq('modality','CPU-UNSM').eq('subject','Educación Cívica')
+   .eq('week',semana).eq('status','published')
+   .order('original_number',{ascending:true}).limit(200);
+  if(error)throw error;
+  if(!data?.length){send({questions:[],total:0,complete:true});return}
+  let sent=0;
+  for(let i=0;i<data.length;i+=5){
+   const group=await Promise.all(data.slice(i,i+5).map(async q=>{
+    const {data:detail,error:e}=await db.rpc('get_question_for_review',{p_question_id:q.id});
+    if(e||!detail)return null;
+    const key=Number(detail.correct_index);
+    if(!Number.isInteger(key)||key<0||key>=q.options.length)return null;
+    return {id:q.id,original_number:q.original_number,statement:q.statement,
+     options:q.options,correct_index:key,explanation:detail.explanation};
+   }));
+   if(request!==civicaPracticaRequest)return;
+   if(group.some(x=>!x))throw new Error('Hay preguntas publicadas sin clave verificable. Revisa el banco académico.');
+   const batch=group.filter(Boolean);
+   sent+=batch.length;
+   send({questions:batch,total:data.length,append:i>0,complete:sent===data.length});
+  }
+ }catch(e){send({error:'No se pudo cargar la práctica CPU: '+(e?.message||'Error de conexión')})}
+}
+function bindCivicaPractica(){
+ if(page!=='biblioteca'||!admin()||bibliotecaLeccionesVista||
+    typeof bibCursoPreparacion==='undefined'||bibCursoPreparacion!=='Educación Cívica'||
+    ![11,12,13].includes(bibSemanaPreparacion))return;
+ const semana=bibSemanaPreparacion;
+ const iframe=document.querySelector('iframe[title="Educación Cívica semana '+semana+'"]');
+ if(!iframe)return;
+ let started=false;
+ const start=()=>{if(started||!iframe.isConnected)return;started=true;enviarPracticaCivica(iframe,semana)};
+ const onReady=e=>{
+  if(e.origin!==window.location.origin||e.source!==iframe.contentWindow||
+     e.data?.type!=='cachimbolab-civica-ready'||Number(e.data.week)!==semana)return;
+  window.removeEventListener('message',onReady);start();
+ };
+ window.addEventListener('message',onReady);
+ iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(start,300)},{once:true});
+}
 function bindPsicologiaPiloto(){
  if(!(page==='psicologia_piloto'||(page==='biblioteca'&&bibliotecaLeccionesVista))||!admin())return;
  const iframe=document.querySelector('iframe[title^="Psicología, lección semana"]');
@@ -485,6 +537,7 @@ function render(){
  bindPsicologiaPiloto();
  bindCulturaPractica();
  bindVerbalPractica();
+ bindCivicaPractica();
  if(typeof bibBind==='function'&&!bibliotecaLeccionesVista)bibBind();
  $('bibAbrirPsicologia')?.addEventListener('click',()=>{bibliotecaLeccionesVista=true;psicologiaSemanaSeleccionada=null;render()});
  $('bibVolverLecciones')?.addEventListener('click',()=>{bibliotecaLeccionesVista=false;psicologiaSemanaSeleccionada=null;render()});
