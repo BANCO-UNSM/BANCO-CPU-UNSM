@@ -420,7 +420,7 @@ async function enviarPracticaVerbal(iframe,semana){
  }catch(e){send({error:'No se pudo cargar la práctica CPU: '+(e?.message||'Error de conexión')})}
 }
 function bindVerbalPractica(){
- if(page!=='biblioteca'||!admin()||bibliotecaLeccionesVista||typeof bibCursoPreparacion==='undefined'||bibCursoPreparacion!=='Razonamiento Verbal'||![6,9,11,12,13,14].includes(bibSemanaPreparacion))return;
+ if(page!=='biblioteca'||!admin()||bibliotecaLeccionesVista||typeof bibCursoPreparacion==='undefined'||bibCursoPreparacion!=='Razonamiento Verbal'||![1,2,3,6,9,11,12,13,14].includes(bibSemanaPreparacion))return;
  const semana=bibSemanaPreparacion;
  const iframe=document.querySelector('iframe[title="Razonamiento Verbal semana '+semana+'"]');
  if(!iframe)return;
