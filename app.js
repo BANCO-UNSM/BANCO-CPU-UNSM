@@ -622,10 +622,11 @@ function render(){
  const allowed=teacher()||access?.allowed;
  const pages=user?(allowed?(teacher()?
  [['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU']]:[]),['practice','📚 Estudia y practica'],['biblioteca','📖 Biblioteca de estudio'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación'],...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica'],['exams','Exámenes de admisión · Administración']]:[])]:[
- ['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU']]:[]),
- ['biblioteca','📖 Aprender'],['practice','✏️ Practicar'],['quiz','📝 Simulacros'],
- ['progress','📊 Mi progreso'],['mistakes','Mis errores'],['results','Mis resultados'],
- ...(hasService('CPU-UNSM')?[['weekly','Reto semanal'],['exams','📝 Exámenes de admisión · Próximamente']]:[])
+ ['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU'],['biblioteca','📖 Aprender']]:[]),
+ ['practice','✏️ Practicar'],['quiz','📝 Simulacros'],['progress','📊 Mi progreso'],
+ ...(page==='mistakes'?[['mistakes','Mis errores']]:[]),
+ ...(page==='results'?[['results','Mis resultados']]:[]),
+ ...(page==='weekly'?[['weekly','Reto semanal']]:[])
  ]):[['access','Mi acceso']]):[];
  if(page==='bank'&&!admin())page='practice';
  
