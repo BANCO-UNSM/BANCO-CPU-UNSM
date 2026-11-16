@@ -542,7 +542,7 @@ function bindStudentLibraryPractice(){
  if(!(['biblioteca','psicologia_piloto'].includes(page))||!user||!db||!(teacher()||access?.allowed))return;
  const subjects={'Razonamiento Verbal':'Razonamiento Verbal','Cultura General':'Cultura General',
   'Educación Cívica':'Educación Cívica','Historia':'Historia','Geografía':'Geografía',
-  'Lenguaje y Literatura':'Lenguaje y Literatura','Filosofía':'Filosofía','Economía':'Economía',
+  'Lenguaje y Literatura':'Lenguaje y Literatura','Filosofía':'Filosofía','Economía':'Economía','Álgebra':'Álgebra',
   'Psicología':'Psicología'};
  const psicoLesson=page==='psicologia_piloto'||bibliotecaLeccionesVista;
  const subject=psicoLesson?'Psicología':bibCursoPreparacion;
@@ -555,7 +555,7 @@ function bindStudentLibraryPractice(){
  const type={'Razonamiento Verbal':'cachimbolab-verbal','Cultura General':'cachimbolab-cultura',
   'Educación Cívica':'cachimbolab-civica','Psicología':'cachimbolab-psico'}[subject]||'cachimbolab-nuevos';
  const slug={'Historia':'historia','Geografía':'geografia','Lenguaje y Literatura':'lenguaje',
-  'Filosofía':'filosofia','Economía':'economia'}[subject];
+  'Filosofía':'filosofia','Economía':'economia','Álgebra':'algebra'}[subject];
  let started=false,active=true;
  const permitted=new Set();
  const send=(kind,extra)=>{if(!active||!iframe.isConnected||!iframe.contentWindow)return;
