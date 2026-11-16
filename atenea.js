@@ -147,14 +147,15 @@ function initFloatingButton(){
  const root=$('atenea-root'),btn=$('atenea-toggle');if(!root||!btn)return;
  const compactKey='ateneaButtonCompact';
  const saved=(()=>{try{return sessionStorage.getItem(compactKey)}catch(_){return null}})();
- const compact=saved===null?window.matchMedia('(max-width:700px)').matches:saved==='true';
+ const compact=window.matchMedia('(max-width:700px)').matches ? saved!=='false' : saved==='true';
  const sizeBtn=document.createElement('button');sizeBtn.id='atenea-toggle-size';sizeBtn.type='button';
  btn.after(sizeBtn);
  function setCompact(value){root.classList.toggle('atenea-toggle-compact',value);sizeBtn.textContent=value?'+':'−';sizeBtn.title=value?'Ampliar botón de Atenea':'Minimizar botón de Atenea';sizeBtn.setAttribute('aria-label',sizeBtn.title);try{sessionStorage.setItem(compactKey,String(value))}catch(_){}}
  setCompact(compact);
- sizeBtn.addEventListener('click',()=>setCompact(!root.classList.contains('atenea-toggle-compact')));
+ sizeBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setCompact(!root.classList.contains('atenea-toggle-compact'))});
  let drag=null,blockClick=false;
  btn.style.touchAction='none';
+ btn.setAttribute('aria-description','Arrastra para mover a Atenea; pulsa para abrir el chat.');
  btn.addEventListener('pointerdown',e=>{
   if(e.pointerType==='mouse'&&e.button!==0)return;
   const rect=btn.getBoundingClientRect();
