@@ -8,20 +8,19 @@ function pick(){
  const synth=window.speechSynthesis;
  if(!synth)return null;
  const voices=synth.getVoices().filter(v=>/^es(?:-|$)/i.test(v.lang||'')&&femaleNames.test(v.name||'')&&!maleNames.test(v.name||''));
- return voices.sort((a,b)=>Number(/^es-PE$/i.test(b.lang))-Number(/^es-PE$/i.test(a.lang))||Number(/natural|neural|premium/i.test(b.name))-Number(/natural|neural|premium/i.test(a.name)))[0]||null;
+ return voices.sort((a,b)=>Number(/^es-PE$/i.test(b.lang))-Number(/^es-PE$/i.test(a.lang))||Number(/natural|neural|premium/i.test(b.name))-Number(/natural|neural|premium/i.test(a.name)))[0]||synth.getVoices().filter(v=>/^es(?:-|$)/i.test(v.lang||'')).sort((a,b)=>Number(/^es-PE$/i.test(b.lang))-Number(/^es-PE$/i.test(a.lang)))[0]||null;
 }
 window.ateneaVozFemenina=pick;
 window.ateneaSpeak=function(utterance){
  const voice=pick();
+ if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)return false;
  if(!voice){
-  if(!warned){
-   warned=true;
-   alert('Atenea necesita una voz femenina en español. Este navegador no tiene una voz femenina identificable disponible. Instala o activa una voz femenina en español en las opciones de voz del dispositivo y vuelve a abrir la lección.');
-  }
-  return false;
+  // Android puede cargar sus voces después del primer toque. No bloquear el motor.
+  utterance.lang='es-PE';
+ }else{
+  utterance.voice=voice;
+  utterance.lang=voice.lang;
  }
- utterance.voice=voice;
- utterance.lang=voice.lang;
  utterance.pitch=1;
  window.speechSynthesis.speak(utterance);
  return true;
