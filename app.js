@@ -339,7 +339,7 @@ function psicologiaPilotoPage(){
   const n=i+1,disponible=true,activo=n===semana,repaso=n===10||n===16;
   return `<button type="button" data-psico-semana="${n}" ${disponible?'':'disabled title="Lección en preparación"'} aria-pressed="${activo}" style="min-height:68px;border-radius:13px;padding:12px 8px;border:2px solid ${activo?'#087f79':repaso?'#8ccfc7':'#d4e3ef'};background:${activo?'#e2f6f0':repaso?'#eaf8f5':disponible?'#f2f8ff':'#f5f6f8'};color:${disponible?'#173c58':'#8493a1'};font-weight:750;cursor:${disponible?'pointer':'not-allowed'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">Semana ${n}<small style="font-size:11px;font-weight:500">${repaso?'Ver repaso':'Ver lección'}</small></button>`;
  }).join('');
- return `<div class="card"><h2>Vista previa · Psicología</h2><p class="muted">Selecciona una semana para estudiar su lección completa, desde la teoría hasta el punto 7. Por ahora solo están habilitadas las semanas con contenido elaborado. Las lecciones están disponibles para los estudiantes autorizados.</p><div role="group" aria-label="Seleccionar semana de Psicología" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0 24px">${botones}</div>${semana?`<h3 style="margin-bottom:5px">Semana ${semana}: ${temas[semana]}</h3><p class="muted">Explora la teoría, comprueba lo aprendido y desarrolla la práctica de la semana.</p><iframe title="Psicología, lección semana ${semana}" src="pilotos/psicologia-semana-${semana}.html?v=32" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><a href="pilotos/psicologia-semana-${semana}.html?v=29" target="_blank" rel="noopener">Abrir semana ${semana} en pantalla completa</a></p>`:`<p class="muted" style="padding:18px 0">Elige una semana disponible para abrir su lección.</p>`}</div>`;
+ return `<div class="card"><h2>Vista previa · Psicología</h2><p class="muted">Selecciona una semana para estudiar su lección completa, desde la teoría hasta el punto 7. Por ahora solo están habilitadas las semanas con contenido elaborado. Las lecciones están disponibles para los estudiantes autorizados.</p><div role="group" aria-label="Seleccionar semana de Psicología" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0 24px">${botones}</div>${semana?`<h3 style="margin-bottom:5px">Semana ${semana}: ${temas[semana]}</h3><p class="muted">Explora la teoría, comprueba lo aprendido y desarrolla la práctica de la semana.</p><iframe title="Psicología, lección semana ${semana}" src="pilotos/psicologia-semana-${semana}.html?v=32" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><button type="button" class="secondary" id="psicoGoPractice" data-lesson-week="${semana}">✏️ Practicar preguntas de esta semana</button></p><p><a href="pilotos/psicologia-semana-${semana}.html?v=29" target="_blank" rel="noopener">Abrir semana ${semana} en pantalla completa</a></p>`:`<p class="muted" style="padding:18px 0">Elige una semana disponible para abrir su lección.</p>`}</div>`;
 }
 const psicologiaSemanasConPreguntas=new Set([6,7,8,9,11,12,13]);
 let psicologiaPruebaRequest=0;
@@ -603,6 +603,7 @@ function bindPsicologiaPiloto(){
   iframe.addEventListener('load',()=>{if(iframe.isConnected){setTimeout(()=>{if(iframe.isConnected&&iframe.contentWindow)enviarPracticaPsicologia(iframe,semana)},300)}},{once:true});
  }
 
+ $('psicoGoPractice')?.addEventListener('click',()=>openCPUPracticeForLesson('Psicología',psicologiaSemanaSeleccionada));
  document.querySelectorAll('[data-psico-semana]').forEach(b=>b.addEventListener('click',()=>{
   if(b.disabled)return;
   const n=Number(b.dataset.psicoSemana);
@@ -619,7 +620,13 @@ function render(){
    $('app').innerHTML=recoveryPasswordPage();bindPasswordRecovery();return;
  }
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU']]:[]),['practice','📚 Estudia y practica'],['biblioteca','📖 Biblioteca de estudio'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[]),...(hasService('CPU-UNSM')?[['exams',admin()?'Exámenes de admisión · Administración':'📝 Exámenes de admisión · Próximamente']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?(teacher()?
+ [['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU']]:[]),['practice','📚 Estudia y practica'],['biblioteca','📖 Biblioteca de estudio'],['bank','Banco de preguntas (administración)'],...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación'],...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica'],['exams','Exámenes de admisión · Administración']]:[])]:[
+ ['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU']]:[]),
+ ['biblioteca','📖 Aprender'],['practice','✏️ Practicar'],['quiz','📝 Simulacros'],
+ ['progress','📊 Mi progreso'],['mistakes','Mis errores'],['results','Mis resultados'],
+ ...(hasService('CPU-UNSM')?[['weekly','Reto semanal'],['exams','📝 Exámenes de admisión · Próximamente']]:[])
+ ]):[['access','Mi acceso']]):[];
  if(page==='bank'&&!admin())page='practice';
  
  if(page==='psicologia_piloto')page=admin()?'biblioteca':'home';
@@ -635,7 +642,7 @@ function render(){
   // Para docentes y administradores, descartar cualquier simulacro de prueba abandonado
   // y evitar que se restaure automáticamente desde el navegador.
   if(teacher()&&quiz?.deadlineAt&&!quiz.result)clearTimedExam();
-  page=x.dataset.page;quiz=null;practice=null;examSession=null;render();if(page==='biblioteca'&&typeof bibLoad==='function')bibLoad();
+  page=x.dataset.page;quiz=null;practice=null;examSession=null;if(page==='practice'){cpuPreferredPracticeSubject='';cpuPreferredPracticeWeek=null;}render();if(page==='biblioteca'&&typeof bibLoad==='function')bibLoad();
  });
  $('heading').textContent=({home:'Panel principal','cpu-panel':'Mi preparación CPU-UNSM',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica',biblioteca:'Biblioteca de estudio',psicologia_piloto:'Vista previa · Psicología'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
@@ -645,7 +652,11 @@ function render(){
  bind();
  bindProgress();
  bindCPUDashboard();
- if(page==='practice'&&cpuPreferredPracticeSubject&&$('practiceSubject')){ $('practiceSubject').value=cpuPreferredPracticeSubject;cpuPreferredPracticeSubject=''; }
+ if(page==='practice'&&$('practiceSubject')){
+  if(cpuPreferredPracticeSubject) $('practiceSubject').value=cpuPreferredPracticeSubject;
+  if(cpuPreferredPracticeWeek!=null&&$('practiceWeek')) $('practiceWeek').value=String(cpuPreferredPracticeWeek);
+  cpuPreferredPracticeSubject='';cpuPreferredPracticeWeek=null;
+ }
  bindAcademicQuality();
  bindPsicologiaPiloto();
  bindCulturaPractica();
@@ -919,6 +930,31 @@ function cpuDashboardPage(){
   </div>
  </div>`;
 }
+function openCPUPracticeForLesson(subject,week){
+ if(!hasService('CPU-UNSM'))return;
+ selectedModality='CPU-UNSM';
+ cpuPreferredPracticeSubject=subject||'';
+ cpuPreferredPracticeWeek=Number.isInteger(Number(week))&&Number(week)>=1&&Number(week)<=16?Number(week):null;
+ quiz=null;practice=null;page='practice';render();
+}
+window.cachimbolabPracticeLesson=openCPUPracticeForLesson;
+function openCPULessonFromPractice(){
+ if(!hasService('CPU-UNSM'))return;
+ const selected=$('practiceSubject')?.value||cpuPreferredPracticeSubject;
+ const week=Number($('practiceWeek')?.value||cpuPreferredPracticeWeek);
+ if(!selected||!Number.isInteger(week)||week<1||week>16){alert('Selecciona una materia y una semana para abrir su lección.');return}
+ rememberCPUStudy(selected,week);
+ selectedModality='CPU-UNSM';page='biblioteca';
+ if(selected==='Psicología'){
+  bibliotecaLeccionesVista=true;psicologiaSemanaSeleccionada=week;
+ }else{
+  const science=['Razonamiento Matemático','Álgebra','Aritmética','Trigonometría','Geometría','Física','Química','Biología'].includes(selected);
+  if(science){alert('Esta lección de Ciencias aún está en preparación. Puedes practicar las preguntas publicadas.');return}
+  bibliotecaLeccionesVista=false;bibVistaArea='Letras y humanidades';
+  bibCursoPreparacion=selected;bibSemanaPreparacion=week;
+ }
+ render();
+}
 function bindCPUDashboard(){
  document.querySelectorAll('[data-cpu-action]').forEach(b=>b.addEventListener('click',()=>{
   const action=b.dataset.cpuAction;
@@ -951,6 +987,7 @@ function bindCPUDashboard(){
  }));
 }
 let cpuPreferredPracticeSubject='';
+let cpuPreferredPracticeWeek=null;
 
 function home(){
   const cpu = questions.filter(q => q.modality === 'CPU-UNSM');
@@ -1466,7 +1503,7 @@ function quizReviewPage(){
 // La respuesta correcta nunca se obtiene antes de comprobar la pregunta en Supabase.
 function practicePage(){
   const published=modalityQuestions().filter(q=>!q.exam_id&&q.status==='published');
-  if(!practice)return `<div class="card"><h2>📚 Estudia y practica · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><p class="muted">Elige una materia y una semana. Marca tu alternativa, comprueba si es correcta y aprende con la explicación. Tus respuestas se guardan en Supabase.</p><div class="field"><label>Materia</label><select id="practiceSubject"><option value="">Todas las materias</option>${[...new Set(published.map(q=>q.subject))].sort().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select></div><div class="field"><label>Semana</label><select id="practiceWeek"><option value="">Todas las semanas</option>${[...new Set(published.filter(q=>q.week!=null).map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select></div><div class="actions"><button id="startPractice" ${published.length?'':'disabled'}>Comenzar práctica</button><button id="reviewPractice" class="secondary">Repasar mis errores</button></div><p id="practiceStatus" class="muted">${published.length?`${published.length} pregunta(s) publicada(s) disponible(s).`:'Todavía no hay preguntas publicadas.'}</p></div>`;
+  if(!practice)return `<div class="card"><h2>📚 Estudia y practica · ${selectedModality==='BECA18'?'Beca 18':'CPU-UNSM'}</h2><p class="muted">Elige una materia y una semana. Marca tu alternativa, comprueba si es correcta y aprende con la explicación. Tus respuestas se guardan en Supabase.</p><div class="field"><label>Materia</label><select id="practiceSubject"><option value="">Todas las materias</option>${[...new Set(published.map(q=>q.subject))].sort().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select></div><div class="field"><label>Semana</label><select id="practiceWeek"><option value="">Todas las semanas</option>${[...new Set(published.filter(q=>q.week!=null).map(q=>q.week))].sort((a,b)=>a-b).map(w=>`<option value="${w}">Semana ${w}</option>`).join('')}</select></div><div class="actions">${selectedModality==='CPU-UNSM'?'<button type="button" class="secondary" id="goLessonFromPractice">📖 Ir a la lección de esta semana</button>':''}<button id="startPractice" ${published.length?'':'disabled'}>Comenzar práctica</button><button id="reviewPractice" class="secondary">Repasar mis errores</button></div><p id="practiceStatus" class="muted">${published.length?`${published.length} pregunta(s) publicada(s) disponible(s).`:'Todavía no hay preguntas publicadas.'}</p></div>`;
   const q=practice.items[practice.i];
   if(!q)return `<div class="card"><h2>Práctica finalizada</h2><p>Has completado ${practice.items.length} pregunta(s).</p><p>Aciertos en esta sesión: <strong>${practice.hits}/${practice.items.length}</strong></p><button id="finishPractice">Volver al inicio de práctica</button></div>`;
   const d=practice.feedback;
@@ -1477,7 +1514,8 @@ async function startPractice(items){
   practice={items:[...items].sort(()=>Math.random()-.5),i:0,selected:null,feedback:null,hits:0};render();
 }
 function bindPractice(){
-  if($('startPractice'))$('startPractice').onclick=()=>{const subject=$('practiceSubject').value,week=$('practiceWeek').value;startPractice(
+  $('goLessonFromPractice')?.addEventListener('click',openCPULessonFromPractice);
+ if($('startPractice'))$('startPractice').onclick=()=>{const subject=$('practiceSubject').value,week=$('practiceWeek').value;startPractice(
 questions.filter(q=>!q.exam_id&&q.modality===selectedModality&&q.status==='published'
 &&(!subject||q.subject===subject)&&(!week||String(q.week)===week)))};
   if($('reviewPractice'))$('reviewPractice').onclick=async()=>{
