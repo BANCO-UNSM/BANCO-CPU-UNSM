@@ -365,12 +365,12 @@ async function enviarPracticaPsicologia(iframe,semana){
  }catch(e){send({error:'No se pudo cargar la práctica oficial: '+(e?.message||'Error de conexión')})}
 }
 let culturaPracticaRequest=0;
-async function enviarPracticaCultura(iframe){
+async function enviarPracticaCultura(iframe,semana){
  if(!admin()||!db||!iframe?.contentWindow)return;
  const request=++culturaPracticaRequest;
- const send=payload=>{if(request===culturaPracticaRequest&&iframe.isConnected&&iframe.contentWindow)iframe.contentWindow.postMessage({type:'cachimbolab-cultura-questions',week:9,...payload},'*')};
+ const send=payload=>{if(request===culturaPracticaRequest&&iframe.isConnected&&iframe.contentWindow)iframe.contentWindow.postMessage({type:'cachimbolab-cultura-questions',week:semana,...payload},'*')};
  try{
-  const {data,error}=await db.from('questions').select('id,week,subject,original_number,statement,options').eq('modality','CPU-UNSM').eq('subject','Cultura General').eq('week',9).eq('status','published').order('original_number',{ascending:true}).limit(50);
+  const {data,error}=await db.from('questions').select('id,week,subject,original_number,statement,options').eq('modality','CPU-UNSM').eq('subject','Cultura General').eq('week',semana).eq('status','published').order('original_number',{ascending:true}).limit(50);
   if(error)throw error;
   if(!data?.length){send({questions:[]});return}
   const full=[];
@@ -388,12 +388,13 @@ async function enviarPracticaCultura(iframe){
  }catch(e){send({error:'No se pudo cargar la práctica CPU: '+(e?.message||'Error de conexión')})}
 }
 function bindCulturaPractica(){
- if(page!=='biblioteca'||!admin()||bibliotecaLeccionesVista||typeof bibCursoPreparacion==='undefined'||bibCursoPreparacion!=='Cultura General'||bibSemanaPreparacion!==9)return;
- const iframe=document.querySelector('iframe[title="Cultura General semana 9"]');
+ if(page!=='biblioteca'||!admin()||bibliotecaLeccionesVista||typeof bibCursoPreparacion==='undefined'||bibCursoPreparacion!=='Cultura General'||![9,11,12,13].includes(bibSemanaPreparacion))return;
+ const semana=bibSemanaPreparacion;
+ const iframe=document.querySelector('iframe[title="Cultura General semana '+semana+'"]');
  if(!iframe)return;
- const onReady=e=>{if(e.source!==iframe.contentWindow||e.data?.type!=='cachimbolab-cultura-ready'||Number(e.data.week)!==9)return;window.removeEventListener('message',onReady);enviarPracticaCultura(iframe)};
+ const onReady=e=>{if(e.source!==iframe.contentWindow||e.data?.type!=='cachimbolab-cultura-ready'||Number(e.data.week)!==semana)return;window.removeEventListener('message',onReady);enviarPracticaCultura(iframe,semana)};
  window.addEventListener('message',onReady);
- iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(()=>{if(iframe.isConnected)enviarPracticaCultura(iframe)},300)},{once:true});
+ iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(()=>{if(iframe.isConnected)enviarPracticaCultura(iframe,semana)},300)},{once:true});
 }
 function bindPsicologiaPiloto(){
  if(!(page==='psicologia_piloto'||(page==='biblioteca'&&bibliotecaLeccionesVista))||!admin())return;
