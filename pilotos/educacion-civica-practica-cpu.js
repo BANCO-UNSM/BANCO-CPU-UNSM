@@ -12,6 +12,7 @@ const style=document.createElement('style');style.textContent='#cpu-official-pra
 const status=host.querySelector('#cpu-practice-status'),body=host.querySelector('#cpu-practice-body');
 const label=i=>String.fromCharCode(65+i);
 const cleanOption=opt=>String(opt??'').replace(/^\s*(?:\(?[A-Ea-e]\s*[).:\-]\s*)+/, '').trim();
+let pendingAnswer=null;
 let questions=[],index=0,correct=0,answered=false,totalQuestions=0,complete=false;
 function explanationFor(q){return String(q.explanation||'').replace(/^\s*RESPUESTA\s+CORRECTA\s*:\s*[^\r\n]*(?:\r?\n)*/i,'').trim();}
 
@@ -22,14 +23,35 @@ function draw(){body.replaceChildren();if(index>=questions.length){if(!complete)
  body.append(textEl('div','cpu-question',q.statement));
  const choices=document.createElement('div');const verdict=textEl('div','cpu-verdict','');verdict.hidden=true;verdict.setAttribute('role','status');const answer=textEl('p','cpu-answer','');answer.hidden=true;const feedback=textEl('div','cpu-explanation','');feedback.hidden=true;
  const next=textEl('button','cpu-next',index===questions.length-1&&complete?'Ver resultado':'Siguiente pregunta →');next.hidden=true;next.onclick=()=>{index++;draw()};
- (q.options||[]).forEach((opt,j)=>{const btn=textEl('button','cpu-option',label(j)+') '+cleanOption(opt));btn.type='button';btn.onclick=()=>{if(answered)return;answered=true;const hit=j===q.correct_index;if(hit)correct++;choices.querySelectorAll('button').forEach((b,k)=>{b.disabled=true;if(k===q.correct_index)b.classList.add('cpu-correct');else if(k===j)b.classList.add('cpu-incorrect')});verdict.className='cpu-verdict '+(hit?'correct':'incorrect');verdict.replaceChildren(textEl('span','cpu-symbol',hit?'✓':'✗'),textEl('span','',hit?'¡Respuesta correcta!':'Respuesta incorrecta'));verdict.hidden=false;if(!hit){answer.textContent='La respuesta correcta es: '+label(q.correct_index)+') '+q.options[q.correct_index];answer.hidden=false}const explanation=explanationFor(q);if(explanation){feedback.textContent='Explicación: '+explanation;feedback.hidden=false}else{feedback.textContent='';feedback.hidden=true}next.hidden=false};choices.append(btn)});
+ (q.options||[]).forEach((opt,j)=>{const btn=textEl('button','cpu-option',label(j)+') '+cleanOption(opt));btn.type='button';btn.onclick=()=>{if(answered)return;
+if(q.secure===true&&!Number.isInteger(q.correct_index)){
+ if(pendingAnswer)return;
+ pendingAnswer={id:q.id,index:j,button:btn};
+ window.parent.postMessage({type:'cachimbolab-library-check',question_id:q.id,selected_index:j},'*');
+ return;
+}
+answered=true;const hit=j===q.correct_index;if(hit)correct++;choices.querySelectorAll('button').forEach((b,k)=>{b.disabled=true;if(k===q.correct_index)b.classList.add('cpu-correct');else if(k===j)b.classList.add('cpu-incorrect')});verdict.className='cpu-verdict '+(hit?'correct':'incorrect');verdict.replaceChildren(textEl('span','cpu-symbol',hit?'✓':'✗'),textEl('span','',hit?'¡Respuesta correcta!':'Respuesta incorrecta'));verdict.hidden=false;if(!hit){answer.textContent='La respuesta correcta es: '+label(q.correct_index)+') '+q.options[q.correct_index];answer.hidden=false}const explanation=explanationFor(q);if(explanation){feedback.textContent='Explicación: '+explanation;feedback.hidden=false}else{feedback.textContent='';feedback.hidden=true}next.hidden=false};choices.append(btn)});
  body.append(choices,verdict,answer,feedback,next);
 }
+window.addEventListener('message',e=>{
+ if(e.source!==window.parent||e.data?.type!=='cachimbolab-library-result'||!pendingAnswer||e.data.question_id!==pendingAnswer.id)return;
+ const pending=pendingAnswer;
+ if(e.data.error){status.textContent='No se pudo comprobar la respuesta: '+String(e.data.error);pendingAnswer=null;return;}
+ const q=questions[index];
+ if(!q||q.id!==pending.id)return;
+ q.correct_index=Number(e.data.correct_index);
+ q.explanation=String(e.data.explanation||'');
+ if(!Number.isInteger(q.correct_index)||q.correct_index<0||q.correct_index>=q.options.length){
+  status.textContent='No se pudo verificar la clave de esta pregunta.';pendingAnswer=null;return;
+ }
+ pendingAnswer=null;
+ pending.button.click();
+});
 window.addEventListener('message',e=>{
  if(e.source!==window.parent||e.origin!==window.location.origin||e.data?.type!=='cachimbolab-civica-questions'||Number(e.data.week)!==week)return;
  if(e.data.error){if(!questions.length)status.textContent=e.data.error;return}
  const items=e.data.questions;if(!Array.isArray(items))return;
- const valid=items.filter(q=>q&&typeof q.statement==='string'&&Array.isArray(q.options)&&Number.isInteger(q.correct_index)&&q.correct_index>=0&&q.correct_index<q.options.length);
+ const valid=items.filter(q=>q&&typeof q.statement==='string'&&Array.isArray(q.options)&&(q.secure===true||(Number.isInteger(q.correct_index)&&q.correct_index>=0&&q.correct_index<q.options.length)));
  if(e.data.append){
    const previous=questions.length;const known=new Set(questions.map(q=>q.id));
    questions.push(...valid.filter(q=>!known.has(q.id)));
