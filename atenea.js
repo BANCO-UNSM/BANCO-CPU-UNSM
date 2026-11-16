@@ -190,7 +190,7 @@ function initFloatingButton(){
 
 function mount(){if($('atenea-root'))return;
  const root=document.createElement('div');root.id='atenea-root';
- root.innerHTML=`<button id="atenea-personaje" type="button" aria-label="Abrir chat con Atenea" title="Habla con Atenea"><img src="atenea-cuerpo-entero-v29.png" alt="Atenea, tu tutora virtual" /></button><div id="atenea-saludo" role="note"><button type="button" id="atenea-saludo-close" aria-label="Cerrar saludo" title="Cerrar saludo">×</button><span>¡Hola! 👋<br>Soy Atenea 💙<br>Tu guía inteligente hacia la UNSM.</span></div><button id="atenea-minimize" type="button" aria-label="Ocultar figura de Atenea" title="Ocultar figura de Atenea">−</button><button id="atenea-toggle" type="button" aria-label="Abrir asistente Atenea" title="Habla con Atenea"><img class="atenea-toggle-avatar" src="atenea-retrato.png" alt="" /> <span>Atenea</span></button><section id="atenea-panel" role="dialog" aria-label="Atenea, asistente académica" hidden><div class="atenea-top"><div class="atenea-mark"><img src="atenea-retrato.png" alt="Atenea, tutora virtual de CachimboLab" /></div><div><strong>ATENEA</strong><small>Tu guía inteligente hacia la UNSM</small></div><button type="button" id="atenea-close" aria-label="Cerrar">×</button></div><div id="atenea-feed" class="atenea-feed" aria-live="polite"></div><div class="atenea-shortcuts"><button type="button" data-ask="Dame una pista">💡 Pista</button><button type="button" data-ask="Explícame el concepto sin revelar la respuesta de la práctica">📘 Explicación</button><button type="button" data-ask="Motívame">💙 Ánimo</button></div><form id="atenea-form"><input id="atenea-input" maxlength="700" autocomplete="off" placeholder="Pregúntale a Atenea..." aria-label="Tu mensaje"/><button id="atenea-send" type="submit" aria-label="Enviar">➤</button></form><div class="atenea-foot"><label><input type="checkbox" id="atenea-voice"/> 🔊 Leer respuestas</label><span id="atenea-status">Atenea usa Gemini con cupos gratuitos.</span></div></section>`;
+ root.innerHTML=`<button id="atenea-personaje" type="button" aria-label="Abrir chat con Atenea" title="Habla con Atenea"><img src="atenea-cuerpo-entero-v29.png" alt="Atenea, tu tutora virtual" /></button><div id="atenea-saludo" role="note"><button type="button" id="atenea-saludo-close" aria-label="Cerrar saludo" title="Cerrar saludo">×</button><span>¡Hola! 👋<br>Soy Atenea 💙<br>Tu guía inteligente hacia la UNSM.</span></div><button id="atenea-minimize" type="button" aria-label="Ocultar figura de Atenea" title="Ocultar figura de Atenea">−</button><button id="atenea-toggle" type="button" aria-label="Abrir asistente Atenea" title="Habla con Atenea"><img class="atenea-toggle-avatar" src="atenea-retrato.png" alt="" /> <span>Atenea</span></button><section id="atenea-panel" role="dialog" aria-label="Atenea, asistente académica" hidden><div class="atenea-top"><div class="atenea-mark"><img src="atenea-retrato.png" alt="Atenea, tutora virtual de CachimboLab" /></div><div><strong>ATENEA</strong><small>Tu guía inteligente hacia la UNSM</small></div><button type="button" id="atenea-figure-toggle" aria-label="Mostrar figura de cuerpo entero de Atenea" title="Mostrar figura de Atenea">👩 Mostrar figura</button><button type="button" id="atenea-close" aria-label="Cerrar">×</button></div><div id="atenea-feed" class="atenea-feed" aria-live="polite"></div><div class="atenea-shortcuts"><button type="button" data-ask="Dame una pista">💡 Pista</button><button type="button" data-ask="Explícame el concepto sin revelar la respuesta de la práctica">📘 Explicación</button><button type="button" data-ask="Motívame">💙 Ánimo</button></div><form id="atenea-form"><input id="atenea-input" maxlength="700" autocomplete="off" placeholder="Pregúntale a Atenea..." aria-label="Tu mensaje"/><button id="atenea-send" type="submit" aria-label="Enviar">➤</button></form><div class="atenea-foot"><label><input type="checkbox" id="atenea-voice"/> 🔊 Leer respuestas</label><span id="atenea-status">Atenea usa Gemini con cupos gratuitos.</span></div></section>`;
  document.body.append(root);
  $('atenea-toggle').onclick=()=>show(!state.open);
  initFloatingButton();
@@ -201,15 +201,21 @@ function mount(){if($('atenea-root'))return;
 
  };
 
- $('atenea-minimize').onclick=()=>{
-  const hidden=root.classList.toggle('atenea-figure-hidden');
-  const btn=$('atenea-minimize');btn.textContent=hidden?'+':'−';
-  btn.title=hidden?'Mostrar figura de Atenea':'Ocultar figura de Atenea';
-  btn.setAttribute('aria-label',btn.title);
-  try{sessionStorage.setItem('ateneaFigureHidden',String(hidden));}catch(_){}
+ function setFigureVisible(visible){
+  root.classList.toggle('atenea-figure-hidden',!visible);
+  const minimize=$('atenea-minimize'),toggle=$('atenea-figure-toggle');
+  minimize.textContent='−';minimize.title='Ocultar figura de Atenea';minimize.setAttribute('aria-label',minimize.title);
+  toggle.textContent=visible?'🙈 Ocultar figura':'👩 Mostrar figura';
+  toggle.title=visible?'Ocultar figura de cuerpo entero de Atenea':'Mostrar figura de cuerpo entero de Atenea';
+  toggle.setAttribute('aria-label',toggle.title);
+  toggle.setAttribute('aria-pressed',String(visible));
+  try{sessionStorage.setItem('ateneaFigureHidden',String(!visible))}catch(_){}
   requestAnimationFrame(posicionarSaludo);
- };
- try{if(sessionStorage.getItem('ateneaFigureHidden')==='true')$('atenea-minimize').click();}catch(_){}
+ }
+ $('atenea-minimize').onclick=()=>setFigureVisible(false);
+ $('atenea-figure-toggle').onclick=()=>setFigureVisible(root.classList.contains('atenea-figure-hidden'));
+ let initiallyHidden=false;try{initiallyHidden=sessionStorage.getItem('ateneaFigureHidden')==='true'}catch(_){}
+ setFigureVisible(!initiallyHidden);
  initCharacterDrag();
  requestAnimationFrame(posicionarSaludo);
  window.addEventListener('resize',posicionarSaludo);
