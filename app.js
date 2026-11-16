@@ -334,8 +334,8 @@ let psicologiaSemanaSeleccionada=null;
 let bibliotecaLeccionesVista=false;
 function psicologiaPilotoPage(){
  const semana=psicologiaSemanaSeleccionada;
- const temas={1:'Definición, ramas y métodos de la Psicología',2:'Historia de la Psicología y proceso de socialización',3:'Bases biológicas del comportamiento',4:'Etapas del desarrollo humano y desarrollo psicosexual',5:'Sensación y percepción',6:'Atención, concentración y memoria',7:'El proceso cognoscitivo',8:'Inteligencia',9:'Emociones y sentimientos',10:'Repaso: inteligencia y afectividad',11:'Motivación',12:'Aprendizaje',13:'Personalidad',14:'Temperamento y carácter',15:'Alteraciones de la personalidad'};
- const botones=Array.from({length:15},(_,i)=>{
+ const temas={1:'Definición, ramas y métodos de la Psicología',2:'Historia de la Psicología y proceso de socialización',3:'Bases biológicas del comportamiento',4:'Etapas del desarrollo humano y desarrollo psicosexual',5:'Sensación y percepción',6:'Atención, concentración y memoria',7:'El proceso cognoscitivo',8:'Inteligencia',9:'Emociones y sentimientos',10:'Repaso de las semanas 6 a 9',11:'Motivación',12:'Aprendizaje',13:'Personalidad',14:'Temperamento y carácter',15:'Alteraciones de la personalidad',16:'Repaso de las semanas 11 a 15'};
+ const botones=Array.from({length:16},(_,i)=>{
   const n=i+1,disponible=n<=15,activo=n===semana;
   return `<button type="button" data-psico-semana="${n}" ${disponible?'':'disabled title="Lección en preparación"'} aria-pressed="${activo}" style="min-height:68px;border-radius:13px;padding:12px 8px;border:2px solid ${activo?'#087f79':'#d4e3ef'};background:${activo?'#e2f6f0':disponible?'#f2f8ff':'#f5f6f8'};color:${disponible?'#173c58':'#8493a1'};font-weight:750;cursor:${disponible?'pointer':'not-allowed'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">Semana ${n}<small style="font-size:11px;font-weight:500">${disponible?'Ver lección':'En preparación'}</small></button>`;
  }).join('');
