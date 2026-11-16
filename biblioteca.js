@@ -1,7 +1,7 @@
 'use strict';
 const BIB_AREAS={
  'Ciencias y números':['Razonamiento Matemático','Álgebra','Aritmética','Trigonometría','Geometría','Física','Química','Biología'],
- 'Letras y humanidades':['Razonamiento Verbal','Cultura General','Educación Cívica','Historia','Geografía','Lenguaje','Literatura','Lenguaje y Literatura','Psicología','Filosofía','Economía']
+ 'Letras y humanidades':['Razonamiento Verbal','Cultura General','Educación Cívica','Historia','Geografía','Lenguaje y Literatura','Psicología','Filosofía','Economía']
 };
 let bibRows=[],bibLoading=false,bibError='',bibArea='Ciencias y números',bibMateria='',bibSemana='',bibFicha='',bibModalidad='CPU-UNSM',bibEditing='',bibCreating=false;
 function bibSubjects(){return BIB_AREAS[bibArea]||[];}
