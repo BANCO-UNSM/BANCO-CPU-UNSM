@@ -118,3 +118,6 @@
 #atenea-root.atenea-toggle-compact #atenea-toggle span{display:none!important}
 #atenea-root.atenea-toggle-compact #atenea-toggle .atenea-toggle-avatar{width:38px!important;height:38px!important;margin:0!important}
 @media(max-width:700px){#atenea-root #atenea-toggle-size{left:-9px;bottom:30px}}
+
+/* V3.6: ocultar el botón + de la figura cuando esta está escondida; conservar el + pequeño del avatar. */
+#atenea-root.atenea-figure-hidden #atenea-minimize{display:none!important;visibility:hidden!important;pointer-events:none!important}
