@@ -1,28 +1,25 @@
-/* CachimboLab: voz coherente para la narradora Atenea. */
+/* Atenea: síntesis de voz compatible con Android y navegadores móviles. */
 (function(){
 'use strict';
-const femaleNames=/(?:female|femenina|woman|mujer|sabina|paulina|helena|lucia|lucía|sofia|sofía|elena|maría|maria|mónica|monica|paloma|laura|carmen|dalia|elvira|isabela|isabella|camila|valentina|ximena|alexa|conchita|penelope|penélope|ines|inés|elsa|rosa|silvia|silvana|lupe|esmeralda|alondra|gabriela|teresa|nuria)/i;
-const maleNames=/(?:\bmale\b|masculin|hombre|jorge|diego|pablo|ra[uú]l|carlos|enrique|antonio|[aá]lvaro|manuel|francisco|jorge|juan|pedro|andres|andr[eé]s|alberto|jor[díi]|mario|rodrigo|david|jos[eé]|miguel|luis|hern[aá]n|pablo)/i;
-let warned=false;
-function pick(){
+const female=/(female|femenina|sabina|paulina|helena|lucia|lucía|sofia|sofía|maria|maría|monica|mónica|paloma|laura|carmen|dalia|elvira|camila|valentina|alexa|conchita|ines|inés|rosa|silvia|gabriela)/i;
+function chooseVoice(){
  const synth=window.speechSynthesis;
  if(!synth)return null;
- const voices=synth.getVoices().filter(v=>/^es(?:-|$)/i.test(v.lang||'')&&femaleNames.test(v.name||'')&&!maleNames.test(v.name||''));
- return voices.sort((a,b)=>Number(/^es-PE$/i.test(b.lang))-Number(/^es-PE$/i.test(a.lang))||Number(/natural|neural|premium/i.test(b.name))-Number(/natural|neural|premium/i.test(a.name)))[0]||synth.getVoices().filter(v=>/^es(?:-|$)/i.test(v.lang||'')).sort((a,b)=>Number(/^es-PE$/i.test(b.lang))-Number(/^es-PE$/i.test(a.lang)))[0]||null;
+ const spanish=synth.getVoices().filter(v=>/^es(?:-|$)/i.test(v.lang||''));
+ return spanish.sort((a,b)=>{
+  const score=v=>(female.test(v.name||'')?100:0)+(/^es-PE$/i.test(v.lang)?30:0)+(/natural|neural|premium/i.test(v.name)?10:0);
+  return score(b)-score(a);
+ })[0]||null;
 }
-window.ateneaVozFemenina=pick;
+window.ateneaVozFemenina=chooseVoice;
 window.ateneaSpeak=function(utterance){
- const voice=pick();
  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)return false;
- if(!voice){
-  // Android puede cargar sus voces después del primer toque. No bloquear el motor.
-  utterance.lang='es-PE';
- }else{
-  utterance.voice=voice;
-  utterance.lang=voice.lang;
- }
+ const voice=chooseVoice();
+ if(voice){utterance.voice=voice;utterance.lang=voice.lang;}
+ else{utterance.lang='es-ES';}
  utterance.pitch=1;
- window.speechSynthesis.speak(utterance);
- return true;
+ try{window.speechSynthesis.speak(utterance);return true;}
+ catch(err){console.warn('Atenea no pudo iniciar audio',err);return false;}
 };
+window.speechSynthesis?.addEventListener?.('voiceschanged',chooseVoice);
 })();
