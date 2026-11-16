@@ -396,6 +396,38 @@ function bindCulturaPractica(){
  window.addEventListener('message',onReady);
  iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(()=>{if(iframe.isConnected)enviarPracticaCultura(iframe,semana)},300)},{once:true});
 }
+let verbalPracticaRequest=0;
+async function enviarPracticaVerbal(iframe,semana){
+ if(!admin()||!db||!iframe?.contentWindow)return;
+ const request=++verbalPracticaRequest;
+ const send=payload=>{if(request===verbalPracticaRequest&&iframe.isConnected&&iframe.contentWindow)iframe.contentWindow.postMessage({type:'cachimbolab-verbal-questions',week:semana,...payload},'*')};
+ try{
+  const {data,error}=await db.from('questions').select('id,week,subject,original_number,statement,options').eq('modality','CPU-UNSM').eq('subject','Razonamiento Verbal').eq('week',semana).eq('status','published').order('original_number',{ascending:true}).limit(50);
+  if(error)throw error;
+  if(!data?.length){send({questions:[]});return}
+  const full=[];
+  for(let i=0;i<data.length;i+=5){
+   const group=await Promise.all(data.slice(i,i+5).map(async q=>{
+    const {data:detail,error:e}=await db.rpc('get_question_for_review',{p_question_id:q.id});
+    if(e||!detail)return null;
+    return {id:q.id,original_number:q.original_number,statement:q.statement,options:q.options,correct_index:detail.correct_index,explanation:detail.explanation};
+   }));
+   full.push(...group.filter(Boolean));
+   if(request!==verbalPracticaRequest)return;
+  }
+  if(full.length!==data.length)throw new Error('Algunas claves no se pudieron recuperar.');
+  send({questions:full});
+ }catch(e){send({error:'No se pudo cargar la práctica CPU: '+(e?.message||'Error de conexión')})}
+}
+function bindVerbalPractica(){
+ if(page!=='biblioteca'||!admin()||bibliotecaLeccionesVista||typeof bibCursoPreparacion==='undefined'||bibCursoPreparacion!=='Razonamiento Verbal'||![6].includes(bibSemanaPreparacion))return;
+ const semana=bibSemanaPreparacion;
+ const iframe=document.querySelector('iframe[title="Razonamiento Verbal semana '+semana+'"]');
+ if(!iframe)return;
+ const onReady=e=>{if(e.source!==iframe.contentWindow||e.data?.type!=='cachimbolab-verbal-ready'||Number(e.data.week)!==semana)return;window.removeEventListener('message',onReady);enviarPracticaVerbal(iframe,semana)};
+ window.addEventListener('message',onReady);
+ iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(()=>{if(iframe.isConnected)enviarPracticaVerbal(iframe,semana)},300)},{once:true});
+}
 function bindPsicologiaPiloto(){
  if(!(page==='psicologia_piloto'||(page==='biblioteca'&&bibliotecaLeccionesVista))||!admin())return;
  const iframe=document.querySelector('iframe[title^="Psicología, lección semana"]');
@@ -449,6 +481,7 @@ function render(){
  bindAcademicQuality();
  bindPsicologiaPiloto();
  bindCulturaPractica();
+ bindVerbalPractica();
  if(typeof bibBind==='function'&&!bibliotecaLeccionesVista)bibBind();
  $('bibAbrirPsicologia')?.addEventListener('click',()=>{bibliotecaLeccionesVista=true;psicologiaSemanaSeleccionada=null;render()});
  $('bibVolverLecciones')?.addEventListener('click',()=>{bibliotecaLeccionesVista=false;psicologiaSemanaSeleccionada=null;render()});
