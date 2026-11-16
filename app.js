@@ -620,6 +620,19 @@ function render(){
    $('app').innerHTML=recoveryPasswordPage();bindPasswordRecovery();return;
  }
  const allowed=teacher()||access?.allowed;
+ // Enlace directo desde las lecciones: conserva materia y semana sin requerir rol administrador.
+ if(allowed && user && !window.__cpuLessonDeepLinkHandled){
+  const params=new URLSearchParams(window.location.search);
+  const targetWeek=Number(params.get('cpu_week'));
+  const targetSubject=params.get('cpu_subject');
+  if(params.get('cpu_action')==='practice'&&targetSubject==='Psicología'&&Number.isInteger(targetWeek)&&targetWeek>=1&&targetWeek<=16&&hasService('CPU-UNSM')){
+   window.__cpuLessonDeepLinkHandled=true;
+   selectedModality='CPU-UNSM';cpuPreferredPracticeSubject='Psicología';cpuPreferredPracticeWeek=targetWeek;
+   quiz=null;practice=null;page='practice';
+   params.delete('cpu_action');params.delete('cpu_week');params.delete('cpu_subject');
+   history.replaceState(null,'',window.location.pathname+(params.toString()?'?'+params:'')+window.location.hash);
+  }
+ }
  const pages=user?(allowed?(teacher()?
  [['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU']]:[]),['practice','📚 Estudia y practica'],['biblioteca','📖 Biblioteca de estudio'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación'],...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica'],['exams','Exámenes de admisión · Administración']]:[])]:[
  ['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU'],['biblioteca','📖 Aprender']]:[]),
