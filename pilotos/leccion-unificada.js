@@ -17,6 +17,22 @@ const sections=current.sections;if(!Array.isArray(sections)||sections.length!==5
 let speaking=null;
 function read(section,button){if(!window.ateneaSpeak||!window.speechSynthesis)return;if(speaking===button){speechSynthesis.cancel();speaking=null;button.textContent='🔊 Escuchar con Atenea';return}speechSynthesis.cancel();document.querySelectorAll('[data-atenea]').forEach(x=>x.textContent='🔊 Escuchar con Atenea');const u=new SpeechSynthesisUtterance(section[0]+'. '+section[1]+'. Ejemplo: '+section[2]+'. Para recordar: '+section[3]);u.rate=.92;u.onend=()=>{if(speaking===button){speaking=null;button.textContent='🔊 Escuchar con Atenea'}};if(window.ateneaSpeak(u)){speaking=button;button.textContent='⏹ Detener a Atenea'}}
 sections.forEach((s,i)=>{const p=el('section','card');p.id='p'+(i+1);add(p,el('span','tag',String(i+1).padStart(2,'0')+' · '+(review?'REPASAMOS':['DESCUBRE','EXPLORA','RELACIONA','APLICA','PROFUNDIZAMOS'][i])),el('h2','',s[0]),el('p','',s[1]),add(el('div','example'),el('strong','','Ejemplo explicado'),el('p','',s[2])),add(el('div','explain'),el('strong','','Idea clave'),el('p','',s[3])));const b=el('button','btn','🔊 Escuchar con Atenea');b.type='button';b.dataset.atenea='';b.onclick=()=>read(s,b);p.append(b);main.append(p)});
+// Línea de tiempo interactiva: piloto pedagógico para Historia, semana 13.
+if(course==='historia'&&week===13){
+ const events=[
+  {year:'1883',title:'Fin de la guerra y reconstrucción',what:'El Tratado de Ancón marcó el fin de la guerra entre Perú y Chile. El país afrontó graves daños económicos y políticos.',why:'Comienza la difícil recuperación nacional.'},
+  {year:'1884',title:'Gobierno de Miguel Iglesias',what:'Miguel Iglesias gobernó en un escenario de fuertes divisiones políticas tras la guerra.',why:'Las disputas entre dirigentes dificultaron la estabilidad.'},
+  {year:'1886',title:'Andrés Avelino Cáceres',what:'Cáceres inició su primer gobierno y buscó reorganizar la economía y las finanzas públicas.',why:'Fue una figura central del Segundo Militarismo.'},
+  {year:'1889',title:'Contrato Grace',what:'El gobierno acordó una solución para la deuda externa mediante concesiones, incluidas las vinculadas a ferrocarriles.',why:'Influyó en la recuperación financiera y generó controversias.'},
+  {year:'1895',title:'Cambio político',what:'La revolución encabezada por Nicolás de Piérola puso fin al predominio militar de esta etapa.',why:'Abrió paso a un nuevo periodo de predominio civil.'}
+ ];
+ const panel=el('section','card');panel.id='timeline-historia';add(panel,el('span','tag','VISUALIZA'),el('h2','','Línea de tiempo interactiva · Reconstrucción nacional'),el('p','muted','Selecciona un año para descubrir qué pasó y por qué importa.'));
+ const controls=el('div','controls'),detail=el('div','explain');detail.setAttribute('aria-live','polite');
+ let active=0;
+ function showEvent(index){active=index;controls.querySelectorAll('button').forEach((b,i)=>{b.setAttribute('aria-pressed',String(i===index));b.style.fontWeight=i===index?'700':'400'});const e=events[index];detail.replaceChildren(el('h3','',e.year+' · '+e.title),el('p','',e.what),el('p','','¿Por qué importa? '+e.why))}
+ events.forEach((e,i)=>{const b=el('button','btn',e.year);b.type='button';b.onclick=()=>showEvent(i);controls.append(b)});
+ add(panel,controls,detail);main.append(panel);showEvent(0);
+}
 const memory=el('section','card');memory.id='p6';add(memory,el('span','tag','06 · RECUERDA'),el('h2','','Tarjetas de memoria'),el('p','muted','Responde con tus palabras y pulsa la tarjeta para comprobarlo.'));const counter=el('p','muted'),card=el('button','flash');card.type='button';let ci=0,flip=false;
 function drawCard(){counter.textContent='Tarjeta '+(ci+1)+' de '+sections.length;card.textContent=flip?sections[ci][3]:'¿Cuál es la idea fundamental de «'+sections[ci][0]+'»?';}card.onclick=()=>{flip=!flip;drawCard()};const prev=el('button','btn','← Anterior'),next=el('button','btn','Siguiente →');prev.onclick=()=>{ci=(ci-1+sections.length)%sections.length;flip=false;drawCard()};next.onclick=()=>{ci=(ci+1)%sections.length;flip=false;drawCard()};add(memory,counter,card,add(el('div','controls'),prev,next));main.append(memory);drawCard();
 const quiz=el('section','card');quiz.id='p7';add(quiz,el('span','tag','07 · COMPRUEBA'),el('h2','','Reto de comprensión'));const quizHost=el('div');quiz.append(quizHost);main.append(quiz);let qi=0,hits=0,answered=false;const letter=i=>'ABCDE'[i];
