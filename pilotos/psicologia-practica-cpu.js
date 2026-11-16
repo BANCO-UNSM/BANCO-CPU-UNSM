@@ -3,7 +3,7 @@
 const root=document.getElementById('practica');if(!root)return;
 const week=Number((document.body.dataset.psicoWeek||document.querySelector('meta[name="psico-week"]')?.content)||0);
 if(!week)return;
-const available=[6,7,8,9,11,12,13].includes(week);
+const available=[6,7,8,9,11,12,13,14].includes(week);
 const host=document.createElement('div');host.id='cpu-official-practice';
 host.innerHTML='<p id="cpu-practice-status" aria-live="polite">Cargando práctica oficial…</p><div id="cpu-practice-body"></div>';
 root.appendChild(host);
