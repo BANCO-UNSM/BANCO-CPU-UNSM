@@ -14,7 +14,7 @@ let questions=[],index=0,correct=0,answered=false;
 function textEl(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(text??'');return el}
 function draw(){body.replaceChildren();if(index>=questions.length){status.textContent='Práctica oficial completada.';body.append(textEl('h3','', 'Resultado: '+correct+' de '+questions.length+' respuestas correctas.'));const restart=textEl('button','cpu-next','Volver a practicar');restart.onclick=()=>{index=0;correct=0;draw()};body.append(restart);return}
  const q=questions[index];answered=false;status.textContent='Pregunta '+(index+1)+' de '+questions.length+' · Semana '+week;
- body.append(textEl('p','cpu-progress','Pregunta original N.° '+(q.original_number??index+1)));
+
  body.append(textEl('div','cpu-question',q.statement));
  const choices=document.createElement('div');const verdict=textEl('div','cpu-verdict','');verdict.hidden=true;verdict.setAttribute('role','status');const answer=textEl('p','cpu-answer','');answer.hidden=true;const feedback=textEl('div','cpu-explanation','');feedback.hidden=true;
  const next=textEl('button','cpu-next',index===questions.length-1?'Ver resultado':'Siguiente pregunta →');next.hidden=true;next.onclick=()=>{index++;draw()};
