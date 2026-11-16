@@ -909,15 +909,15 @@ function cpuDashboardPage(){
   </div>
   ${learningProgressError?'<p class="muted small">El seguimiento está temporalmente indisponible. Puedes estudiar igualmente.</p>':''}
  </div>
- <div class="card" style="border-left:5px solid #0b847b">
-  <h3>📖 ${recent?'Continúa donde te quedaste':'Comienza a aprender'}</h3>
+ ${recent?`<div class="card" style="border-left:5px solid #0b847b">
+  <h3>📖 Continúa donde te quedaste</h3>
   <p>${lesson}</p>
-  <p class="muted small">${recent?'Recuperamos el último curso y semana que abriste en este dispositivo.':'Primero estudia los temas y luego responde las preguntas para comprobar tu comprensión.'}</p>
-  <button type="button" data-cpu-action="continue">${recent?'Continuar mi lección':'Abrir biblioteca interactiva'}</button>
- </div>
+  <p class="muted small">Retoma el último curso y semana que abriste en este dispositivo.</p>
+  <button type="button" data-cpu-action="continue">Continuar mi lección</button>
+ </div>`:''}
  <div class="card"><h3>Elige cómo deseas prepararte</h3>
   <div class="grid">
-   <div class="card"><h3>📚 Aprender</h3><p class="muted">Teoría, Atenea, tarjetas y lecciones por semana.</p><button type="button" class="secondary" data-cpu-action="library">Abrir biblioteca</button></div>
+   <div class="card"><h3>📚 Aprender</h3><p class="muted">Teoría, Atenea, tarjetas y lecciones por semana.</p><button type="button" class="secondary" data-cpu-action="library">Abrir biblioteca interactiva</button></div>
    <div class="card"><h3>✏️ Practicar</h3><p class="muted">Escoge curso y semana para resolver preguntas publicadas.</p><button type="button" class="secondary" data-cpu-action="practice">Elegir práctica</button></div>
    <div class="card"><h3>📝 Simulacros</h3><p class="muted">Evalúa tu preparación con preguntas y resultados.</p><button type="button" class="secondary" data-cpu-action="quiz">Ver simulacros</button></div>
    <div class="card"><h3>🎯 Mis errores</h3><p class="muted">Vuelve a resolver las preguntas que necesitas reforzar.</p><button type="button" class="secondary" data-cpu-action="mistakes">Repasar mis errores</button></div>
