@@ -13,7 +13,7 @@ let bibSemanaPreparacion=null;
 function listoSemanaBib(){return (bibCursoPreparacion==='Cultura General'&&[1,9,11,12,13].includes(bibSemanaPreparacion))||(bibCursoPreparacion==='Razonamiento Verbal'&&[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16].includes(bibSemanaPreparacion))||(bibCursoPreparacion==='Educación Cívica'&&bibSemanaPreparacion>=1&&bibSemanaPreparacion<=16)||(bibNuevosCursos.includes(bibCursoPreparacion)&&bibSemanaPreparacion>=1&&bibSemanaPreparacion<=16)}
 function bibRMContenido(){
  const ficha=bibRows.find(f=>f.materia==='Razonamiento Matemático'&&Number(f.semana)===Number(bibSemanaPreparacion)&&f.modalidad==='CPU-UNSM');
- if(!ficha)return '<div class="card"><p class="muted">Cargando el marco teórico de esta semana...</p></div>';
+ if(!ficha)return '<div class="card"><p class="muted">'+(bibLoading?'Cargando el marco teórico...':bibError?'No se pudo cargar el marco teórico. '+esc(bibError):'Esta semana todavía no tiene una ficha teórica publicada.')+'</p></div>';
  const bloque=(titulo,valor)=>valor?'<section class="card" style="margin-top:14px"><h3>'+titulo+'</h3><div class="bib-rm-math" style="white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere">'+esc(valor)+'</div></section>':'';
  return '<div class="card"><h3>'+esc(ficha.tema||('Semana '+bibSemanaPreparacion))+'</h3><p>'+esc(ficha.resumen||'')+'</p>'+bloque('Marco teórico',ficha.teoria)+bloque('Fórmulas y propiedades',ficha.formulas)+bloque('Ejemplos resueltos',ficha.ejemplo)+bloque('Errores frecuentes',ficha.errores)+bloque('Claves para recordar',ficha.claves)+'</div>';
 }
