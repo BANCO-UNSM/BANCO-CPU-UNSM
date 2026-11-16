@@ -19,7 +19,7 @@ function explanationFor(q){return String(q.explanation||'').replace(/^\s*RESPUES
 function textEl(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(text??'');return el}
 function formatMath(container){
  if(course!=='algebra'||!window.katex)return;
- const raw=container.textContent||'';
+ const raw=(container.textContent||'').replace(/\\\\(?=[()[\]{}]|[a-zA-Z])/g,'\\');
  if(!/\\\(|\\\[|\\(?:frac|dfrac|sqrt|left|right|cdot|times|leq|geq|neq|pm|div|log|sum|begin)|\^|_/.test(raw))return;
  const parts=raw.split(/(\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\])/g);
  container.replaceChildren();
