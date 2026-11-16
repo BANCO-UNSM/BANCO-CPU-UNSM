@@ -33,8 +33,28 @@ if(course==='historia'&&week===13){
  events.forEach((e,i)=>{const b=el('button','btn',e.year);b.type='button';b.onclick=()=>showEvent(i);controls.append(b)});
  add(panel,controls,detail);main.append(panel);showEvent(0);
 }
+if(course==='historia'&&week===13){
+ const panel=el('section','card');add(panel,el('span','tag','RELACIONA'),el('h2','','Mapa de causas y consecuencias'),el('p','muted','Observa cómo un hecho histórico conduce a otros.'));
+ const flow=el('div','');flow.style.cssText='display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:center;margin:16px 0';
+ [['Guerra del Pacífico','Daños y crisis'],['Reconstrucción','Recuperar economía y gobierno'],['Segundo Militarismo','Dirigentes militares'],['Contrato Grace (1889)','Acuerdo sobre la deuda'],['Cambio de 1895','Predominio de gobiernos civiles']].forEach((entry,i)=>{
+  if(i)flow.append(el('strong','','→'));
+  const node=el('div','');node.style.cssText='flex:1 1 140px;max-width:240px;padding:12px;border:1px solid #bad6e7;border-radius:10px;background:#f0f7ff;text-align:center';
+  add(node,el('strong','',entry[0]),el('p','muted',entry[1]));flow.append(node);
+ });
+ panel.append(flow);main.append(panel);
+}
 const memory=el('section','card');memory.id='p6';add(memory,el('span','tag','06 · RECUERDA'),el('h2','','Tarjetas de memoria'),el('p','muted','Responde con tus palabras y pulsa la tarjeta para comprobarlo.'));const counter=el('p','muted'),card=el('button','flash');card.type='button';let ci=0,flip=false;
-function drawCard(){counter.textContent='Tarjeta '+(ci+1)+' de '+sections.length;card.textContent=flip?sections[ci][3]:'¿Cuál es la idea fundamental de «'+sections[ci][0]+'»?';}card.onclick=()=>{flip=!flip;drawCard()};const prev=el('button','btn','← Anterior'),next=el('button','btn','Siguiente →');prev.onclick=()=>{ci=(ci-1+sections.length)%sections.length;flip=false;drawCard()};next.onclick=()=>{ci=(ci+1)%sections.length;flip=false;drawCard()};add(memory,counter,card,add(el('div','controls'),prev,next));main.append(memory);drawCard();
+function drawCard(){
+ counter.textContent='Tarjeta '+(ci+1)+' de '+sections.length;
+ const prompts=(course==='historia'&&week===13)?[
+ '¿Qué significó reconstruir el Perú después de la Guerra del Pacífico?',
+ '¿Qué fue el Segundo Militarismo y quiénes destacaron?',
+ '¿Para qué se firmó el Contrato Grace en 1889?',
+ '¿Qué caracterizó a la República Aristocrática?',
+ '¿Qué cambios sociales acompañaron la reconstrucción?'
+ ]:null;
+ card.textContent=flip?sections[ci][3]:(prompts?prompts[ci]:'¿Cuál es la idea fundamental de «'+sections[ci][0]+'»?');
+}card.onclick=()=>{flip=!flip;drawCard()};const prev=el('button','btn','← Anterior'),next=el('button','btn','Siguiente →');prev.onclick=()=>{ci=(ci-1+sections.length)%sections.length;flip=false;drawCard()};next.onclick=()=>{ci=(ci+1)%sections.length;flip=false;drawCard()};add(memory,counter,card,add(el('div','controls'),prev,next));main.append(memory);drawCard();
 const quiz=el('section','card');quiz.id='p7';add(quiz,el('span','tag','07 · COMPRUEBA'),el('h2','','Reto de comprensión'));const quizHost=el('div');quiz.append(quizHost);main.append(quiz);let qi=0,hits=0,answered=false;const letter=i=>'ABCDE'[i];
 function drawQuiz(){quizHost.replaceChildren();if(qi>=sections.length){add(quizHost,el('p','', 'Resultado: '+hits+' de '+sections.length+' respuestas correctas.'));const again=el('button','btn','Volver a practicar');again.onclick=()=>{qi=0;hits=0;drawQuiz()};quizHost.append(again);return}answered=false;const source=sections[qi],distractors=[(qi+1)%5,(qi+2)%5,(qi+3)%5];const correctPosition=(qi*2+1)%4;const indices=distractors.slice();indices.splice(correctPosition,0,qi);add(quizHost,el('p','muted','Pregunta '+(qi+1)+' de '+sections.length),el('h3','', 'En el siguiente caso, ¿qué concepto explica mejor la situación?'),add(el('div','example'),el('p','',source[2])));const options=el('div'),feedback=el('div','feedback');feedback.hidden=true;const following=el('button','btn','Siguiente pregunta →');following.hidden=true;following.onclick=()=>{qi++;drawQuiz()};
 indices.forEach((item,pos)=>{const b=el('button','choice',letter(pos)+') '+sections[item][0]);b.onclick=()=>{if(answered)return;answered=true;if(item===qi)hits++;Array.from(options.children).forEach((x,j)=>{x.disabled=true;if(indices[j]===qi)x.classList.add('right');else if(j===pos)x.classList.add('wrong')});feedback.textContent=(item===qi?'¡Respuesta correcta! ':'Respuesta incorrecta. ')+'La respuesta es '+letter(correctPosition)+') '+source[0]+'. '+source[1]+' '+source[3];feedback.hidden=false;following.hidden=false};options.append(b)});add(quizHost,options,feedback,following)}drawQuiz();
