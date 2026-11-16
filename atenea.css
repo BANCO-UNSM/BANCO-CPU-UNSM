@@ -126,3 +126,13 @@
 #atenea-root .atenea-top #atenea-figure-toggle{margin-left:auto;font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap;padding:8px 9px;border:1px solid #ffffff66;border-radius:9px;background:#ffffff18;color:#fff}
 #atenea-root .atenea-top #atenea-close{margin-left:0;flex-shrink:0}
 @media(max-width:400px){#atenea-root .atenea-top #atenea-figure-toggle{font-size:10px;padding:7px 5px}}
+
+/* V3.8: figura completa visible y posicionada dentro de la pantalla, separada del chat. */
+#atenea-root:not(.atenea-figure-hidden) #atenea-personaje{display:block!important;position:fixed;right:105px;bottom:78px;width:clamp(150px,18vw,250px);height:auto;max-height:calc(100dvh - 105px);z-index:10000;overflow:visible}
+#atenea-root:not(.atenea-figure-hidden) #atenea-personaje img{display:block!important;width:100%;height:auto;max-height:calc(100dvh - 105px);object-fit:contain;visibility:visible!important;opacity:1!important}
+#atenea-root:not(.atenea-figure-hidden) #atenea-minimize{display:grid;place-items:center;position:fixed;right:98px;bottom:83px;left:auto;top:auto;z-index:10002}
+@media(max-width:700px){
+ #atenea-root:not(.atenea-figure-hidden) #atenea-personaje{right:60px;bottom:73px;width:clamp(112px,30vw,155px);max-height:55dvh}
+ #atenea-root:not(.atenea-figure-hidden) #atenea-personaje img{max-height:55dvh}
+ #atenea-root:not(.atenea-figure-hidden) #atenea-minimize{right:62px;bottom:78px}
+}
