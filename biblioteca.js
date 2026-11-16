@@ -11,11 +11,31 @@ let bibVistaArea='';
 let bibCursoPreparacion='';
 let bibSemanaPreparacion=null;
 function listoSemanaBib(){return (bibCursoPreparacion==='Cultura General'&&[1,9,11,12,13].includes(bibSemanaPreparacion))||(bibCursoPreparacion==='Razonamiento Verbal'&&[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16].includes(bibSemanaPreparacion))||(bibCursoPreparacion==='Educación Cívica'&&bibSemanaPreparacion>=1&&bibSemanaPreparacion<=16)||(bibNuevosCursos.includes(bibCursoPreparacion)&&bibSemanaPreparacion>=1&&bibSemanaPreparacion<=16)}
+const bibRMExtra={
+ 1:['Calcula mentalmente: 24 × 15.','24 × (10 + 5) = 240 + 120 = 360.'],
+ 2:['Halla el siguiente término: 3, 7, 11, 15, ...','La diferencia es 4. El siguiente término es 19.'],
+ 3:['Halla la suma: 4 + 8 + 12 + 16 + 20.','Hay 5 términos. S = (4 + 20) × 5 ÷ 2 = 60.'],
+ 4:['Si a ★ b = 2a + 3b, calcula 4 ★ 5.','2 × 4 + 3 × 5 = 8 + 15 = 23.'],
+ 5:['Tres números están en razón 2:3:4 y suman 81. Halla el mayor.','2k + 3k + 4k = 81; k = 9. Mayor: 4k = 36.'],
+ 6:['Una máquina termina una tarea en 8 horas y otra en 12. ¿Cuánto tardan juntas?','1/T = 1/8 + 1/12 = 5/24; T = 24/5 horas.'],
+ 7:['Un artículo de S/ 180 tiene descuento de 20 %. ¿Cuál es su precio final?','Descuento = 180 × 20/100 = 36. Precio = 180 − 36 = S/ 144.'],
+ 9:['Si compro 5 cuadernos me sobran S/ 8; si compro 7 me faltan S/ 10. ¿Cuánto cuesta cada uno?','Dos cuadernos adicionales requieren 8 + 10 = 18 soles; cada uno cuesta S/ 9.'],
+ 10:['Repaso: calcula el 25 % de 320.','320 × 25/100 = 80.'],
+ 11:['Si 4 obreros realizan un trabajo en 15 días, ¿cuánto tardan 6 obreros al mismo ritmo?','Magnitudes inversas: 4 × 15 = 6 × t; t = 10 días.'],
+ 12:['¿Qué ángulo menor forman las manecillas a las 3:00?','Minutero: 0°. Horario: 90°. Ángulo menor: 90°.'],
+ 13:['Dos móviles se acercan desde puntos separados 210 km a 60 y 45 km/h. ¿Cuándo se encuentran?','Velocidad de acercamiento = 60 + 45 = 105 km/h; t = 210/105 = 2 h.'],
+ 14:['Un cuadrado de 10 cm de lado contiene otro de 6 cm de lado. Halla el área entre ambos.','Área sombreada = 10² − 6² = 100 − 36 = 64 cm².'],
+ 15:['¿De cuántas maneras se puede elegir a 2 delegados entre 5 estudiantes?','C(5,2) = 5!/(2!3!) = 10 maneras.'],
+ 16:['Repaso: elige 3 representantes de 6 estudiantes. ¿Cuántos grupos hay?','C(6,3) = 6!/(3!3!) = 20 grupos.']
+};
 function bibRMContenido(){
  const ficha=bibRows.find(f=>f.materia==='Razonamiento Matemático'&&Number(f.semana)===Number(bibSemanaPreparacion)&&f.modalidad==='CPU-UNSM');
  if(!ficha)return '<div class="card"><p class="muted">'+(bibLoading?'Cargando el marco teórico...':bibError?'No se pudo cargar el marco teórico. '+esc(bibError):'Esta semana todavía no tiene una ficha teórica publicada.')+'</p></div>';
- const bloque=(titulo,valor)=>valor?'<section class="card" style="margin-top:14px"><h3>'+titulo+'</h3><div class="bib-rm-math" style="white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere">'+esc(valor)+'</div></section>':'';
- return '<div class="card"><h3>'+esc(ficha.tema||('Semana '+bibSemanaPreparacion))+'</h3><p>'+esc(ficha.resumen||'')+'</p>'+bloque('Marco teórico',ficha.teoria)+bloque('Fórmulas y propiedades',ficha.formulas)+bloque('Ejemplos resueltos',ficha.ejemplo)+bloque('Errores frecuentes',ficha.errores)+bloque('Claves para recordar',ficha.claves)+'</div>';
+ const bloque=(titulo,valor)=>'<section class="card" style="margin-top:14px"><h3>'+titulo+'</h3><div class="bib-rm-math" style="white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere">'+esc(valor||'Pendiente de ampliación')+'</div></section>';
+ const extra=bibRMExtra[Number(bibSemanaPreparacion)];
+ const memoria='<section class="card" style="margin-top:14px"><h3>07 · Repaso de fórmulas y ejercicio nuevo</h3><p class="muted">Repasa las propiedades de esta semana y practica con un ejercicio adicional creado para la lección, distinto del ejemplo teórico.</p><details><summary style="cursor:pointer;font-weight:700">Recordar las fórmulas</summary><div class="bib-rm-math" style="white-space:pre-wrap;overflow-x:auto;margin-top:12px">'+esc(ficha.formulas||'Pendiente de ampliación')+'</div></details>'+(extra?'<p style="margin-top:16px"><strong>Reto adicional:</strong> '+esc(extra[0])+'</p><details><summary style="cursor:pointer;color:#0b7362;font-weight:700">Ver solución explicada</summary><p>'+esc(extra[1])+'</p></details>':'')+'</section>';
+ const separata='<section class="card" style="margin-top:14px"><h3>08 · Separata de la semana '+bibSemanaPreparacion+'</h3><p class="muted">Consulta las preguntas correspondientes a esta semana. No se sustituyen las preguntas oficiales por ejercicios inventados.</p><button type="button" class="secondary" id="bibRMSeparata">Ver separata y preguntas de la semana</button></section>';
+ return '<div class="card"><h3>'+esc(ficha.tema||('Semana '+bibSemanaPreparacion))+'</h3><p>'+esc(ficha.resumen||'')+'</p>'+bloque('01 · Marco teórico',ficha.teoria)+bloque('02 · Fórmulas y propiedades',ficha.formulas)+bloque('03 · Ejemplos resueltos',ficha.ejemplo)+bloque('04 · Errores frecuentes',ficha.errores)+bloque('05 · Claves para recordar',ficha.claves)+bloque('06 · Comprueba lo aprendido','Explica con tus palabras cuándo se utiliza cada propiedad y verifica los pasos del ejemplo resuelto.')+memoria+separata+'</div>';
 }
 function bibPage(){
  if(bibCursoPreparacion){
@@ -39,6 +59,7 @@ async function bibLoad(){
  finally{bibLoading=false;if(page==='biblioteca')render();}
 }
 function bibBind(){
+ $('bibRMSeparata')?.addEventListener('click',()=>{if(typeof window.cachimbolabPracticeLesson==='function')window.cachimbolabPracticeLesson('Razonamiento Matemático',bibSemanaPreparacion);else alert('La separata de esta semana todavía no está disponible en el banco de preguntas.');});
  if(page!=='biblioteca'||bibliotecaLeccionesVista)return;
  document.querySelectorAll('[data-bib-area]').forEach(b=>b.addEventListener('click',()=>{bibVistaArea=b.dataset.bibArea;render()}));
  $('bibVolverAreas')?.addEventListener('click',()=>{bibVistaArea='';render()});
