@@ -598,7 +598,7 @@ function bindPsicologiaPiloto(){
  if(!(page==='psicologia_piloto'||(page==='biblioteca'&&bibliotecaLeccionesVista)))return;
  const iframe=document.querySelector('iframe[title^="Psicología, lección semana"]');
  const semana=psicologiaSemanaSeleccionada;
- if(iframe&&psicologiaSemanasConPreguntas.has(semana)){
+ if(false&&iframe&&psicologiaSemanasConPreguntas.has(semana)){
   const onReady=e=>{if(e.source!==iframe.contentWindow||e.data?.type!=='cachimbolab-psico-ready'||Number(e.data.week)!==semana)return;window.removeEventListener('message',onReady);enviarPracticaPsicologia(iframe,semana)};
   window.addEventListener('message',onReady);
   iframe.addEventListener('load',()=>{if(iframe.isConnected){setTimeout(()=>{if(iframe.isConnected&&iframe.contentWindow)enviarPracticaPsicologia(iframe,semana)},300)}},{once:true});
