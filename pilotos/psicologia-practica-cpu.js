@@ -45,7 +45,14 @@ window.addEventListener('message',e=>{
 });
 window.addEventListener('message',e=>{if(e.source!==window.parent||e.data?.type!=='cachimbolab-psico-questions'||Number(e.data.week)!==week)return;if(e.data.error){status.textContent=e.data.error;return}const items=e.data.questions;if(!Array.isArray(items))return;questions=items.filter(q=>q&&typeof q.statement==='string'&&Array.isArray(q.options)&&(q.secure===true||(Number.isInteger(q.correct_index)&&q.correct_index>=0&&q.correct_index<q.options.length))).slice(0,50);index=0;correct=0;if(!questions.length){status.textContent='No se encontraron preguntas oficiales completas para esta semana.';return}draw()});
 if(!available){status.textContent='La práctica oficial de esta semana todavía no está cargada en el banco de Psicología.';return}
-if(window.parent===window){status.textContent='Para realizar las preguntas oficiales, abre esta semana desde «Vista previa Psicología» en CachimboLab como administrador.';return}
+if(window.parent===window){
+ status.textContent='Las preguntas oficiales se realizan desde la plataforma principal con tu cuenta de estudiante.';
+ const go=textEl('a','cpu-next','Ir a CachimboLab para practicar esta semana');
+ go.href='../index.html?cpu_subject=Psicolog%C3%ADa&cpu_week='+week+'&cpu_action=practice';
+ go.style.cssText='display:inline-block;text-decoration:none;margin-top:12px';
+ body.append(go);
+ return;
+}
 status.textContent='Esperando las preguntas oficiales del banco de CachimboLab…';
 window.parent.postMessage({type:'cachimbolab-psico-ready',week},'*');
 })();
