@@ -686,6 +686,13 @@ function academicQualityPage(){
  if(!admin())return notice('Auditoría reservada a la administradora.',true);
  const pending=academicKeyAlerts.filter(x=>x.status==='pending');
  const reviewed=academicKeyAlerts.filter(x=>x.status==='reviewed');
+ const cpuFindings=academicFindings.filter(x=>x.modality==='CPU-UNSM');
+ const cpuPending=pending.filter(x=>x.modality==='CPU-UNSM'||!x.modality);
+ const subjectCounts=new Map();
+ for(const row of cpuFindings){const subject=row.subject||'Sin materia';const item=subjectCounts.get(subject)||{format:0,keys:0};item.format++;subjectCounts.set(subject,item)}
+ for(const row of cpuPending){const subject=row.subject||'Sin materia';const item=subjectCounts.get(subject)||{format:0,keys:0};item.keys++;subjectCounts.set(subject,item)}
+ const cpuAuditSummary=[...subjectCounts].sort((a,b)=>a[0].localeCompare(b[0],'es')).map(([subject,counts])=>`<tr><td>${esc(subject)}</td><td>${counts.format}</td><td>${counts.keys}</td></tr>`).join('');
+
  const label=i=>Number.isInteger(i)&&i>=0&&i<=4?'ABCDE'[i]+')':'Sin clave';
  const keyText=(row,i)=>Number.isInteger(i)&&i>=0&&i<(row.options||[]).length?label(i)+' '+String(row.options[i]).replace(/^\\s*(?:[A-Ea-e]\\s*[).:-]\\s*)+/,''):label(i);
  const alertCard=row=>`<div class="listitem" style="border-left:4px solid ${row.status==='pending'?'#ca7c13':'#258469'};padding-left:14px">
@@ -706,6 +713,9 @@ function academicQualityPage(){
   <button id="runQualityAudit">${academicAuditLoaded?'Volver a analizar':'Analizar preguntas publicadas'}</button>
   <p id="qualityStatus" class="muted" role="status">${esc(academicAuditError)}</p>
   ${academicAuditLoaded?`
+   <h3>Resumen de observaciones · CPU-UNSM</h3>
+   <p class="muted small">Los conteos representan observaciones detectadas, no preguntas académicamente verificadas. Las claves deben contrastarse con la separata o el solucionario original. Beca 18 no se incluye en este resumen.</p>
+   ${cpuAuditSummary?'<div style="overflow-x:auto"><table><thead><tr><th>Curso</th><th>Formato o explicación</th><th>Claves pendientes</th></tr></thead><tbody>'+cpuAuditSummary+'</tbody></table></div>':'<p>No hay observaciones registradas de CPU-UNSM en la auditoría cargada.</p>'}
    <h3>Discrepancias de clave para seguimiento</h3>
    <div class="learning-stats"><div><strong>${pending.length}</strong><span>Pendientes</span></div><div><strong>${reviewed.length}</strong><span>Revisadas (con historial)</span></div></div>
    ${pending.length?pending.map(alertCard).join(''):'<p>No hay discrepancias pendientes registradas.</p>'}
