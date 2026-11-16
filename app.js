@@ -899,7 +899,7 @@ function login(){
 function cpuStudyKey(){return 'cachimbolab_cpu_recent_'+(user?.id||'sin_sesion')}
 function rememberCPUStudy(subject,week){
  if(!user||!subject||!Number.isInteger(Number(week))||week<1||week>16)return;
- try{localStorage.setItem(cpuStudyKey(),JSON.stringify({subject,week:Number(week)}))}catch(_){}
+ try{localStorage.setItem(cpuStudyKey(),JSON.stringify({subject,week:Number(week)}));const key='cpu_week_visits_'+user.id;const visits=JSON.parse(localStorage.getItem(key)||'{}')||{};visits[subject+'|'+Number(week)]=true;localStorage.setItem(key,JSON.stringify(visits))}catch(_){}
 }
 window.cachimbolabRememberCPU=rememberCPUStudy;
 function recentCPUStudy(){
@@ -908,6 +908,14 @@ function recentCPUStudy(){
   const subjects=['Psicología','Razonamiento Verbal','Cultura General','Educación Cívica','Historia','Geografía','Lenguaje y Literatura','Filosofía','Economía'];
   return row&&subjects.includes(row.subject)&&Number.isInteger(row.week)&&row.week>=1&&row.week<=16?row:null;
  }catch(_){return null}
+}
+function cpuWeekProgressMarkup(){
+ const subjects=['Psicología','Razonamiento Verbal','Cultura General','Educación Cívica','Historia','Geografía','Lenguaje y Literatura','Filosofía','Economía'];
+ let visits={};try{visits=JSON.parse(localStorage.getItem('cpu_week_visits_'+user.id)||'{}')||{}}catch(_){}
+ const published=questions.filter(q=>q.modality==='CPU-UNSM'&&q.status==='published'&&!q.exam_id&&Number(q.week)>=1&&Number(q.week)<=16);
+ return '<div class="card"><h3>📊 Progreso por curso y semana</h3><p class="muted small">Las semanas vistas son las lecciones que abriste en este navegador desde esta actualización; no equivalen a temas dominados. Los aciertos se registran por separado.</p><div style="overflow-x:auto"><table style="width:100%"><thead><tr><th>Curso</th><th>Semanas vistas</th><th>Preguntas publicadas</th><th>Ir al curso</th></tr></thead><tbody>'+
+ subjects.map(subject=>{const seen=Array.from({length:16},(_,i)=>i+1).filter(w=>visits[subject+'|'+w]);const count=published.filter(q=>q.subject===subject).length;
+ return '<tr><td>'+esc(subject)+'</td><td>'+seen.length+'/16 <span class="muted small">'+esc(seen.map(w=>'S'+w).join(', '))+'</span></td><td>'+count+'</td><td><button type="button" class="secondary" data-cpu-week-course="'+esc(subject)+'">Ver semanas</button></td></tr>'}).join('')+'</tbody></table></div></div>';
 }
 function cpuDashboardPage(){
  if(!hasService('CPU-UNSM'))return notice('No tienes acceso activo a CPU-UNSM.',true);
@@ -944,6 +952,7 @@ function cpuDashboardPage(){
    <div class="card"><h3>🎯 Mis errores</h3><p class="muted">Vuelve a resolver las preguntas que necesitas reforzar.</p><button type="button" class="secondary" data-cpu-action="mistakes">Repasar mis errores</button></div>
   </div>
  </div>
+ ${cpuWeekProgressMarkup()}
  <div class="card"><h3>💡 Tu siguiente paso recomendado</h3><p>${retry}</p>
   <div class="actions">
    <button type="button" class="secondary" data-cpu-action="progress">Ver mi progreso</button>
@@ -981,7 +990,12 @@ function openCPULessonFromPractice(){
  }
  render();
 }
+function openCPUCourseWeeks(subject){
+ selectedModality='CPU-UNSM';page='biblioteca';bibliotecaLeccionesVista=false;bibVistaArea='Letras y humanidades';bibCursoPreparacion=subject;bibSemanaPreparacion=null;render();if(typeof bibLoad==='function')bibLoad();
+}
 function bindCPUDashboard(){
+ document.querySelectorAll('[data-cpu-week-course]').forEach(b=>b.addEventListener('click',()=>openCPUCourseWeeks(b.dataset.cpuWeekCourse)));
+
  document.querySelectorAll('[data-cpu-action]').forEach(b=>b.addEventListener('click',()=>{
   const action=b.dataset.cpuAction;
   selectedModality='CPU-UNSM';
