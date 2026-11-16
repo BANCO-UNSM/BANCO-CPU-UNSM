@@ -431,6 +431,59 @@ function bindVerbalPractica(){
  window.addEventListener('message',onReady);
  iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(start,300)},{once:true});
 }
+const nuevosCursosPractica={'historia':'Historia','geografia':'Geografía','lenguaje':'Lenguaje y Literatura','filosofia':'Filosofía','economia':'Economía'};
+let nuevasPracticasRequest=0;
+async function enviarPracticaNueva(iframe,semana,course){
+ if(!admin()||!db||!iframe?.contentWindow||!nuevosCursosPractica[course]||semana<1||semana>16)return;
+ const request=++nuevasPracticasRequest,subject=nuevosCursosPractica[course];
+ const send=payload=>{
+  if(request===nuevasPracticasRequest&&iframe.isConnected&&iframe.contentWindow)
+    iframe.contentWindow.postMessage({type:'cachimbolab-nuevos-questions',course,week:semana,...payload},window.location.origin);
+ };
+ try{
+  const {data,error}=await db.from('questions')
+   .select('id,week,subject,original_number,statement,options')
+   .eq('modality','CPU-UNSM').eq('subject',subject)
+   .eq('week',semana).eq('status','published')
+   .order('original_number',{ascending:true}).limit(250);
+  if(error)throw error;
+  if(!data?.length){send({questions:[],total:0,complete:true});return;}
+  let sent=0;
+  for(let i=0;i<data.length;i+=5){
+   const group=await Promise.all(data.slice(i,i+5).map(async q=>{
+    const {data:detail,error:e}=await db.rpc('get_question_for_review',{p_question_id:q.id});
+    if(e||!detail)return null;
+    const index=Number(detail.correct_index);
+    if(!Number.isInteger(index)||index<0||!Array.isArray(q.options)||index>=q.options.length)return null;
+    return {id:q.id,original_number:q.original_number,statement:q.statement,
+      options:q.options,correct_index:index,explanation:detail.explanation};
+   }));
+   if(request!==nuevasPracticasRequest)return;
+   if(group.some(x=>!x))throw new Error('El banco contiene una clave no verificable. Se requiere revisión académica.');
+   sent+=group.length;
+   send({questions:group,total:data.length,append:i>0,complete:sent===data.length});
+  }
+ }catch(e){send({error:'No se pudo cargar la separata: '+(e?.message||'Error de conexión')});}
+}
+function bindPracticaNuevosCursos(){
+ if(page!=='biblioteca'||!admin()||bibliotecaLeccionesVista||
+  typeof bibCursoPreparacion==='undefined'||!bibCursoPreparacion||
+  !Number.isInteger(bibSemanaPreparacion))return;
+ const course=Object.keys(nuevosCursosPractica).find(c=>nuevosCursosPractica[c]===bibCursoPreparacion);
+ if(!course)return;
+ const week=bibSemanaPreparacion,iframe=document.querySelector('iframe[title="'+bibCursoPreparacion+' semana '+week+'"]');
+ if(!iframe)return;
+ let started=false;
+ const start=()=>{if(started||!iframe.isConnected)return;started=true;enviarPracticaNueva(iframe,week,course)};
+ const onReady=e=>{
+  if(e.origin!==window.location.origin||e.source!==iframe.contentWindow||
+   e.data?.type!=='cachimbolab-nuevos-ready'||e.data.course!==course||Number(e.data.week)!==week)return;
+  window.removeEventListener('message',onReady);start();
+ };
+ window.addEventListener('message',onReady);
+ iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(start,300)},{once:true});
+}
+
 let civicaPracticaRequest=0;
 async function enviarPracticaCivica(iframe,semana){
  if(!admin()||!db||!iframe?.contentWindow||![11,12,13].includes(semana))return;
@@ -538,6 +591,7 @@ function render(){
  bindCulturaPractica();
  bindVerbalPractica();
  bindCivicaPractica();
+ bindPracticaNuevosCursos();
  if(typeof bibBind==='function'&&!bibliotecaLeccionesVista)bibBind();
  $('bibAbrirPsicologia')?.addEventListener('click',()=>{bibliotecaLeccionesVista=true;psicologiaSemanaSeleccionada=null;render()});
  $('bibVolverLecciones')?.addEventListener('click',()=>{bibliotecaLeccionesVista=false;psicologiaSemanaSeleccionada=null;render()});
