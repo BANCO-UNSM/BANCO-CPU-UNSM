@@ -141,11 +141,58 @@ function initCharacterDrag(){
   el.style.top=Math.max(0,Math.min(window.innerHeight-r.height,r.top))+'px';posicionarSaludo();
  });
 }
+
+// Botón flotante compacto y arrastrable, independiente de la figura.
+function initFloatingButton(){
+ const root=$('atenea-root'),btn=$('atenea-toggle');if(!root||!btn)return;
+ const compactKey='ateneaButtonCompact';
+ const saved=(()=>{try{return sessionStorage.getItem(compactKey)}catch(_){return null}})();
+ const compact=saved===null?window.matchMedia('(max-width:700px)').matches:saved==='true';
+ const sizeBtn=document.createElement('button');sizeBtn.id='atenea-toggle-size';sizeBtn.type='button';
+ btn.after(sizeBtn);
+ function setCompact(value){root.classList.toggle('atenea-toggle-compact',value);sizeBtn.textContent=value?'+':'−';sizeBtn.title=value?'Ampliar botón de Atenea':'Minimizar botón de Atenea';sizeBtn.setAttribute('aria-label',sizeBtn.title);try{sessionStorage.setItem(compactKey,String(value))}catch(_){}}
+ setCompact(compact);
+ sizeBtn.addEventListener('click',()=>setCompact(!root.classList.contains('atenea-toggle-compact')));
+ let drag=null,blockClick=false;
+ btn.style.touchAction='none';
+ btn.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  const rect=btn.getBoundingClientRect();
+  drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:rect.left,top:rect.top,moved:false};
+  btn.setPointerCapture(e.pointerId);
+ });
+ btn.addEventListener('pointermove',e=>{
+  if(!drag||drag.id!==e.pointerId)return;
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.moved&&Math.hypot(dx,dy)<8)return;
+  drag.moved=true;
+  const x=Math.max(6,Math.min(window.innerWidth-btn.offsetWidth-6,drag.left+dx));
+  const y=Math.max(6,Math.min(window.innerHeight-btn.offsetHeight-6,drag.top+dy));
+  btn.style.setProperty('position','fixed','important');
+  btn.style.setProperty('left',x+'px','important');btn.style.setProperty('top',y+'px','important');
+  btn.style.setProperty('right','auto','important');btn.style.setProperty('bottom','auto','important');
+  sizeBtn.classList.add('atenea-size-follow');
+  sizeBtn.style.left=Math.max(2,Math.min(window.innerWidth-26,x-9))+'px';
+  sizeBtn.style.top=Math.max(2,Math.min(window.innerHeight-26,y+btn.offsetHeight-17))+'px';
+ });
+ const end=e=>{if(!drag||drag.id!==e.pointerId)return;if(drag.moved){blockClick=true;setTimeout(()=>blockClick=false,350)}drag=null};
+ btn.addEventListener('pointerup',end);btn.addEventListener('pointercancel',end);
+ btn.addEventListener('click',e=>{if(blockClick){e.preventDefault();e.stopImmediatePropagation();blockClick=false}},true);
+ window.addEventListener('resize',()=>{
+  if(!btn.style.left)return;
+  const r=btn.getBoundingClientRect();
+  const x=Math.max(6,Math.min(window.innerWidth-r.width-6,r.left)),y=Math.max(6,Math.min(window.innerHeight-r.height-6,r.top));
+  btn.style.left=x+'px';btn.style.top=y+'px';
+  sizeBtn.style.left=Math.max(2,x-9)+'px';sizeBtn.style.top=Math.max(2,y+r.height-17)+'px';
+ });
+}
+
 function mount(){if($('atenea-root'))return;
  const root=document.createElement('div');root.id='atenea-root';
  root.innerHTML=`<button id="atenea-personaje" type="button" aria-label="Abrir chat con Atenea" title="Habla con Atenea"><img src="atenea-cuerpo-entero-v29.png" alt="Atenea, tu tutora virtual" /></button><div id="atenea-saludo" role="note"><button type="button" id="atenea-saludo-close" aria-label="Cerrar saludo" title="Cerrar saludo">×</button><span>¡Hola! 👋<br>Soy Atenea 💙<br>Tu guía inteligente hacia la UNSM.</span></div><button id="atenea-minimize" type="button" aria-label="Ocultar figura de Atenea" title="Ocultar figura de Atenea">−</button><button id="atenea-toggle" type="button" aria-label="Abrir asistente Atenea" title="Habla con Atenea"><img class="atenea-toggle-avatar" src="atenea-retrato.png" alt="" /> <span>Atenea</span></button><section id="atenea-panel" role="dialog" aria-label="Atenea, asistente académica" hidden><div class="atenea-top"><div class="atenea-mark"><img src="atenea-retrato.png" alt="Atenea, tutora virtual de CachimboLab" /></div><div><strong>ATENEA</strong><small>Tu guía inteligente hacia la UNSM</small></div><button type="button" id="atenea-close" aria-label="Cerrar">×</button></div><div id="atenea-feed" class="atenea-feed" aria-live="polite"></div><div class="atenea-shortcuts"><button type="button" data-ask="Dame una pista">💡 Pista</button><button type="button" data-ask="Explícame el concepto sin revelar la respuesta de la práctica">📘 Explicación</button><button type="button" data-ask="Motívame">💙 Ánimo</button></div><form id="atenea-form"><input id="atenea-input" maxlength="700" autocomplete="off" placeholder="Pregúntale a Atenea..." aria-label="Tu mensaje"/><button id="atenea-send" type="submit" aria-label="Enviar">➤</button></form><div class="atenea-foot"><label><input type="checkbox" id="atenea-voice"/> 🔊 Leer respuestas</label><span id="atenea-status">Atenea usa Gemini con cupos gratuitos.</span></div></section>`;
  document.body.append(root);
  $('atenea-toggle').onclick=()=>show(!state.open);
+ initFloatingButton();
  $('atenea-personaje').onclick=()=>{if(!dragState.moved)show(!state.open);};
  $('atenea-close').onclick=()=>show(false);
  $('atenea-saludo-close').onclick=()=>{
