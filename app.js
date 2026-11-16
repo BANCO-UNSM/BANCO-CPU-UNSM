@@ -182,7 +182,7 @@ async function cargarImagenesPrivadas(raiz=document){
 
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',topic:'',status:''};
 let activityRows=[],activityLoaded=false,activityError='';
-let academicFindings=[],academicAuditLoaded=false,academicAuditError='';
+let academicFindings=[],academicKeyAlerts=[],academicAuditLoaded=false,academicAuditError='';
 let exams=[],examsError='',questionsError='',examTypeFilter='',examCycleFilter='',examActiveId='',examSession=null,examPreview=null;
 let examPreviewRequest=0;
 let relationItems=[],relationBusy=false,relationLoaded=false,relationError='',relationSelected=null,relationAnswers=[],relationGrade=null,relationReview=null;
@@ -554,14 +554,52 @@ function accessPage(){
 
 function academicQualityPage(){
  if(!admin())return notice('Auditoría reservada a la administradora.',true);
- return `<div class="card"><h2>🔎 Auditoría académica</h2><p class="muted">Revisa alertas de formato y explicaciones incompletas de preguntas publicadas. Las alertas no implican necesariamente una clave incorrecta. Ningún resultado se modifica automáticamente.</p><button id="runQualityAudit">${academicAuditLoaded?'Volver a analizar':'Analizar preguntas publicadas'}</button><p id="qualityStatus" class="muted" role="status">${esc(academicAuditError)}</p>${academicAuditLoaded?`<div class="learning-stats"><div><strong>${academicFindings.length}</strong><span>Preguntas con observaciones</span></div></div>${academicFindings.length?academicFindings.slice(0,250).map(row=>`<div class="listitem"><strong>${esc(row.subject||'Materia')} · ${esc(row.modality||'')} · ${row.week==null?'Sin semana':'Semana '+esc(row.week)} · N.º ${row.original_number??'—'}</strong><p class="muted small">Observaciones:</p><ul>${(row.issues||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul><button class="secondary" data-quality-question="${esc(row.id)}">Abrir en revisión</button></div>`).join(''):'<p>Sin observaciones según las reglas automáticas. Todavía se necesita comprobación académica de claves y desarrollos.</p>'}${academicFindings.length>250?'<p class="muted">Se muestran las primeras 250 preguntas.</p>':''}`:''}</div>`;
+ const pending=academicKeyAlerts.filter(x=>x.status==='pending');
+ const reviewed=academicKeyAlerts.filter(x=>x.status==='reviewed');
+ const label=i=>Number.isInteger(i)&&i>=0&&i<=4?'ABCDE'[i]+')':'Sin clave';
+ const keyText=(row,i)=>Number.isInteger(i)&&i>=0&&i<(row.options||[]).length?label(i)+' '+String(row.options[i]).replace(/^\\s*(?:[A-Ea-e]\\s*[).:-]\\s*)+/,''):label(i);
+ const alertCard=row=>`<div class="listitem" style="border-left:4px solid ${row.status==='pending'?'#ca7c13':'#258469'};padding-left:14px">
+  <strong>${esc(row.subject)} · Semana ${esc(row.week??'Sin asignar')} · Pregunta ${esc(row.original_number)}</strong>
+  <p>${esc(row.statement||'')}</p>
+  <p><strong>Clave originalmente registrada:</strong> ${esc(keyText(row,row.original_correct_index))}</p>
+  <p><strong>Clave actual en banco:</strong> ${esc(keyText(row,row.current_correct_index))}</p>
+  <p><strong>Resultado del contraste:</strong> ${esc(row.proposed_answer||'No determinado')}</p>
+  <p><strong>Motivo de la alerta:</strong> ${esc(row.reason)}</p>
+  ${row.evidence_url?'<p><a href="'+esc(row.evidence_url)+'" target="_blank" rel="noopener noreferrer">Consultar fuente de contraste</a></p>':''}
+  <p><strong>Estado:</strong> ${row.status==='reviewed'?'Revisada por administración':'Pendiente de verificar con docente o material original'}</p>
+  ${row.resolution_note?'<p><strong>Nota de revisión:</strong> '+esc(row.resolution_note)+'</p>':''}
+  <button class="secondary" data-quality-question="${esc(row.id)}">Abrir en revisión</button>
+  <button class="secondary" data-audit-discrepancy="${row.discrepancy_id}" data-audit-status="${row.status==='pending'?'reviewed':'pending'}">${row.status==='pending'?'Registrar revisión':'Reabrir observación'}</button>
+ </div>`;
+ return `<div class="card"><h2>🔎 Auditoría académica</h2>
+  <p class="muted">Control de formato, desarrollos y discrepancias entre la clave registrada y una fuente de contraste. Una alerta no cambia la respuesta oficial: permite comprobar si el docente corrigió la clave, si existe un error en el solucionario o si se marcó una opción equivocada.</p>
+  <button id="runQualityAudit">${academicAuditLoaded?'Volver a analizar':'Analizar preguntas publicadas'}</button>
+  <p id="qualityStatus" class="muted" role="status">${esc(academicAuditError)}</p>
+  ${academicAuditLoaded?`
+   <h3>Discrepancias de clave para seguimiento</h3>
+   <div class="learning-stats"><div><strong>${pending.length}</strong><span>Pendientes</span></div><div><strong>${reviewed.length}</strong><span>Revisadas (con historial)</span></div></div>
+   ${pending.length?pending.map(alertCard).join(''):'<p>No hay discrepancias pendientes registradas.</p>'}
+   ${reviewed.length?'<details><summary>Mostrar '+reviewed.length+' observación(es) revisada(s)</summary>'+reviewed.map(alertCard).join('')+'</details>':''}
+   <h3>Otras observaciones automáticas</h3>
+   <div class="learning-stats"><div><strong>${academicFindings.length}</strong><span>Preguntas con observaciones de formato o explicación</span></div></div>
+   ${academicFindings.length?academicFindings.slice(0,250).map(row=>`<div class="listitem"><strong>${esc(row.subject||'Materia')} · ${esc(row.modality||'')} · ${row.week==null?'Sin semana':'Semana '+esc(row.week)} · N.º ${row.original_number??'—'}</strong><p class="muted small">Observaciones:</p><ul>${(row.issues||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul><button class="secondary" data-quality-question="${esc(row.id)}">Abrir en revisión</button></div>`).join(''):'<p>Sin observaciones según las reglas automáticas. Las claves requieren comprobación académica.</p>'}
+   ${academicFindings.length>250?'<p class="muted">Se muestran las primeras 250 preguntas.</p>':''}
+  `:''}
+ </div>`;
 }
 async function loadAcademicQuality(){
- const status=$('qualityStatus');const btn=$('runQualityAudit');
- if(btn)btn.disabled=true;if(status)status.textContent='Analizando explicaciones...';
- const {data,error}=await db.rpc('admin_academic_quality_audit');
- if(error){academicAuditError=error.message;academicAuditLoaded=false;}
- else{academicAuditError='';academicFindings=Array.isArray(data?.findings)?data.findings:[];academicAuditLoaded=true;}
+ const status=$('qualityStatus'),btn=$('runQualityAudit');
+ if(btn)btn.disabled=true;
+ if(status)status.textContent='Revisando alertas y explicaciones...';
+ const [standard,discrepancies]=await Promise.all([
+  db.rpc('admin_academic_quality_audit'),
+  db.rpc('admin_academic_key_discrepancies')
+ ]);
+ const errors=[standard.error?.message,discrepancies.error?.message].filter(Boolean);
+ academicAuditError=errors.join(' | ');
+ academicFindings=standard.error?[]:Array.isArray(standard.data?.findings)?standard.data.findings:[];
+ academicKeyAlerts=discrepancies.error?[]:Array.isArray(discrepancies.data?.findings)?discrepancies.data.findings:[];
+ academicAuditLoaded=!errors.length;
  render();
 }
 function bindAcademicQuality(){
@@ -574,6 +612,20 @@ function bindAcademicQuality(){
   reviewSelected=null;relationReview=null;page='review';render();
   const button=[...document.querySelectorAll('[data-review-id]')].find(x=>x.dataset.reviewId===q.id);
   button?.click();
+ }));
+ document.querySelectorAll('[data-audit-discrepancy]').forEach(b=>b.addEventListener('click',async()=>{
+  const id=Number(b.dataset.auditDiscrepancy),target=b.dataset.auditStatus;
+  const entry=academicKeyAlerts.find(x=>x.discrepancy_id===id);
+  if(!entry)return;
+  const note=target==='reviewed'
+   ?prompt('Indica qué comprobaste con el docente o documento y si corregiste la clave. Esta nota quedará en el historial:','')
+   :prompt('Motivo para reabrir la observación (opcional):','');
+  if(note===null)return;
+  if(target==='reviewed'&&!note.trim()){alert('Para marcar como revisada debes registrar una conclusión.');return}
+  b.disabled=true;
+  const {error}=await db.rpc('admin_review_academic_key_discrepancy',{p_id:id,p_status:target,p_resolution_note:note});
+  if(error){alert('No se pudo registrar la revisión: '+error.message);b.disabled=false;return}
+  await loadAcademicQuality();
  }));
 }
 
