@@ -341,7 +341,7 @@ function psicologiaPilotoPage(){
  }).join('');
  return `<div class="card"><h2>Vista previa · Psicología</h2><p class="muted">Selecciona una semana para estudiar su lección completa, desde la teoría hasta el punto 8. Las semanas 10 y 16 son de repaso; las preguntas de la separata están en el punto 8 cuando se encuentran publicadas. Las lecciones están disponibles para los estudiantes autorizados.</p><div role="group" aria-label="Seleccionar semana de Psicología" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0 24px">${botones}</div>${semana?`<h3 style="margin-bottom:5px">Semana ${semana}: ${temas[semana]}</h3><p class="muted">Explora la teoría, comprueba lo aprendido y desarrolla la práctica de la semana.</p><iframe title="Psicología, lección semana ${semana}" src="pilotos/psicologia-semana-${semana}.html?v=33" style="display:block;width:100%;height:78vh;min-height:540px;border:1px solid #d9e5f0;border-radius:12px;background:white" loading="lazy" sandbox="allow-scripts"></iframe><p><button type="button" class="secondary" id="psicoGoPractice" data-lesson-week="${semana}">✏️ Practicar preguntas de esta semana</button></p><p><a href="pilotos/psicologia-semana-${semana}.html?v=29" target="_blank" rel="noopener">Abrir semana ${semana} en pantalla completa</a></p>`:`<p class="muted" style="padding:18px 0">Elige una semana disponible para abrir su lección.</p>`}</div>`;
 }
-const psicologiaSemanasConPreguntas=new Set([6,7,8,9,11,12,13]);
+const psicologiaSemanasConPreguntas=new Set([6,7,8,9,11,12,13,14]);
 let psicologiaPruebaRequest=0;
 async function enviarPracticaPsicologia(iframe,semana){
  if(!admin()||!db||!psicologiaSemanasConPreguntas.has(semana)||!iframe?.contentWindow)return;
