@@ -21,26 +21,22 @@ function textEl(tag,cls,text){const el=document.createElement(tag);if(cls)el.cla
 function formatMath(container){
  if(course!=='algebra'||!window.katex)return;
  const raw=(container.textContent||'').replace(/\\\\(?=[()[\]{}]|[a-zA-Z])/g,'\\');
- if(!/\\\(|\\\[|\\(?:frac|dfrac|sqrt|left|right|cdot|times|leq|geq|neq|pm|div|log|sum|begin)|\^|_/.test(raw))return;
- const parts=raw.split(/(\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\])/g);
- container.replaceChildren();
+ const token=/(\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|\$\$[\s\S]*?\$\$|\$[^$\n]+\$)/g;
+ if(!token.test(raw))return;
+ token.lastIndex=0;
  const render=(tex,display=false)=>{
-  const span=document.createElement(display?'div':'span');
-  span.className='cpu-math';
+  const span=document.createElement(display?'div':'span');span.className='cpu-math';
   try{window.katex.render(tex,span,{throwOnError:true,displayMode:display,strict:'ignore'});return span}
-  catch{return document.createTextNode(tex)}
+  catch(e){span.textContent=tex;return span}
  };
- parts.forEach(part=>{
+ const fragments=raw.split(token);container.replaceChildren();
+ fragments.forEach(part=>{
   if(!part)return;
-  if(part.startsWith('\\(')&&part.endsWith('\\)')){container.append(render(part.slice(2,-2)));return}
-  if(part.startsWith('\\[')&&part.endsWith('\\]')){container.append(render(part.slice(2,-2),true));return}
-  // Algunos enunciados del banco guardan LaTeX sin delimitadores.
-  // Renderizar únicamente expresiones completas, nunca interpretar HTML.
-  const trimmed=part.trim();
-  if(/^\\(?:frac|dfrac|sqrt|begin|left)[\s\S]*$/.test(trimmed)){
-   container.append(render(trimmed));return;
-  }
-  container.append(document.createTextNode(part));
+  if(part.startsWith('\\(')&&part.endsWith('\\)'))container.append(render(part.slice(2,-2)));
+  else if(part.startsWith('\\[')&&part.endsWith('\\]'))container.append(render(part.slice(2,-2),true));
+  else if(part.startsWith('$$')&&part.endsWith('$$'))container.append(render(part.slice(2,-2),true));
+  else if(part.startsWith('$')&&part.endsWith('$'))container.append(render(part.slice(1,-1)));
+  else container.append(document.createTextNode(part));
  });
 }
 function mathText(tag,cls,value){const node=textEl(tag,cls,value);formatMath(node);return node}
