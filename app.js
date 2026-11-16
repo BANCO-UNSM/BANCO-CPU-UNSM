@@ -402,7 +402,7 @@ async function enviarPracticaVerbal(iframe,semana){
  const request=++verbalPracticaRequest;
  const send=payload=>{if(request===verbalPracticaRequest&&iframe.isConnected&&iframe.contentWindow)iframe.contentWindow.postMessage({type:'cachimbolab-verbal-questions',week:semana,...payload},'*')};
  try{
-  const {data,error}=await db.from('questions').select('id,week,subject,original_number,statement,options').eq('modality','CPU-UNSM').eq('subject','Razonamiento Verbal').eq('week',semana).eq('status','published').order('original_number',{ascending:true}).limit(50);
+  const {data,error}=await db.from('questions').select('id,week,subject,original_number,statement,options').eq('modality','CPU-UNSM').eq('subject','Razonamiento Verbal').eq('week',semana).eq('status','published').order('original_number',{ascending:true}).limit(200);
   if(error)throw error;
   if(!data?.length){send({questions:[]});return}
   const full=[];
