@@ -10,7 +10,7 @@ function bibPage(){
  const filtered=bibRows.filter(x=>x.modalidad===bibModalidad&&x.area===bibArea&&(!bibMateria||x.materia===bibMateria)&&(!bibSemana||String(x.semana)===bibSemana));
  const selected=filtered.find(x=>x.id===bibFicha);
  const option=(v,label,selected)=>'<option value="'+esc(v)+'"'+(selected?' selected':'')+'>'+esc(label)+'</option>';
- return '<div class="card"><h2>📖 Biblioteca de fórmulas y teoría esencial</h2><p class="muted">Estudia por área, materia, semana y tema. Las fichas se publican después de su revisión académica.</p>'+
+ return (admin()?'<div class="card"><h2>🧠 Lecciones interactivas por curso</h2><p class="muted">Selecciona un curso y estudia sus lecciones organizadas por semanas. Las lecciones en preparación solo están disponibles para administradores.</p><button type="button" id="bibAbrirPsicologia">Psicología · Ver lecciones por semana</button></div>':'')+'<div class="card"><h2>📖 Biblioteca de fórmulas y teoría esencial</h2><p class="muted">Estudia por área, materia, semana y tema. Las fichas se publican después de su revisión académica.</p>'+
  '<div class="grid"><label>Modalidad<select id="bibModalidad">'+['CPU-UNSM','BECA18'].map(v=>option(v,v,v===bibModalidad)).join('')+'</select></label>'+
  '<label>Área<select id="bibArea">'+Object.keys(BIB_AREAS).map(v=>option(v,v,v===bibArea)).join('')+'</select></label>'+
  '<label>Materia<select id="bibMateria">'+option('','Todas las materias',!bibMateria)+materias.map(v=>option(v,v,v===bibMateria)).join('')+'</select></label>'+
