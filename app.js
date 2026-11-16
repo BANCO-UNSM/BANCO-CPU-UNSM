@@ -425,9 +425,11 @@ function bindVerbalPractica(){
  const semana=bibSemanaPreparacion;
  const iframe=document.querySelector('iframe[title="Razonamiento Verbal semana '+semana+'"]');
  if(!iframe)return;
- const onReady=e=>{if(e.source!==iframe.contentWindow||e.data?.type!=='cachimbolab-verbal-ready'||Number(e.data.week)!==semana)return;window.removeEventListener('message',onReady);enviarPracticaVerbal(iframe,semana)};
+ let started=false;
+ const start=()=>{if(started||!iframe.isConnected)return;started=true;enviarPracticaVerbal(iframe,semana)};
+ const onReady=e=>{if(e.source!==iframe.contentWindow||e.data?.type!=='cachimbolab-verbal-ready'||Number(e.data.week)!==semana)return;window.removeEventListener('message',onReady);start()};
  window.addEventListener('message',onReady);
- iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(()=>{if(iframe.isConnected)enviarPracticaVerbal(iframe,semana)},300)},{once:true});
+ iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(start,300)},{once:true});
 }
 function bindPsicologiaPiloto(){
  if(!(page==='psicologia_piloto'||(page==='biblioteca'&&bibliotecaLeccionesVista))||!admin())return;
