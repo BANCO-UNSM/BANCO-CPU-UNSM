@@ -539,15 +539,16 @@ function bindCivicaPractica(){
 let studentLibraryCleanup=null;
 function bindStudentLibraryPractice(){
  if(studentLibraryCleanup){studentLibraryCleanup();studentLibraryCleanup=null}
- if(page!=='biblioteca'||!user||admin()||!db||!(teacher()||access?.allowed))return;
+ if(!(['biblioteca','psicologia_piloto'].includes(page))||!user||!db||!(teacher()||access?.allowed))return;
  const subjects={'Razonamiento Verbal':'Razonamiento Verbal','Cultura General':'Cultura General',
   'Educación Cívica':'Educación Cívica','Historia':'Historia','Geografía':'Geografía',
   'Lenguaje y Literatura':'Lenguaje y Literatura','Filosofía':'Filosofía','Economía':'Economía',
   'Psicología':'Psicología'};
- const subject=bibliotecaLeccionesVista?'Psicología':bibCursoPreparacion;
- const week=bibliotecaLeccionesVista?psicologiaSemanaSeleccionada:bibSemanaPreparacion;
+ const psicoLesson=page==='psicologia_piloto'||bibliotecaLeccionesVista;
+ const subject=psicoLesson?'Psicología':bibCursoPreparacion;
+ const week=psicoLesson?psicologiaSemanaSeleccionada:bibSemanaPreparacion;
  if(!subjects[subject]||!Number.isInteger(week)||week<1||week>16)return;
- const iframe=bibliotecaLeccionesVista?
+ const iframe=psicoLesson?
   document.querySelector('iframe[title^="Psicología, lección semana"]'):
   document.querySelector('iframe[title="'+subject+' semana '+week+'"]');
  if(!iframe)return;
