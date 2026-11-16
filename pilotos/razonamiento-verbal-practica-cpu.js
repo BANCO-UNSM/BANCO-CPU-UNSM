@@ -13,7 +13,7 @@ const label=i=>String.fromCharCode(65+i);
 const cleanOption=opt=>String(opt??'').replace(/^\s*(?:\(?[A-Ea-e]\s*[).:\-]\s*)+/, '').trim();
 let questions=[],index=0,correct=0,answered=false,totalQuestions=0,complete=false;
 function explanationFor(q){
- const stored=String(q.explanation||'').replace(/^\\s*RESPUESTA\\s+CORRECTA\\s*:\\s*[^\\r\\n]*(?:\\r?\\n)*/i,'').trim();
+ const stored=String(q.explanation||'').replace(/^\s*RESPUESTA\s+CORRECTA\s*:\s*[^\r\n]*(?:\r?\n)*/i,'').trim();
  if(stored)return stored;
  const statement=String(q.statement||'').toLocaleUpperCase('es');
  const options=(q.options||[]).map(o=>cleanOption(o).toLocaleUpperCase('es'));
