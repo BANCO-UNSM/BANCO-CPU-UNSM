@@ -608,6 +608,7 @@ function bindPsicologiaPiloto(){
   const n=Number(b.dataset.psicoSemana);
   if(!Number.isInteger(n)||n<1||n>16)return;
   psicologiaSemanaSeleccionada=n;
+  rememberCPUStudy('Psicología',n);
   render();
  }));
 }
@@ -618,7 +619,7 @@ function render(){
    $('app').innerHTML=recoveryPasswordPage();bindPasswordRecovery();return;
  }
  const allowed=teacher()||access?.allowed;
- const pages=user?(allowed?[['home','Inicio'],['practice','📚 Estudia y practica'],['biblioteca','📖 Biblioteca de estudio'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[]),...(hasService('CPU-UNSM')?[['exams',admin()?'Exámenes de admisión · Administración':'📝 Exámenes de admisión · Próximamente']]:[])]:[['access','Mi acceso']]):[];
+ const pages=user?(allowed?[['home','Inicio'],...(hasService('CPU-UNSM')?[['cpu-panel','🎓 Mi preparación CPU']]:[]),['practice','📚 Estudia y practica'],['biblioteca','📖 Biblioteca de estudio'],...(admin()?[['bank','Banco de preguntas (administración)']]:[]),...(hasService('CPU-UNSM')?[['weekly','🏆 Reto semanal']]:[]),['quiz','Simulacros'],['results','Mis resultados'],['progress','Mi progreso'],['mistakes','Mis errores'],...(teacher()?[['manage','Registrar pregunta'],['bulk','Carga masiva'],['review','Revisión y publicación']]:[]),...(admin()?[['students','Control de alumnos'],['activity','Seguimiento de estudiantes'],['quality','Auditoría académica']]:[]),...(hasService('CPU-UNSM')?[['exams',admin()?'Exámenes de admisión · Administración':'📝 Exámenes de admisión · Próximamente']]:[])]:[['access','Mi acceso']]):[];
  if(page==='bank'&&!admin())page='practice';
  
  if(page==='psicologia_piloto')page=admin()?'biblioteca':'home';
@@ -636,13 +637,15 @@ function render(){
   if(teacher()&&quiz?.deadlineAt&&!quiz.result)clearTimedExam();
   page=x.dataset.page;quiz=null;practice=null;examSession=null;render();if(page==='biblioteca'&&typeof bibLoad==='function')bibLoad();
  });
- $('heading').textContent=({home:'Panel principal',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica',biblioteca:'Biblioteca de estudio',psicologia_piloto:'Vista previa · Psicología'})[page];
+ $('heading').textContent=({home:'Panel principal','cpu-panel':'Mi preparación CPU-UNSM',bank:'Banco de preguntas · Administración',exams:'Exámenes de admisión',weekly:'Reto semanal',quiz:'Simulacros',practice:'Estudia y practica',results:'Resultados',progress:'Mi progreso',mistakes:'Mis errores',manage:'Panel docente',bulk:'Carga masiva de preguntas',review:'Revisión y publicación',access:'Estado de acceso',students:'Administración de alumnos',activity:'Seguimiento de estudiantes',quality:'Auditoría académica',biblioteca:'Biblioteca de estudio',psicologia_piloto:'Vista previa · Psicología'})[page];
  $('account').innerHTML=user?`<span class="muted small">${esc(user.email)} · ${admin()?'Administrador':teacher()?'Docente':'Estudiante'}</span> <button class="secondary" id="logout">Salir</button>`:'';
  if(user)$('logout').onclick=()=>db.auth.signOut();
   liberarImagenesPrivadas($('app'));
- $('app').innerHTML=!user?login():!allowed?accessPage():({home,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage,psicologia_piloto:psicologiaPilotoPage,biblioteca:(bibliotecaLeccionesVista?()=>'<div class="card"><button type="button" class="secondary" id="bibVolverLecciones">← Volver a Biblioteca de estudio</button></div>'+psicologiaPilotoPage():(typeof bibPage==='function'?bibPage:()=>notice('Biblioteca temporalmente no disponible. Actualiza la página para cargar el módulo.')))})[page]();
+ $('app').innerHTML=!user?login():!allowed?accessPage():({home,'cpu-panel':cpuDashboardPage,bank,exams:examsPage,weekly:weeklyPage,quiz:quizPage,practice:practicePage,results,progress:progressPage,mistakes:mistakesPage,manage,bulk:bulkPage,review:reviewPage,students:studentsPage,activity:activityPage,quality:academicQualityPage,psicologia_piloto:psicologiaPilotoPage,biblioteca:(bibliotecaLeccionesVista?()=>'<div class="card"><button type="button" class="secondary" id="bibVolverLecciones">← Volver a Biblioteca de estudio</button></div>'+psicologiaPilotoPage():(typeof bibPage==='function'?bibPage:()=>notice('Biblioteca temporalmente no disponible. Actualiza la página para cargar el módulo.')))})[page]();
  bind();
  bindProgress();
+ bindCPUDashboard();
+ if(page==='practice'&&cpuPreferredPracticeSubject&&$('practiceSubject')){ $('practiceSubject').value=cpuPreferredPracticeSubject;cpuPreferredPracticeSubject=''; }
  bindAcademicQuality();
  bindPsicologiaPiloto();
  bindCulturaPractica();
@@ -858,6 +861,97 @@ function login(){
  const signup=authMode==='signup';
  return `<div class="card"><h2>${signup?'Crear cuenta de estudiante':'Ingresar a CachimboLab'}</h2><p class="muted">${signup?'Completa tus datos para solicitar una cuenta. El administrador debe autorizar tu acceso antes de utilizar el banco académico.':'Ingresa con tu correo y contraseña. Si eres nuevo, selecciona «Crear cuenta».'}</p><form id="authForm">${signup?'<div class="field"><label for="authName">Nombre completo y apellidos</label><input id="authName" name="fullName" type="text" autocomplete="name" minlength="3" maxlength="120" required placeholder="Ej.: María Pérez López"></div>':''}<div class="field"><label for="authEmail">Correo electrónico</label><input id="authEmail" type="email" name="email" autocomplete="email" required></div><div class="field"><label for="authPassword">Contraseña (mínimo 6 caracteres)</label><input id="authPassword" type="password" name="password" autocomplete="${signup?'new-password':'current-password'}" minlength="6" required></div>${signup?'<div class="field"><label for="authConfirm">Confirmar contraseña</label><input id="authConfirm" type="password" name="confirmPassword" autocomplete="new-password" minlength="6" required></div>':''}<div class="actions"><button id="authSubmit" type="submit">${signup?'Registrar mi cuenta':'Ingresar'}</button><button type="button" id="authSwitch" class="secondary">${signup?'Ya tengo cuenta':'Crear cuenta'}</button></div></form>${!signup?'<button type="button" id="forgotPassword" class="secondary" style="margin-top:12px">¿Olvidaste tu contraseña?</button>':''}<p id="authStatus" class="muted" role="status" aria-live="polite"></p></div>`;
 }
+
+// Panel de preparación CPU: orienta antes de elegir materias y semanas.
+function cpuStudyKey(){return 'cachimbolab_cpu_recent_'+(user?.id||'sin_sesion')}
+function rememberCPUStudy(subject,week){
+ if(!user||!subject||!Number.isInteger(Number(week))||week<1||week>16)return;
+ try{localStorage.setItem(cpuStudyKey(),JSON.stringify({subject,week:Number(week)}))}catch(_){}
+}
+window.cachimbolabRememberCPU=rememberCPUStudy;
+function recentCPUStudy(){
+ try{
+  const row=JSON.parse(localStorage.getItem(cpuStudyKey())||'null');
+  const subjects=['Psicología','Razonamiento Verbal','Cultura General','Educación Cívica','Historia','Geografía','Lenguaje y Literatura','Filosofía','Economía'];
+  return row&&subjects.includes(row.subject)&&Number.isInteger(row.week)&&row.week>=1&&row.week<=16?row:null;
+ }catch(_){return null}
+}
+function cpuDashboardPage(){
+ if(!hasService('CPU-UNSM'))return notice('No tienes acceso activo a CPU-UNSM.',true);
+ const cpuProgress=Array.isArray(learningProgress?.by_subject)?learningProgress.by_subject.filter(x=>x.modality==='CPU-UNSM'):[];
+ const total=cpuProgress.reduce((sum,x)=>sum+(Number(x.total)||0),0);
+ const correct=cpuProgress.reduce((sum,x)=>sum+(Number(x.correct)||0),0);
+ const errors=Array.isArray(learningProgress?.review)?learningProgress.review.filter(x=>x.modality==='CPU-UNSM').length:0;
+ const recent=recentCPUStudy();
+ const weak=cpuProgress.filter(x=>Number(x.total)>=3).sort((a,b)=>percent(a.correct,a.total)-percent(b.correct,b.total))[0];
+ const lesson=recent?'<strong>'+esc(recent.subject)+'</strong> · Semana '+recent.week:'Elige un curso para empezar tu primera lección';
+ const retry=weak?'Te recomendamos reforzar <strong>'+esc(weak.subject)+'</strong> ('+percent(weak.correct,weak.total)+'% de aciertos en tus últimas respuestas registradas).':'Comienza con una lección y después comprueba lo aprendido en una práctica.';
+ return `<div class="card" style="background:linear-gradient(115deg,#e9f6fa,#ffffff);border:1px solid #c8e2ec">
+  <p class="muted small" style="font-weight:700;letter-spacing:.04em">🎓 MI PREPARACIÓN CPU-UNSM</p>
+  <h2 style="margin:8px 0">¿Qué vamos a estudiar hoy?</h2>
+  <p>Continúa tu preparación con teoría, tarjetas, preguntas de comprensión y separatas oficiales. También puedes elegir libremente cualquier curso o semana.</p>
+  <div class="learning-stats">
+   <div><strong>${total}</strong><span>Preguntas trabajadas</span></div>
+   <div><strong>${total?percent(correct,total)+'%':'—'}</strong><span>Aciertos actuales</span></div>
+   <div><strong>${errors}</strong><span>Preguntas por reforzar</span></div>
+  </div>
+  ${learningProgressError?'<p class="muted small">El seguimiento está temporalmente indisponible. Puedes estudiar igualmente.</p>':''}
+ </div>
+ <div class="card" style="border-left:5px solid #0b847b">
+  <h3>📖 ${recent?'Continúa donde te quedaste':'Comienza a aprender'}</h3>
+  <p>${lesson}</p>
+  <p class="muted small">${recent?'Recuperamos el último curso y semana que abriste en este dispositivo.':'Primero estudia los temas y luego responde las preguntas para comprobar tu comprensión.'}</p>
+  <button type="button" data-cpu-action="continue">${recent?'Continuar mi lección':'Abrir biblioteca interactiva'}</button>
+ </div>
+ <div class="card"><h3>Elige cómo deseas prepararte</h3>
+  <div class="grid">
+   <div class="card"><h3>📚 Aprender</h3><p class="muted">Teoría, Atenea, tarjetas y lecciones por semana.</p><button type="button" class="secondary" data-cpu-action="library">Abrir biblioteca</button></div>
+   <div class="card"><h3>✏️ Practicar</h3><p class="muted">Escoge curso y semana para resolver preguntas publicadas.</p><button type="button" class="secondary" data-cpu-action="practice">Elegir práctica</button></div>
+   <div class="card"><h3>📝 Simulacros</h3><p class="muted">Evalúa tu preparación con preguntas y resultados.</p><button type="button" class="secondary" data-cpu-action="quiz">Ver simulacros</button></div>
+   <div class="card"><h3>🎯 Mis errores</h3><p class="muted">Vuelve a resolver las preguntas que necesitas reforzar.</p><button type="button" class="secondary" data-cpu-action="mistakes">Repasar mis errores</button></div>
+  </div>
+ </div>
+ <div class="card"><h3>💡 Tu siguiente paso recomendado</h3><p>${retry}</p>
+  <div class="actions">
+   <button type="button" class="secondary" data-cpu-action="progress">Ver mi progreso</button>
+   ${weak?'<button type="button" data-cpu-action="weak">Practicar curso recomendado</button>':''}
+   <button type="button" class="secondary" data-cpu-action="weekly">Reto semanal</button>
+  </div>
+ </div>`;
+}
+function bindCPUDashboard(){
+ document.querySelectorAll('[data-cpu-action]').forEach(b=>b.addEventListener('click',()=>{
+  const action=b.dataset.cpuAction;
+  selectedModality='CPU-UNSM';
+  if(action==='continue'){
+   const recent=recentCPUStudy();
+   page='biblioteca';
+   if(recent){
+    if(recent.subject==='Psicología'){
+     bibliotecaLeccionesVista=true;psicologiaSemanaSeleccionada=recent.week;
+    }else{
+     bibliotecaLeccionesVista=false;bibVistaArea='Letras y humanidades';
+     bibCursoPreparacion=recent.subject;bibSemanaPreparacion=recent.week;
+    }
+   }else{
+    bibliotecaLeccionesVista=false;bibCursoPreparacion='';bibSemanaPreparacion=null;bibVistaArea='';
+   }
+  }else if(action==='library'){
+   page='biblioteca';bibliotecaLeccionesVista=false;bibCursoPreparacion='';bibSemanaPreparacion=null;bibVistaArea='';
+  }else if(action==='practice'||action==='weak'){
+   if(action==='weak'){
+    const weak=(learningProgress?.by_subject||[]).filter(x=>x.modality==='CPU-UNSM'&&Number(x.total)>=3).sort((a,b)=>percent(a.correct,a.total)-percent(b.correct,b.total))[0];
+    cpuPreferredPracticeSubject=weak?.subject||'';
+   }else cpuPreferredPracticeSubject='';
+   practice=null;page='practice';
+  }else if(['quiz','mistakes','progress','weekly'].includes(action))page=action;
+  else return;
+  render();
+  if(page==='biblioteca'&&typeof bibLoad==='function')bibLoad();
+ }));
+}
+let cpuPreferredPracticeSubject='';
+
 function home(){
   const cpu = questions.filter(q => q.modality === 'CPU-UNSM');
   const beca = questions.filter(q => q.modality === 'BECA18');
@@ -1841,7 +1935,7 @@ function bindReviewDetail(){
 
 function bind(){
 
- if($('selectCPU')) $('selectCPU').onclick=()=>{if(!hasService('CPU-UNSM'))return;selectedModality='CPU-UNSM';page='practice';quiz=null;practice=null;render();};
+ if($('selectCPU')) $('selectCPU').onclick=()=>{if(!hasService('CPU-UNSM'))return;selectedModality='CPU-UNSM';page='cpu-panel';quiz=null;practice=null;render();};
 if($('selectBeca')) $('selectBeca').onclick=()=>{if(!hasService('BECA18'))return;selectedModality='BECA18';page='practice';quiz=null;practice=null;render();};
   if(user&&page==='access'&&$('reloadAccess'))$('reloadAccess').onclick=refresh;if(user&&page==='students')bindStudents();if(user&&page==='activity'&&$('loadActivity'))$('loadActivity').onclick=loadActivity;if(!user){
  $('authSwitch').onclick=()=>{authMode=authMode==='login'?'signup':'login';render()};
