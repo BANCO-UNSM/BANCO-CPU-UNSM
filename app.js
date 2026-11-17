@@ -484,6 +484,16 @@ function bindPracticaNuevosCursos(){
  iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(start,300)},{once:true});
 }
 
+// Responde también cuando la lección termina de inicializarse después del render.
+window.addEventListener('message',e=>{
+ if(e.origin!==window.location.origin||e.data?.type!=='cachimbolab-nuevos-ready'||!admin()||!db)return;
+ const course=e.data.course,week=Number(e.data.week);
+ if(!nuevosCursosPractica[course]||week<1||week>16)return;
+ const iframe=Array.from(document.querySelectorAll('iframe')).find(f=>f.contentWindow===e.source);
+ if(!iframe||!iframe.isConnected)return;
+ enviarPracticaNueva(iframe,week,course);
+});
+
 let civicaPracticaRequest=0;
 async function enviarPracticaCivica(iframe,semana){
  if(!admin()||!db||!iframe?.contentWindow||![11,12,13].includes(semana))return;
