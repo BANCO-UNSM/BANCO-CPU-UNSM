@@ -685,7 +685,7 @@ function render(){
  bindCulturaPractica();
  bindVerbalPractica();
  bindCivicaPractica();
- bindPracticaNuevosCursos();
+ // La práctica de cursos nuevos se enlaza por mensaje ready del iframe.
  bindStudentLibraryPractice();
  if(typeof bibBind==='function'&&!bibliotecaLeccionesVista)bibBind();
  $('bibAbrirPsicologia')?.addEventListener('click',()=>{bibliotecaLeccionesVista=true;psicologiaSemanaSeleccionada=null;render()});
