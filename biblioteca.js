@@ -65,6 +65,46 @@ function bibAritTextBlocks(value,kind){
   return '<article class="arit-topic">'+title+body+'</article>';
  }).join('');
 }
+function bibAritFormulaCards(w,original){
+ const formulas={
+ 1:[['Unión de conjuntos',String.raw`A\cup B=\{x:x\in A\ \text{o}\ x\in B\}`],['Intersección',String.raw`A\cap B=\{x:x\in A\ \text{y}\ x\in B\}`],['Dos conjuntos',String.raw`n(A\cup B)=n(A)+n(B)-n(A\cap B)`],['Tres conjuntos',String.raw`n(A\cup B\cup C)=n(A)+n(B)+n(C)-n(A\cap B)-n(A\cap C)-n(B\cap C)+n(A\cap B\cap C)`],['Subconjuntos',String.raw`N=2^n,\qquad N_{\text{propios}}=2^n-1`],['Subconjuntos de k elementos',String.raw`\binom nk=\frac{n!}{k!(n-k)!}`]],
+ 2:[['Valor posicional',String.raw`\overline{abc}_{(b)}=a\cdot b^2+b\cdot b+c`]],
+ 3:[['Algoritmo de división',String.raw`D=dq+r,\qquad 0\le r<d`]],
+ 4:[['Divisibilidad',String.raw`3\mid N\iff 3\mid\text{suma de sus cifras}`],['Divisibilidad por 9',String.raw`9\mid N\iff 9\mid\text{suma de sus cifras}`]],
+ 5:[['Número de divisores',String.raw`N=p^a q^b\Rightarrow d(N)=(a+1)(b+1)`]],
+ 6:[['Relación MCD y MCM',String.raw`a\cdot b=\operatorname{MCD}(a,b)\cdot\operatorname{MCM}(a,b)`]],
+ 7:[['Suma de fracciones',String.raw`\frac ab+\frac cd=\frac{ad+bc}{bd}`],['Multiplicación',String.raw`\frac ab\cdot\frac cd=\frac{ac}{bd}`],['División',String.raw`\frac ab\div\frac cd=\frac{ad}{bc}`]],
+ 8:[['Conteo de conjuntos',String.raw`n(A\cup B)=n(A)+n(B)-n(A\cap B)`],['MCD y MCM',String.raw`a\cdot b=\operatorname{MCD}(a,b)\operatorname{MCM}(a,b)`]],
+ 9:[['Proporción',String.raw`\frac ab=\frac cd\Longrightarrow ad=bc`],['Proporción continua',String.raw`\frac ab=\frac bc\Longrightarrow b^2=ac`]],
+ 10:[['Proporcionalidad directa',String.raw`y=kx`],['Proporcionalidad inversa',String.raw`xy=k`],['Reparto proporcional',String.raw`P_i=\frac{T\cdot p_i}{\sum p_i}`]],
+ 11:[['Regla de tres directa',String.raw`x=\frac{bc}{a}`],['Regla de tres inversa',String.raw`a\cdot b=c\cdot x`]],
+ 12:[['Porcentaje',String.raw`p\%\text{ de }N=\frac{Np}{100}`],['Aumento porcentual',String.raw`N_f=N\left(1+\frac p{100}\right)`],['Descuento porcentual',String.raw`N_f=N\left(1-\frac p{100}\right)`]],
+ 13:[['Interés simple',String.raw`I=\frac{C\cdot r\cdot t}{100}`],['Monto',String.raw`M=C+I`],['Tasa anual y tiempo en meses',String.raw`I=\frac{C\cdot r\cdot m}{1200}`],['Tasa anual y días comerciales',String.raw`I=\frac{C\cdot r\cdot d}{36000}`]],
+ 15:[['Precio medio de una mezcla',String.raw`P_m=\frac{q_1p_1+q_2p_2}{q_1+q_2}`],['Ley de aleación',String.raw`L=\frac{\text{masa de metal fino}}{\text{masa total}}`]],
+ 16:[['Proporción',String.raw`ad=bc`],['Interés simple',String.raw`I=\frac{Crt}{100}`],['Descuento comercial',String.raw`D_c=\frac{V_n dt}{100}`],['Mezcla ponderada',String.raw`P_m=\frac{\sum q_ip_i}{\sum q_i}`]]
+ };
+ if(w===14)return bibAritTextBlocks(original,'formula');
+ const rows=formulas[w]||[];
+ return rows.map(([name,tex])=>'<article class="arit-topic"><h4>'+bibAritEsc(name)+'</h4>'+bibAritMath('$'+tex+'$')+'</article>').join('');
+}
+function bibAritExampleCards(w,original){
+ const steps={
+ 2:[String.raw`\overline{132}_{(5)}=1\cdot5^2+3\cdot5+2=42`],
+ 3:[String.raw`157=12\cdot13+1`],
+ 5:[String.raw`72=2^3\cdot3^2`,String.raw`d(72)=(3+1)(2+1)=12`],
+ 6:[String.raw`\operatorname{MCD}(12,18)=6`,String.raw`\operatorname{MCM}(12,18)=36`],
+ 7:[String.raw`\frac34+\frac23=\frac{9+8}{12}=\frac{17}{12}`],
+ 9:[String.raw`\frac35=\frac{x}{20}\Longrightarrow 5x=60\Longrightarrow x=12`],
+ 10:[String.raw`\frac{840\cdot2}{10}=168,\quad\frac{840\cdot3}{10}=252,\quad\frac{840\cdot5}{10}=420`],
+ 11:[String.raw`x=\frac{9\cdot240}{6}=360`],
+ 12:[String.raw`200\left(1+\frac{10}{100}\right)\left(1-\frac{10}{100}\right)=198`],
+ 13:[String.raw`I=\frac{3000\cdot8\cdot9}{1200}=\text{S/ }180`],
+ 15:[String.raw`P_m=\frac{4\cdot8+6\cdot13}{4+6}=\text{S/ }11`],
+ 16:[String.raw`D_c=\frac{2000\cdot12\cdot3}{1200}=\text{S/ }60`]
+ };
+ if(w===1||w===14||!steps[w])return bibAritTextBlocks(original,'example');
+ return '<p class="arit-paragraph">'+bibAritEsc(original)+'</p>'+steps[w].map(tex=>bibAritMath('$'+tex+'$')).join('');
+}
 function bibAritLesson(ficha){
  const w=Number(bibSemanaPreparacion);
  const sections=[
@@ -80,11 +120,11 @@ function bibAritLesson(ficha){
  const card=(n,content)=>'<section class="arit-card" id="arit-p'+n+'"><span class="arit-eyebrow">'+sections[Number(n)-1][0]+' · '+sections[Number(n)-1][1].toUpperCase()+'</span><h3>'+sections[Number(n)-1][2]+'</h3>'+content+'</section>';
  const vennInteract=w===1?'<div class="arit-interactive"><h4>Explora el diagrama de Venn</h4><p>Selecciona una región para descubrir qué representa.</p><div class="arit-venn-controls"><button type="button" data-arit-venn="soloA">Solo fútbol</button><button type="button" data-arit-venn="ambos">Ambos</button><button type="button" data-arit-venn="soloB">Solo vóley</button><button type="button" data-arit-venn="ninguno">Ninguno</button></div><p class="arit-venn-result" aria-live="polite">Elige una región para comprobar cómo se cuentan los estudiantes.</p></div>':'';
  const intro=card(1,bibAritTextBlocks(ficha.teoria,'theory')+(w===1?bibDiagramaVenn()+vennInteract:''));
- const formulas=card(2,bibAritTextBlocks(ficha.formulas,'formula'));
- const ejemplos=card(3,bibAritTextBlocks(ficha.ejemplo,'example'));
+ const formulas=card(2,bibAritFormulaCards(w,ficha.formulas));
+ const ejemplos=card(3,bibAritExampleCards(w,ficha.ejemplo));
  const errores=card(4,'<p class="arit-paragraph">'+bibAritMath(ficha.errores||'Identifica el tipo de problema y comprueba tus operaciones.')+'</p>');
  const claves=card(5,'<p class="arit-paragraph">'+bibAritMath(ficha.claves||'Identifica los datos, selecciona la propiedad adecuada y comprueba el resultado.')+'</p>');
- const memoria=card(6,'<p>Intenta recordar las fórmulas antes de abrir cada respuesta.</p><details class="arit-memory"><summary>Mostrar las fórmulas para recordar</summary>'+bibAritTextBlocks(ficha.formulas,'formula')+'</details>');
+ const memoria=card(6,'<p>Intenta recordar las fórmulas antes de abrir cada respuesta.</p><details class="arit-memory"><summary>Mostrar las fórmulas para recordar</summary>'+bibAritFormulaCards(w,ficha.formulas)+'</details>');
  const retos=w===1?[['Si A tiene 5 elementos, ¿cuántos subconjuntos tiene?',['10','25','32','31'],2,'El número total es 2⁵ = 32.'],['Si 20 alumnos estudian inglés, 12 francés y 5 ambos, ¿cuántos estudian al menos uno?',['27','32','37','17'],0,'Se aplica 20 + 12 − 5 = 27.']]:[['Si una letra de S/ 1000 se descuenta al 2 % mensual durante 3 meses, ¿cuánto es el descuento comercial?',['S/ 20','S/ 60','S/ 120','S/ 600'],1,'D = 1000 × 2 × 3 / 100 = S/ 60.']];
  const reto=card(7,'<p>Resuelve estos ejercicios nuevos, distintos de las preguntas de la separata.</p>'+retos.map((r,i)=>'<div class="arit-quiz" data-answer="'+r[2]+'"><strong>'+bibAritEsc(r[0])+'</strong><div class="arit-quiz-options">'+r[1].map((opt,j)=>'<button type="button" data-arit-choice="'+j+'">'+String.fromCharCode(65+j)+') '+bibAritEsc(opt)+'</button>').join('')+'</div><p class="arit-quiz-feedback" hidden aria-live="polite">'+bibAritEsc(r[3])+'</p></div>').join(''));
  const practica=card(8,'<iframe title="Práctica CPU · Aritmética semana '+w+'" src="pilotos/aritmetica-practica.html?week='+w+'&v=3" style="width:100%;height:78vh;min-height:660px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="eager"></iframe>');
