@@ -157,14 +157,26 @@ function bibFormatoEcuaciones(valor){return bibAritMath(valor)}
 function bibRMContenido(){
  const esAritmetica=bibCursoPreparacion==='Aritmética';
  const ficha=bibRows.find(f=>f.materia===(esAritmetica?'Aritmética':'Razonamiento Matemático')&&Number(f.semana)===Number(bibSemanaPreparacion)&&f.modalidad==='CPU-UNSM');
- if(!ficha)return '<div class="card"><p class="muted">'+(bibLoading?'Cargando el marco teórico...':bibError?'No se pudo cargar el marco teórico. '+esc(bibError):'Esta semana todavía no tiene una ficha teórica publicada.')+'</p></div>';
- return bibAritLesson(ficha);
+ if(!ficha)return '<div class="card"><p class="muted">'+(bibLoading?'Cargando la lección...':bibError?'No se pudo cargar la lección. '+esc(bibError):'Esta semana todavía no tiene una ficha teórica publicada.')+'</p></div>';
  if(esAritmetica)return bibAritLesson(ficha);
- const bloque=(titulo,valor)=>'<section class="card" style="margin-top:14px"><h3>'+titulo+'</h3><div class="bib-rm-math" style="white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere">'+bibFormatoEcuaciones(valor)+'</div></section>';
- const extra=bibRMExtra[Number(bibSemanaPreparacion)];
- const memoria='<section class="card" style="margin-top:14px"><h3>07 · Repaso de fórmulas y ejercicio nuevo</h3><p class="muted">Repasa las propiedades de esta semana y practica con un ejercicio adicional creado para la lección, distinto del ejemplo teórico.</p><details><summary style="cursor:pointer;font-weight:700">Recordar las fórmulas</summary><div class="bib-rm-math" style="white-space:pre-wrap;overflow-x:auto;margin-top:12px">'+bibFormatoEcuaciones(ficha.formulas)+'</div></details>'+(extra?'<p style="margin-top:16px"><strong>Reto adicional:</strong> '+esc(extra[0])+'</p><details><summary style="cursor:pointer;color:#0b7362;font-weight:700">Ver solución explicada</summary><p>'+esc(extra[1])+'</p></details>':'')+'</section>';
- const separata='<section class="card" style="margin-top:14px"><h3>08 · Separata de la semana '+bibSemanaPreparacion+'</h3><p class="muted">Preguntas originales publicadas de la semana, con alternativas y explicación. Se muestran aquí mismo, sin abrir otra pantalla.</p><iframe title="Razonamiento Matemático semana '+bibSemanaPreparacion+'" src="pilotos/razonamiento-matematico-practica.html?week='+bibSemanaPreparacion+'&v=3" style="width:100%;height:78vh;min-height:660px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="eager"></iframe></section>';
- return '<div class="card"><h3>'+esc(ficha.tema||('Semana '+bibSemanaPreparacion))+'</h3><p>'+esc(ficha.resumen||'')+'</p>'+bloque('01 · Marco teórico',ficha.teoria)+bloque('02 · Fórmulas y propiedades',ficha.formulas)+bloque('03 · Ejemplos resueltos',ficha.ejemplo)+bloque('04 · Errores frecuentes',ficha.errores)+bloque('05 · Claves para recordar',ficha.claves)+bloque('06 · Comprueba lo aprendido','Explica con tus palabras cuándo se utiliza cada propiedad y verifica los pasos del ejemplo resuelto.')+memoria+separata+'</div>';
+ const w=Number(bibSemanaPreparacion), rawFormulas=String(ficha.formulas||'');
+ const formulas=rawFormulas.split(/\$\$([\s\S]*?)\$\$/g).filter(x=>x.trim()).map(x=>x.trim());
+ const formulaList=formulas.filter(x=>!x.startsWith('\n')&&x.includes('\\')||x.includes('=')||x.includes('^'));
+ const renderFormula=(tex)=>bibAritMath('$$'+tex+'$$');
+ const card=(num,eyebrow,title,content)=>'<section class="arit-card" id="rm-sec-'+num+'"><span class="arit-eyebrow">'+num+' · '+eyebrow+'</span><h3>'+title+'</h3>'+content+'</section>';
+ const formulary=formulaList.map((tex,i)=>'<div class="rm-formula-item"><strong>Propiedad '+(i+1)+'</strong><div class="arit-formula">'+renderFormula(tex)+'</div></div>').join('');
+ const example=bibAritTextBlocks(ficha.ejemplo,'example');
+ const memoria='<p>Recuerda cada propiedad antes de mostrarla.</p><div class="rm-memory"><p id="rm-memory-label">Fórmula 1 de '+formulaList.length+'</p><div id="rm-memory-formula" hidden>'+renderFormula(formulaList[0]||'')+'</div><button type="button" class="secondary" data-rm-memory-show>Mostrar fórmula</button> <button type="button" class="secondary" data-rm-memory-next>Otra fórmula</button></div>';
+ const extra=bibRMExtra[w];
+ const challenge=extra?'<div class="rm-quiz"><p><strong>'+esc(extra[0])+'</strong></p><details><summary>Mostrar solución explicada</summary><p>'+esc(extra[1])+'</p></details></div>':'';
+ const practice='<iframe title="Práctica CPU · Razonamiento Matemático semana '+w+'" src="pilotos/razonamiento-matematico-practica.html?week='+w+'&v=4" style="width:100%;height:78vh;min-height:660px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="eager"></iframe>';
+ const nav=['Formulario','Ejemplo resuelto','Memoria activa','Comprueba lo aprendido','Práctica CPU'].map((name,i)=>'<a href="#rm-sec-'+(i+1)+'">'+String(i+1).padStart(2,'0')+' · '+name+'</a>').join('');
+ return '<div class="arit-lesson rm-five"><style>.rm-five .rm-formula-item{padding:14px 0;border-bottom:1px solid #e3edf5}.rm-five .rm-formula-item strong{display:block;margin-bottom:10px}.rm-five .arit-formula{background:#eff6fd;border-radius:9px;padding:12px;overflow-x:auto;text-align:center}.rm-five .rm-memory,.rm-five .rm-quiz{background:#f2f8fe;padding:16px;border-radius:10px}.rm-five .arit-card{max-width:790px}.rm-five details{margin-top:12px}.rm-five summary{cursor:pointer;color:#125b82;font-weight:700}</style><header class="arit-hero"><span class="arit-chip">RAZONAMIENTO MATEMÁTICO · SEMANA '+w+'</span><h2>'+esc(ficha.tema)+'</h2><p>'+esc(ficha.resumen||'Aprende los conceptos y practica paso a paso.')+'</p></header><nav class="arit-nav">'+nav+'</nav>'+
+ card(1,'FORMULARIO','Fórmulas que debes dominar',formulary||'<p>Revisa las propiedades del tema.</p>')+
+ card(2,'EJEMPLO RESUELTO','Aplicación directa',example)+
+ card(3,'MEMORIA ACTIVA','¿Recuerdas la fórmula?',memoria)+
+ card(4,'COMPRUEBA LO APRENDIDO','Ejercicio de comprensión',challenge||'<p>Explica con tus palabras cuándo se utiliza cada propiedad y verifica el ejemplo resuelto.</p>')+
+ card(5,'PRÁCTICA CPU · SEPARATA','Aplicamos lo aprendido',practice)+'</div>';
 }
 function bibPage(){
  if(bibCursoPreparacion){
