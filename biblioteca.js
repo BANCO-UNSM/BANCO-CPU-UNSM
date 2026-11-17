@@ -259,7 +259,25 @@ function bibRMContenido(){
   {q:'Si 1 + 3 = 4, 1 + 3 + 5 = 9 y 1 + 3 + 5 + 7 = 16, ¿cuánto suman los cinco primeros números impares?',opts:['20','25','30','36'],correct:1,why:'Por inducción observamos que la suma de los primeros n números impares es n². Para n = 5, resulta 5² = 25.'},
   {q:'¿Cuál es el resultado de 6 + 4 × (12 − 7)² ÷ 5?',opts:['26','46','106','30'],correct:0,why:'Primero paréntesis: 12 − 7 = 5; después potencia: 5² = 25; luego 4 × 25 ÷ 5 = 20; finalmente 6 + 20 = 26.'}
  ]:null;
- const quizHtml=quizRM?'<div class="rm-check-quiz" data-rm-check><p>Resuelve el ejercicio, marca una alternativa y continúa con la siguiente pregunta.</p><p class="rm-check-progress">Pregunta 1 de '+quizRM.length+'</p>'+quizRM.map((item,i)=>'<div class="rm-check-item" data-rm-check-item data-correct="'+item.correct+'" '+(i?'hidden':'')+'><p><strong>'+esc(item.q)+'</strong></p><div class="rm-check-options">'+item.opts.map((opt,j)=>'<button type="button" class="rm-memory-choice" data-rm-check-option="'+j+'"><strong>'+String.fromCharCode(65+j)+')</strong> '+esc(opt)+'</button>').join('')+'</div><p class="rm-check-feedback" role="status" aria-live="polite"></p><div class="rm-check-explanation" hidden><strong>Solución explicada</strong><p>'+esc(item.why)+'</p></div><button type="button" class="secondary" data-rm-check-next disabled>'+(i===quizRM.length-1?'Volver a empezar':'Siguiente pregunta →')+'</button></div>').join('')+'</div>':null;
+ const rmExtraChoices={
+  2:{opts:['17','18','19','21'],correct:2},
+  3:{opts:['48','56','60','64'],correct:2},
+  4:{opts:['20','23','25','27'],correct:1},
+  5:{opts:['27','32','36','40'],correct:2},
+  6:{opts:['4 horas','4 horas y 48 minutos','5 horas','6 horas'],correct:1},
+  7:{opts:['S/ 136','S/ 140','S/ 144','S/ 160'],correct:2},
+  9:{opts:['S/ 7','S/ 8','S/ 9','S/ 10'],correct:2},
+  10:{opts:['60','75','80','100'],correct:2},
+  11:{opts:['8 días','10 días','12 días','15 días'],correct:1},
+  12:{opts:['45°','60°','90°','180°'],correct:2},
+  13:{opts:['1 hora','2 horas','3 horas','4 horas'],correct:1},
+  14:{opts:['36 cm²','48 cm²','64 cm²','100 cm²'],correct:2},
+  15:{opts:['5 maneras','10 maneras','15 maneras','20 maneras'],correct:1},
+  16:{opts:['10 grupos','15 grupos','20 grupos','30 grupos'],correct:2}
+ };
+ const extraQuiz=!quizRM&&bibRMExtra[w]&&rmExtraChoices[w]?[{q:bibRMExtra[w][0],opts:rmExtraChoices[w].opts,correct:rmExtraChoices[w].correct,why:bibRMExtra[w][1]}]:null;
+ const activeQuiz=quizRM||extraQuiz;
+ const quizHtml=activeQuiz?'<div class="rm-check-quiz" data-rm-check><p>Resuelve el ejercicio, marca una alternativa y continúa con la siguiente pregunta.</p><p class="rm-check-progress">Pregunta 1 de '+activeQuiz.length+'</p>'+activeQuiz.map((item,i)=>'<div class="rm-check-item" data-rm-check-item data-correct="'+item.correct+'" '+(i?'hidden':'')+'><p><strong>'+esc(item.q)+'</strong></p><div class="rm-check-options">'+item.opts.map((opt,j)=>'<button type="button" class="rm-memory-choice" data-rm-check-option="'+j+'"><strong>'+String.fromCharCode(65+j)+')</strong> '+esc(opt)+'</button>').join('')+'</div><p class="rm-check-feedback" role="status" aria-live="polite"></p><div class="rm-check-explanation" hidden><strong>Solución explicada</strong><p>'+esc(item.why)+'</p></div><button type="button" class="secondary" data-rm-check-next disabled>'+(i===activeQuiz.length-1?'Volver a empezar':'Siguiente pregunta →')+'</button></div>').join('')+'</div>':null;
  const extra=bibRMExtra[w];
  const challenge=quizHtml||(extra?'<div class="rm-quiz"><p><strong>'+esc(extra[0])+'</strong></p><details><summary>Mostrar solución explicada</summary><p>'+esc(extra[1])+'</p></details></div>':'');
  const practice='<iframe title="Práctica CPU · Razonamiento Matemático semana '+w+'" src="pilotos/razonamiento-matematico-practica.html?week='+w+'&v=4" style="width:100%;height:78vh;min-height:660px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="eager"></iframe>';
