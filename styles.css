@@ -96,3 +96,5 @@ button.cpu-primary-action:focus-visible{outline:3px solid #79d9cb;outline-offset
 .bib-course-tile[data-bib-curso="Psicología"]{--course-bg:#f1eaff;--course-accent:#7751a4;--course-border:#7751a444}
 .bib-course-tile[data-bib-curso="Filosofía"]{--course-bg:#edf0ff;--course-accent:#4e60a2;--course-border:#4e60a244}
 .bib-course-tile[data-bib-curso="Economía"]{--course-bg:#e5f7f4;--course-accent:#227f75;--course-border:#227f7544}
+
+.bib-course-icon{display:inline-flex;align-items:center;justify-content:center;min-width:35px;height:30px;margin-right:10px;margin-bottom:4px;padding:0 6px;border-radius:9px;background:#ffffffc9;color:var(--course-accent,#174d6d);font-size:20px;font-weight:800;vertical-align:middle;border:1px solid #ffffff}
