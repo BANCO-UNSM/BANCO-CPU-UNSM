@@ -39,6 +39,18 @@ function formatMath(container){
   else container.append(document.createTextNode(part));
  });
 }
+function formatSolutionStep(line){
+ const value=String(line||'').trim();
+ if(/\\\(|\\\[|\$\$/.test(value))return value;
+ if(!/\d+\s*\/\s*(?:\([^)]+\)|[a-zA-Z]\w*)/.test(value)&&!/[a-zA-Z]\s*\^\s*\d+/.test(value))return value;
+ // Convert only equation-like lines, leaving narrative explanations unchanged.
+ if(!/[=<>]/.test(value)||/[¿?¡!]/.test(value)||/[ÁÉÍÓÚáéíóú]{2}/.test(value))return value;
+ let tex=value.replace(/(\d+)\s*\/\s*\(([^()]+)\)/g,(_,n,d)=>'\\frac{'+n+'}{'+d+'}')
+  .replace(/(\d+)\s*\/\s*([a-zA-Z]\w*)/g,(_,n,d)=>'\\frac{'+n+'}{'+d+'}')
+  .replace(/([a-zA-Z])\s*\^\s*(\d+)/g,'$1^{$2}')
+  .replace(/×/g,'\\cdot ').replace(/÷/g,'\\div ');
+ return '\\['+tex+'\\]';
+}
 function mathText(tag,cls,value){const node=textEl(tag,cls,value);formatMath(node);return node}
 function draw(){body.replaceChildren();if(index>=questions.length){if(!complete){status.textContent='Preparando las siguientes preguntas…';body.append(textEl('p','', 'Las siguientes preguntas aparecerán automáticamente.'));return}status.textContent='Práctica oficial completada.';body.append(textEl('h3','', 'Resultado: '+correct+' de '+questions.length+' respuestas correctas.'));const restart=textEl('button','cpu-next','Volver a practicar');restart.onclick=()=>{index=0;correct=0;draw()};body.append(restart);return}
  const q=questions[index];answered=false;status.textContent='Pregunta '+(index+1)+' de '+(totalQuestions||questions.length)+' · Semana '+week;
@@ -53,7 +65,7 @@ if(q.secure===true&&!Number.isInteger(q.correct_index)){
  window.parent.postMessage({type:'cachimbolab-library-check',question_id:q.id,selected_index:j},'*');
  return;
 }
-answered=true;const hit=j===q.correct_index;if(hit)correct++;choices.querySelectorAll('button').forEach((b,k)=>{b.disabled=true;if(k===q.correct_index)b.classList.add('cpu-correct');else if(k===j)b.classList.add('cpu-incorrect')});verdict.className='cpu-verdict '+(hit?'correct':'incorrect');verdict.replaceChildren(textEl('span','cpu-symbol',hit?'✓':'✗'),textEl('span','',hit?'¡Respuesta correcta!':'Respuesta incorrecta'));verdict.hidden=false;if(!hit){answer.textContent='La respuesta correcta es: '+label(q.correct_index)+') '+q.options[q.correct_index];formatMath(answer);answer.hidden=false}const explanation=explanationFor(q);if(explanation){feedback.replaceChildren();const heading=textEl('div','cpu-explanation-title','Explicación');feedback.append(heading);const lines=explanation.replace(/\\\\/g,'\\').split(/\r?\n/).flatMap(line=>line.trim().split(/(?<=\.)\s+(?=[A-ZÁÉÍÓÚÑ])/u));lines.forEach(line=>{if(!line.trim())return;const row=textEl('p','cpu-explanation-line',line.trim());row.setAttribute('tabindex','0');row.setAttribute('aria-label','Paso de la solución, desliza horizontalmente si es necesario');formatMath(row);feedback.append(row)});feedback.hidden=false}else{feedback.textContent='';feedback.hidden=true}next.hidden=false};choices.append(btn)});
+answered=true;const hit=j===q.correct_index;if(hit)correct++;choices.querySelectorAll('button').forEach((b,k)=>{b.disabled=true;if(k===q.correct_index)b.classList.add('cpu-correct');else if(k===j)b.classList.add('cpu-incorrect')});verdict.className='cpu-verdict '+(hit?'correct':'incorrect');verdict.replaceChildren(textEl('span','cpu-symbol',hit?'✓':'✗'),textEl('span','',hit?'¡Respuesta correcta!':'Respuesta incorrecta'));verdict.hidden=false;if(!hit){answer.textContent='La respuesta correcta es: '+label(q.correct_index)+') '+q.options[q.correct_index];formatMath(answer);answer.hidden=false}const explanation=explanationFor(q);if(explanation){feedback.replaceChildren();const heading=textEl('div','cpu-explanation-title','Explicación');feedback.append(heading);const lines=explanation.replace(/\\\\/g,'\\').split(/\r?\n/).flatMap(line=>line.trim().split(/(?<=\.)\s+(?=[A-ZÁÉÍÓÚÑ])/u));lines.forEach(line=>{if(!line.trim())return;const row=textEl('p','cpu-explanation-line',formatSolutionStep(line.trim()));row.setAttribute('tabindex','0');row.setAttribute('aria-label','Paso de la solución, desliza horizontalmente si es necesario');formatMath(row);feedback.append(row)});feedback.hidden=false}else{feedback.textContent='';feedback.hidden=true}next.hidden=false};choices.append(btn)});
  body.append(choices,verdict,answer,feedback,next);
 }
 window.addEventListener('message',e=>{
