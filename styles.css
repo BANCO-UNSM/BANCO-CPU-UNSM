@@ -67,3 +67,8 @@
 #app .bank-solution-math .katex-display { margin: .18em 0 !important; text-align: left; }
 #app .bank-solution-math { white-space: pre-line !important; line-height: 1.35 !important; margin: 6px 0 !important; }
 #app .bank-solution-math .katex-display > .katex { text-align: left; }
+
+/* Acciones principales del panel CPU-UNSM: mismo verde que Prepararme */
+button.cpu-primary-action{background:#00877e!important;color:#fff!important;border:1px solid #00877e!important;font-weight:700!important;box-shadow:none!important}
+button.cpu-primary-action:hover{background:#006f68!important;border-color:#006f68!important;color:#fff!important}
+button.cpu-primary-action:focus-visible{outline:3px solid #79d9cb;outline-offset:2px}
