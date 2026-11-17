@@ -9,7 +9,7 @@ host.innerHTML='<p id="cpu-practice-status" aria-live="polite">Cargando práctic
 const oldNotice=root.querySelector(':scope > p:last-of-type');if(oldNotice)oldNotice.hidden=true;
 root.appendChild(host);
 const style=document.createElement('style');style.textContent='#cpu-official-practice{margin-top:16px;padding:16px;border:1px solid #c9dfed;border-radius:14px;background:#f5faff;color:#15344d}#cpu-official-practice .cpu-question{font-weight:700;white-space:pre-wrap;margin:14px 0}#cpu-official-practice .cpu-option{display:block;width:100%;text-align:left;margin:7px 0;padding:11px;border:1px solid #b7cfe1;border-radius:9px;background:#fff;color:#15344d;cursor:pointer}#cpu-official-practice .cpu-option:disabled{cursor:default}#cpu-official-practice .cpu-option.cpu-correct{border-color:#1874c7;background:#e4f2ff}#cpu-official-practice .cpu-option.cpu-incorrect{border-color:#c24c55;background:#ffe9ec}#cpu-official-practice .cpu-explanation{white-space:pre-wrap;line-height:1.6;background:#eaf3f8;padding:12px;border-radius:9px;margin:12px 0}#cpu-official-practice .cpu-progress{font-size:13px;color:#47657b}#cpu-official-practice .cpu-next{padding:10px 15px;background:#087f79;color:white;border:0;border-radius:9px;cursor:pointer} #cpu-official-practice .cpu-verdict{display:flex;align-items:center;gap:9px;margin:13px 0 8px;font-weight:750;font-size:16px}#cpu-official-practice .cpu-verdict.correct{color:#1269bd}#cpu-official-practice .cpu-verdict.incorrect{color:#c12637}#cpu-official-practice .cpu-symbol{font-size:21px;font-weight:900}#cpu-official-practice .cpu-answer{font-weight:700;margin:6px 0 12px}';document.head.appendChild(style);
-const mobileMathStyle=document.createElement('style');mobileMathStyle.textContent='#cpu-official-practice .cpu-explanation{white-space:normal;min-width:0;max-width:100%;overflow:hidden}#cpu-official-practice .cpu-explanation-title{font-weight:800;margin-bottom:10px;white-space:normal}#cpu-official-practice .cpu-explanation-line{display:block;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;white-space:nowrap;overflow-wrap:normal;word-break:normal;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;padding:8px 2px;box-sizing:border-box;scrollbar-width:thin}#cpu-official-practice .cpu-explanation-line .katex{white-space:nowrap}#cpu-official-practice .cpu-explanation-line .katex-display{margin:.3em 0;text-align:left;overflow:visible}#cpu-official-practice .cpu-explanation-line .cpu-math{display:inline-block;vertical-align:middle}';mobileMathStyle.textContent += '#cpu-official-practice .cpu-explanation-line{white-space:normal;overflow-x:visible;overflow-wrap:anywhere;word-break:normal;line-height:1.7;padding:6px 0}#cpu-official-practice .cpu-explanation{overflow:visible}#cpu-official-practice .cpu-explanation-line .katex-display{overflow-x:auto;max-width:100%}';mobileMathStyle.textContent += '#cpu-official-practice .cpu-explanation{width:100%;max-width:100%;padding:14px;box-sizing:border-box;overflow-wrap:anywhere}#cpu-official-practice .cpu-explanation-line{display:block;max-width:100%;margin:0 0 12px;white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important;line-height:1.65;text-align:left;overflow-x:visible!important}#cpu-official-practice .cpu-explanation-line:last-child{margin-bottom:0}';document.head.appendChild(mobileMathStyle);
+const mobileMathStyle=document.createElement('style');mobileMathStyle.textContent='#cpu-official-practice .cpu-explanation{white-space:normal;min-width:0;max-width:100%;overflow:hidden}#cpu-official-practice .cpu-explanation-title{font-weight:800;margin-bottom:10px;white-space:normal}#cpu-official-practice .cpu-explanation-line{display:block;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;white-space:nowrap;overflow-wrap:normal;word-break:normal;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;padding:8px 2px;box-sizing:border-box;scrollbar-width:thin}#cpu-official-practice .cpu-explanation-line .katex{white-space:nowrap}#cpu-official-practice .cpu-explanation-line .katex-display{margin:.3em 0;text-align:left;overflow:visible}#cpu-official-practice .cpu-explanation-line .cpu-math{display:inline-block;vertical-align:middle}';mobileMathStyle.textContent += '#cpu-official-practice .cpu-explanation-line{white-space:normal;overflow-x:visible;overflow-wrap:anywhere;word-break:normal;line-height:1.7;padding:6px 0}#cpu-official-practice .cpu-explanation{overflow:visible}#cpu-official-practice .cpu-explanation-line .katex-display{overflow-x:auto;max-width:100%}';mobileMathStyle.textContent += '#cpu-official-practice .cpu-explanation{font-size:14px;line-height:1.55}#cpu-official-practice .cpu-explanation .katex{font-size:1.1em}#cpu-official-practice .cpu-explanation{width:100%;max-width:100%;padding:14px;box-sizing:border-box;overflow-wrap:anywhere}#cpu-official-practice .cpu-explanation-line{display:block;max-width:100%;margin:0 0 12px;white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important;line-height:1.65;text-align:left;overflow-x:visible!important}#cpu-official-practice .cpu-explanation-line:last-child{margin-bottom:0}';document.head.appendChild(mobileMathStyle);
 const status=host.querySelector('#cpu-practice-status'),body=host.querySelector('#cpu-practice-body');
 const label=i=>String.fromCharCode(65+i);
 const cleanOption=opt=>String(opt??'').replace(/^\s*(?:\(?[A-Ea-e]\s*[).:\-]\s*)+/, '').trim();
@@ -17,15 +17,19 @@ let pendingAnswer=null;
 let questions=[],index=0,correct=0,answered=false,totalQuestions=0,complete=false;
 
 function normalizeExplanation(value){
- let text=String(value||'').replace(/\r\n?/g,'\n');
- // Some imported solutions have the opening LaTeX delimiter broken by whitespace.
- text=text.replace(/\\\s*\n\s*\[/g,'\\[').replace(/\\\s*\n\s*\]/g,'\\]')
-          .replace(/\\\s*\n\s*\(/g,'\\(').replace(/\\\s*\n\s*\)/g,'\\)');
- // Recover double-escaped commands, but preserve the intentional LaTeX line break \\\\.
- text=text.replace(/\\\\(?=(?:begin|end|frac|dfrac|tfrac|text|boxed|cdot|times|div|left|right|sqrt|displaystyle|mathrm|overline|underbrace|quad|qquad|,|;|!|[()[\]]))/g,'\\');
- // Recover block delimiters split from the equation by a stray newline.
- text=text.replace(/\\\[\s*\n/g,'\\[\n').replace(/\n\s*\\\]/g,'\n\\]');
- return text;
+ let s=String(value||'').replace(/\r\n?/g,'\n');
+ // Repair imported mathematical blocks, including a slash followed by a newline and '['.
+ s=s.replace(/\\\s*\n\s*\[/g,'\\[').replace(/\\\s*\n\s*\]/g,'\\]')
+    .replace(/\\\s*\n\s*\(/g,'\\(').replace(/\\\s*\n\s*\)/g,'\\)');
+ s=s.replace(/\\\\(?=(?:begin|end|frac|dfrac|tfrac|text|boxed|cdot|times|div|left|right|sqrt|displaystyle|mathrm|overline|underbrace|quad|qquad|[()[\]])\b)/g,'\\');
+ // Importers sometimes put an extra backslash before the block delimiter.
+ s=s.replace(/\\\\\[/g,'\\[').replace(/\\\\\]/g,'\\]');
+ // KaTeX expects a single command slash; preserve double slash row separators.
+ s=s.replace(/\\\\(?=[a-zA-Z])/g,'\\');
+ // Recover a block written as bare \begin{aligned}...\end{aligned}.
+ s=s.replace(/(^|[\n])(\s*\\begin\{(?:aligned|align|gathered|array)\}[\s\S]*?\\end\{(?:aligned|align|gathered|array)\})/g,
+   (all,prefix,math)=>prefix+'\\['+math+'\\]');
+ return s;
 }
 function explanationFor(q){return String(q.explanation||'').replace(/^\s*RESPUESTA\s+CORRECTA\s*:\s*[^\r\n]*(?:\r?\n)*/i,'').trim();}
 
@@ -84,7 +88,7 @@ parts.forEach(part=>{
  const display=(part.startsWith('\\[')&&part.endsWith('\\]'))||(part.startsWith('$$')&&part.endsWith('$$'));
  const inline=part.startsWith('\\(')&&part.endsWith('\\)');
  if(display||inline){
-  const tex=part.slice(2,-2).trim();
+  const tex=part.slice(2,-2).trim().replace(/\\\\(?=[a-zA-Z])/g,'\\');
   const row=document.createElement('div');row.className='cpu-explanation-line cpu-equation';
   row.setAttribute('tabindex','0');
   if(window.katex){try{window.katex.render(tex,row,{throwOnError:false,displayMode:display,strict:'ignore'});}catch(err){row.textContent=tex;}}
