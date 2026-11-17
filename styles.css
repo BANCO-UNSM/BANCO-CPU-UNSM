@@ -72,3 +72,27 @@
 button.cpu-primary-action{background:#00877e!important;color:#fff!important;border:1px solid #00877e!important;font-weight:700!important;box-shadow:none!important}
 button.cpu-primary-action:hover{background:#006f68!important;border-color:#006f68!important;color:#fff!important}
 button.cpu-primary-action:focus-visible{outline:3px solid #79d9cb;outline-offset:2px}
+
+/* Biblioteca: cada curso tiene una identidad cromática propia */
+.bib-course-tile{position:relative!important;overflow:hidden;background:var(--course-bg,#edf3f8)!important;border:1px solid var(--course-border,#d3e1eb)!important;border-left:5px solid var(--course-accent,#4b748c)!important;color:#102e49!important;transition:transform .15s ease,box-shadow .15s ease!important}
+.bib-course-tile strong{color:var(--course-accent,#174d6d)!important;font-size:15px}
+.bib-course-tile small{color:#36536a!important}
+.bib-course-tile:hover{transform:translateY(-2px);box-shadow:0 5px 14px #16334d1a!important;filter:saturate(1.08)}
+.bib-course-tile:focus-visible{outline:3px solid var(--course-accent,#1769a5)!important;outline-offset:2px}
+.bib-course-tile[data-bib-curso="Razonamiento Matemático"]{--course-bg:#e5f3ff;--course-accent:#1769a5;--course-border:#1769a544}
+.bib-course-tile[data-bib-curso="Álgebra"]{--course-bg:#efeaff;--course-accent:#6d43a8;--course-border:#6d43a844}
+.bib-course-tile[data-bib-curso="Aritmética"]{--course-bg:#e2f7ed;--course-accent:#167b59;--course-border:#167b5944}
+.bib-course-tile[data-bib-curso="Trigonometría"]{--course-bg:#fff1e4;--course-accent:#aa5b18;--course-border:#aa5b1844}
+.bib-course-tile[data-bib-curso="Geometría"]{--course-bg:#e4f4f5;--course-accent:#177d85;--course-border:#177d8544}
+.bib-course-tile[data-bib-curso="Física"]{--course-bg:#e8eeff;--course-accent:#385db4;--course-border:#385db444}
+.bib-course-tile[data-bib-curso="Química"]{--course-bg:#fff0f4;--course-accent:#b03f70;--course-border:#b03f7044}
+.bib-course-tile[data-bib-curso="Biología"]{--course-bg:#edf6df;--course-accent:#5b8126;--course-border:#5b812644}
+.bib-course-tile[data-bib-curso="Razonamiento Verbal"]{--course-bg:#f4eaff;--course-accent:#814aa4;--course-border:#814aa444}
+.bib-course-tile[data-bib-curso="Cultura General"]{--course-bg:#fff3df;--course-accent:#9c6818;--course-border:#9c681844}
+.bib-course-tile[data-bib-curso="Educación Cívica"]{--course-bg:#e4f4ff;--course-accent:#246b98;--course-border:#246b9844}
+.bib-course-tile[data-bib-curso="Historia"]{--course-bg:#fff0e8;--course-accent:#9b5631;--course-border:#9b563144}
+.bib-course-tile[data-bib-curso="Geografía"]{--course-bg:#e4f5ed;--course-accent:#29775c;--course-border:#29775c44}
+.bib-course-tile[data-bib-curso="Lenguaje y Literatura"]{--course-bg:#fcebf3;--course-accent:#9d4d7b;--course-border:#9d4d7b44}
+.bib-course-tile[data-bib-curso="Psicología"]{--course-bg:#f1eaff;--course-accent:#7751a4;--course-border:#7751a444}
+.bib-course-tile[data-bib-curso="Filosofía"]{--course-bg:#edf0ff;--course-accent:#4e60a2;--course-border:#4e60a244}
+.bib-course-tile[data-bib-curso="Economía"]{--course-bg:#e5f7f4;--course-accent:#227f75;--course-border:#227f7544}
