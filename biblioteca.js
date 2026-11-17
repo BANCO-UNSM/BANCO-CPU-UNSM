@@ -145,7 +145,7 @@ function bibBindAritInteract(){
  }));
  const memoryQuiz=lesson.querySelector('[data-rm-memory-quiz]');
  if(memoryQuiz){
-  const all=Array.from(lesson.querySelectorAll('.rm-formula-item .arit-formula'));
+  const all=Array.from(lesson.querySelectorAll('#rm-sec-1 .rm-formula-item .arit-formula'));
   const names=Array.from(lesson.querySelectorAll('.rm-formula-item strong')).map(el=>el.textContent);
   const topicNames=lesson.dataset.rmNames?JSON.parse(lesson.dataset.rmNames):names;
   let idx=0;
@@ -155,7 +155,7 @@ function bibBindAritInteract(){
    label.textContent='Pregunta '+(idx+1)+' de '+all.length;
    question.textContent='¿Cuál es la fórmula correspondiente a '+(topicNames[idx]||'la propiedad '+(idx+1))+'?';
    feedback.textContent='';next.disabled=true;next.textContent=idx===all.length-1?'Volver a practicar':'Siguiente fórmula →';
-   const picks=[idx];for(let j=1;j<Math.min(4,all.length);j++)picks.push((idx+j)%all.length);
+   const picks=[idx];for(let j=1;j<all.length&&picks.length<4;j++){const candidate=(idx+j)%all.length;if(!picks.some(k=>all[k].textContent.replace(/\s+/g,'')===all[candidate].textContent.replace(/\s+/g,'')))picks.push(candidate);}
    if(all.length===1){question.textContent='Observa y recuerda la fórmula';}
    const ordered=picks.map((p,j)=>picks[(j+idx)%picks.length]);
    options.replaceChildren();
@@ -191,8 +191,7 @@ function bibRMContenido(){
  if(!ficha)return '<div class="card"><p class="muted">'+(bibLoading?'Cargando la lección...':bibError?'No se pudo cargar la lección. '+esc(bibError):'Esta semana todavía no tiene una ficha teórica publicada.')+'</p></div>';
  if(esAritmetica)return bibAritLesson(ficha);
  const w=Number(bibSemanaPreparacion), rawFormulas=String(ficha.formulas||'');
- const formulas=rawFormulas.split(/\$\$([\s\S]*?)\$\$/g).filter(x=>x.trim()).map(x=>x.trim());
- const formulaList=formulas.filter(x=>!x.startsWith('\n')&&x.includes('\\')||x.includes('=')||x.includes('^'));
+ const formulaList=Array.from(rawFormulas.matchAll(/\$\$([\s\S]*?)\$\$/g),m=>m[1].trim()).filter(Boolean);
  const renderFormula=(tex)=>bibAritMath('$$'+tex+'$$');
  const card=(num,eyebrow,title,content)=>'<section class="arit-card" id="rm-sec-'+num+'"><span class="arit-eyebrow">'+num+' · '+eyebrow+'</span><h3>'+title+'</h3>'+content+'</section>';
  const formulary=formulaList.map((tex,i)=>'<div class="rm-formula-item"><strong>Propiedad '+(i+1)+'</strong><div class="arit-formula">'+renderFormula(tex)+'</div></div>').join('');
