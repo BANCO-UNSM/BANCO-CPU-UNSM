@@ -19,7 +19,7 @@ function explanationFor(q){return String(q.explanation||'').replace(/^\s*RESPUES
 
 function textEl(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(text??'');return el}
 function formatMath(container){
- if(course!=='algebra'||!window.katex)return;
+ if(!window.katex)return;
  const raw=(container.textContent||'').replace(/\\\\(?=[()[\]{}]|[a-zA-Z])/g,'\\');
  const token=/(\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|\$\$[\s\S]*?\$\$|\$[^$\n]+\$)/g;
  if(!token.test(raw))return;
