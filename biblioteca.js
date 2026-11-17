@@ -31,26 +31,78 @@ const bibRMExtra={
 function bibDiagramaVenn(){
  return '<section class="card" style="margin-top:14px"><h3>Diagrama de Venn · Ejemplo visual</h3><p>En un salón de 40 estudiantes: 24 juegan fútbol, 18 vóley y 10 ambos. Observa cómo se distribuyen las cuatro regiones.</p><svg viewBox="0 0 650 330" role="img" aria-label="Diagrama de Venn: solo fútbol 14, ambos 10, solo vóley 8, ninguno 8" style="width:100%;max-width:700px;display:block;margin:auto;background:#f7fbff;border-radius:12px"><rect x="22" y="24" width="606" height="280" rx="18" fill="#f0f6ff" stroke="#6684a2" stroke-width="2"/><text x="44" y="52" font-size="20" font-weight="bold" fill="#173952">U = 40</text><circle cx="265" cy="164" r="111" fill="#76b9ed" fill-opacity=".42" stroke="#236aa7" stroke-width="3"/><circle cx="386" cy="164" r="111" fill="#f8bb73" fill-opacity=".43" stroke="#c17a22" stroke-width="3"/><g fill="#173952" font-family="Arial,sans-serif" text-anchor="middle"><text x="223" y="94" font-size="17" font-weight="bold">Fútbol</text><text x="429" y="94" font-size="17" font-weight="bold">Vóley</text><text x="222" y="176" font-size="34" font-weight="bold">14</text><text x="326" y="176" font-size="34" font-weight="bold">10</text><text x="430" y="176" font-size="34" font-weight="bold">8</text><text x="553" y="265" font-size="18">Ninguno: 8</text></g></svg><p><strong>Cómo se resuelve:</strong> primero se coloca 10 en la intersección. Luego, solo fútbol = 24 − 10 = 14; solo vóley = 18 − 10 = 8. Finalmente, ninguno = 40 − (14 + 10 + 8) = 8.</p><p class="muted">Cada número representa una región diferente. La suma 14 + 10 + 8 + 8 = 40 comprueba el resultado.</p></section>';
 }
-function bibFormatoEcuaciones(valor){
- const partes=String(valor||'Pendiente de ampliación').split(/(\$\$[\s\S]*?\$\$)/g);
- return partes.map(parte=>{
-  if(parte.startsWith('$')&&parte.endsWith('$')){
-   const latex=parte.slice(2,-2);
-   if(window.katex){try{return '<div style="overflow-x:auto;max-width:100%;padding:7px 0;text-align:center">'+window.katex.renderToString(latex,{displayMode:true,throwOnError:false,strict:'ignore'})+'</div>'}catch(e){}}
-   return '<div style="padding:8px;text-align:center">'+esc(latex)+'</div>';
+
+function bibAritEsc(v){return esc(String(v??''))}
+function bibAritMath(v){
+ const normalized=String(v||'').replace(/\\\\(?=[a-zA-Z])/g,'\\');
+ return normalized.split(/(\$\$[\s\S]*?\$\$)/g).map(p=>{
+  if(p.startsWith('$$')&&p.endsWith('$$')){
+   const tex=p.slice(2,-2);
+   try{if(window.katex)return '<div class="arit-formula">'+window.katex.renderToString(tex,{displayMode:true,throwOnError:false})+'</div>'}catch(e){}
+   return '<div class="arit-formula">'+bibAritEsc(tex)+'</div>';
   }
-  return esc(parte);
+  return bibAritEsc(p);
  }).join('');
 }
+function bibAritTextBlocks(value,kind){
+ const raw=String(value||'');
+ const lines=raw.split(/\r?\n/);
+ const chunks=[];let current=null;
+ const isHeading=(t)=>kind==='theory'?/^\d{1,2}\.\s+\S/.test(t):kind==='formula'?/^[A-ZÁÉÍÓÚÜÑ][A-ZÁÉÍÓÚÜÑ\s\-]+$/.test(t)&&t.length<65:/^EJEMPLO\s+\d+/i.test(t);
+ for(const line of lines){
+  const t=line.trim();
+  if(isHeading(t)){if(current)chunks.push(current);current={heading:t,body:[]}}
+  else{if(!current)current={heading:'',body:[]};current.body.push(line)}
+ }
+ if(current)chunks.push(current);
+ if(chunks.length===1&&!chunks[0].heading&&kind==='theory'){
+  const paragraphs=raw.split(/\n\s*\n/).filter(Boolean);
+  return paragraphs.map(p=>'<p class="arit-paragraph">'+bibAritMath(p)+'</p>').join('');
+ }
+ return chunks.map((c,i)=>{
+  const title=c.heading?'<h4>'+bibAritEsc(c.heading)+'</h4>':'';
+  const body=c.body.join('\n').trim().split(/\n\s*\n/).filter(Boolean).map(p=>'<div class="arit-paragraph">'+bibAritMath(p).replace(/\n/g,'<br>')+'</div>').join('');
+  return '<article class="arit-topic">'+title+body+'</article>';
+ }).join('');
+}
+function bibAritLesson(ficha){
+ const w=Number(bibSemanaPreparacion);
+ const sections=[
+  ['01','Marco teórico','Descubre los conceptos fundamentales'],
+  ['02','Fórmulas y propiedades','Aprende a identificar y aplicar cada fórmula'],
+  ['03','Ejemplos resueltos','Sigue el procedimiento paso a paso'],
+  ['04','Errores frecuentes','Evita las confusiones más comunes'],
+  ['05','Claves para recordar','Consolida lo aprendido'],
+  ['06','Tarjetas de memoria','Repasa los conceptos esenciales'],
+  ['07','Reto de aprendizaje','Comprueba lo que sabes'],
+  ['08','Preguntas CPU','Practica con las preguntas de la semana']
+ ];
+ const card=(n,content)=>'<section class="arit-card" id="arit-p'+n+'"><span class="arit-eyebrow">'+sections[Number(n)-1][0]+' · '+sections[Number(n)-1][1].toUpperCase()+'</span><h3>'+sections[Number(n)-1][2]+'</h3>'+content+'</section>';
+ const intro=card(1,bibAritTextBlocks(ficha.teoria,'theory')+(w===1?bibDiagramaVenn():''));
+ const formulas=card(2,bibAritTextBlocks(ficha.formulas,'formula'));
+ const ejemplos=card(3,bibAritTextBlocks(ficha.ejemplo,'example'));
+ const errores=card(4,'<p class="arit-paragraph">'+bibAritMath(ficha.errores||'Identifica el tipo de problema y comprueba tus operaciones.')+'</p>');
+ const claves=card(5,'<p class="arit-paragraph">'+bibAritMath(ficha.claves||'Identifica los datos, selecciona la propiedad adecuada y comprueba el resultado.')+'</p>');
+ const memoria=card(6,'<p>Repasa las ideas principales antes de continuar.</p><details class="arit-memory"><summary>Mostrar las fórmulas para recordar</summary>'+bibAritTextBlocks(ficha.formulas,'formula')+'</details>');
+ const reto=card(7,'<p>Antes de revisar la práctica, explica con tus palabras las propiedades y resuelve nuevamente uno de los ejemplos sin consultar el procedimiento.</p>');
+ const practica=card(8,'<iframe title="Práctica CPU · Aritmética semana '+w+'" src="pilotos/aritmetica-practica.html?week='+w+'&v=3" style="width:100%;height:78vh;min-height:660px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="eager"></iframe>');
+ return '<div class="arit-lesson"><style>'+
+ '.arit-lesson{background:#eef5fb;padding:18px 12px;border-radius:16px;color:#153a57;font-family:system-ui,sans-serif}.arit-hero{max-width:790px;margin:0 auto 14px;padding:26px 22px;background:linear-gradient(115deg,#195376,#348cb3);border-radius:15px;color:#fff}.arit-hero h2{font-size:clamp(24px,3vw,34px);margin:18px 0 10px;color:#fff}.arit-hero p{color:#fff;margin:0;line-height:1.6}.arit-chip{display:inline-block;background:#def9ec;color:#006c58;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:800}.arit-nav{max-width:790px;margin:0 auto 18px;display:flex;flex-wrap:wrap;gap:7px}.arit-nav a{border:1px solid #c6e2f4;background:white;color:#164a72;border-radius:8px;padding:10px 12px;text-decoration:none;font-size:12px;font-weight:700}.arit-card{max-width:790px;margin:16px auto;background:white;border:1px solid #d1e3f2;border-radius:16px;padding:22px;box-shadow:0 4px 13px rgba(29,72,105,.04);scroll-margin-top:15px}.arit-card h3{font-size:21px;color:#133b58;margin:13px 0 20px}.arit-eyebrow{display:inline-block;background:#dcf7e8;color:#006b56;border-radius:30px;padding:7px 12px;font-size:11px;font-weight:800}.arit-topic{border-top:1px solid #e5eef5;padding:15px 0}.arit-topic:first-of-type{border-top:0}.arit-topic h4{font-size:16px;margin:2px 0 12px;color:#0f4668}.arit-paragraph{line-height:1.85;margin:10px 0 16px;white-space:normal;overflow-wrap:anywhere}.arit-formula{background:#f0f6fc;border-radius:10px;margin:12px 0;padding:15px 10px;max-width:100%;overflow-x:auto;text-align:center}.arit-formula .katex-display{margin:0}.arit-memory{padding:14px;border:1px solid #d1e3f2;border-radius:10px}.arit-memory summary{cursor:pointer;font-weight:700;color:#087f79}@media(max-width:650px){.arit-lesson{padding:10px 6px}.arit-card{padding:15px}.arit-hero{padding:22px 16px}.arit-nav a{padding:8px 9px}}'+
+ '</style><div class="arit-hero"><span class="arit-chip">ARITMÉTICA · SEMANA '+w+' · LECCIÓN INTERACTIVA</span><h2>'+bibAritEsc(ficha.tema||'Lección de Aritmética')+'</h2><p>Aprende los conceptos, interpreta las fórmulas y practica paso a paso.</p></div>'+
+ '<nav class="arit-nav" aria-label="Secciones de la lección">'+sections.map((x,i)=>'<a href="#arit-p'+(i+1)+'">'+x[0]+' · '+(i===7?'CPU':i===5?'Memoria':i===6?'Reto':'Estudia')+'</a>').join('')+'</nav>'+
+ intro+formulas+ejemplos+errores+claves+memoria+reto+practica+'</div>';
+}
+function bibFormatoEcuaciones(valor){return bibAritMath(valor)}
 function bibRMContenido(){
  const esAritmetica=bibCursoPreparacion==='Aritmética';
  const ficha=bibRows.find(f=>f.materia===(esAritmetica?'Aritmética':'Razonamiento Matemático')&&Number(f.semana)===Number(bibSemanaPreparacion)&&f.modalidad==='CPU-UNSM');
  if(!ficha)return '<div class="card"><p class="muted">'+(bibLoading?'Cargando el marco teórico...':bibError?'No se pudo cargar el marco teórico. '+esc(bibError):'Esta semana todavía no tiene una ficha teórica publicada.')+'</p></div>';
+ if(esAritmetica)return bibAritLesson(ficha);
  const bloque=(titulo,valor)=>'<section class="card" style="margin-top:14px"><h3>'+titulo+'</h3><div class="bib-rm-math" style="white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere">'+bibFormatoEcuaciones(valor)+'</div></section>';
- const extra=esAritmetica?null:bibRMExtra[Number(bibSemanaPreparacion)];
+ const extra=bibRMExtra[Number(bibSemanaPreparacion)];
  const memoria='<section class="card" style="margin-top:14px"><h3>07 · Repaso de fórmulas y ejercicio nuevo</h3><p class="muted">Repasa las propiedades de esta semana y practica con un ejercicio adicional creado para la lección, distinto del ejemplo teórico.</p><details><summary style="cursor:pointer;font-weight:700">Recordar las fórmulas</summary><div class="bib-rm-math" style="white-space:pre-wrap;overflow-x:auto;margin-top:12px">'+bibFormatoEcuaciones(ficha.formulas)+'</div></details>'+(extra?'<p style="margin-top:16px"><strong>Reto adicional:</strong> '+esc(extra[0])+'</p><details><summary style="cursor:pointer;color:#0b7362;font-weight:700">Ver solución explicada</summary><p>'+esc(extra[1])+'</p></details>':'')+'</section>';
- const separata='<section class="card" style="margin-top:14px"><h3>08 · Separata de la semana '+bibSemanaPreparacion+'</h3><p class="muted">Preguntas originales publicadas de la semana, con alternativas y explicación. Se muestran aquí mismo, sin abrir otra pantalla.</p><iframe title="'+(esAritmetica?'Aritmética':'Razonamiento Matemático')+' semana '+bibSemanaPreparacion+'" src="pilotos/'+(esAritmetica?'aritmetica':'razonamiento-matematico')+'-practica.html?week='+bibSemanaPreparacion+'&v=3" style="width:100%;height:78vh;min-height:660px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="eager"></iframe></section>';
- return '<div class="card"><h3>'+esc(ficha.tema||('Semana '+bibSemanaPreparacion))+'</h3><p>'+esc(ficha.resumen||'')+'</p>'+bloque('01 · Marco teórico',ficha.teoria)+(esAritmetica&&Number(bibSemanaPreparacion)===1?bibDiagramaVenn():'')+bloque('02 · Fórmulas y propiedades',ficha.formulas)+bloque('03 · Ejemplos resueltos',ficha.ejemplo)+bloque('04 · Errores frecuentes',ficha.errores)+bloque('05 · Claves para recordar',ficha.claves)+bloque('06 · Comprueba lo aprendido','Explica con tus palabras cuándo se utiliza cada propiedad y verifica los pasos del ejemplo resuelto.')+memoria+separata+'</div>';
+ const separata='<section class="card" style="margin-top:14px"><h3>08 · Separata de la semana '+bibSemanaPreparacion+'</h3><p class="muted">Preguntas originales publicadas de la semana, con alternativas y explicación. Se muestran aquí mismo, sin abrir otra pantalla.</p><iframe title="Razonamiento Matemático semana '+bibSemanaPreparacion+'" src="pilotos/razonamiento-matematico-practica.html?week='+bibSemanaPreparacion+'&v=3" style="width:100%;height:78vh;min-height:660px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="eager"></iframe></section>';
+ return '<div class="card"><h3>'+esc(ficha.tema||('Semana '+bibSemanaPreparacion))+'</h3><p>'+esc(ficha.resumen||'')+'</p>'+bloque('01 · Marco teórico',ficha.teoria)+bloque('02 · Fórmulas y propiedades',ficha.formulas)+bloque('03 · Ejemplos resueltos',ficha.ejemplo)+bloque('04 · Errores frecuentes',ficha.errores)+bloque('05 · Claves para recordar',ficha.claves)+bloque('06 · Comprueba lo aprendido','Explica con tus palabras cuándo se utiliza cada propiedad y verifica los pasos del ejemplo resuelto.')+memoria+separata+'</div>';
 }
 function bibPage(){
  if(bibCursoPreparacion){
