@@ -965,10 +965,10 @@ function cpuDashboardPage(){
  </div>`:''}
  <div class="card"><h3>Elige cómo deseas prepararte</h3>
   <div class="grid">
-   <div class="card"><h3>📚 Aprender</h3><p class="muted">Teoría, Atenea, tarjetas y lecciones por semana.</p><button type="button" class="secondary" data-cpu-action="library">Abrir biblioteca interactiva</button></div>
-   <div class="card"><h3>✏️ Practicar</h3><p class="muted">Escoge curso y semana para resolver preguntas publicadas.</p><button type="button" class="secondary" data-cpu-action="practice">Elegir práctica</button></div>
-   <div class="card"><h3>📝 Simulacros</h3><p class="muted">Evalúa tu preparación con preguntas y resultados.</p><button type="button" class="secondary" data-cpu-action="quiz">Ver simulacros</button></div>
-   <div class="card"><h3>🎯 Mis errores</h3><p class="muted">Vuelve a resolver las preguntas que necesitas reforzar.</p><button type="button" class="secondary" data-cpu-action="mistakes">Repasar mis errores</button></div>
+   <div class="card"><h3>📚 Aprender</h3><p class="muted">Teoría, Atenea, tarjetas y lecciones por semana.</p><button type="button" class="cpu-primary-action" data-cpu-action="library">Abrir biblioteca interactiva</button></div>
+   <div class="card"><h3>✏️ Practicar</h3><p class="muted">Escoge curso y semana para resolver preguntas publicadas.</p><button type="button" class="cpu-primary-action" data-cpu-action="practice">Elegir práctica</button></div>
+   <div class="card"><h3>📝 Simulacros</h3><p class="muted">Evalúa tu preparación con preguntas y resultados.</p><button type="button" class="cpu-primary-action" data-cpu-action="quiz">Ver simulacros</button></div>
+   <div class="card"><h3>🎯 Mis errores</h3><p class="muted">Vuelve a resolver las preguntas que necesitas reforzar.</p><button type="button" class="cpu-primary-action" data-cpu-action="mistakes">Repasar mis errores</button></div>
   </div>
  </div>
  ${cpuWeekProgressMarkup()}
