@@ -431,7 +431,7 @@ function bindVerbalPractica(){
  window.addEventListener('message',onReady);
  iframe.addEventListener('load',()=>{if(iframe.isConnected)setTimeout(start,300)},{once:true});
 }
-const nuevosCursosPractica={'razonamiento-matematico':'Razonamiento Matemático','algebra':'Álgebra','historia':'Historia','geografia':'Geografía','lenguaje':'Lenguaje y Literatura','filosofia':'Filosofía','economia':'Economía'};
+const nuevosCursosPractica={'aritmetica':'Aritmética','razonamiento-matematico':'Razonamiento Matemático','algebra':'Álgebra','historia':'Historia','geografia':'Geografía','lenguaje':'Lenguaje y Literatura','filosofia':'Filosofía','economia':'Economía'};
 let nuevasPracticasRequest=0;
 async function enviarPracticaNueva(iframe,semana,course){
  if(!admin()||!db||!iframe?.contentWindow||!nuevosCursosPractica[course]||semana<1||semana>16)return;
