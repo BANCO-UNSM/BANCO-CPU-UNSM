@@ -143,6 +143,10 @@ function bibBindAritInteract(){
   lesson.querySelectorAll('.arit-card').forEach(card=>card.hidden=card.id!=='arit-p'+tab);
   lesson.querySelector('.arit-hero')?.scrollIntoView({block:'start',behavior:'smooth'});
  }));
+ const rmFormulas=Array.from(lesson.querySelectorAll('.rm-formula-item .arit-formula')).map(el=>el.innerHTML);
+ let rmIndex=0;
+ lesson.querySelector('[data-rm-memory-show]')?.addEventListener('click',()=>{const el=lesson.querySelector('#rm-memory-formula');if(el)el.hidden=!el.hidden;});
+ lesson.querySelector('[data-rm-memory-next]')?.addEventListener('click',()=>{if(!rmFormulas.length)return;rmIndex=(rmIndex+1)%rmFormulas.length;const el=lesson.querySelector('#rm-memory-formula');if(el){el.innerHTML=rmFormulas[rmIndex];el.hidden=true;}const label=lesson.querySelector('#rm-memory-label');if(label)label.textContent='Fórmula '+(rmIndex+1)+' de '+rmFormulas.length;});
  const explanations={soloA:'Solo fútbol: 24 − 10 = 14 estudiantes.',ambos:'Ambos deportes: 10 estudiantes, que se colocan primero en la intersección.',soloB:'Solo vóley: 18 − 10 = 8 estudiantes.',ninguno:'Ninguno: 40 − (14 + 10 + 8) = 8 estudiantes.'};
  lesson.querySelectorAll('[data-arit-venn]').forEach(b=>b.addEventListener('click',()=>{const el=lesson.querySelector('.arit-venn-result');if(el)el.textContent=explanations[b.dataset.aritVenn]}));
  lesson.querySelectorAll('[data-arit-choice]').forEach(b=>b.addEventListener('click',()=>{
