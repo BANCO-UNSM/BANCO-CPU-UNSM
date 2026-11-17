@@ -150,12 +150,12 @@ function bibBindAritInteract(){
   const topicNames=lesson.dataset.rmNames?JSON.parse(lesson.dataset.rmNames):names;
   const rmWeek=Number(lesson.dataset.rmWeek||0);
   const curated=rmWeek===1?[
-   {name:'propiedad conmutativa',tex:String.raw`a+b=b+a,\\qquad ab=ba`},
+   {name:'propiedad conmutativa',tex:String.raw`a+b=b+a,\qquad ab=ba`},
    {name:'propiedad asociativa',tex:String.raw`(a+b)+c=a+(b+c)`},
    {name:'propiedad distributiva de la suma',tex:String.raw`a(b+c)=ab+ac`},
    {name:'propiedad distributiva de la resta',tex:String.raw`a(b-c)=ab-ac`},
    {name:'diferencia de cuadrados',tex:String.raw`a^2-b^2=(a-b)(a+b)`},
-   {name:'suma de los primeros números naturales',tex:String.raw`1+2+\\cdots+n=\\frac{n(n+1)}{2}`}
+   {name:'suma de los primeros números naturales',tex:String.raw`1+2+\cdots+n=\frac{n(n+1)}{2}`}
   ]:null;
   const items=curated||all.map((el,i)=>({name:topicNames[i]||'fórmula '+(i+1),html:el.innerHTML,plain:el.textContent}));
   if(curated)items.forEach(x=>{x.html=window.katex?window.katex.renderToString(x.tex,{displayMode:true,throwOnError:false}):'\\('+x.tex+'\\)';x.plain=x.tex});
