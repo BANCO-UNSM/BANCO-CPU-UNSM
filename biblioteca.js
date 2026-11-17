@@ -143,16 +143,47 @@ function bibBindAritInteract(){
   lesson.querySelectorAll('.arit-card').forEach(card=>card.hidden=card.id!=='arit-p'+tab);
   lesson.querySelector('.arit-hero')?.scrollIntoView({block:'start',behavior:'smooth'});
  }));
- lesson.querySelectorAll('[data-rm-check-item]').forEach(item=>{
-  item.querySelectorAll('[data-rm-check-option]').forEach(btn=>btn.addEventListener('click',()=>{
-   const chosen=Number(btn.dataset.rmCheckOption),correct=Number(item.dataset.correct);
-   item.querySelectorAll('[data-rm-check-option]').forEach(b=>{b.disabled=true;if(Number(b.dataset.rmCheckOption)===correct)b.style.background='#e2f6eb';});
-   btn.style.borderColor=chosen===correct?'#16865a':'#dc5555';
-   const feedback=item.querySelector('.rm-check-feedback');
-   feedback.textContent=chosen===correct?'¡Respuesta correcta!':'Respuesta incorrecta. La alternativa correcta es '+String.fromCharCode(65+correct)+'.';
-   item.querySelector('.rm-check-explanation').hidden=false;
-  }));
- });
+ const checkQuiz=lesson.querySelector('[data-rm-check]');
+ if(checkQuiz){
+  const items=Array.from(checkQuiz.querySelectorAll('[data-rm-check-item]'));
+  let current=0;
+  const show=(index)=>{
+   current=index;
+   items.forEach((item,i)=>item.hidden=i!==index);
+   checkQuiz.querySelector('.rm-check-progress').textContent='Pregunta '+(index+1)+' de '+items.length;
+  };
+  items.forEach((item,i)=>{
+   item.querySelectorAll('[data-rm-check-option]').forEach(btn=>btn.addEventListener('click',()=>{
+    if(item.dataset.answered==='true')return;
+    item.dataset.answered='true';
+    const chosen=Number(btn.dataset.rmCheckOption),correct=Number(item.dataset.correct);
+    item.querySelectorAll('[data-rm-check-option]').forEach(b=>{
+     b.disabled=true;
+     if(Number(b.dataset.rmCheckOption)===correct){b.style.background='#e2f6eb';b.style.borderColor='#16865a';}
+    });
+    if(chosen!==correct){btn.style.background='#fff0f0';btn.style.borderColor='#dc5555';}
+    const feedback=item.querySelector('.rm-check-feedback');
+    feedback.textContent=chosen===correct?'✓ ¡Respuesta correcta!':'✗ Respuesta incorrecta. La alternativa correcta es '+String.fromCharCode(65+correct)+'.';
+    feedback.style.color=chosen===correct?'#137d54':'#b43c3c';
+    item.querySelector('.rm-check-explanation').hidden=false;
+    item.querySelector('[data-rm-check-next]').disabled=false;
+   }));
+   item.querySelector('[data-rm-check-next]').addEventListener('click',()=>{
+    if(i===items.length-1){
+     items.forEach(it=>{
+      delete it.dataset.answered;
+      it.querySelectorAll('[data-rm-check-option]').forEach(b=>{b.disabled=false;b.style.background='';b.style.borderColor='';});
+      it.querySelector('.rm-check-feedback').textContent='';
+      it.querySelector('.rm-check-explanation').hidden=true;
+      it.querySelector('[data-rm-check-next]').disabled=true;
+     });
+     show(0);
+    }else show(i+1);
+    checkQuiz.scrollIntoView({block:'start',behavior:'smooth'});
+   });
+  });
+ }
+
  const memoryQuiz=lesson.querySelector('[data-rm-memory-quiz]');
  if(memoryQuiz){
   const all=Array.from(lesson.querySelectorAll('#rm-sec-1 .rm-formula-item .arit-formula'));
@@ -228,7 +259,7 @@ function bibRMContenido(){
   {q:'Si 1 + 3 = 4, 1 + 3 + 5 = 9 y 1 + 3 + 5 + 7 = 16, ¿cuánto suman los cinco primeros números impares?',opts:['20','25','30','36'],correct:1,why:'Por inducción observamos que la suma de los primeros n números impares es n². Para n = 5, resulta 5² = 25.'},
   {q:'¿Cuál es el resultado de 6 + 4 × (12 − 7)² ÷ 5?',opts:['26','46','106','30'],correct:0,why:'Primero paréntesis: 12 − 7 = 5; después potencia: 5² = 25; luego 4 × 25 ÷ 5 = 20; finalmente 6 + 20 = 26.'}
  ]:null;
- const quizHtml=quizRM?'<div class="rm-check-quiz" data-rm-check><p>Resuelve cada ejercicio y marca una alternativa. Después de responder podrás leer el procedimiento explicado.</p>'+quizRM.map((item,i)=>'<div class="rm-check-item" data-rm-check-item data-correct="'+item.correct+'"><p><strong>Ejercicio '+(i+1)+' de '+quizRM.length+'. '+esc(item.q)+'</strong></p><div class="rm-check-options">'+item.opts.map((opt,j)=>'<button type="button" class="rm-memory-choice" data-rm-check-option="'+j+'"><strong>'+String.fromCharCode(65+j)+')</strong> '+esc(opt)+'</button>').join('')+'</div><p class="rm-check-feedback" role="status" aria-live="polite"></p><div class="rm-check-explanation" hidden><strong>Solución explicada</strong><p>'+esc(item.why)+'</p></div></div>').join('')+'</div>':null;
+ const quizHtml=quizRM?'<div class="rm-check-quiz" data-rm-check><p>Resuelve el ejercicio, marca una alternativa y continúa con la siguiente pregunta.</p><p class="rm-check-progress">Pregunta 1 de '+quizRM.length+'</p>'+quizRM.map((item,i)=>'<div class="rm-check-item" data-rm-check-item data-correct="'+item.correct+'" '+(i?'hidden':'')+'><p><strong>'+esc(item.q)+'</strong></p><div class="rm-check-options">'+item.opts.map((opt,j)=>'<button type="button" class="rm-memory-choice" data-rm-check-option="'+j+'"><strong>'+String.fromCharCode(65+j)+')</strong> '+esc(opt)+'</button>').join('')+'</div><p class="rm-check-feedback" role="status" aria-live="polite"></p><div class="rm-check-explanation" hidden><strong>Solución explicada</strong><p>'+esc(item.why)+'</p></div><button type="button" class="secondary" data-rm-check-next disabled>'+(i===quizRM.length-1?'Volver a empezar':'Siguiente pregunta →')+'</button></div>').join('')+'</div>':null;
  const extra=bibRMExtra[w];
  const challenge=quizHtml||(extra?'<div class="rm-quiz"><p><strong>'+esc(extra[0])+'</strong></p><details><summary>Mostrar solución explicada</summary><p>'+esc(extra[1])+'</p></details></div>':'');
  const practice='<iframe title="Práctica CPU · Razonamiento Matemático semana '+w+'" src="pilotos/razonamiento-matematico-practica.html?week='+w+'&v=4" style="width:100%;height:78vh;min-height:660px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="eager"></iframe>';
