@@ -15,6 +15,18 @@ const label=i=>String.fromCharCode(65+i);
 const cleanOption=opt=>String(opt??'').replace(/^\s*(?:\(?[A-Ea-e]\s*[).:\-]\s*)+/, '').trim();
 let pendingAnswer=null;
 let questions=[],index=0,correct=0,answered=false,totalQuestions=0,complete=false;
+
+function normalizeExplanation(value){
+ let text=String(value||'').replace(/\r\n?/g,'\n');
+ // Some imported solutions have the opening LaTeX delimiter broken by whitespace.
+ text=text.replace(/\\\s*\n\s*\[/g,'\\[').replace(/\\\s*\n\s*\]/g,'\\]')
+          .replace(/\\\s*\n\s*\(/g,'\\(').replace(/\\\s*\n\s*\)/g,'\\)');
+ // Recover double-escaped commands, but preserve the intentional LaTeX line break \\\\.
+ text=text.replace(/\\\\(?=(?:begin|end|frac|dfrac|tfrac|text|boxed|cdot|times|div|left|right|sqrt|displaystyle|mathrm|overline|underbrace|quad|qquad|,|;|!|[()[\]]))/g,'\\');
+ // Recover block delimiters split from the equation by a stray newline.
+ text=text.replace(/\\\[\s*\n/g,'\\[\n').replace(/\n\s*\\\]/g,'\n\\]');
+ return text;
+}
 function explanationFor(q){return String(q.explanation||'').replace(/^\s*RESPUESTA\s+CORRECTA\s*:\s*[^\r\n]*(?:\r?\n)*/i,'').trim();}
 
 function textEl(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(text??'');return el}
@@ -65,20 +77,25 @@ if(q.secure===true&&!Number.isInteger(q.correct_index)){
  window.parent.postMessage({type:'cachimbolab-library-check',question_id:q.id,selected_index:j},'*');
  return;
 }
-answered=true;const hit=j===q.correct_index;if(hit)correct++;choices.querySelectorAll('button').forEach((b,k)=>{b.disabled=true;if(k===q.correct_index)b.classList.add('cpu-correct');else if(k===j)b.classList.add('cpu-incorrect')});verdict.className='cpu-verdict '+(hit?'correct':'incorrect');verdict.replaceChildren(textEl('span','cpu-symbol',hit?'✓':'✗'),textEl('span','',hit?'¡Respuesta correcta!':'Respuesta incorrecta'));verdict.hidden=false;if(!hit){answer.textContent='La respuesta correcta es: '+label(q.correct_index)+') '+q.options[q.correct_index];formatMath(answer);answer.hidden=false}const explanation=explanationFor(q);if(explanation){feedback.replaceChildren();const heading=textEl('div','cpu-explanation-title','Explicación');feedback.append(heading);const normalized=explanation.replace(/\\\\/g,'\\');
+answered=true;const hit=j===q.correct_index;if(hit)correct++;choices.querySelectorAll('button').forEach((b,k)=>{b.disabled=true;if(k===q.correct_index)b.classList.add('cpu-correct');else if(k===j)b.classList.add('cpu-incorrect')});verdict.className='cpu-verdict '+(hit?'correct':'incorrect');verdict.replaceChildren(textEl('span','cpu-symbol',hit?'✓':'✗'),textEl('span','',hit?'¡Respuesta correcta!':'Respuesta incorrecta'));verdict.hidden=false;if(!hit){answer.textContent='La respuesta correcta es: '+label(q.correct_index)+') '+q.options[q.correct_index];formatMath(answer);answer.hidden=false}const explanation=explanationFor(q);if(explanation){feedback.replaceChildren();const heading=textEl('div','cpu-explanation-title','Explicación');feedback.append(heading);const normalized=normalizeExplanation(explanation);
 const parts=normalized.split(/(\\\[[\s\S]*?\\\]|\$\$[\s\S]*?\$\$|\\\([\s\S]*?\\\))/g);
 parts.forEach(part=>{
  if(!part.trim())return;
- const isDisplay=(part.startsWith('\\[')&&part.endsWith('\\]'))||(part.startsWith('$$')&&part.endsWith('$$'));
- const isInline=part.startsWith('\\(')&&part.endsWith('\\)');
- if(isDisplay||isInline){
+ const display=(part.startsWith('\\[')&&part.endsWith('\\]'))||(part.startsWith('$$')&&part.endsWith('$$'));
+ const inline=part.startsWith('\\(')&&part.endsWith('\\)');
+ if(display||inline){
   const tex=part.slice(2,-2).trim();
-  const row=document.createElement('div');row.className='cpu-explanation-line cpu-equation';row.setAttribute('tabindex','0');
-  if(window.katex){try{window.katex.render(tex,row,{throwOnError:true,displayMode:isDisplay,strict:'ignore'});}catch(err){row.textContent=part;}}
-  else{row.textContent=part;}
+  const row=document.createElement('div');row.className='cpu-explanation-line cpu-equation';
+  row.setAttribute('tabindex','0');
+  if(window.katex){try{window.katex.render(tex,row,{throwOnError:false,displayMode:display,strict:'ignore'});}catch(err){row.textContent=tex;}}
+  else row.textContent=tex;
   feedback.append(row);
  }else{
-  part.split(/\r?\n/).forEach(line=>{if(!line.trim())return;const row=textEl('p','cpu-explanation-line',formatSolutionStep(line.trim()));row.setAttribute('tabindex','0');formatMath(row);feedback.append(row)});
+  part.split(/\r?\n/).forEach(line=>{
+   if(!line.trim())return;
+   const row=textEl('p','cpu-explanation-line',formatSolutionStep(line.trim()));
+   row.setAttribute('tabindex','0');formatMath(row);feedback.append(row);
+  });
  }
 });feedback.hidden=false}else{feedback.textContent='';feedback.hidden=true}next.hidden=false};choices.append(btn)});
  body.append(choices,verdict,answer,feedback,next);
