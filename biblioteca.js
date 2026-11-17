@@ -78,19 +78,39 @@ function bibAritLesson(ficha){
   ['08','Preguntas CPU','Practica con las preguntas de la semana']
  ];
  const card=(n,content)=>'<section class="arit-card" id="arit-p'+n+'"><span class="arit-eyebrow">'+sections[Number(n)-1][0]+' · '+sections[Number(n)-1][1].toUpperCase()+'</span><h3>'+sections[Number(n)-1][2]+'</h3>'+content+'</section>';
- const intro=card(1,bibAritTextBlocks(ficha.teoria,'theory')+(w===1?bibDiagramaVenn():''));
+ const vennInteract=w===1?'<div class="arit-interactive"><h4>Explora el diagrama de Venn</h4><p>Selecciona una región para descubrir qué representa.</p><div class="arit-venn-controls"><button type="button" data-arit-venn="soloA">Solo fútbol</button><button type="button" data-arit-venn="ambos">Ambos</button><button type="button" data-arit-venn="soloB">Solo vóley</button><button type="button" data-arit-venn="ninguno">Ninguno</button></div><p class="arit-venn-result" aria-live="polite">Elige una región para comprobar cómo se cuentan los estudiantes.</p></div>':'';
+ const intro=card(1,bibAritTextBlocks(ficha.teoria,'theory')+(w===1?bibDiagramaVenn()+vennInteract:''));
  const formulas=card(2,bibAritTextBlocks(ficha.formulas,'formula'));
  const ejemplos=card(3,bibAritTextBlocks(ficha.ejemplo,'example'));
  const errores=card(4,'<p class="arit-paragraph">'+bibAritMath(ficha.errores||'Identifica el tipo de problema y comprueba tus operaciones.')+'</p>');
  const claves=card(5,'<p class="arit-paragraph">'+bibAritMath(ficha.claves||'Identifica los datos, selecciona la propiedad adecuada y comprueba el resultado.')+'</p>');
- const memoria=card(6,'<p>Repasa las ideas principales antes de continuar.</p><details class="arit-memory"><summary>Mostrar las fórmulas para recordar</summary>'+bibAritTextBlocks(ficha.formulas,'formula')+'</details>');
- const reto=card(7,'<p>Antes de revisar la práctica, explica con tus palabras las propiedades y resuelve nuevamente uno de los ejemplos sin consultar el procedimiento.</p>');
+ const memoria=card(6,'<p>Intenta recordar las fórmulas antes de abrir cada respuesta.</p><details class="arit-memory"><summary>Mostrar las fórmulas para recordar</summary>'+bibAritTextBlocks(ficha.formulas,'formula')+'</details>');
+ const retos=w===1?[['Si A tiene 5 elementos, ¿cuántos subconjuntos tiene?',['10','25','32','31'],2,'El número total es 2⁵ = 32.'],['Si 20 alumnos estudian inglés, 12 francés y 5 ambos, ¿cuántos estudian al menos uno?',['27','32','37','17'],0,'Se aplica 20 + 12 − 5 = 27.']]:[['Si una letra de S/ 1000 se descuenta al 2 % mensual durante 3 meses, ¿cuánto es el descuento comercial?',['S/ 20','S/ 60','S/ 120','S/ 600'],1,'D = 1000 × 2 × 3 / 100 = S/ 60.']];
+ const reto=card(7,'<p>Resuelve estos ejercicios nuevos, distintos de las preguntas de la separata.</p>'+retos.map((r,i)=>'<div class="arit-quiz" data-answer="'+r[2]+'"><strong>'+bibAritEsc(r[0])+'</strong><div class="arit-quiz-options">'+r[1].map((opt,j)=>'<button type="button" data-arit-choice="'+j+'">'+String.fromCharCode(65+j)+') '+bibAritEsc(opt)+'</button>').join('')+'</div><p class="arit-quiz-feedback" hidden aria-live="polite">'+bibAritEsc(r[3])+'</p></div>').join(''));
  const practica=card(8,'<iframe title="Práctica CPU · Aritmética semana '+w+'" src="pilotos/aritmetica-practica.html?week='+w+'&v=3" style="width:100%;height:78vh;min-height:660px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="eager"></iframe>');
  return '<div class="arit-lesson"><style>'+
  '.arit-lesson{background:#eef5fb;padding:18px 12px;border-radius:16px;color:#153a57;font-family:system-ui,sans-serif}.arit-hero{max-width:790px;margin:0 auto 14px;padding:26px 22px;background:linear-gradient(115deg,#195376,#348cb3);border-radius:15px;color:#fff}.arit-hero h2{font-size:clamp(24px,3vw,34px);margin:18px 0 10px;color:#fff}.arit-hero p{color:#fff;margin:0;line-height:1.6}.arit-chip{display:inline-block;background:#def9ec;color:#006c58;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:800}.arit-nav{max-width:790px;margin:0 auto 18px;display:flex;flex-wrap:wrap;gap:7px}.arit-nav a{border:1px solid #c6e2f4;background:white;color:#164a72;border-radius:8px;padding:10px 12px;text-decoration:none;font-size:12px;font-weight:700}.arit-card{max-width:790px;margin:16px auto;background:white;border:1px solid #d1e3f2;border-radius:16px;padding:22px;box-shadow:0 4px 13px rgba(29,72,105,.04);scroll-margin-top:15px}.arit-card h3{font-size:21px;color:#133b58;margin:13px 0 20px}.arit-eyebrow{display:inline-block;background:#dcf7e8;color:#006b56;border-radius:30px;padding:7px 12px;font-size:11px;font-weight:800}.arit-topic{border-top:1px solid #e5eef5;padding:15px 0}.arit-topic:first-of-type{border-top:0}.arit-topic h4{font-size:16px;margin:2px 0 12px;color:#0f4668}.arit-paragraph{line-height:1.85;margin:10px 0 16px;white-space:normal;overflow-wrap:anywhere}.arit-formula{background:#f0f6fc;border-radius:10px;margin:12px 0;padding:15px 10px;max-width:100%;overflow-x:auto;text-align:center}.arit-formula .katex-display{margin:0}.arit-memory{padding:14px;border:1px solid #d1e3f2;border-radius:10px}.arit-memory summary{cursor:pointer;font-weight:700;color:#087f79}@media(max-width:650px){.arit-lesson{padding:10px 6px}.arit-card{padding:15px}.arit-hero{padding:22px 16px}.arit-nav a{padding:8px 9px}}'+
  '</style><div class="arit-hero"><span class="arit-chip">ARITMÉTICA · SEMANA '+w+' · LECCIÓN INTERACTIVA</span><h2>'+bibAritEsc(ficha.tema||'Lección de Aritmética')+'</h2><p>Aprende los conceptos, interpreta las fórmulas y practica paso a paso.</p></div>'+
- '<nav class="arit-nav" aria-label="Secciones de la lección">'+sections.map((x,i)=>'<a href="#arit-p'+(i+1)+'">'+x[0]+' · '+(i===7?'CPU':i===5?'Memoria':i===6?'Reto':'Estudia')+'</a>').join('')+'</nav>'+
+ '<nav class="arit-nav" aria-label="Secciones de la lección">'+sections.map((x,i)=>'<button type="button" data-arit-tab="'+(i+1)+'" aria-pressed="'+(i===0?'true':'false')+'">'+x[0]+' · '+(i===7?'CPU':i===5?'Memoria':i===6?'Reto':'Estudia')+'</button>').join('')+'</nav>'+
  intro+formulas+ejemplos+errores+claves+memoria+reto+practica+'</div>';
+}
+function bibBindAritInteract(){
+ const lesson=document.querySelector('.arit-lesson');if(!lesson)return;
+ lesson.querySelectorAll('[data-arit-tab]').forEach(button=>button.addEventListener('click',()=>{
+  const tab=Number(button.dataset.aritTab);
+  lesson.querySelectorAll('[data-arit-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+  lesson.querySelectorAll('.arit-card').forEach(card=>card.hidden=card.id!=='arit-p'+tab);
+  lesson.querySelector('.arit-hero')?.scrollIntoView({block:'start',behavior:'smooth'});
+ }));
+ const explanations={soloA:'Solo fútbol: 24 − 10 = 14 estudiantes.',ambos:'Ambos deportes: 10 estudiantes, que se colocan primero en la intersección.',soloB:'Solo vóley: 18 − 10 = 8 estudiantes.',ninguno:'Ninguno: 40 − (14 + 10 + 8) = 8 estudiantes.'};
+ lesson.querySelectorAll('[data-arit-venn]').forEach(b=>b.addEventListener('click',()=>{const el=lesson.querySelector('.arit-venn-result');if(el)el.textContent=explanations[b.dataset.aritVenn]}));
+ lesson.querySelectorAll('[data-arit-choice]').forEach(b=>b.addEventListener('click',()=>{
+  const quiz=b.closest('.arit-quiz');if(quiz.dataset.done)return;quiz.dataset.done='true';
+  const hit=Number(b.dataset.aritChoice)===Number(quiz.dataset.answer);
+  b.classList.add(hit?'arit-correct':'arit-wrong');
+  quiz.querySelectorAll('button').forEach(btn=>{btn.disabled=true;if(Number(btn.dataset.aritChoice)===Number(quiz.dataset.answer))btn.classList.add('arit-correct')});
+  const feedback=quiz.querySelector('.arit-quiz-feedback');feedback.hidden=false;feedback.prepend(document.createTextNode(hit?'✓ ¡Correcto! ':'✗ Revisa el procedimiento. '));
+ }));
 }
 function bibFormatoEcuaciones(valor){return bibAritMath(valor)}
 function bibRMContenido(){
@@ -126,6 +146,7 @@ async function bibLoad(){
  finally{bibLoading=false;if(page==='biblioteca')render();}
 }
 function bibBind(){
+ bibBindAritInteract();
 
  if(page!=='biblioteca'||bibliotecaLeccionesVista)return;
  document.querySelectorAll('[data-bib-area]').forEach(b=>b.addEventListener('click',()=>{bibVistaArea=b.dataset.bibArea;render()}));
