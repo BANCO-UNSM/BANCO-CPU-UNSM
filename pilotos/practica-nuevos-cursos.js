@@ -9,7 +9,7 @@ host.innerHTML='<p id="cpu-practice-status" aria-live="polite">Cargando práctic
 const oldNotice=root.querySelector(':scope > p:last-of-type');if(oldNotice)oldNotice.hidden=true;
 root.appendChild(host);
 const style=document.createElement('style');style.textContent='#cpu-official-practice{margin-top:16px;padding:16px;border:1px solid #c9dfed;border-radius:14px;background:#f5faff;color:#15344d}#cpu-official-practice .cpu-question{font-weight:700;white-space:pre-wrap;margin:14px 0}#cpu-official-practice .cpu-option{display:block;width:100%;text-align:left;margin:7px 0;padding:11px;border:1px solid #b7cfe1;border-radius:9px;background:#fff;color:#15344d;cursor:pointer}#cpu-official-practice .cpu-option:disabled{cursor:default}#cpu-official-practice .cpu-option.cpu-correct{border-color:#1874c7;background:#e4f2ff}#cpu-official-practice .cpu-option.cpu-incorrect{border-color:#c24c55;background:#ffe9ec}#cpu-official-practice .cpu-explanation{white-space:pre-wrap;line-height:1.6;background:#eaf3f8;padding:12px;border-radius:9px;margin:12px 0}#cpu-official-practice .cpu-progress{font-size:13px;color:#47657b}#cpu-official-practice .cpu-next{padding:10px 15px;background:#087f79;color:white;border:0;border-radius:9px;cursor:pointer} #cpu-official-practice .cpu-verdict{display:flex;align-items:center;gap:9px;margin:13px 0 8px;font-weight:750;font-size:16px}#cpu-official-practice .cpu-verdict.correct{color:#1269bd}#cpu-official-practice .cpu-verdict.incorrect{color:#c12637}#cpu-official-practice .cpu-symbol{font-size:21px;font-weight:900}#cpu-official-practice .cpu-answer{font-weight:700;margin:6px 0 12px}';document.head.appendChild(style);
-const mobileMathStyle=document.createElement('style');mobileMathStyle.textContent='#cpu-official-practice .cpu-explanation{white-space:normal;min-width:0;max-width:100%;overflow:hidden}#cpu-official-practice .cpu-explanation-title{font-weight:800;margin-bottom:10px;white-space:normal}#cpu-official-practice .cpu-explanation-line{display:block;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;white-space:nowrap;overflow-wrap:normal;word-break:normal;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;padding:8px 2px;box-sizing:border-box;scrollbar-width:thin}#cpu-official-practice .cpu-explanation-line .katex{white-space:nowrap}#cpu-official-practice .cpu-explanation-line .katex-display{margin:.3em 0;text-align:left;overflow:visible}#cpu-official-practice .cpu-explanation-line .cpu-math{display:inline-block;vertical-align:middle}';mobileMathStyle.textContent += '#cpu-official-practice .cpu-explanation-line{white-space:normal;overflow-x:visible;overflow-wrap:anywhere;word-break:normal;line-height:1.7;padding:6px 0}#cpu-official-practice .cpu-explanation{overflow:visible}#cpu-official-practice .cpu-explanation-line .katex-display{overflow-x:auto;max-width:100%}';mobileMathStyle.textContent += '#cpu-official-practice .cpu-explanation{font-size:14px;line-height:1.55}#cpu-official-practice .cpu-explanation .katex{font-size:1.1em}#cpu-official-practice .cpu-explanation{width:100%;max-width:100%;padding:14px;box-sizing:border-box;overflow-wrap:anywhere}#cpu-official-practice .cpu-explanation-line{display:block;max-width:100%;margin:0 0 12px;white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important;line-height:1.65;text-align:left;overflow-x:visible!important}#cpu-official-practice .cpu-explanation-line:last-child{margin-bottom:0}';document.head.appendChild(mobileMathStyle);
+const mobileMathStyle=document.createElement('style');mobileMathStyle.textContent='#cpu-official-practice .cpu-explanation{white-space:normal;min-width:0;max-width:100%;overflow:hidden}#cpu-official-practice .cpu-explanation-title{font-weight:800;margin-bottom:10px;white-space:normal}#cpu-official-practice .cpu-explanation-line{display:block;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;white-space:nowrap;overflow-wrap:normal;word-break:normal;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;padding:8px 2px;box-sizing:border-box;scrollbar-width:thin}#cpu-official-practice .cpu-explanation-line .katex{white-space:nowrap}#cpu-official-practice .cpu-explanation-line .katex-display{margin:.3em 0;text-align:left;overflow:visible}#cpu-official-practice .cpu-explanation-line .cpu-math{display:inline-block;vertical-align:middle}';mobileMathStyle.textContent += '#cpu-official-practice .cpu-explanation-line{white-space:normal;overflow-x:visible;overflow-wrap:anywhere;word-break:normal;line-height:1.7;padding:6px 0}#cpu-official-practice .cpu-explanation{overflow:visible}#cpu-official-practice .cpu-explanation-line .katex-display{overflow-x:auto;max-width:100%}';mobileMathStyle.textContent += '#cpu-official-practice .cpu-equation{overflow-x:auto!important;overflow-wrap:normal!important;white-space:nowrap!important}#cpu-official-practice .cpu-equation .katex-display{min-width:max-content;max-width:none;overflow:visible}#cpu-official-practice .cpu-math-error{color:#b42318;white-space:pre-wrap}';mobileMathStyle.textContent += '#cpu-official-practice .cpu-explanation{font-size:14px;line-height:1.55}#cpu-official-practice .cpu-explanation .katex{font-size:1.1em}#cpu-official-practice .cpu-explanation{width:100%;max-width:100%;padding:14px;box-sizing:border-box;overflow-wrap:anywhere}#cpu-official-practice .cpu-explanation-line{display:block;max-width:100%;margin:0 0 12px;white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important;line-height:1.65;text-align:left;overflow-x:visible!important}#cpu-official-practice .cpu-explanation-line:last-child{margin-bottom:0}';document.head.appendChild(mobileMathStyle);
 const status=host.querySelector('#cpu-practice-status'),body=host.querySelector('#cpu-practice-body');
 const label=i=>String.fromCharCode(65+i);
 const cleanOption=opt=>String(opt??'').replace(/^\s*(?:\(?[A-Ea-e]\s*[).:\-]\s*)+/, '').trim();
@@ -18,52 +18,54 @@ let questions=[],index=0,correct=0,answered=false,totalQuestions=0,complete=fals
 
 function normalizeExplanation(value){
  let s=String(value||'').replace(/\r\n?/g,'\n');
- // Repair imported mathematical blocks, including a slash followed by a newline and '['.
- s=s.replace(/\\\s*\n\s*\[/g,'\\[').replace(/\\\s*\n\s*\]/g,'\\]')
-    .replace(/\\\s*\n\s*\(/g,'\\(').replace(/\\\s*\n\s*\)/g,'\\)');
- s=s.replace(/\\\\(?=(?:begin|end|frac|dfrac|tfrac|text|boxed|cdot|times|div|left|right|sqrt|displaystyle|mathrm|overline|underbrace|quad|qquad|[()[\]])\b)/g,'\\');
- // Importers sometimes put an extra backslash before the block delimiter.
- s=s.replace(/\\\\\[/g,'\\[').replace(/\\\\\]/g,'\\]');
- // KaTeX expects a single command slash; preserve double slash row separators.
- s=s.replace(/\\\\(?=[a-zA-Z])/g,'\\');
- // Recover a block written as bare \begin{aligned}...\end{aligned}.
- s=s.replace(/(^|[\n])(\s*\\begin\{(?:aligned|align|gathered|array)\}[\s\S]*?\\end\{(?:aligned|align|gathered|array)\})/g,
-   (all,prefix,math)=>prefix+'\\['+math+'\\]');
+ // Recover delimiters split by the import process: backslash, newline, bracket.
+ s=s.replace(/\\[ \t]*\n[ \t]*([\[\]()])/g,'\\$1');
+ // Reduce duplicated command slashes, without destroying aligned row breaks.
+ s=s.replace(/\\{2,}(?=(?:begin|end|frac|dfrac|tfrac|text|boxed|cdot|times|div|left|right|sqrt|displaystyle|mathrm|overline|underbrace|quad|qquad)\b)/g,'\\');
+ s=s.replace(/\\{2,}([\[\]()])/g,'\\$1');
+ // Some records have a bare math environment instead of display delimiters.
+ s=s.replace(/\\begin\{(aligned|align|gathered|array|equation|split)\}[\s\S]*?\\end\{\1\}/g,(block,env,offset,all)=>{
+   const before=all.slice(0,offset).trimEnd(),after=all.slice(offset+block.length).trimStart();
+   if(before.endsWith('\\[')||before.endsWith('$$')||after.startsWith('\\]')||after.startsWith('$$'))return block;
+   return '\\['+block+'\\]';
+ });
  return s;
 }
 function explanationFor(q){return String(q.explanation||'').replace(/^\s*RESPUESTA\s+CORRECTA\s*:\s*[^\r\n]*(?:\r?\n)*/i,'').trim();}
 
 function textEl(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(text??'');return el}
-function formatMath(container){
- if(!window.katex)return;
- const raw=(container.textContent||'').replace(/\\\\(?=[()[\]{}]|[a-zA-Z])/g,'\\');
+function renderMath(tex,display){
+ const node=document.createElement(display?'div':'span');node.className='cpu-math';
+ if(!window.katex){node.textContent=tex;return node;}
+ try{window.katex.render(tex,node,{throwOnError:true,displayMode:display,strict:'ignore',trust:false});}
+ catch(err){node.classList.add('cpu-math-error');node.textContent=tex;}
+ return node;
+}
+function appendFormattedMath(container,value){
+ const raw=normalizeExplanation(value);
  const token=/(\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|\$\$[\s\S]*?\$\$|\$[^$\n]+\$)/g;
- if(!token.test(raw))return;
- token.lastIndex=0;
- const render=(tex,display=false)=>{
-  const span=document.createElement(display?'div':'span');span.className='cpu-math';
-  try{window.katex.render(tex,span,{throwOnError:true,displayMode:display,strict:'ignore'});return span}
-  catch(e){span.textContent=tex;return span}
- };
- const fragments=raw.split(token);container.replaceChildren();
- fragments.forEach(part=>{
-  if(!part)return;
-  if(part.startsWith('\\(')&&part.endsWith('\\)'))container.append(render(part.slice(2,-2)));
-  else if(part.startsWith('\\[')&&part.endsWith('\\]'))container.append(render(part.slice(2,-2),true));
-  else if(part.startsWith('$$')&&part.endsWith('$$'))container.append(render(part.slice(2,-2),true));
-  else if(part.startsWith('$')&&part.endsWith('$'))container.append(render(part.slice(1,-1)));
-  else container.append(document.createTextNode(part));
- });
+ let pos=0,match;
+ while((match=token.exec(raw))){
+  if(match.index>pos)container.append(document.createTextNode(raw.slice(pos,match.index)));
+  const t=match[0],display=t.startsWith('\\[')||t.startsWith('$$');
+  container.append(renderMath(t.slice(display?2:t.startsWith('\\(')?2:1,display?-2:t.startsWith('\\(')?-2:-1),display));
+  pos=token.lastIndex;
+ }
+ if(pos<raw.length)container.append(document.createTextNode(raw.slice(pos)));
+}
+function formatMath(container){
+ const raw=container.textContent||'';container.replaceChildren();appendFormattedMath(container,raw);
 }
 function formatSolutionStep(line){
  const value=String(line||'').trim();
- if(/\\\(|\\\[|\$\$/.test(value))return value;
- if(!/\d+\s*\/\s*(?:\([^)]+\)|[a-zA-Z]\w*)/.test(value)&&!/[a-zA-Z]\s*\^\s*\d+/.test(value))return value;
- // Convert only equation-like lines, leaving narrative explanations unchanged.
- if(!/[=<>]/.test(value)||/[¿?¡!]/.test(value)||/[ÁÉÍÓÚáéíóú]{2}/.test(value))return value;
- let tex=value.replace(/(\d+)\s*\/\s*\(([^()]+)\)/g,(_,n,d)=>'\\frac{'+n+'}{'+d+'}')
-  .replace(/(\d+)\s*\/\s*([a-zA-Z]\w*)/g,(_,n,d)=>'\\frac{'+n+'}{'+d+'}')
-  .replace(/([a-zA-Z])\s*\^\s*(\d+)/g,'$1^{$2}')
+ if(!value||/\\\[|\\\(|\$\$|\\begin\{/.test(value))return value;
+ if(!/[=<>]/.test(value)||/[¿?¡!]/.test(value))return value;
+ // Only convert standalone equations, never prose or explanatory sentences.
+ if(/[ÁÉÍÓÚáéíóú]|(?:\b(?:por|para|según|entonces|donde|respuesta|resultado)\b)/i.test(value))return value;
+ if(!/^[\w\s.,+\-*/^()=<>×÷%]+$/.test(value))return value;
+ let tex=value.replace(/(\d+)\s*\/\s*\(([^()]+)\)/g,(_,n,den)=>'\\frac{'+n+'}{'+den+'}')
+  .replace(/(\d+)\s*\/\s*([a-zA-Z]\w*)/g,(_,n,den)=>'\\frac{'+n+'}{'+den+'}')
+  .replace(/([a-zA-Z0-9])\s*\^\s*(\d+)/g,'$1^{$2}')
   .replace(/×/g,'\\cdot ').replace(/÷/g,'\\div ');
  return '\\['+tex+'\\]';
 }
@@ -88,12 +90,9 @@ parts.forEach(part=>{
  const display=(part.startsWith('\\[')&&part.endsWith('\\]'))||(part.startsWith('$$')&&part.endsWith('$$'));
  const inline=part.startsWith('\\(')&&part.endsWith('\\)');
  if(display||inline){
-  const tex=part.slice(2,-2).trim().replace(/\\\\(?=[a-zA-Z])/g,'\\');
-  const row=document.createElement('div');row.className='cpu-explanation-line cpu-equation';
-  row.setAttribute('tabindex','0');
-  if(window.katex){try{window.katex.render(tex,row,{throwOnError:false,displayMode:display,strict:'ignore'});}catch(err){row.textContent=tex;}}
-  else row.textContent=tex;
-  feedback.append(row);
+  const row=document.createElement('div');row.className='cpu-explanation-line cpu-equation';row.setAttribute('tabindex','0');
+  const tex=part.slice(2,-2).trim();
+  row.append(renderMath(tex,display));feedback.append(row);
  }else{
   part.split(/\r?\n/).forEach(line=>{
    if(!line.trim())return;
