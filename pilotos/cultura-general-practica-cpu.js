@@ -23,6 +23,12 @@ function draw(){body.replaceChildren();if(index>=questions.length){status.textCo
 if(q.secure===true&&!Number.isInteger(q.correct_index)){
  if(pendingAnswer)return;
  pendingAnswer={id:q.id,index:j,button:btn};
+ const pending=pendingAnswer;
+ pending.timeout=setTimeout(()=>{
+  if(pendingAnswer!==pending)return;
+  pendingAnswer=null;
+  status.textContent='No se recibió la verificación. Revisa tu conexión y pulsa nuevamente la alternativa.';
+ },15000);
  window.parent.postMessage({type:'cachimbolab-library-check',question_id:q.id,selected_index:j},'*');
  return;
 }
@@ -32,6 +38,7 @@ answered=true;const hit=j===q.correct_index;if(hit)correct++;choices.querySelect
 window.addEventListener('message',e=>{
  if(e.source!==window.parent||e.data?.type!=='cachimbolab-library-result'||!pendingAnswer||e.data.question_id!==pendingAnswer.id)return;
  const pending=pendingAnswer;
+ clearTimeout(pendingAnswer.timeout);
  if(e.data.error){status.textContent='No se pudo comprobar la respuesta: '+String(e.data.error);pendingAnswer=null;return;}
  const q=questions[index];
  if(!q||q.id!==pending.id)return;
