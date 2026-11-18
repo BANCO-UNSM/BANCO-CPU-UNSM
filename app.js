@@ -595,10 +595,19 @@ function bindStudentLibraryPractice(){
   if(e.data.type!=='cachimbolab-library-check')return;
   const id=e.data.question_id,selected=Number(e.data.selected_index);
   if(!permitted.has(id)||!Number.isInteger(selected)||selected<0||selected>4)return;
-  const {data,error}=await db.rpc('check_practice_answer',{p_question_id:id,p_selected_index:selected});
-  if(!active)return;
-  send('cachimbolab-library-result',error?{question_id:id,error:error.message}:{
-   question_id:id,correct_index:data?.correct_index,explanation:data?.explanation||''});
+  try{
+   const result=await Promise.race([
+    db.rpc('check_practice_answer',{p_question_id:id,p_selected_index:selected}),
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error('La verificación tardó demasiado. Comprueba tu conexión y vuelve a intentarlo.')),12000))
+   ]);
+   if(!active)return;
+   if(result.error)throw result.error;
+   const detail=Array.isArray(result.data)?result.data[0]:result.data;
+   if(!detail||!Number.isInteger(Number(detail.correct_index)))throw new Error('La clave de esta pregunta no está disponible.');
+   send('cachimbolab-library-result',{question_id:id,correct_index:Number(detail.correct_index),explanation:detail.explanation||''});
+  }catch(error){
+   if(active)send('cachimbolab-library-result',{question_id:id,error:error?.message||'Error al verificar. Inténtalo nuevamente.'});
+  }
  };
  window.addEventListener('message',onMessage);
  iframe.addEventListener('load',()=>{if(active)setTimeout(start,200)},{once:true});
