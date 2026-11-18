@@ -181,7 +181,8 @@ async function cargarImagenesPrivadas(raiz=document){
 }
 
 let access=null,students=[],user=null,profile=null,questions=[],attempts=[],page='home',quiz=null,practice=null,bulkRows=[],bulkBusy=false,reviewRows=[],reviewSelected=null,reviewFilter={subject:'',week:'',topic:'',status:''};
-let activityRows=[],activityLoaded=false,activityError='';
+let activityRows=[],activityLoaded=false,activityError='',activityLearningReport={summary:[],recent:[]};
+let learningEntryRecordedFor=null,learningHeartbeatStarted=false;
 let academicFindings=[],academicKeyAlerts=[],academicAuditLoaded=false,academicAuditError='';
 let exams=[],examsError='',questionsError='',examTypeFilter='',examCycleFilter='',examActiveId='',examSession=null,examPreview=null;
 let examPreviewRequest=0;
@@ -327,6 +328,10 @@ async function refresh(){
   }
  }
  if(user&&(teacher()||access?.allowed))restoreTimedExam();
+ if(user&&profile?.role==='student'&&access?.allowed){
+  if(learningEntryRecordedFor!==user.id){learningEntryRecordedFor=user.id;recordLearningEvent('entry');}
+  startLearningHeartbeat();
+ }
  render();
  if(quiz?.deadlineAt&&!quiz.result&&quizRemaining()===0)submitQuizTimed();
 }
@@ -805,17 +810,38 @@ function bindAcademicQuality(){
  }));
 }
 
+function recordLearningEvent(type,course=null,week=null,seconds=0){
+ if(!user||profile?.role!=='student'||!access?.allowed||!db)return;
+ db.rpc('record_student_learning_event',{p_event_type:type,p_course:course,p_week:week,p_active_seconds:seconds})
+  .then(({error})=>{if(error)console.warn('Seguimiento de estudio:',error.message)})
+  .catch(error=>console.warn('Seguimiento de estudio:',error));
+}
+window.cachimbolabRecordLearningEvent=recordLearningEvent;
+function startLearningHeartbeat(){
+ if(learningHeartbeatStarted)return;
+ learningHeartbeatStarted=true;
+ setInterval(()=>{
+  if(document.visibilityState==='visible'&&document.hasFocus())recordLearningEvent('active',null,null,60);
+ },60000);
+}
 function activityPage(){
  if(!admin())return notice('Acceso exclusivo para administradores',true);
  const n=activityRows.length,active=activityRows.filter(x=>Number(x.practice_count)+Number(x.attempt_count)>0).length;
  const date=v=>v?new Date(v).toLocaleString('es-PE',{timeZone:'America/Lima',dateStyle:'short',timeStyle:'short'}):'Sin registro';
- return `<div class="card"><h2>Seguimiento de estudiantes</h2><p class="muted">Consulta de actividad registrada. Un inicio de sesión no significa necesariamente que el alumno haya practicado. Los datos se actualizan al pulsar el botón.</p><button id="loadActivity">${activityLoaded?'Actualizar actividad':'Consultar actividad'}</button><p id="activityStatus" class="muted" role="status">${esc(activityError)}</p>${activityLoaded?`<div class="grid"><div class="card"><div class="muted">Estudiantes</div><div class="stat">${n}</div></div><div class="card"><div class="muted">Con actividad</div><div class="stat">${active}</div></div><div class="card"><div class="muted">Sin actividad registrada</div><div class="stat">${n-active}</div></div></div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left"><thead><tr><th>Estudiante</th><th>Último ingreso</th><th>Respuestas de práctica</th><th>Simulacros</th><th>Aciertos en simulacros</th><th>Último simulacro</th></tr></thead><tbody>${activityRows.map(x=>`<tr><td>${esc(x.student_name||'Sin nombre')}</td><td>${esc(date(x.last_sign_in_at))}</td><td>${Number(x.practice_count)||0}</td><td>${Number(x.attempt_count)||0}</td><td>${Number(x.quiz_correct)||0} / ${Number(x.quiz_questions)||0}</td><td>${esc(date(x.last_attempt))}</td></tr>`).join('')}</tbody></table></div>${!n?'<p>No hay estudiantes registrados.</p>':''}`:''}</div>`;
+ const summary=activityLearningReport.summary||[],recent=activityLearningReport.recent||[];
+ const byStudent=new Map(summary.map(s=>[s.student_id,s]));
+ const duration=s=>{const m=Math.round(Number(s||0)/60);return m<60?m+' min':Math.floor(m/60)+' h '+(m%60)+' min'};
+ const types={entry:'Ingreso',course:'Curso abierto',week:'Semana abierta'};
+ const detailTable='<h3>Historial de accesos y lecciones</h3><p class="muted small">Últimos 150 eventos. El tiempo es aproximado: indica que la pestaña estaba visible y enfocada, no demuestra atención o aprendizaje.</p><div style="overflow-x:auto"><table style="width:100%;text-align:left"><thead><tr><th>Alumno</th><th>Fecha y hora</th><th>Actividad</th><th>Curso</th><th>Semana</th></tr></thead><tbody>'+recent.map(e=>'<tr><td>'+esc(e.student_name||'Alumno')+'</td><td>'+esc(date(e.created_at))+'</td><td>'+esc(types[e.event_type]||e.event_type)+'</td><td>'+esc(e.course||'—')+'</td><td>'+esc(e.week||'—')+'</td></tr>').join('')+'</tbody></table></div>'+(recent.length?'':'<p>Aún no hay ingresos nuevos registrados desde la activación del seguimiento.</p>');
+ return `<div class="card"><h2>Seguimiento de estudiantes</h2><p class="muted">Consulta de actividad registrada. Un inicio de sesión no significa necesariamente que el alumno haya practicado. Los datos se actualizan al pulsar el botón.</p><button id="loadActivity">${activityLoaded?'Actualizar actividad':'Consultar actividad'}</button><p id="activityStatus" class="muted" role="status">${esc(activityError)}</p>${activityLoaded?`<div class="grid"><div class="card"><div class="muted">Estudiantes</div><div class="stat">${n}</div></div><div class="card"><div class="muted">Con actividad</div><div class="stat">${active}</div></div><div class="card"><div class="muted">Sin actividad registrada</div><div class="stat">${n-active}</div></div></div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left"><thead><tr><th>Estudiante</th><th>Último ingreso</th><th>Ingresos registrados</th><th>Semanas visitadas</th><th>Tiempo aprox.</th><th>Respuestas de práctica</th><th>Simulacros</th><th>Aciertos en simulacros</th><th>Último simulacro</th></tr></thead><tbody>${activityRows.map(x=>`<tr><td>${esc(x.student_name||'Sin nombre')}</td><td>${esc(date(byStudent.get(x.student_id)?.last_entry||x.last_sign_in_at))}</td><td>${Number(byStudent.get(x.student_id)?.entry_count)||0}</td><td>${Number(byStudent.get(x.student_id)?.unique_weeks)||0}</td><td>${duration(byStudent.get(x.student_id)?.active_seconds)}</td><td>${Number(x.practice_count)||0}</td><td>${Number(x.attempt_count)||0}</td><td>${Number(x.quiz_correct)||0} / ${Number(x.quiz_questions)||0}</td><td>${esc(date(x.last_attempt))}</td></tr>`).join('')}</tbody></table></div>${detailTable}${!n?'<p>No hay estudiantes registrados.</p>':''}`:''}</div>`;
 }
 async function loadActivity(){
  const button=$('loadActivity');if(button)button.disabled=true;
- const {data,error}=await db.rpc('admin_student_activity');
+ const [{data,error},{data:learning,error:learningError}]=await Promise.all([db.rpc('admin_student_activity'),db.rpc('admin_learning_event_report')]);
  if(error){activityError='No se pudo consultar: '+error.message;const st=$('activityStatus');if(st)st.textContent=activityError;if(button)button.disabled=false;return;}
- activityRows=Array.isArray(data)?data:[];activityLoaded=true;activityError='';render();
+ activityRows=Array.isArray(data)?data:[];
+ activityLearningReport=learningError?{summary:[],recent:[]}:(learning||{summary:[],recent:[]});
+ activityLoaded=true;activityError=learningError?'El historial ampliado no está disponible: '+learningError.message:'';render();
 }
 function studentsPage(){
  if(!admin())return notice('Solo el administrador puede gestionar alumnos',true);
