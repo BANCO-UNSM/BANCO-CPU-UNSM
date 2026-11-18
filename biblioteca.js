@@ -317,11 +317,11 @@ function bibBind(){
  if(page!=='biblioteca'||bibliotecaLeccionesVista)return;
  document.querySelectorAll('[data-bib-area]').forEach(b=>b.addEventListener('click',()=>{bibVistaArea=b.dataset.bibArea;render()}));
  $('bibVolverAreas')?.addEventListener('click',()=>{bibVistaArea='';render()});
- $('bibAbrirVerbal')?.addEventListener('click',()=>{bibCursoPreparacion='Razonamiento Verbal';bibSemanaPreparacion=null;render()});
- $('bibAbrirCivica')?.addEventListener('click',()=>{bibCursoPreparacion='Educación Cívica';bibSemanaPreparacion=null;render()});
- $('bibAbrirCultura')?.addEventListener('click',()=>{bibCursoPreparacion='Cultura General';bibSemanaPreparacion=null;render()});
+ $('bibAbrirVerbal')?.addEventListener('click',()=>{bibCursoPreparacion='Razonamiento Verbal';bibSemanaPreparacion=null;window.cachimbolabRecordLearningEvent?.('course',bibCursoPreparacion);render()});
+ $('bibAbrirCivica')?.addEventListener('click',()=>{bibCursoPreparacion='Educación Cívica';bibSemanaPreparacion=null;window.cachimbolabRecordLearningEvent?.('course',bibCursoPreparacion);render()});
+ $('bibAbrirCultura')?.addEventListener('click',()=>{bibCursoPreparacion='Cultura General';bibSemanaPreparacion=null;window.cachimbolabRecordLearningEvent?.('course',bibCursoPreparacion);render()});
  $('bibPracticeSelected')?.addEventListener('click',()=>window.cachimbolabPracticeLesson?.(bibCursoPreparacion,bibSemanaPreparacion));
  $('bibVolverCursos')?.addEventListener('click',()=>{bibCursoPreparacion='';bibSemanaPreparacion=null;render()});
- document.querySelectorAll('[data-bib-semana]').forEach(b=>b.addEventListener('click',()=>{bibSemanaPreparacion=Number(b.dataset.bibSemana);window.cachimbolabRememberCPU?.(bibCursoPreparacion,bibSemanaPreparacion);render();if((bibCursoPreparacion==='Razonamiento Matemático'||bibCursoPreparacion==='Aritmética')&&!bibRows.length)bibLoad()}));
- document.querySelectorAll('[data-bib-curso]:not(#bibAbrirPsicologia):not(#bibAbrirCultura):not(#bibAbrirVerbal):not(#bibAbrirCivica)').forEach(b=>b.addEventListener('click',()=>{if(bibNuevosCursos.includes(b.dataset.bibCurso)){bibCursoPreparacion=b.dataset.bibCurso;bibSemanaPreparacion=null;render();if(bibCursoPreparacion==='Razonamiento Matemático'||bibCursoPreparacion==='Aritmética')bibLoad();return;}alert('Las lecciones de '+b.dataset.bibCurso+' se incorporarán próximamente.')}));
+ document.querySelectorAll('[data-bib-semana]').forEach(b=>b.addEventListener('click',()=>{bibSemanaPreparacion=Number(b.dataset.bibSemana);window.cachimbolabRecordLearningEvent?.('week',bibCursoPreparacion,bibSemanaPreparacion);window.cachimbolabRememberCPU?.(bibCursoPreparacion,bibSemanaPreparacion);render();if((bibCursoPreparacion==='Razonamiento Matemático'||bibCursoPreparacion==='Aritmética')&&!bibRows.length)bibLoad()}));
+ document.querySelectorAll('[data-bib-curso]:not(#bibAbrirPsicologia):not(#bibAbrirCultura):not(#bibAbrirVerbal):not(#bibAbrirCivica)').forEach(b=>b.addEventListener('click',()=>{if(bibNuevosCursos.includes(b.dataset.bibCurso)){bibCursoPreparacion=b.dataset.bibCurso;bibSemanaPreparacion=null;window.cachimbolabRecordLearningEvent?.('course',bibCursoPreparacion);render();if(bibCursoPreparacion==='Razonamiento Matemático'||bibCursoPreparacion==='Aritmética')bibLoad();return;}alert('Las lecciones de '+b.dataset.bibCurso+' se incorporarán próximamente.')}));
 }
