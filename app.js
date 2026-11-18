@@ -300,6 +300,8 @@ async function refresh(){
    const servicesResponse=await db.rpc('my_authorized_services');
    authorizedServices=teacher()?['CPU-UNSM','BECA18']:(Array.isArray(servicesResponse.data)?servicesResponse.data:[]);
    if(servicesResponse.error){console.error('Servicios autorizados:',servicesResponse.error.message);authorizedServices=[];}
+   // Recuperar un simulacro cronometrado antes de pintar su vista.
+   restoreTimedExam();
    // Mostrar el panel autorizado sin esperar a descargar todo el banco de preguntas.
    if(window.__cachimbolabPendingPage){page=window.__cachimbolabPendingPage;window.__cachimbolabPendingPage=null;}
    render();
@@ -341,7 +343,6 @@ async function refresh(){
    }})();
   }
  }
- if(user&&(teacher()||access?.allowed))restoreTimedExam();
  if(user&&profile?.role==='student'&&access?.allowed){
   if(learningEntryRecordedFor!==user.id){learningEntryRecordedFor=user.id;recordLearningEvent('entry');}
   startLearningHeartbeat();
