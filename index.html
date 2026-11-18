@@ -15,4 +15,23 @@
     Tu laboratorio de preparación preuniversitaria.
   </p>
 </div>
-<h1 id="heading">Plataforma académica</h1></div><div id="account"></div></header><div id="app"><div class="card" style="max-width:650px;margin-top:8px;min-height:160px;display:flex;align-items:center;gap:20px" role="status" aria-live="polite"><span class="cachimbo-spinner" aria-hidden="true"></span><div><h2 style="margin:0 0 8px">Preparando CachimboLab</h2><p class="muted" style="margin:0">Iniciando la plataforma...</p></div></div></div></main></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script><script src="config.js"></script><script src="beca-private.js?v=1.0"></script><script src="biblioteca.js?v=student-history-20261118"></script><script src="app.js?v=student-activity-table-center-20261118"></script><script src="atenea.js?v=3.8"></script><script defer src="https://cdn.jsdelivr.net/npm/mathlive@0.111.1/mathlive.min.js"></script><script defer src="math-editor.js?v=1.0"></script></body></html>
+<h1 id="heading">Plataforma académica</h1></div><div id="account"></div></header><div id="app">
+<section class="card" style="max-width:850px;margin-top:8px;padding:22px">
+<h2 style="margin-top:0">🎓 Bienvenido a Cachimbolab</h2>
+<p>Elige cómo quieres prepararte. La verificación de tu cuenta se realiza en segundo plano.</p>
+<div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+<button type="button" data-fast-start="cpu-panel" style="padding:20px 12px;min-height:95px;white-space:normal">🎯 Prepararme para CPU-UNSM</button>
+<button type="button" data-fast-start="biblioteca" style="padding:20px 12px;min-height:95px;white-space:normal">📚 Abrir biblioteca</button>
+<button type="button" data-fast-start="quiz" style="padding:20px 12px;min-height:95px;white-space:normal">📝 Ver simulacros</button>
+</div>
+<p id="startupNotice" class="muted small" role="status" aria-live="polite">Puedes elegir una opción mientras se valida el acceso.</p>
+</section>
+</div></main></div><script>
+document.addEventListener('click',function(e){
+ const btn=e.target.closest('[data-fast-start]');
+ if(!btn)return;
+ window.__cachimbolabPendingPage=btn.getAttribute('data-fast-start');
+ const status=document.getElementById('startupNotice');
+ if(status)status.textContent='Opción seleccionada. Abriendo tu espacio en cuanto se confirme el acceso…';
+});
+</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script><script src="config.js"></script><script src="beca-private.js?v=1.0"></script><script src="biblioteca.js?v=student-history-20261118"></script><script src="app.js?v=fast-start-20261118"></script><script src="atenea.js?v=3.8"></script><script defer src="https://cdn.jsdelivr.net/npm/mathlive@0.111.1/mathlive.min.js"></script><script defer src="math-editor.js?v=1.0"></script></body></html>
