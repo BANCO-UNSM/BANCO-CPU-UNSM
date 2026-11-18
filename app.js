@@ -222,7 +222,7 @@ function withStartupTimeout(promise,ms,label){
  return Promise.race([Promise.resolve(promise),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Tiempo de espera agotado: '+label)),ms))]);
 }
 async function init(){
- mostrarCarga('Recuperando tu sesión de forma segura...');
+ // La portada pública ya se muestra desde el HTML, sin esperar credenciales.
  if(!ready){$('app').innerHTML=notice('Falta configurar Supabase.');$('nav').innerHTML='';return;}
  // Supabase puede emitir SIGNED_IN cada vez que se vuelve a enfocar la pestaña.
  // Si la cuenta no cambió, conservar la vista y las preguntas ya descargadas.
@@ -247,8 +247,7 @@ async function init(){
  const {data:{session}}=await withStartupTimeout(db.auth.getSession(),12000,'sesión');
  user=session?.user||null;
  if(passwordRecoveryMode){render();return;}
- mostrarCarga(user?'Verificando permisos y preparando el banco académico...':'Preparando la pantalla de ingreso...');
- try{await withStartupTimeout(refresh(),18000,'carga inicial');}
+ try{await withStartupTimeout(refresh(),18000,'validación inicial');}
  catch(err){console.error('Inicio demorado:',err);$('app').innerHTML='<div class="card"><h2>No se pudo completar la carga</h2><p>La conexión con el banco académico está demorando demasiado.</p><p class="muted">'+esc(err.message)+'</p><button id="retryStartup">Reintentar</button></div>';$('retryStartup').onclick=()=>init();}
 }
 // Supabase devuelve como máximo 1 000 filas por consulta por defecto.
@@ -268,8 +267,10 @@ async function cargarPreguntasPaginadas(){
  }
  return {data:rows,error:'Se alcanzó el límite de paginación. Comunica este error al administrador.'};
 }
+let refreshGeneration=0;
 async function refresh(){
- if(user&&!passwordRecoveryMode)mostrarCarga('Verificando acceso y cargando preguntas...');
+ const generation=++refreshGeneration;
+ // No bloquear toda la interfaz durante las consultas de Supabase.
  esquemasCargados=false;esquemasEliminados=new Set();
  relationLoaded=false;relationItems=[];relationReview=null;
  profile=null;access=null;authorizedServices=[];learningProgress=null;learningProgressError='';weeklyHistory=[];weeklyHistoryError='';questions=[];attempts=[];exams=[];examsError='';questionsError='';
@@ -299,6 +300,11 @@ async function refresh(){
    const servicesResponse=await db.rpc('my_authorized_services');
    authorizedServices=teacher()?['CPU-UNSM','BECA18']:(Array.isArray(servicesResponse.data)?servicesResponse.data:[]);
    if(servicesResponse.error){console.error('Servicios autorizados:',servicesResponse.error.message);authorizedServices=[];}
+   // Mostrar el panel autorizado sin esperar a descargar todo el banco de preguntas.
+   if(window.__cachimbolabPendingPage){page=window.__cachimbolabPendingPage;window.__cachimbolabPendingPage=null;}
+   render();
+   const backgroundUserId=user.id;
+   void (async()=>{try{
    const [catalogo,ex,r]=await withStartupTimeout(Promise.all([
      cargarPreguntasPaginadas(),
      db.from('exams').select('id,code,title,exam_type,exam_year,cycle,exam_number,exam_date,status')
@@ -309,6 +315,7 @@ async function refresh(){
      hasService('CPU-UNSM')?loadWeeklyHistory():Promise.resolve(),
      hasService('BECA18')?obtenerLecturasBeca():Promise.resolve()
    ]),14000,'consultas del banco académico');
+   if(generation!==refreshGeneration||user?.id!==backgroundUserId)return;
    attempts=r.data||[];
    questions=catalogo.data;
    if(catalogo.error)questionsError=catalogo.error;
@@ -324,7 +331,14 @@ async function refresh(){
         exams.push({id,code:meta.code||'',title:meta.title||('Examen · '+id.slice(0,8)),exam_type:meta.exam_type||'CPU',exam_year:meta.exam_year||Number(String(first?.cycle||'').slice(0,4))||null,cycle:meta.cycle||first?.cycle||'',exam_number:meta.exam_number||null,exam_date:meta.exam_date||null,status:'unknown',_localFallback:true});
       }
     }
-
+   // Actualizar solo vistas de consulta; no interrumpir cuestionarios en curso.
+   if(['home','cpu-panel'].includes(page)||(page==='quiz'&&!quiz)||(page==='practice'&&!practice))render();
+   }catch(err){
+     if(generation!==refreshGeneration||user?.id!==backgroundUserId)return;
+     console.warn('Carga secundaria:',err);
+     questionsError='La información académica está tardando. Vuelve a intentar si no aparece.';
+     if(['home','cpu-panel'].includes(page))render();
+   }})();
   }
  }
  if(user&&(teacher()||access?.allowed))restoreTimedExam();
