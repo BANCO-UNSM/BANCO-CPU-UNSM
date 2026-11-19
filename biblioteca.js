@@ -5,7 +5,8 @@ const BIB_AREAS={
 };
 let bibRows=[],bibLoading=false,bibError='',bibArea='Ciencias y números',bibMateria='',bibSemana='',bibFicha='',bibModalidad='CPU-UNSM',bibEditing='',bibCreating=false;
 function bibSubjects(){return BIB_AREAS[bibArea]||[];}
-const bibNuevosCursos=['Aritmética','Razonamiento Matemático','Álgebra','Trigonometría','Geometría','Física','Historia','Geografía','Lenguaje y Literatura','Filosofía','Economía'];
+const bibNuevosCursos=['Aritmética','Razonamiento Matemático','Álgebra','Trigonometría','Geometría','Física','Química','Biología','Historia','Geografía','Lenguaje y Literatura','Filosofía','Economía'];
+const bibSeparataOnlyCursos=['Química','Biología'];
 const bibCienciasSeisCursos=['Trigonometría','Geometría','Física'];
 const bibCursoSlug={'Aritmética':'aritmetica','Razonamiento Matemático':'razonamiento-matematico','Álgebra':'algebra','Razonamiento Verbal':'razonamiento-verbal','Educación Cívica':'educacion-civica','Cultura General':'cultura-general','Historia':'historia','Geografía':'geografia','Lenguaje y Literatura':'lenguaje','Filosofía':'filosofia','Economía':'economia'};
 let bibVistaArea='';
@@ -384,7 +385,7 @@ function bibPage(){
  if(bibCursoPreparacion){
   const nombre=esc(bibCursoPreparacion);
   const semanas=Array.from({length:16},(_,i)=>{const n=i+1,repaso=(n===10||n===16)||(bibCursoPreparacion==='Educación Cívica'&&n===8),listo=(bibCienciasSeisCursos.includes(bibCursoPreparacion)?Boolean(window.cachimbolabScienceSix?.hasTopic(bibCursoPreparacion,n)):(bibCursoPreparacion==='Cultura General'?[1,9,11,12,13]:(bibCursoPreparacion==='Razonamiento Verbal'||bibCursoPreparacion==='Educación Cívica'||bibNuevosCursos.includes(bibCursoPreparacion))?[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]:[]).includes(n));return '<button type="button" class="secondary" data-bib-semana="'+n+'" aria-pressed="'+(bibSemanaPreparacion===n)+'" style="min-height:74px;border-radius:12px;padding:12px;background:'+(bibSemanaPreparacion===n?'#dceef8':listo?'#e8f8f2':'#f4f8fc')+';color:#163b58"><strong>Semana '+n+'</strong><small style="display:block;margin-top:5px">'+(listo?(repaso?'Ver repaso':'Ver lección'):repaso?'Repaso · En preparación':'En preparación')+'</small></button>'}).join('');
-  return '<div class="card"><button type="button" class="secondary" id="bibVolverCursos">← Volver a los cursos</button><h2 style="margin-top:20px">📚 '+nombre+' · Lecciones interactivas</h2><p class="muted">Ciclo CPU-UNSM · 16 semanas. Las semanas de repaso se organizarán según la programación oficial del curso.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:22px 0">'+semanas+'</div>'+(bibCienciasSeisCursos.includes(bibCursoPreparacion)&&bibSemanaPreparacion?window.cachimbolabScienceSix?.render(bibCursoPreparacion,bibSemanaPreparacion)||'<p>Lección temporalmente no disponible.</p>':(bibCursoPreparacion==='Razonamiento Matemático'||bibCursoPreparacion==='Aritmética')&&bibSemanaPreparacion?bibRMContenido():listoSemanaBib()?'<div class="card"><h3>Semana '+bibSemanaPreparacion+' · '+nombre+'</h3><p class="muted">Lección interactiva con teoría y práctica de aprendizaje. En Álgebra: fórmulas matemáticas y ejemplos.</p><iframe title="'+nombre+' semana '+bibSemanaPreparacion+'" src="pilotos/'+bibCursoSlug[bibCursoPreparacion]+'-semana-'+bibSemanaPreparacion+'.html?v=40" style="width:100%;height:76vh;min-height:600px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="lazy"></iframe>'+(bibNuevosCursos.includes(bibCursoPreparacion)||bibCursoPreparacion==='Filosofía'&&bibSemanaPreparacion===14?'':`<div class="actions" style="margin-top:12px"><button type="button" class="secondary" id="bibPracticeSelected">✏️ Practicar preguntas de esta semana</button></div>`)+'</div>':bibSemanaPreparacion?'<div class="listitem"><h3>Semana '+bibSemanaPreparacion+' · En preparación</h3><p>Esta lección se desarrollará a partir de las separatas y preguntas registradas de Cultura General, sin asignar temas de otros cursos.</p></div>':'<p class="muted">Selecciona una semana para consultar su estado.</p>')+'</div>';
+  return '<div class="card"><button type="button" class="secondary" id="bibVolverCursos">← Volver a los cursos</button><h2 style="margin-top:20px">📚 '+nombre+' · Lecciones interactivas</h2><p class="muted">Ciclo CPU-UNSM · 16 semanas. Las semanas de repaso se organizarán según la programación oficial del curso.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:22px 0">'+semanas+'</div>'+((bibSeparataOnlyCursos.includes(bibCursoPreparacion)&&bibSemanaPreparacion)?'<div class="card"><h3>'+nombre+' · Semana '+bibSemanaPreparacion+'</h3><p class="muted">El desarrollo teórico de esta semana está en preparación. Consulta las preguntas de la separata si están publicadas.</p></div>':bibCienciasSeisCursos.includes(bibCursoPreparacion)&&bibSemanaPreparacion?window.cachimbolabScienceSix?.render(bibCursoPreparacion,bibSemanaPreparacion)||'<p>Lección temporalmente no disponible.</p>':(bibCursoPreparacion==='Razonamiento Matemático'||bibCursoPreparacion==='Aritmética')&&bibSemanaPreparacion?bibRMContenido():listoSemanaBib()?'<div class="card"><h3>Semana '+bibSemanaPreparacion+' · '+nombre+'</h3><p class="muted">Lección interactiva con teoría y práctica de aprendizaje. En Álgebra: fórmulas matemáticas y ejemplos.</p><iframe title="'+nombre+' semana '+bibSemanaPreparacion+'" src="pilotos/'+bibCursoSlug[bibCursoPreparacion]+'-semana-'+bibSemanaPreparacion+'.html?v=40" style="width:100%;height:76vh;min-height:600px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="lazy"></iframe>'+(bibNuevosCursos.includes(bibCursoPreparacion)||bibCursoPreparacion==='Filosofía'&&bibSemanaPreparacion===14?'':`<div class="actions" style="margin-top:12px"><button type="button" class="secondary" id="bibPracticeSelected">✏️ Practicar preguntas de esta semana</button></div>`)+'</div>':bibSemanaPreparacion?'<div class="listitem"><h3>Semana '+bibSemanaPreparacion+' · En preparación</h3><p>Esta lección se desarrollará a partir de las separatas y preguntas registradas de Cultura General, sin asignar temas de otros cursos.</p></div>':'<p class="muted">Selecciona una semana para consultar su estado.</p>')+(bibSemanaPreparacion?'<section id="bib-separata-access" class="card" data-subject="'+nombre+'" data-week="'+bibSemanaPreparacion+'" style="border:1px solid #c9dfed;background:#f0f7ff"><strong>Preguntas CPU · Separata — semana '+bibSemanaPreparacion+'</strong><p class="muted small">Comprobando las preguntas disponibles para esta semana...</p></section>':'')+'</div>';
  }
  const area=bibVistaArea;
  const bibIconosCurso={'Razonamiento Matemático':'🧠','Álgebra':'√','Aritmética':'🔢','Trigonometría':'∠','Geometría':'△','Física':'⚡','Química':'⚗','Biología':'🧬','Historia':'📜','Geografía':'🌍','Razonamiento Verbal':'📖','Lenguaje y Literatura':'✒','Psicología':'🧠','Filosofía':'💭','Economía':'📊','Educación Cívica':'⚖','Cultura General':'🌐'};
@@ -402,8 +403,100 @@ async function bibLoad(){
  }catch(e){bibError='No se pudo cargar la biblioteca: '+e.message;}
  finally{bibLoading=false;if(page==='biblioteca')render();}
 }
+const bibSeparataCountCache=new Map();
+const bibSeparataPending=new Map();
+function bibSeparataCount(subject,week){
+ const m=bibSeparataCountCache.get(subject);
+ const fromBank=Number(m?.get(Number(week))||0);
+ // En Álgebra semana 14 hay 15 ejercicios integrados en el archivo de la separata.
+ return subject==='Álgebra'&&Number(week)===14?Math.max(15,fromBank):fromBank;
+}
+async function bibFetchSeparatas(subject){
+ if(!subject||typeof db==='undefined'||!db)return;
+ if(bibSeparataCountCache.has(subject))return;
+ if(bibSeparataPending.has(subject))return bibSeparataPending.get(subject);
+ const request=(async()=>{
+  try{
+   const {data,error}=await db.from('questions').select('week')
+    .eq('modality','CPU-UNSM').eq('subject',subject).eq('status','published')
+    .is('exam_id',null).gte('week',1).lte('week',16).limit(1000);
+   if(error)throw error;
+   const counts=new Map();
+   (data||[]).forEach(row=>counts.set(Number(row.week),(counts.get(Number(row.week))||0)+1));
+   bibSeparataCountCache.set(subject,counts);
+  }catch(error){console.warn('Consulta de separatas:',error.message);}
+  finally{bibSeparataPending.delete(subject);}
+ })();
+ bibSeparataPending.set(subject,request);return request;
+}
+function bibSeparataShow(subject,week){
+ if(page!=='biblioteca'||bibCursoPreparacion!==subject||Number(bibSemanaPreparacion)!==Number(week))return;
+ const count=bibSeparataCount(subject,week),local=subject==='Álgebra'&&Number(week)===14;
+ const existing=document.querySelector('#bib-separata-access');
+ if(existing){
+  const p=existing.querySelector('p');if(p)p.textContent=count?
+   (local?'15 ejercicios de la separata integrados en esta lección.':'Hay '+count+' preguntas oficiales publicadas para '+subject+', semana '+week+'.'):
+   'Aún no hay preguntas de separata publicadas para este curso y semana.';
+  let button=existing.querySelector('[data-bib-separata-open]');
+  if(count&&!local&&!button){
+   button=document.createElement('button');button.type='button';button.className='secondary';button.dataset.bibSeparataOpen='1';button.textContent='Abrir '+count+' preguntas CPU · Semana '+week;
+   button.style.cssText='background:#087f79;color:#fff;border-color:#087f79;margin-top:8px';
+   button.onclick=()=>window.cachimbolabPracticeLesson?.(subject,Number(week));existing.append(button);
+  }
+  if(local&&!existing.querySelector('[data-bib-local-note]')){
+   const p=document.createElement('p');p.dataset.bibLocalNote='1';p.className='muted small';p.textContent='Accede a los 15 ejercicios en el sexto apartado de la lección.';existing.append(p);
+  }
+ }
+ document.querySelectorAll('[data-bib-semana]').forEach(b=>{
+  const w=Number(b.dataset.bibSemana);let note=b.querySelector('.bib-separata-mini');
+  const number=bibSeparataCount(subject,w);
+  if(note)note.remove();
+  if(number){note=document.createElement('small');note.className='bib-separata-mini';note.textContent=(subject==='Álgebra'&&w===14?'15 ejercicios':'📄 '+number+' preguntas CPU');note.style.cssText='display:block;margin-top:5px;color:#087363;font-weight:800';b.append(note);}
+ });
+ // Dentro del último apartado, mostrar el enlace a la práctica de la semana.
+ function insertInto(container){
+  if(!container||container.querySelector('[data-cpu-week-link]'))return;
+  const target=container.ownerDocument;
+  const block=target.createElement('div');block.dataset.cpuWeekLink='1';
+  block.style.cssText='margin:14px 0;padding:14px;background:#e8f4ff;border:1px solid #c5dff2;border-radius:12px;color:#153b59';
+  const title=target.createElement('strong');title.textContent='📄 Separata CPU · '+subject+' · Semana '+week;block.append(title);
+  const p=target.createElement('p');p.style.margin='7px 0';p.textContent=count?
+   (local?'Los 15 ejercicios están incluidos en esta sección.':count+' preguntas publicadas de esta misma semana.'):
+   'Todavía no hay preguntas publicadas en el banco de esta semana.';block.append(p);
+  if(count&&!local){
+   const button=target.createElement('button');button.type='button';button.textContent='Ver preguntas de la separata →';
+   button.style.cssText='padding:10px 13px;border:0;border-radius:9px;background:#087f79;color:white;font-weight:800;cursor:pointer';
+   button.onclick=()=>window.cachimbolabPracticeLesson?.(subject,Number(week));block.append(button);
+  }
+  container.append(block);
+ }
+ const standalone=document.querySelector('#arit-p6, #rm-sec-6, #science-sec-6');
+ if(standalone)insertInto(standalone);
+ const iframe=document.querySelector('iframe[title="'+subject+' semana '+week+'"]');
+ if(iframe){
+  const place=()=>{
+   try{
+    const doc=iframe.contentDocument;
+    if(!doc||!doc.body)return;
+    // En la lección de Álgebra 14 los ejercicios ya están integrados.
+    const target=doc.querySelector('#algebra14-practica, #p8, #practica, #reto, main > section.card:last-of-type');
+    if(target)insertInto(target);
+   }catch(_){/* El iframe sigue funcionando aunque el navegador no permita acceder a su DOM. */}
+  };
+  iframe.addEventListener('load',place,{once:true});place();
+ }
+}
+function bibBindSeparata(){
+ if(page!=='biblioteca'||!bibCursoPreparacion||!bibSemanaPreparacion)return;
+ const subject=bibCursoPreparacion,week=Number(bibSemanaPreparacion);
+ // Mostrar al instante el material local conocido. Consultar los demás registros
+ // sin bloquear la lectura de la teoría.
+ bibSeparataShow(subject,week);
+ void bibFetchSeparatas(subject).then(()=>bibSeparataShow(subject,week));
+}
 function bibBind(){
  bibBindAritInteract();
+ bibBindSeparata();
  document.querySelectorAll('[data-science-official]').forEach(button=>button.addEventListener('click',()=>{
   const section=button.closest('[data-science-course]');if(!section)return;
   window.cachimbolabPracticeLesson?.(section.dataset.scienceCourse,Number(section.dataset.scienceWeek));
