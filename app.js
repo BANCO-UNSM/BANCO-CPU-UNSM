@@ -573,7 +573,7 @@ function bindStudentLibraryPractice(){
  const subjects={'Razonamiento Verbal':'Razonamiento Verbal','Cultura General':'Cultura General',
   'Educación Cívica':'Educación Cívica','Historia':'Historia','Geografía':'Geografía',
   'Lenguaje y Literatura':'Lenguaje y Literatura','Filosofía':'Filosofía','Economía':'Economía','Álgebra':'Álgebra',
-  'Psicología':'Psicología','Aritmética':'Aritmética','Razonamiento Matemático':'Razonamiento Matemático','Química':'Química','Biología':'Biología'};
+  'Psicología':'Psicología','Aritmética':'Aritmética','Razonamiento Matemático':'Razonamiento Matemático','Trigonometría':'Trigonometría','Geometría':'Geometría','Física':'Física','Química':'Química','Biología':'Biología'};
  const psicoLesson=page==='psicologia_piloto'||bibliotecaLeccionesVista;
  const subject=psicoLesson?'Psicología':bibCursoPreparacion;
  const week=psicoLesson?psicologiaSemanaSeleccionada:bibSemanaPreparacion;
@@ -586,7 +586,7 @@ function bindStudentLibraryPractice(){
  const type={'Razonamiento Verbal':'cachimbolab-verbal','Cultura General':'cachimbolab-cultura',
   'Educación Cívica':'cachimbolab-civica','Psicología':'cachimbolab-psico'}[subject]||'cachimbolab-nuevos';
  const slug={'Historia':'historia','Geografía':'geografia','Lenguaje y Literatura':'lenguaje',
-  'Filosofía':'filosofia','Economía':'economia','Álgebra':'algebra','Aritmética':'aritmetica','Razonamiento Matemático':'razonamiento-matematico','Química':'quimica','Biología':'biologia'}[subject];
+  'Filosofía':'filosofia','Economía':'economia','Álgebra':'algebra','Aritmética':'aritmetica','Razonamiento Matemático':'razonamiento-matematico','Trigonometría':'trigonometria','Geometría':'geometria','Física':'fisica','Química':'quimica','Biología':'biologia'}[subject];
  let started=false,active=true;
  const permitted=new Set();
  const send=(kind,extra)=>{if(!active||!iframe.isConnected||!iframe.contentWindow)return;
