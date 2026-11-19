@@ -130,6 +130,50 @@ function bibAritLesson(ficha){
    ['Si A tiene 5 elementos, ¿cuántos subconjuntos tiene?',['10','25','32','31'],2,'El número total de subconjuntos es 2⁵ = 32.'],
    ['Si 20 alumnos estudian inglés, 12 francés y 5 ambos, ¿cuántos estudian al menos uno?',['27','32','37','17'],0,'Unión de conjuntos: 20 + 12 − 5 = 27.']
   ],
+  2:[
+   ['¿Cuánto representa 132 en base 5 expresado en base 10?',['32','42','52','62'],1,'1×5² + 3×5 + 2 = 25 + 15 + 2 = 42.'],
+   ['¿Cuál es la mayor cifra permitida en base 7?',['5','6','7','8'],1,'En una base b se utilizan las cifras desde 0 hasta b−1. En base 7, la cifra máxima es 6.']
+  ],
+  3:[
+   ['Calcula 6 + 4 × (12 − 7)² ÷ 5.',['26','46','106','30'],0,'Primero (12−7)=5; después 5²=25; finalmente 6+4×25÷5=6+20=26.'],
+   ['¿Cuál es el resultado de 128 ÷ 8 + 3 × 7?',['37','35','19','49'],0,'Primero divisiones y multiplicaciones: 128÷8=16 y 3×7=21. Entonces 16+21=37.']
+  ],
+  4:[
+   ['¿Cuál de los siguientes números es divisible entre 9?',['235','342','421','506'],1,'3 + 4 + 2 = 9, que es múltiplo de 9. Por eso 342 es divisible entre 9.'],
+   ['¿Cuál es el residuo de dividir 157 entre 13?',['0','1','2','3'],1,'13 × 12 = 156. Así, 157 = 13 × 12 + 1; el residuo es 1.']
+  ],
+  5:[
+   ['¿Cuántos divisores positivos tiene 72?',['8','10','12','14'],2,'72 = 2³ × 3². Cantidad de divisores: (3+1)(2+1)=12.'],
+   ['¿Cuál de estos números es primo?',['21','29','33','39'],1,'29 solo tiene dos divisores positivos: 1 y 29.']
+  ],
+  6:[
+   ['¿Cuál es el MCD de 12 y 18?',['3','6','12','36'],1,'Los divisores comunes de 12 y 18 son 1, 2, 3 y 6; el mayor es 6.'],
+   ['¿Cuál es el MCM de 12 y 18?',['6','18','36','72'],2,'12 = 2²×3 y 18 = 2×3². Se toman las potencias mayores: 2²×3² = 36.']
+  ],
+  7:[
+   ['Calcula 3/4 + 2/3.',['5/7','13/12','17/12','19/12'],2,'El mínimo común denominador es 12: 3/4=9/12 y 2/3=8/12. Suma=17/12.'],
+   ['Calcula 5/6 − 1/4.',['7/12','3/8','1/2','2/3'],0,'Denominador común 12: 10/12 − 3/12 = 7/12.']
+  ],
+  8:[
+   ['Repaso: ¿cuál es el MCD de 24 y 36?',['6','12','18','72'],1,'24=2³×3 y 36=2²×3². MCD=2²×3=12.'],
+   ['Repaso: ¿cuánto es 2/5 + 1/10?',['3/15','1/2','3/10','2/15'],1,'2/5=4/10. Por eso 4/10+1/10=5/10=1/2.']
+  ],
+  9:[
+   ['Si 3/5 = x/20, ¿cuánto vale x?',['8','10','12','15'],2,'Producto cruzado: 5x = 3×20 = 60; entonces x=12.'],
+   ['Dos cantidades están en razón 2:3 y suman 50. ¿Cuál es la mayor?',['20','25','30','35'],2,'Son 2k y 3k: 5k=50, k=10. La mayor es 3k=30.']
+  ],
+  10:[
+   ['Reparte S/ 840 en partes directamente proporcionales a 2, 3 y 5. ¿Cuál es la mayor?',['S/ 168','S/ 252','S/ 336','S/ 420'],3,'Total de partes: 2+3+5=10. La mayor es 840×5/10=S/ 420.'],
+   ['Si 4 obreros producen 40 piezas en una jornada, ¿cuántas producirán 7 obreros iguales?',['56','70','80','100'],1,'A igual tiempo, las cantidades son directamente proporcionales: 40×7/4=70.']
+  ],
+  15:[
+   ['Se mezclan 4 kg de un producto a S/ 8/kg y 6 kg a S/ 13/kg. ¿Cuál es el precio promedio por kg?',['S/ 10','S/ 11','S/ 12','S/ 13'],1,'Precio medio=(4×8+6×13)/(4+6)=110/10=S/ 11 por kg.'],
+   ['Una aleación tiene 30 g de metal fino en 50 g de masa total. ¿Cuál es su ley?',['0,3','0,5','0,6','0,8'],2,'Ley=masa de metal fino/masa total = 30/50 = 0,6.']
+  ],
+  16:[
+   ['Repaso: ¿cuánto es el 20 % de S/ 450?',['S/ 45','S/ 80','S/ 90','S/ 100'],2,'450×20/100 = S/ 90.'],
+   ['Repaso: ¿qué interés simple produce S/ 2000 al 6 % anual durante 6 meses?',['S/ 30','S/ 60','S/ 120','S/ 600'],1,'I = 2000×6×6/1200=S/ 60, porque el tiempo está en meses.']
+  ],
   11:[
    ['Si 6 trabajadores terminan una obra en 12 días, ¿cuántos días necesitan 9 trabajadores al mismo ritmo?',['6 días','8 días','10 días','18 días'],1,'Es una proporcionalidad inversa: 6 × 12 = 9 × t; por tanto, t = 8 días.'],
    ['Si 5 cuadernos cuestan S/ 30, ¿cuánto cuestan 8 cuadernos iguales?',['S/ 36','S/ 42','S/ 48','S/ 54'],2,'Cada cuaderno cuesta S/ 6. Entonces 8 × 6 = S/ 48.']
