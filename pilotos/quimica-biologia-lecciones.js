@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 const E=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const M=s=>{const tex=String(s||'');try{return window.katex?window.katex.renderToString(tex,{displayMode:true,throwOnError:false,strict:'ignore'}):E(tex)}catch(_){return E(tex)}};
+const M=s=>{const tex=String(s||'');if(!/[\\\\^_{}]/.test(tex))return E(tex);try{return window.katex?window.katex.renderToString(tex,{displayMode:true,throwOnError:false,strict:'ignore'}):E(tex)}catch(_){return E(tex)}};
 const definition=(d)=>Array.isArray(d)?d:[];
 const labels=['MARCO TEÓRICO','CONCEPTOS, FÓRMULAS Y PROPIEDADES','EJEMPLOS RESUELTOS','MEMORIA ACTIVA','PREGUNTAS CPU · SEPARATA'];
 function getData(course,week){const entries=course==='Química'?window.CACHIMBOLAB_CHEMISTRY_LESSONS:window.CACHIMBOLAB_BIOLOGY_LESSONS;return entries?.[Number(week)]||null;}
