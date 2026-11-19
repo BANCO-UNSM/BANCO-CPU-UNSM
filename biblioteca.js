@@ -122,11 +122,40 @@ function bibAritLesson(ficha){
  const intro=card(1,bibAritTextBlocks(ficha.teoria,'theory')+(!isRM&&w===1?bibDiagramaVenn()+vennInteract:''));
  const formulas=card(2,isRM?bibAritTextBlocks(ficha.formulas,'formula'):bibAritFormulaCards(w,ficha.formulas));
  const ejemplos=card(3,isRM?bibAritTextBlocks(ficha.ejemplo,'example'):bibAritExampleCards(w,ficha.ejemplo));
- const memoria=card(4,'<p>Intenta recordar las fórmulas antes de abrir cada respuesta.</p><details class="arit-memory"><summary>Mostrar las fórmulas para recordar</summary>'+ (isRM?bibAritTextBlocks(ficha.formulas,'formula'):bibAritFormulaCards(w,ficha.formulas))+'</details>');
- const retos=isRM?[[bibRMExtra[w]?.[0]||'Aplica la fórmula estudiada a un ejercicio propio.',['Mostrar procedimiento'],0,bibRMExtra[w]?.[1]||'Repasa el ejemplo resuelto y comprueba el resultado.']]:w===1?[['Si A tiene 5 elementos, ¿cuántos subconjuntos tiene?',['10','25','32','31'],2,'El número total es 2⁵ = 32.'],['Si 20 alumnos estudian inglés, 12 francés y 5 ambos, ¿cuántos estudian al menos uno?',['27','32','37','17'],0,'Se aplica 20 + 12 − 5 = 27.']]:[['Si una letra de S/ 1000 se descuenta al 2 % mensual durante 3 meses, ¿cuánto es el descuento comercial?',['S/ 20','S/ 60','S/ 120','S/ 600'],1,'D = 1000 × 2 × 3 / 100 = S/ 60.']];
- const reto=card(5,'<p>Resuelve estos ejercicios nuevos, distintos de las preguntas de la separata.</p>'+retos.map((r,i)=>'<div class="arit-quiz" data-answer="'+r[2]+'"><strong>'+bibAritEsc(r[0])+'</strong><div class="arit-quiz-options">'+r[1].map((opt,j)=>'<button type="button" data-arit-choice="'+j+'">'+String.fromCharCode(65+j)+') '+bibAritEsc(opt)+'</button>').join('')+'</div><p class="arit-quiz-feedback" hidden aria-live="polite">'+bibAritEsc(r[3])+'</p></div>').join(''));
+ const formulaItems=(bibAritFormulaCards(w,ficha.formulas).match(/<article class="arit-topic">[\s\S]*?<\/article>/g)||[]);
+ const cards=formulaItems.length?formulaItems.slice(0,12).map((html,i)=>'<div class="arit-flip-item" data-arit-flip-card><span class="arit-flip-count">TARJETA '+(i+1)+' / '+Math.min(formulaItems.length,12)+'</span><div class="arit-flip-front">'+html.replace(/<div class="arit-formula">[\s\S]*?<\/div>/,'')+'</div><div class="arit-flip-back" hidden>'+html+'</div><button type="button" class="arit-flip-toggle" data-arit-flip>Mostrar respuesta</button></div>').join(''):'<div class="arit-flip-item" data-arit-flip-card><strong>¿Recuerdas las propiedades de esta semana?</strong><div class="arit-flip-back" hidden>'+bibAritTextBlocks(ficha.formulas,'formula')+'</div><button type="button" class="arit-flip-toggle" data-arit-flip>Mostrar respuesta</button></div>';
+ const memoria=card(4,'<p class="arit-help">Intenta recordar la propiedad antes de descubrir la respuesta. Usa las tarjetas para estudiar activamente.</p><div class="arit-flip-grid">'+cards+'</div>');
+ const retosPorSemana={
+  1:[
+   ['Si A tiene 5 elementos, ¿cuántos subconjuntos tiene?',['10','25','32','31'],2,'El número total de subconjuntos es 2⁵ = 32.'],
+   ['Si 20 alumnos estudian inglés, 12 francés y 5 ambos, ¿cuántos estudian al menos uno?',['27','32','37','17'],0,'Unión de conjuntos: 20 + 12 − 5 = 27.']
+  ],
+  11:[
+   ['Si 6 trabajadores terminan una obra en 12 días, ¿cuántos días necesitan 9 trabajadores al mismo ritmo?',['6 días','8 días','10 días','18 días'],1,'Es una proporcionalidad inversa: 6 × 12 = 9 × t; por tanto, t = 8 días.'],
+   ['Si 5 cuadernos cuestan S/ 30, ¿cuánto cuestan 8 cuadernos iguales?',['S/ 36','S/ 42','S/ 48','S/ 54'],2,'Cada cuaderno cuesta S/ 6. Entonces 8 × 6 = S/ 48.']
+  ],
+  12:[
+   ['¿Cuánto es el 15 % de 240?',['24','30','36','48'],2,'Calculamos 240 × 15 / 100 = 36.'],
+   ['Un producto de S/ 200 tiene un descuento del 10 %. ¿Cuál es su precio final?',['S/ 180','S/ 190','S/ 210','S/ 220'],0,'Descuento = 200 × 10 / 100 = S/ 20; precio final = S/ 180.']
+  ],
+  13:[
+   ['¿Qué interés simple produce S/ 3000 al 8 % anual durante 9 meses?',['S/ 120','S/ 180','S/ 200','S/ 240'],1,'Como el tiempo está en meses y la tasa es anual: I = 3000 × 8 × 9 / 1200 = S/ 180.'],
+   ['¿Qué interés simple produce S/ 1200 al 5 % anual en 2 años?',['S/ 60','S/ 100','S/ 120','S/ 240'],2,'I = C × r × t / 100 = 1200 × 5 × 2 / 100 = S/ 120.']
+  ],
+  14:[
+   ['Una letra de S/ 1000 se descuenta comercialmente al 2 % mensual durante 3 meses. ¿Cuál es el descuento?',['S/ 20','S/ 60','S/ 120','S/ 600'],1,'Como la tasa y el tiempo están en meses: D = 1000 × 2 × 3 / 100 = S/ 60.'],
+   ['Una letra de S/ 2000 se descuenta al 12 % anual durante 60 días comerciales. ¿Cuál es el descuento comercial?',['S/ 20','S/ 30','S/ 40','S/ 120'],2,'D = 2000 × 12 × 60 / 36000 = S/ 40.']
+  ]
+ };
+ const retos=retosPorSemana[w]||[];
+ const retoContent=retos.length?
+ '<div class="arit-check-progress" aria-live="polite">Pregunta 1 de '+retos.length+'</div>'+
+ retos.map((r,i)=>'<div class="arit-quiz" data-answer="'+r[2]+'" '+(i?'hidden':'')+'><strong class="arit-question">'+bibAritEsc(r[0])+'</strong><div class="arit-quiz-options">'+r[1].map((opt,j)=>'<button type="button" data-arit-choice="'+j+'"><span class="arit-option-letter">'+String.fromCharCode(65+j)+'</span><span>'+bibAritEsc(opt)+'</span></button>').join('')+'</div><div class="arit-quiz-feedback" hidden aria-live="polite"><strong class="arit-verdict"></strong><p>'+bibAritEsc(r[3])+'</p></div><button type="button" class="arit-next" data-arit-next hidden>'+(i===retos.length-1?'Volver a practicar':'Siguiente pregunta →')+'</button></div>').join(''):
+ '<div class="arit-quiz-empty"><p>El reto de esta semana se completará con ejercicios originales del tema de la separata. Mientras tanto, practica las tarjetas y utiliza las preguntas oficiales del punto 6.</p></div>';
+ const reto=card(5,'<p class="arit-help">Resuelve el ejercicio, selecciona una alternativa y revisa la solución explicada. Los ejercicios son distintos de la separata.</p>'+retoContent);
  const practica=card(6,'<iframe title="Práctica CPU · '+(isRM?'Razonamiento Matemático':'Aritmética')+' semana '+w+'" src="pilotos/'+(isRM?'razonamiento-matematico':'aritmetica')+'-practica.html?week='+w+'&v=math-normalizer-20261117');
  return '<div class="arit-lesson"><style>'+
+ '.arit-lesson .arit-nav button{padding:12px 14px;border-radius:11px;background:#fff;border:1px solid #c9dded;color:#205173;font-weight:800;cursor:pointer}.arit-lesson .arit-nav button[aria-pressed="true"]{background:#087f79;color:#fff;border-color:#087f79}.arit-lesson .arit-flip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:14px}.arit-lesson .arit-flip-item{background:linear-gradient(145deg,#f2f9ff,#fff);border:1px solid #bfd9ef;border-radius:13px;padding:17px;min-height:175px;box-shadow:0 4px 13px rgba(17,75,116,.07)}.arit-lesson .arit-flip-item .arit-topic{border:0;padding:8px 0}.arit-lesson .arit-flip-count{font-size:11px;font-weight:900;color:#057b70}.arit-lesson .arit-flip-toggle,.arit-lesson .arit-next{background:#087f79;color:white;border:none;border-radius:10px;padding:12px 17px;font-weight:800;cursor:pointer;margin-top:10px}.arit-lesson .arit-quiz{border:1px solid #d2e5f2;border-radius:15px;padding:18px;background:#f5faff;margin:15px 0}.arit-lesson .arit-question{display:block;font-size:17px;line-height:1.55;margin-bottom:12px}.arit-lesson .arit-quiz-options{display:grid;gap:11px}.arit-lesson .arit-quiz-options button{display:flex;align-items:center;gap:14px;text-align:left;min-height:62px;width:100%;border:1px solid #c3d6e6;border-radius:11px;background:#fff;color:#163c57;font-size:15px;padding:12px;cursor:pointer}.arit-lesson .arit-quiz-options button:hover:not(:disabled){background:#eaf7fd;border-color:#4c9fb7}.arit-lesson .arit-option-letter{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:9px;background:#e7f2fc;color:#144d74;font-weight:900}.arit-lesson .arit-quiz-options button.arit-correct{background:#dff7e9;border:2px solid #16845b;color:#09583a}.arit-lesson .arit-quiz-options button.arit-wrong{background:#fff0f0;border:2px solid #ca5353;color:#932f2f}.arit-lesson .arit-quiz-feedback{margin:15px 0;background:#eaf7ee;border-left:4px solid #17895e;border-radius:10px;padding:14px;line-height:1.6}.arit-lesson .arit-check-progress{color:#087f79;font-weight:800;margin:12px 0}.arit-lesson [hidden]{display:none!important}.arit-lesson .arit-help{line-height:1.6;color:#516e81}@media(max-width:650px){.arit-lesson .arit-flip-grid{grid-template-columns:1fr}.arit-lesson .arit-quiz{padding:12px}}'+
  '.arit-lesson{background:#eef5fb;padding:18px 12px;border-radius:16px;color:#153a57;font-family:system-ui,sans-serif}.arit-hero{max-width:790px;margin:0 auto 14px;padding:26px 22px;background:linear-gradient(115deg,#195376,#348cb3);border-radius:15px;color:#fff}.arit-hero h2{font-size:clamp(24px,3vw,34px);margin:18px 0 10px;color:#fff}.arit-hero p{color:#fff;margin:0;line-height:1.6}.arit-chip{display:inline-block;background:#def9ec;color:#006c58;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:800}.arit-nav{max-width:790px;margin:0 auto 18px;display:flex;flex-wrap:wrap;gap:7px}.arit-nav a{border:1px solid #c6e2f4;background:white;color:#164a72;border-radius:8px;padding:10px 12px;text-decoration:none;font-size:12px;font-weight:700}.arit-card{max-width:790px;margin:16px auto;background:white;border:1px solid #d1e3f2;border-radius:16px;padding:22px;box-shadow:0 4px 13px rgba(29,72,105,.04);scroll-margin-top:15px}.arit-card h3{font-size:21px;color:#133b58;margin:13px 0 20px}.arit-eyebrow{display:inline-block;background:#dcf7e8;color:#006b56;border-radius:30px;padding:7px 12px;font-size:11px;font-weight:800}.arit-topic{border-top:1px solid #e5eef5;padding:15px 0}.arit-topic:first-of-type{border-top:0}.arit-topic h4{font-size:16px;margin:2px 0 12px;color:#0f4668}.arit-paragraph{line-height:1.85;margin:10px 0 16px;white-space:normal;overflow-wrap:anywhere}.arit-formula{background:#f0f6fc;border-radius:10px;margin:12px 0;padding:15px 10px;max-width:100%;overflow-x:auto;text-align:center}.arit-formula .katex-display{margin:0}.arit-memory{padding:14px;border:1px solid #d1e3f2;border-radius:10px}.arit-memory summary{cursor:pointer;font-weight:700;color:#087f79}@media(max-width:650px){.arit-lesson{padding:10px 6px}.arit-card{padding:15px}.arit-hero{padding:22px 16px}.arit-nav a{padding:8px 9px}}'+
  '</style><div class="arit-hero"><span class="arit-chip">'+(isRM?'RAZONAMIENTO MATEMÁTICO':'ARITMÉTICA')+' · SEMANA '+w+' · LECCIÓN INTERACTIVA</span><h2>'+bibAritEsc(ficha.tema||'Lección de Aritmética')+'</h2><p>Aprende los conceptos, interpreta las fórmulas y practica paso a paso.</p></div>'+
  '<nav class="arit-nav" aria-label="Secciones de la lección">'+sections.map((x,i)=>'<button type="button" data-arit-tab="'+(i+1)+'" aria-pressed="'+(i===0?'true':'false')+'">'+x[0]+' · '+(i===5?'CPU':i===3?'Memoria':i===4?'Reto':'Estudia')+'</button>').join('')+'</nav>'+
@@ -223,6 +252,24 @@ function bibBindAritInteract(){
   memoryQuiz.querySelector('[data-rm-memory-next]').addEventListener('click',()=>{idx=(idx+1)%items.length;draw()});
   draw();
  }
+ lesson.querySelectorAll('[data-arit-flip]').forEach(button=>button.addEventListener('click',()=>{
+  const card=button.closest('[data-arit-flip-card]');const back=card?.querySelector('.arit-flip-back');if(!back)return;
+  back.hidden=!back.hidden;button.textContent=back.hidden?'Mostrar respuesta':'Ocultar respuesta';
+ }));
+ lesson.querySelectorAll('.arit-quiz').forEach((quiz,i,all)=>{
+  const next=quiz.querySelector('[data-arit-next]');
+  if(!next)return;
+  next.addEventListener('click',()=>{
+   if(i===all.length-1){all.forEach(item=>{
+    delete item.dataset.done;
+    item.querySelectorAll('[data-arit-choice]').forEach(button=>{button.disabled=false;button.classList.remove('arit-correct','arit-wrong')});
+    item.querySelector('.arit-quiz-feedback').hidden=true;
+    item.querySelector('[data-arit-next]').hidden=true;
+   });all.forEach((item,j)=>item.hidden=j!==0);lesson.querySelector('.arit-check-progress').textContent='Pregunta 1 de '+all.length;}
+   else{quiz.hidden=true;all[i+1].hidden=false;lesson.querySelector('.arit-check-progress').textContent='Pregunta '+(i+2)+' de '+all.length;}
+   lesson.querySelector('.arit-check-progress')?.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+ });
  const explanations={soloA:'Solo fútbol: 24 − 10 = 14 estudiantes.',ambos:'Ambos deportes: 10 estudiantes, que se colocan primero en la intersección.',soloB:'Solo vóley: 18 − 10 = 8 estudiantes.',ninguno:'Ninguno: 40 − (14 + 10 + 8) = 8 estudiantes.'};
  lesson.querySelectorAll('[data-arit-venn]').forEach(b=>b.addEventListener('click',()=>{const el=lesson.querySelector('.arit-venn-result');if(el)el.textContent=explanations[b.dataset.aritVenn]}));
  lesson.querySelectorAll('[data-arit-choice]').forEach(b=>b.addEventListener('click',()=>{
@@ -230,7 +277,9 @@ function bibBindAritInteract(){
   const hit=Number(b.dataset.aritChoice)===Number(quiz.dataset.answer);
   b.classList.add(hit?'arit-correct':'arit-wrong');
   quiz.querySelectorAll('button').forEach(btn=>{btn.disabled=true;if(Number(btn.dataset.aritChoice)===Number(quiz.dataset.answer))btn.classList.add('arit-correct')});
-  const feedback=quiz.querySelector('.arit-quiz-feedback');feedback.hidden=false;feedback.prepend(document.createTextNode(hit?'✓ ¡Correcto! ':'✗ Revisa el procedimiento. '));
+  const feedback=quiz.querySelector('.arit-quiz-feedback');feedback.hidden=false;
+  feedback.querySelector('.arit-verdict').textContent=hit?'✓ ¡Respuesta correcta!':'✗ Revisa tu respuesta. La alternativa correcta es '+String.fromCharCode(65+Number(quiz.dataset.answer))+'.';
+  quiz.querySelector('[data-arit-next]').hidden=false;
  }));
 }
 function bibFormatoEcuaciones(valor){return bibAritMath(valor)}
