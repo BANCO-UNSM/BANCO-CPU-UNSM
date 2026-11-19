@@ -416,7 +416,15 @@ function bibBind(){
    if(Number(option.dataset.scienceChoice)===right){option.style.background='#e2f7e9';option.style.borderColor='#16865a';}
   });
   if(Number(button.dataset.scienceChoice)!==right){button.style.background='#fff0f0';button.style.borderColor='#c45151';}
-  const feedback=quiz.querySelector('.science-feedback');if(feedback)feedback.hidden=false;
+  const feedback=quiz.querySelector('.science-feedback');if(feedback){
+   feedback.hidden=false;
+   const isCorrect=Number(button.dataset.scienceChoice)===right;
+   feedback.style.background=isCorrect?'#e4f8ed':'#fff0f0';
+   feedback.style.borderLeft='4px solid '+(isCorrect?'#16865a':'#c45151');
+   const verdict=document.createElement('strong');
+   verdict.textContent=isCorrect?'✓ ¡Respuesta correcta!':'✗ Respuesta incorrecta. La alternativa correcta es '+String.fromCharCode(65+right)+'.';
+   feedback.prepend(verdict,document.createElement('br'));
+  }
  }));
 
  if(page!=='biblioteca'||bibliotecaLeccionesVista)return;
