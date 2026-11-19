@@ -5,7 +5,8 @@ const BIB_AREAS={
 };
 let bibRows=[],bibLoading=false,bibError='',bibArea='Ciencias y números',bibMateria='',bibSemana='',bibFicha='',bibModalidad='CPU-UNSM',bibEditing='',bibCreating=false;
 function bibSubjects(){return BIB_AREAS[bibArea]||[];}
-const bibNuevosCursos=['Aritmética','Razonamiento Matemático','Álgebra','Historia','Geografía','Lenguaje y Literatura','Filosofía','Economía'];
+const bibNuevosCursos=['Aritmética','Razonamiento Matemático','Álgebra','Trigonometría','Geometría','Física','Historia','Geografía','Lenguaje y Literatura','Filosofía','Economía'];
+const bibCienciasSeisCursos=['Trigonometría','Geometría','Física'];
 const bibCursoSlug={'Aritmética':'aritmetica','Razonamiento Matemático':'razonamiento-matematico','Álgebra':'algebra','Razonamiento Verbal':'razonamiento-verbal','Educación Cívica':'educacion-civica','Cultura General':'cultura-general','Historia':'historia','Geografía':'geografia','Lenguaje y Literatura':'lenguaje','Filosofía':'filosofia','Economía':'economia'};
 let bibVistaArea='';
 let bibCursoPreparacion='';
@@ -289,8 +290,8 @@ function bibRMContenido(){
 function bibPage(){
  if(bibCursoPreparacion){
   const nombre=esc(bibCursoPreparacion);
-  const semanas=Array.from({length:16},(_,i)=>{const n=i+1,repaso=(n===10||n===16)||(bibCursoPreparacion==='Educación Cívica'&&n===8),listo=(bibCursoPreparacion==='Cultura General'?[1,9,11,12,13]:(bibCursoPreparacion==='Razonamiento Verbal'||bibCursoPreparacion==='Educación Cívica'||bibNuevosCursos.includes(bibCursoPreparacion))?[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]:[]).includes(n);return '<button type="button" class="secondary" data-bib-semana="'+n+'" aria-pressed="'+(bibSemanaPreparacion===n)+'" style="min-height:74px;border-radius:12px;padding:12px;background:'+(bibSemanaPreparacion===n?'#dceef8':listo?'#e8f8f2':'#f4f8fc')+';color:#163b58"><strong>Semana '+n+'</strong><small style="display:block;margin-top:5px">'+(listo?(repaso?'Ver repaso':'Ver lección'):repaso?'Repaso · En preparación':'En preparación')+'</small></button>'}).join('');
-  return '<div class="card"><button type="button" class="secondary" id="bibVolverCursos">← Volver a los cursos</button><h2 style="margin-top:20px">📚 '+nombre+' · Lecciones interactivas</h2><p class="muted">Ciclo CPU-UNSM · 16 semanas. Las semanas de repaso se organizarán según la programación oficial del curso.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:22px 0">'+semanas+'</div>'+((bibCursoPreparacion==='Razonamiento Matemático'||bibCursoPreparacion==='Aritmética')&&bibSemanaPreparacion?bibRMContenido():listoSemanaBib()?'<div class="card"><h3>Semana '+bibSemanaPreparacion+' · '+nombre+'</h3><p class="muted">Lección interactiva con teoría y práctica de aprendizaje. En Álgebra: fórmulas matemáticas y ejemplos.</p><iframe title="'+nombre+' semana '+bibSemanaPreparacion+'" src="pilotos/'+bibCursoSlug[bibCursoPreparacion]+'-semana-'+bibSemanaPreparacion+'.html?v=39" style="width:100%;height:76vh;min-height:600px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="lazy"></iframe>'+(bibNuevosCursos.includes(bibCursoPreparacion)||bibCursoPreparacion==='Filosofía'&&bibSemanaPreparacion===14?'':`<div class="actions" style="margin-top:12px"><button type="button" class="secondary" id="bibPracticeSelected">✏️ Practicar preguntas de esta semana</button></div>`)+'</div>':bibSemanaPreparacion?'<div class="listitem"><h3>Semana '+bibSemanaPreparacion+' · En preparación</h3><p>Esta lección se desarrollará a partir de las separatas y preguntas registradas de Cultura General, sin asignar temas de otros cursos.</p></div>':'<p class="muted">Selecciona una semana para consultar su estado.</p>')+'</div>';
+  const semanas=Array.from({length:16},(_,i)=>{const n=i+1,repaso=(n===10||n===16)||(bibCursoPreparacion==='Educación Cívica'&&n===8),listo=(bibCienciasSeisCursos.includes(bibCursoPreparacion)?Boolean(window.cachimbolabScienceSix?.hasTopic(bibCursoPreparacion,n)):bibCursoPreparacion==='Cultura General'?[1,9,11,12,13]:(bibCursoPreparacion==='Razonamiento Verbal'||bibCursoPreparacion==='Educación Cívica'||bibNuevosCursos.includes(bibCursoPreparacion))?[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]:[]).includes(n);return '<button type="button" class="secondary" data-bib-semana="'+n+'" aria-pressed="'+(bibSemanaPreparacion===n)+'" style="min-height:74px;border-radius:12px;padding:12px;background:'+(bibSemanaPreparacion===n?'#dceef8':listo?'#e8f8f2':'#f4f8fc')+';color:#163b58"><strong>Semana '+n+'</strong><small style="display:block;margin-top:5px">'+(listo?(repaso?'Ver repaso':'Ver lección'):repaso?'Repaso · En preparación':'En preparación')+'</small></button>'}).join('');
+  return '<div class="card"><button type="button" class="secondary" id="bibVolverCursos">← Volver a los cursos</button><h2 style="margin-top:20px">📚 '+nombre+' · Lecciones interactivas</h2><p class="muted">Ciclo CPU-UNSM · 16 semanas. Las semanas de repaso se organizarán según la programación oficial del curso.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:22px 0">'+semanas+'</div>'+(bibCienciasSeisCursos.includes(bibCursoPreparacion)&&bibSemanaPreparacion?window.cachimbolabScienceSix?.render(bibCursoPreparacion,bibSemanaPreparacion)||'<p>Lección temporalmente no disponible.</p>':(bibCursoPreparacion==='Razonamiento Matemático'||bibCursoPreparacion==='Aritmética')&&bibSemanaPreparacion?bibRMContenido():listoSemanaBib()?'<div class="card"><h3>Semana '+bibSemanaPreparacion+' · '+nombre+'</h3><p class="muted">Lección interactiva con teoría y práctica de aprendizaje. En Álgebra: fórmulas matemáticas y ejemplos.</p><iframe title="'+nombre+' semana '+bibSemanaPreparacion+'" src="pilotos/'+bibCursoSlug[bibCursoPreparacion]+'-semana-'+bibSemanaPreparacion+'.html?v=39" style="width:100%;height:76vh;min-height:600px;border:1px solid #d7e5f1;border-radius:14px;background:white" loading="lazy"></iframe>'+(bibNuevosCursos.includes(bibCursoPreparacion)||bibCursoPreparacion==='Filosofía'&&bibSemanaPreparacion===14?'':`<div class="actions" style="margin-top:12px"><button type="button" class="secondary" id="bibPracticeSelected">✏️ Practicar preguntas de esta semana</button></div>`)+'</div>':bibSemanaPreparacion?'<div class="listitem"><h3>Semana '+bibSemanaPreparacion+' · En preparación</h3><p>Esta lección se desarrollará a partir de las separatas y preguntas registradas de Cultura General, sin asignar temas de otros cursos.</p></div>':'<p class="muted">Selecciona una semana para consultar su estado.</p>')+'</div>';
  }
  const area=bibVistaArea;
  const bibIconosCurso={'Razonamiento Matemático':'🧠','Álgebra':'√','Aritmética':'🔢','Trigonometría':'∠','Geometría':'△','Física':'⚡','Química':'⚗','Biología':'🧬','Historia':'📜','Geografía':'🌍','Razonamiento Verbal':'📖','Lenguaje y Literatura':'✒','Psicología':'🧠','Filosofía':'💭','Economía':'📊','Educación Cívica':'⚖','Cultura General':'🌐'};
@@ -310,6 +311,20 @@ async function bibLoad(){
 }
 function bibBind(){
  bibBindAritInteract();
+ document.querySelectorAll('[data-science-official]').forEach(button=>button.addEventListener('click',()=>{
+  const section=button.closest('[data-science-course]');if(!section)return;
+  window.cachimbolabPracticeLesson?.(section.dataset.scienceCourse,Number(section.dataset.scienceWeek));
+ }));
+ document.querySelectorAll('[data-science-choice]').forEach(button=>button.addEventListener('click',()=>{
+  const quiz=button.closest('.science-challenge');if(!quiz||quiz.dataset.done)return;
+  quiz.dataset.done='true';const right=Number(quiz.dataset.answer);
+  quiz.querySelectorAll('[data-science-choice]').forEach(option=>{
+   option.disabled=true;
+   if(Number(option.dataset.scienceChoice)===right){option.style.background='#e2f7e9';option.style.borderColor='#16865a';}
+  });
+  if(Number(button.dataset.scienceChoice)!==right){button.style.background='#fff0f0';button.style.borderColor='#c45151';}
+  const feedback=quiz.querySelector('.science-feedback');if(feedback)feedback.hidden=false;
+ }));
 
  if(page!=='biblioteca'||bibliotecaLeccionesVista)return;
  document.querySelectorAll('[data-bib-area]').forEach(b=>b.addEventListener('click',()=>{bibVistaArea=b.dataset.bibArea;render()}));
