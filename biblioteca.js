@@ -200,6 +200,7 @@ function bibAritLesson(ficha){
  const reto=card(5,'<p class="arit-help">Resuelve el ejercicio, selecciona una alternativa y revisa la solución explicada. Los ejercicios son distintos de la separata.</p>'+retoContent);
  const practica=card(6,'<iframe title="Práctica CPU · '+(isRM?'Razonamiento Matemático':'Aritmética')+' semana '+w+'" src="pilotos/'+(isRM?'razonamiento-matematico':'aritmetica')+'-practica.html?week='+w+'&v=math-normalizer-20261117');
  return '<div class="arit-lesson"><style>'+
+ '.arit-lesson #arit-p2 .arit-topic{padding:13px 0}.arit-lesson #arit-p2 .arit-topic .arit-formula,.arit-lesson #arit-p2 .arit-topic>div.arit-paragraph{background:#ecf5ff;border:1px solid #d0e4f5;border-radius:10px;padding:12px;overflow-x:auto}.arit-lesson #arit-p6{background:#f7fbff}.arit-lesson #arit-p6 iframe{background:#eaf4ff}.arit-lesson .arit-deck-controls,.arit-lesson .arit-example-controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between;background:#eff7ff;border:1px solid #cfe3f4;border-radius:12px;padding:12px;margin:12px 0}.arit-lesson .arit-deck-controls button,.arit-lesson .arit-example-controls button{padding:9px 12px;border:1px solid #a9cadf;border-radius:9px;background:#087f79;color:#fff;font-weight:800;cursor:pointer}.arit-lesson .arit-deck-controls button:disabled,.arit-lesson .arit-example-controls button:disabled{background:#e5edf5;color:#7c91a4;cursor:default}.arit-lesson .arit-flip-grid{grid-template-columns:minmax(0,1fr)!important;max-width:650px;margin:0 auto}.arit-lesson .arit-flip-item{min-height:180px;padding:19px!important}.arit-lesson .arit-flip-back .arit-formula{background:#e9f4ff;border:1px solid #cfe1f3;border-radius:9px}.arit-lesson .arit-quiz-options button{min-height:38px!important;padding:8px 11px!important;gap:10px!important}.arit-lesson [hidden]{display:none!important}'+
  '.arit-lesson .arit-nav button{padding:12px 14px;border-radius:11px;background:#fff;border:1px solid #c9dded;color:#205173;font-weight:800;cursor:pointer}.arit-lesson .arit-nav button[aria-pressed="true"]{background:#087f79;color:#fff;border-color:#087f79}.arit-lesson .arit-flip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:14px}.arit-lesson .arit-flip-item{background:linear-gradient(145deg,#f2f9ff,#fff);border:1px solid #bfd9ef;border-radius:13px;padding:17px;min-height:175px;box-shadow:0 4px 13px rgba(17,75,116,.07)}.arit-lesson .arit-flip-item .arit-topic{border:0;padding:8px 0}.arit-lesson .arit-flip-count{font-size:11px;font-weight:900;color:#057b70}.arit-lesson .arit-flip-toggle,.arit-lesson .arit-next{background:#087f79;color:white;border:none;border-radius:10px;padding:12px 17px;font-weight:800;cursor:pointer;margin-top:10px}.arit-lesson .arit-quiz{border:1px solid #d2e5f2;border-radius:15px;padding:18px;background:#f5faff;margin:15px 0}.arit-lesson .arit-question{display:block;font-size:17px;line-height:1.55;margin-bottom:12px}.arit-lesson .arit-quiz-options{display:grid;gap:11px}.arit-lesson .arit-quiz-options button{display:flex;align-items:center;gap:14px;text-align:left;min-height:62px;width:100%;border:1px solid #c3d6e6;border-radius:11px;background:#fff;color:#163c57;font-size:15px;padding:12px;cursor:pointer}.arit-lesson .arit-quiz-options button:hover:not(:disabled){background:#eaf7fd;border-color:#4c9fb7}.arit-lesson .arit-option-letter{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:9px;background:#e7f2fc;color:#144d74;font-weight:900}.arit-lesson .arit-quiz-options button.arit-correct{background:#dff7e9;border:2px solid #16845b;color:#09583a}.arit-lesson .arit-quiz-options button.arit-wrong{background:#fff0f0;border:2px solid #ca5353;color:#932f2f}.arit-lesson .arit-quiz-feedback{margin:15px 0;background:#eaf7ee;border-left:4px solid #17895e;border-radius:10px;padding:14px;line-height:1.6}.arit-lesson .arit-check-progress{color:#087f79;font-weight:800;margin:12px 0}.arit-lesson [hidden]{display:none!important}.arit-lesson .arit-help{line-height:1.6;color:#516e81}@media(max-width:650px){.arit-lesson .arit-flip-grid{grid-template-columns:1fr}.arit-lesson .arit-quiz{padding:12px}}'+
  '.arit-lesson{background:#eef5fb;padding:18px 12px;border-radius:16px;color:#153a57;font-family:system-ui,sans-serif}.arit-hero{max-width:790px;margin:0 auto 14px;padding:26px 22px;background:linear-gradient(115deg,#195376,#348cb3);border-radius:15px;color:#fff}.arit-hero h2{font-size:clamp(24px,3vw,34px);margin:18px 0 10px;color:#fff}.arit-hero p{color:#fff;margin:0;line-height:1.6}.arit-chip{display:inline-block;background:#def9ec;color:#006c58;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:800}.arit-nav{max-width:790px;margin:0 auto 18px;display:flex;flex-wrap:wrap;gap:7px}.arit-nav a{border:1px solid #c6e2f4;background:white;color:#164a72;border-radius:8px;padding:10px 12px;text-decoration:none;font-size:12px;font-weight:700}.arit-card{max-width:790px;margin:16px auto;background:white;border:1px solid #d1e3f2;border-radius:16px;padding:22px;box-shadow:0 4px 13px rgba(29,72,105,.04);scroll-margin-top:15px}.arit-card h3{font-size:21px;color:#133b58;margin:13px 0 20px}.arit-eyebrow{display:inline-block;background:#dcf7e8;color:#006b56;border-radius:30px;padding:7px 12px;font-size:11px;font-weight:800}.arit-topic{border-top:1px solid #e5eef5;padding:15px 0}.arit-topic:first-of-type{border-top:0}.arit-topic h4{font-size:16px;margin:2px 0 12px;color:#0f4668}.arit-paragraph{line-height:1.85;margin:10px 0 16px;white-space:normal;overflow-wrap:anywhere}.arit-formula{background:#f0f6fc;border-radius:10px;margin:12px 0;padding:15px 10px;max-width:100%;overflow-x:auto;text-align:center}.arit-formula .katex-display{margin:0}.arit-memory{padding:14px;border:1px solid #d1e3f2;border-radius:10px}.arit-memory summary{cursor:pointer;font-weight:700;color:#087f79}@media(max-width:650px){.arit-lesson{padding:10px 6px}.arit-card{padding:15px}.arit-hero{padding:22px 16px}.arit-nav a{padding:8px 9px}}'+
  '</style><div class="arit-hero"><span class="arit-chip">'+(isRM?'RAZONAMIENTO MATEMÁTICO':'ARITMÉTICA')+' · SEMANA '+w+' · LECCIÓN INTERACTIVA</span><h2>'+bibAritEsc(ficha.tema||'Lección de Aritmética')+'</h2><p>Aprende los conceptos, interpreta las fórmulas y practica paso a paso.</p></div>'+
@@ -208,6 +209,40 @@ function bibAritLesson(ficha){
 }
 function bibBindAritInteract(){
  const lesson=document.querySelector('.arit-lesson');if(!lesson)return;
+ // Una tarjeta de memoria por vez, con avance controlado.
+ const memoryDeck=lesson.querySelector('#arit-p4 .arit-flip-grid');
+ if(memoryDeck){
+  const cards=Array.from(memoryDeck.querySelectorAll('[data-arit-flip-card]'));
+  if(cards.length>1){
+   let index=0;
+   const controls=document.createElement('div');controls.className='arit-deck-controls';
+   const progress=document.createElement('strong');
+   const previous=document.createElement('button');previous.type='button';previous.textContent='← Anterior';
+   const next=document.createElement('button');next.type='button';
+   const draw=()=>{cards.forEach((card,i)=>{card.hidden=i!==index;});progress.textContent='Tarjeta '+(index+1)+' de '+cards.length;previous.disabled=index===0;next.textContent=index===cards.length-1?'Volver a empezar ↺':'Siguiente tarjeta →';};
+   previous.onclick=()=>{if(index>0)index--;draw();};
+   next.onclick=()=>{index=(index+1)%cards.length;draw();};
+   controls.append(previous,progress,next);memoryDeck.after(controls);draw();
+  }
+ }
+ // Un ejemplo resuelto visible por vez, sin borrar los procedimientos.
+ const examples=lesson.querySelector('#arit-p3');
+ if(examples){
+  let items=Array.from(examples.querySelectorAll(':scope > article.arit-topic'));
+  if(items.length<2)items=Array.from(examples.querySelectorAll(':scope > .arit-paragraph'));
+  if(items.length>1){
+   let index=0;
+   const controls=document.createElement('div');controls.className='arit-example-controls';
+   const progress=document.createElement('strong');
+   const previous=document.createElement('button');previous.type='button';previous.textContent='← Ejemplo anterior';
+   const next=document.createElement('button');next.type='button';
+   const draw=()=>{items.forEach((item,i)=>{item.hidden=i!==index;});progress.textContent='Ejemplo '+(index+1)+' de '+items.length;previous.disabled=index===0;next.textContent=index===items.length-1?'Volver al primero ↺':'Siguiente ejemplo →';};
+   previous.onclick=()=>{if(index>0)index--;draw();};
+   next.onclick=()=>{index=(index+1)%items.length;draw();};
+   controls.append(previous,progress,next);examples.append(controls);draw();
+  }
+ }
+
  lesson.querySelectorAll('[data-arit-tab]').forEach(button=>button.addEventListener('click',()=>{
   const tab=Number(button.dataset.aritTab);
   lesson.querySelectorAll('[data-arit-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
