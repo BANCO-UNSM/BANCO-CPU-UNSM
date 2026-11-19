@@ -573,19 +573,20 @@ function bindStudentLibraryPractice(){
  const subjects={'Razonamiento Verbal':'Razonamiento Verbal','Cultura General':'Cultura General',
   'Educación Cívica':'Educación Cívica','Historia':'Historia','Geografía':'Geografía',
   'Lenguaje y Literatura':'Lenguaje y Literatura','Filosofía':'Filosofía','Economía':'Economía','Álgebra':'Álgebra',
-  'Psicología':'Psicología'};
+  'Psicología':'Psicología','Aritmética':'Aritmética','Razonamiento Matemático':'Razonamiento Matemático','Química':'Química','Biología':'Biología'};
  const psicoLesson=page==='psicologia_piloto'||bibliotecaLeccionesVista;
  const subject=psicoLesson?'Psicología':bibCursoPreparacion;
  const week=psicoLesson?psicologiaSemanaSeleccionada:bibSemanaPreparacion;
  if(!subjects[subject]||!Number.isInteger(week)||week<1||week>16)return;
  const iframe=psicoLesson?
   document.querySelector('iframe[title^="Psicología, lección semana"]'):
-  document.querySelector('iframe[title="'+subject+' semana '+week+'"]');
+  (document.querySelector('iframe[title="'+subject+' semana '+week+'"]')||
+   document.querySelector('iframe[title="Práctica CPU · '+subject+' semana '+week+'"]'));
  if(!iframe)return;
  const type={'Razonamiento Verbal':'cachimbolab-verbal','Cultura General':'cachimbolab-cultura',
   'Educación Cívica':'cachimbolab-civica','Psicología':'cachimbolab-psico'}[subject]||'cachimbolab-nuevos';
  const slug={'Historia':'historia','Geografía':'geografia','Lenguaje y Literatura':'lenguaje',
-  'Filosofía':'filosofia','Economía':'economia','Álgebra':'algebra'}[subject];
+  'Filosofía':'filosofia','Economía':'economia','Álgebra':'algebra','Aritmética':'aritmetica','Razonamiento Matemático':'razonamiento-matematico','Química':'quimica','Biología':'biologia'}[subject];
  let started=false,active=true;
  const permitted=new Set();
  const send=(kind,extra)=>{if(!active||!iframe.isConnected||!iframe.contentWindow)return;
