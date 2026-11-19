@@ -599,7 +599,7 @@ function bindStudentLibraryPractice(){
    const {data,error}=await db.from('questions')
     .select('id,week,subject,original_number,statement,options')
     .eq('modality','CPU-UNSM').eq('status','published')
-    .eq('subject',subject).eq('week',week)
+    .eq('subject',subject).eq('week',week).is('exam_id',null)
     .order('original_number',{ascending:true}).limit(250);
    if(!active)return;
    if(error)throw error;
