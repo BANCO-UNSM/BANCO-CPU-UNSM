@@ -275,7 +275,7 @@ async function refresh(){
  // No bloquear toda la interfaz durante las consultas de Supabase.
  esquemasCargados=false;esquemasEliminados=new Set();
  relationLoaded=false;relationItems=[];relationReview=null;
- profile=null;access=null;authorizedServices=[];learningProgress=null;learningProgressError='';weeklyHistory=[];weeklyHistoryError='';questions=[];attempts=[];exams=[];examsError='';questionsError='';
+ profile=null;access=null;authorizedServices=[];learningProgress=null;learningProgressError='';weeklyHistory=[];weeklyHistoryError='';/* conservar el banco existente mientras se sincroniza */attempts=[];examsError='';questionsError='';
  if(user){
   const p=await db.from('profiles').select('role,name').eq('id',user.id).maybeSingle();profile=p.data;
   if(teacher()) access={status:'staff',allowed:true};
