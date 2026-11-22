@@ -334,12 +334,12 @@ async function refresh(){
       }
     }
    // Actualizar solo vistas de consulta; no interrumpir cuestionarios en curso.
-   if(['home','cpu-panel'].includes(page)||(page==='quiz'&&!quiz)||(page==='practice'&&!practice))render();
+   if(['home','cpu-panel','review','bank','manage','bulk','quality','exams'].includes(page)||(page==='quiz'&&!quiz)||(page==='practice'&&!practice)){if(page!=='review'||!reviewSelected)render();}
    }catch(err){
      if(generation!==refreshGeneration||user?.id!==backgroundUserId)return;
      console.warn('Carga secundaria:',err);
      questionsError='La información académica está tardando. Vuelve a intentar si no aparece.';
-     if(['home','cpu-panel'].includes(page))render();
+     if(['home','cpu-panel','review','bank','manage','bulk','quality','exams'].includes(page)){if(page!=='review'||!reviewSelected)render();}
    }})();
   }
  }
