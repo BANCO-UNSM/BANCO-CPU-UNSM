@@ -309,33 +309,35 @@ async function refresh(){
    render();
    const backgroundUserId=user.id;
    void (async()=>{try{
-   const [catalogo,ex,r]=await withStartupTimeout(Promise.all([
-     cargarPreguntasPaginadas(),
-     db.from('exams').select('id,code,title,exam_type,exam_year,cycle,exam_number,exam_date,status')
-       .order('exam_year',{ascending:false}).order('exam_number',{ascending:true}),
-     db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30),
-     cargarEsquemasEliminados(),
-     loadLearningProgress(),
-     hasService('CPU-UNSM')?loadWeeklyHistory():Promise.resolve(),
-     hasService('BECA18')?obtenerLecturasBeca():Promise.resolve()
-   ]),14000,'consultas del banco académico');
+   // Cargar preguntas independientemente de estadísticas, exámenes y recursos secundarios.
+   // Antes Promise.all hacía esperar al banco por 7 solicitudes y lo descartaba si una tardaba.
+   const catalogo=await cargarPreguntasPaginadas();
    if(generation!==refreshGeneration||user?.id!==backgroundUserId)return;
-   attempts=r.data||[];
-   questions=catalogo.data;
+   if(catalogo.error){
+     questionsError=catalogo.error;
+     if(catalogo.data?.length)questions=catalogo.data;
+   }else{
+     questions=catalogo.data||[];
+     questionsError='';
+   }
    bancoCargando=false;
-   if(catalogo.error)questionsError=catalogo.error;
-   if(ex.error){examsError=ex.error.message;console.error('Exámenes:',examsError)}else exams=ex.data||[];
-    // Solo en el panel docente: recuperar grupos visibles de preguntas si el catálogo está oculto por RLS.
-    // No se inventa un estado de publicación ni se habilita su resolución.
-    if(teacher()){
-      const known={'2ace1472-a5d9-4e4f-a69b-9b38770c72c9':{title:'2.º Examen CPU 2026-II',code:'CPU-UNSM-2026-II-E02',exam_type:'CPU',exam_year:2026,cycle:'2026-II',exam_number:2,exam_date:'2026-10-24'}};
-      for(const id of [...new Set(questions.filter(x=>x.exam_id).map(x=>x.exam_id))]){
-        if(exams.some(e=>e.id===id))continue;
-        const first=questions.find(x=>x.exam_id===id);
-        const meta=known[id]||{};
-        exams.push({id,code:meta.code||'',title:meta.title||('Examen · '+id.slice(0,8)),exam_type:meta.exam_type||'CPU',exam_year:meta.exam_year||Number(String(first?.cycle||'').slice(0,4))||null,cycle:meta.cycle||first?.cycle||'',exam_number:meta.exam_number||null,exam_date:meta.exam_date||null,status:'unknown',_localFallback:true});
-      }
-    }
+   // Datos secundarios no bloquean la edición ni la lista de preguntas.
+   void (async()=>{
+     const settled=await Promise.allSettled([
+       db.from('exams').select('id,code,title,exam_type,exam_year,cycle,exam_number,exam_date,status').order('exam_year',{ascending:false}).order('exam_number',{ascending:true}),
+       db.from('attempts').select('id,submitted_at,total,correct').order('submitted_at',{ascending:false}).limit(30),
+       cargarEsquemasEliminados(),loadLearningProgress(),
+       hasService('CPU-UNSM')?loadWeeklyHistory():Promise.resolve(),
+       hasService('BECA18')?obtenerLecturasBeca():Promise.resolve()
+     ]);
+     if(generation!==refreshGeneration||user?.id!==backgroundUserId)return;
+     const ex=settled[0].status==='fulfilled'?settled[0].value:null;
+     const attemptsResponse=settled[1].status==='fulfilled'?settled[1].value:null;
+     if(attemptsResponse?.data)attempts=attemptsResponse.data;
+     if(ex?.error)examsError=ex.error.message;
+     else if(ex?.data)exams=ex.data;
+     if(['home','cpu-panel','exams'].includes(page))render();
+   })().catch(err=>console.warn('Carga de datos secundarios:',err));
    // Actualizar solo vistas de consulta; no interrumpir cuestionarios en curso.
    if(['home','cpu-panel','review','bank','manage','bulk','quality','exams'].includes(page)||(page==='quiz'&&!quiz)||(page==='practice'&&!practice)){if(page!=='review'||!reviewSelected)render();}
    }catch(err){
