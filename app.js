@@ -1342,7 +1342,7 @@ function bankList(){
  liberarImagenesPrivadas(contenedor);
  const s=$('subjectFilter').value,w=$('weekFilter').value,t=$('searchFilter').value.toLowerCase();
  contenedor.innerHTML=questions.filter(q=>!q.exam_id&&q.modality===selectedModality&&(!s||q.subject===s)
-&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).sort(ordenarPreguntasPorOrigenYNumero).map(q=>`<div class="listitem"><strong>${esc(q.subject)}${q.subject==='Razonamiento Verbal'&&q.topic?' · '+esc(q.topic):''} · ${esc(etiquetaOrigen(q))} · N.º ${q.original_number??'—'}</strong> ${admin()?`<span class="tag">${esc(q.status)}</span>`:''}<p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${figuraGeometriaSemana11(q)}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.topic)}${admin()&&q.source&&q.source.trim()&&q.source.trim().toLowerCase()!=='fuente pendiente'?' · '+esc(q.source):''}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
+&&(!w||String(q.week)===w)&&(`${q.statement} ${q.topic}`.toLowerCase().includes(t))).sort(ordenarPreguntasPorOrigenYNumero).map(q=>`<div class="listitem"><strong>${esc(q.subject)}${q.subject==='Razonamiento Verbal'&&q.topic?' · '+esc(q.topic):''} · ${esc(etiquetaOrigen(q))} · N.º ${q.original_number??'—'}</strong> ${admin()?`<span class="tag">${esc(q.status)}</span>`:''}<p>${esc(q.statement)}</p>${espacioImagenPrivada(q.statement_image_path,'Imagen del enunciado')}${figuraGeometriaSemana11(q)}${q.options.map((o,i)=>`<div class="small">${'ABCDE'[i]}) ${esc(o)}</div>`).join('')}<p class="muted small">${esc(q.topic)}</p>${admin()?`<button type="button" class="secondary" data-bank-solution="${esc(q.id)}">Ver solución</button><div class="bank-solution" id="bank-solution-${esc(q.id)}" hidden></div>`:''}</div>`).join('')||'<p>No hay preguntas con estos filtros.</p>';
  contenedor.insertAdjacentHTML('beforeend',relationBankPanel());
  bindRelations();
  mostrarFormulas();
@@ -2318,7 +2318,7 @@ const {error}=await db.rpc('save_question_by_modality',{
         p_number:values.number?Number(values.number):null,
         p_statement:values.statement,
         p_options:'ABCDE'.slice(0,values.modality==='BECA18'?4:5).split('').map(x=>values['option'+x]),
-        p_source:values.source||'',
+        p_source:'',
         p_correct:Number(values.correct),
         p_explanation:values.explanation||'',
         p_statement_image_path:statementImagePath,
