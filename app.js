@@ -2085,13 +2085,21 @@ function bindReviewDetail(){
    if(!confirm('¿Enviar esta pregunta a revisión? Guarda antes cualquier corrección pendiente.'))return;
    const b=$('reviewSubmit');b.disabled=true;const {error}=await db.rpc('submit_question_for_review',{p_question_id:q.id});
    if(error){$('reviewDetailStatus').textContent='Error: '+error.message;b.disabled=false;return}
-   reviewSelected=null;await refresh();$('reviewMessage').textContent='Pregunta enviada a revisión.';
+   q.status='review';
+   const row=questions.find(item=>item.id===q.id);if(row)row.status='review';
+   reviewSelected=null;
+   render();
+   const message=$('reviewMessage');if(message)message.textContent='✓ Pregunta enviada a revisión. Puedes continuar con la siguiente sin recargar la página.';
  };
  if($('reviewPublish'))$('reviewPublish').onclick=async()=>{
    if(!confirm('¿Confirmas que revisaste la clave, alternativas y explicación y deseas publicar esta pregunta?'))return;
    const b=$('reviewPublish');b.disabled=true;const {error}=await db.rpc('publish_question',{p_question_id:q.id});
    if(error){$('reviewDetailStatus').textContent='Error: '+error.message;b.disabled=false;return}
-   reviewSelected=null;await refresh();$('reviewMessage').textContent='Pregunta publicada correctamente.';
+   q.status='published';
+   const row=questions.find(item=>item.id===q.id);if(row)row.status='published';
+   reviewSelected=null;
+   render();
+   const message=$('reviewMessage');if(message)message.textContent='✓ Pregunta publicada. Puedes continuar con la siguiente sin recargar la página.';
  };
 }
 
