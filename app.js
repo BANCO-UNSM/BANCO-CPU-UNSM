@@ -2073,7 +2073,16 @@ function bindReviewDetail(){
     if(q.exam_id)args.p_week=null;
    const {error}=await db.rpc(q.exam_id?'admin_update_exam_question':published?'admin_update_published_question':'update_question_for_review',args);
    if(error){status.textContent='Error: '+error.message+(q.exam_id?' Verifica que hayas ejecutado el SQL adjunto en Supabase.':'');b.disabled=false;return}
-   reviewSelected=null;await refresh();const m=$('reviewMessage');if(m)m.textContent='Correcciones guardadas. Abre nuevamente la pregunta para continuar.';
+   // Mantener la revisión abierta y los filtros intactos después de guardar.
+   // refresh() reiniciaba el banco y dejaba momentáneamente la lista vacía.
+   const cambios={cycle:args.p_cycle,week:args.p_week,subject:args.p_subject,topic:args.p_topic,page:args.p_page,original_number:args.p_number,statement:args.p_statement,options:args.p_options,source:args.p_source,correct_index:args.p_correct,explanation:args.p_explanation};
+   Object.assign(q,cambios);
+   const indice=questions.findIndex(item=>item.id===q.id);
+   if(indice>=0)Object.assign(questions[indice],cambios);
+   reviewSelected=q;
+   status.textContent='✓ Cambios guardados. Puedes continuar con esta pregunta o seleccionar la siguiente sin actualizar la página.';
+   b.disabled=false;
+   const m=$('reviewMessage');if(m)m.textContent='Pregunta guardada correctamente. La lista y los filtros se mantienen disponibles.';
  };
  if($('reviewSubmit'))$('reviewSubmit').onclick=async()=>{
    if(q.exam_id&&q.correct_index==null){$('reviewDetailStatus').textContent='Primero registra y guarda la clave correcta antes de enviarla a revisión.';return;}
