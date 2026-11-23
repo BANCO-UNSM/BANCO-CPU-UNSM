@@ -2074,7 +2074,15 @@ function bindReviewDetail(){
     // Para exámenes, p_week debe permanecer NULL y la vinculación exam_id se conserva.
     if(q.exam_id)args.p_week=null;
    const {error}=await db.rpc(q.exam_id?'admin_update_exam_question':published?'admin_update_published_question':'update_question_for_review',args);
-   if(error){status.textContent='Error: '+error.message+(q.exam_id?' Verifica que hayas ejecutado el SQL adjunto en Supabase.':'');b.disabled=false;return}
+   if(error){
+     const duplicate=error.code==='23505'||String(error.message||'').includes('questions_unique_weekly_statement');
+     if(duplicate){
+       status.textContent='No se guardaron las correcciones: ya existe otra pregunta con el mismo enunciado en este ciclo y semana. Revisa el texto y la semana, o abre la pregunta existente para editarla. La imagen de solución que guardaste permanece intacta.';
+     }else{
+       status.textContent='Error: '+error.message+(q.exam_id?' Verifica que hayas ejecutado el SQL adjunto en Supabase.':'');
+     }
+     b.disabled=false;return;
+   }
    // Mantener la revisión abierta y los filtros intactos después de guardar.
    // refresh() reiniciaba el banco y dejaba momentáneamente la lista vacía.
    const cambios={cycle:args.p_cycle,week:args.p_week,subject:args.p_subject,topic:args.p_topic,page:args.p_page,original_number:args.p_number,statement:args.p_statement,options:args.p_options,source:args.p_source,correct_index:args.p_correct,explanation:args.p_explanation};
